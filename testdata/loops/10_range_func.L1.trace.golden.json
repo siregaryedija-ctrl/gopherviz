@@ -1,0 +1,248 @@
+{
+  "version": 1,
+  "file": "10_range_func.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "for3",
+    "line": 7,
+    "endLine": 11,
+    "vars": [
+      "i"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "i": "3"
+      },
+      "note": "i := n → i = 3"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "i": "3"
+      },
+      "result": true,
+      "note": "i > 0 → 3 > 0 → true"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "v": "3"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: v = 3"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "v": "3"
+      },
+      "note": "fmt.Println(v) → cetak \"3\"",
+      "output": "3\n"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "i": "3"
+      },
+      "result": false,
+      "note": "if !yield(i) → false"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "i": "2"
+      },
+      "note": "i-- → i = 2"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "i": "2"
+      },
+      "result": true,
+      "note": "i > 0 → 2 > 0 → true"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 1,
+      "vars": {
+        "v": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: v = 2"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 1,
+      "vars": {
+        "v": "2"
+      },
+      "note": "fmt.Println(v) → cetak \"2\"",
+      "output": "2\n"
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 1,
+      "vars": {
+        "i": "2"
+      },
+      "result": false,
+      "note": "if !yield(i) → false"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "i": "1"
+      },
+      "note": "i-- → i = 1"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "i": "1"
+      },
+      "result": true,
+      "note": "i > 0 → 1 > 0 → true"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 2,
+      "vars": {
+        "v": "1"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: v = 1"
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 2,
+      "vars": {
+        "v": "1"
+      },
+      "note": "fmt.Println(v) → cetak \"1\"",
+      "output": "1\n"
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "i": "1"
+      },
+      "result": false,
+      "note": "if !yield(i) → false"
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "i": "0"
+      },
+      "note": "i-- → i = 0"
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "i": "0"
+      },
+      "result": false,
+      "note": "i > 0 → 0 > 0 → false"
+    },
+    {
+      "n": 17,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "i": "0"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

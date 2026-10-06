@@ -69,6 +69,11 @@
       pipe: () => [523, 392, 330, 262].forEach((f, k) => tone(f, { dur: 0.07, vol: 0.2, at: k * 0.07 })),
       door: () => { noise({ dur: 0.1, cut: 600, vol: 0.4 }); tone(147, { dur: 0.12, vol: 0.3 }); },
       appear: () => tone(660, { to: 990, dur: 0.07, vol: 0.18 }),
+      yes: () => { tone(784, { dur: 0.06, vol: 0.3 }); tone(1175, { dur: 0.1, vol: 0.3, at: 0.07 }); },
+      no: () => tone(330, { to: 294, dur: 0.14, type: 'triangle', vol: 0.45 }),
+      thud: () => noise({ dur: 0.07, cut: 700, vol: 0.45 }),
+      sparkle: () => [1568, 2093, 2637, 3136].forEach((f, k) => tone(f, { dur: 0.09, type: 'triangle', vol: 0.25, at: k * 0.055 })),
+      panic: () => { noise({ dur: 0.25, cut: 300, vol: 0.7 }); tone(220, { to: 55, dur: 0.4, vol: 0.35 }); },
       think: () => { tone(523, { to: 659, dur: 0.1, type: 'triangle', vol: 0.35 }); tone(659, { to: 587, dur: 0.12, type: 'triangle', vol: 0.3, at: 0.11 }); },
       jingle: () => {
         [72, 76, 79, 84, 79, 84, 88].forEach((m, k) => tone(hz(m), { dur: k === 6 ? 0.45 : 0.1, vol: 0.24, at: 0.05 + k * 0.11 }));

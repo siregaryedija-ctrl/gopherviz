@@ -135,5 +135,62 @@
     for (let j = 0; j < h; j += 2) { c.fillRect(x, y + j, 1, 1); c.fillRect(x + w - 1, y + j, 1, 1); }
   }
 
-  G.pixel = { INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, disc, ell, rect, box, dashedBox };
+  function dashedLine(c, x0, x1, y, col) {
+    c.fillStyle = col;
+    for (let x = x0; x <= x1; x += 3) c.fillRect(x, y, 2, 1);
+  }
+
+  /** Balon ucapan 11x11 berisi satu karakter, ekornya menunjuk ke bawah di (x, y+13). */
+  function bubble(c, x, y, ch, col) {
+    const w = 11, h = 11, L = Math.round(x - w / 2), T = Math.round(y), cx = Math.round(x);
+    rect(c, L + 1, T, w - 2, h, INK); rect(c, L, T + 1, w, h - 2, INK);
+    rect(c, L + 1, T + 1, w - 2, h - 2, '#ffffff');
+    rect(c, cx - 1, T + h, 1, 1, INK); rect(c, cx + 1, T + h, 1, 1, INK); rect(c, cx, T + h + 1, 1, 1, INK);
+    rect(c, cx, T + h - 1, 1, 2, '#ffffff');
+    text(c, ch, cx - 1, T + 3, col);
+  }
+
+  const stamps = {};
+  /** Stempel teks berbingkai (BREAK!, SELESAI!), digambar dengan skala bilangan bulat. */
+  function stamp(label, col) {
+    const key = label + col;
+    if (stamps[key]) return stamps[key];
+    const w = textW(label) + 8, h = 13, c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const x = c.getContext('2d');
+    rect(x, 0, 0, w, h, col); rect(x, 1, 1, w - 2, h - 2, '#fff8fb');
+    rect(x, 2, 2, w - 4, 1, col); rect(x, 2, h - 3, w - 4, 1, col);
+    text(x, label, 4, 4, col);
+    return (stamps[key] = c);
+  }
+
+  /** Latar dunia pastel: langit bergradasi berdither, awan, pohon lolipop, tanah berkerikil. */
+  function paintWorld(c, W, H, GY) {
+    const bands = ['#fcd3e1', '#fddbe6', '#fde3eb', '#feeaf0', '#fff1f4'];
+    const bh = Math.ceil(GY / bands.length);
+    bands.forEach((col, k) => rect(c, 0, k * bh, W, bh + 1, col));
+    for (let k = 1; k < bands.length; k++) {
+      c.fillStyle = bands[k - 1];
+      for (let x = 0; x < W; x += 2) c.fillRect(x, k * bh, 1, 1);
+      for (let x = 1; x < W; x += 4) c.fillRect(x, k * bh + 1, 1, 1);
+    }
+    for (let x = 20; x < W; x += 64) {
+      const y = 8 + ((x * 7) % 14);
+      ell(c, x, y, 8, 3, '#fff8fb'); ell(c, x - 6, y + 1, 5, 2, '#fff8fb'); ell(c, x + 7, y + 1, 6, 2, '#fff8fb');
+    }
+    for (let x = 30, k = 0; x < W; x += 58, k++) {
+      const col = k % 2 ? '#dcefb8' : '#fbe7a6', r = 10 + (k % 3) * 2, cy = GY - 38 + (k % 2) * 8;
+      rect(c, x - 1, cy + r - 2, 3, GY - (cy + r - 2), '#efcab9');
+      disc(c, x, cy, r, mix(col, '#fde3eb', 0.35));
+    }
+    rect(c, 0, GY, W, H - GY, '#fbe3e8');
+    rect(c, 0, GY, W, 1, '#f2c4d2');
+    rect(c, 0, GY + 1, W, 1, '#f7d3dd');
+    for (let x = 3; x < W; x += 8) ell(c, x, H - 4, 2, 1, '#f5b3c7');
+  }
+
+  G.pixel = {
+    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter,
+    disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
+  };
 })(window.GLV = window.GLV || {});

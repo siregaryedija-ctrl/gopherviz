@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as crypto from 'node:crypto';
-import type { UpdateResult } from './server';
+import type { Trace, UpdateResult } from './server';
 
 /** Pesan dari ekstensi ke webview. */
 export type ToPanel =
@@ -11,6 +11,7 @@ export type ToPanel =
       focusLoop?: string;
       server: { ok: boolean; message?: string };
     }
+  | { type: 'trace'; loopId: string; trace: Trace }
   | { type: 'config'; speed: number; sound: boolean; music: boolean };
 
 /** Pesan dari webview ke ekstensi. */
@@ -20,11 +21,25 @@ export type FromPanel =
   | { type: 'setConfig'; key: 'speed' | 'sound' | 'music'; value: number | boolean }
   | { type: 'restart' };
 
+const icon = (d: string) => `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${d}"/></svg>`;
+
+/** Pemutar langkah trace: mundur, putar/jeda, maju, ulang, slider. Salinannya ada di dev/harness.html. */
+export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
+    <button id="tPrev" class="icon-btn" title="Langkah sebelumnya" aria-label="Langkah sebelumnya">${icon('M3 2h2v12H3zM14 2v12L6 8z')}</button>
+    <button id="tPlay" class="icon-btn primary" title="Putar / jeda" aria-label="Putar atau jeda">${icon('M3 2h4v12H3zM9 2h4v12H9z')}</button>
+    <button id="tNext" class="icon-btn" title="Langkah berikutnya" aria-label="Langkah berikutnya">${icon('M11 2h2v12h-2zM2 2v12l8-6z')}</button>
+    <button id="tRestart" class="icon-btn" title="Ulang dari awal" aria-label="Ulang dari awal">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
+    <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Posisi langkah">
+    <span id="tLabel" class="tlabel"></span>
+  </div>
+  <p id="stepNote" class="step-note" hidden></p>`;
+
 /** Panel webview GoLoopViz. Pesan terakhir disimpan dan dikirim ulang saat webview siap. */
 export class LoopPanel implements vscode.Disposable {
   private panel?: vscode.WebviewPanel;
   private ready = false;
   private lastState?: ToPanel;
+  private lastTrace?: ToPanel;
   private lastConfig?: ToPanel;
   private closedByUser = false;
   private readonly extensionUri: vscode.Uri;
@@ -61,7 +76,7 @@ export class LoopPanel implements vscode.Disposable {
     panel.webview.onDidReceiveMessage((m: FromPanel) => {
       if (m.type === 'ready') {
         this.ready = true;
-        for (const msg of [this.lastConfig, this.lastState]) {
+        for (const msg of [this.lastConfig, this.lastState, this.lastTrace]) {
           if (msg) {
             void panel.webview.postMessage(msg);
           }
@@ -80,6 +95,8 @@ export class LoopPanel implements vscode.Disposable {
   post(msg: ToPanel): void {
     if (msg.type === 'state') {
       this.lastState = msg;
+    } else if (msg.type === 'trace') {
+      this.lastTrace = msg;
     } else {
       this.lastConfig = msg;
     }
@@ -101,7 +118,7 @@ export class LoopPanel implements vscode.Disposable {
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
@@ -132,11 +149,20 @@ export class LoopPanel implements vscode.Disposable {
       <button id="btnRestart" class="btn" hidden>Mulai ulang server</button>
     </div>
   </div>
+  ${TRACE_MARKUP}
   <p id="note" class="note"></p>
 
   <section id="partsSection">
     <h2>Isi loop</h2>
     <ol id="parts" class="parts"></ol>
+  </section>
+  <section id="varsSection" hidden>
+    <h2>Variabel</h2>
+    <div id="vars" class="vars"></div>
+  </section>
+  <section id="outSection" hidden>
+    <h2>Output</h2>
+    <pre id="out" class="out"></pre>
   </section>
 
   <section id="navSection">

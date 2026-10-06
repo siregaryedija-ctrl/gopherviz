@@ -37,23 +37,58 @@ func (r Result) JSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Program adalah hasil parse + cek tipe satu file beserta Scene-nya. Dipakai
+// bersama oleh analyzer dan simulator supaya keduanya melihat AST yang sama.
+type Program struct {
+	Fset      *token.FileSet
+	File      *ast.File
+	Info      *types.Info
+	Result    Result
+	LoopNodes map[string]ast.Stmt // ID loop → *ast.ForStmt / *ast.RangeStmt
+	LoopIDs   map[ast.Node]string
+	src       source
+}
+
+// Line mengembalikan nomor baris di teks asli (sudah dikoreksi bila potongan kode dibungkus).
+func (p *Program) Line(pos token.Pos) int { return p.src.line(pos) }
+
+// Text mengembalikan sumber node dalam satu baris.
+func (p *Program) Text(n ast.Node) string {
+	if n == nil {
+		return ""
+	}
+	return oneLine(p.src.slice(p.src.offset(n.Pos()), p.src.offset(n.End())))
+}
+
 // Analyze menganalisis src. Fungsi ini tidak pernah panik: kegagalan internal
 // dilaporkan sebagai diagnostic supaya tampilan realtime tidak ikut mati.
-func Analyze(filename string, src []byte) (res Result) {
+func Analyze(filename string, src []byte) Result {
+	return Load(filename, src).Result
+}
+
+// Load seperti Analyze, tetapi juga mengembalikan AST untuk simulator.
+func Load(filename string, src []byte) (p *Program) {
 	defer func() {
 		if r := recover(); r != nil {
-			res = Result{
-				Scene:       scene.Scene{Version: scene.Version, File: filename, Loops: []scene.Loop{}},
-				Diagnostics: []scene.Diagnostic{{Message: fmt.Sprintf("kesalahan internal analyzer: %v", r)}},
+			p = &Program{
+				Fset: token.NewFileSet(), File: &ast.File{Name: ast.NewIdent("")}, Info: &types.Info{},
+				LoopNodes: map[string]ast.Stmt{}, LoopIDs: map[ast.Node]string{},
+				Result: Result{
+					Scene:       scene.Scene{Version: scene.Version, File: filename, Loops: []scene.Loop{}},
+					Diagnostics: []scene.Diagnostic{{Message: fmt.Sprintf("kesalahan internal analyzer: %v", r)}},
+				},
 			}
 		}
 	}()
-	return analyze(filename, src)
+	return load(filename, src)
 }
 
-func analyze(filename string, src []byte) Result {
+func analyze(filename string, src []byte) Result { return load(filename, src).Result }
+
+func load(filename string, src []byte) *Program {
 	s := parse(filename, src)
-	b := &builder{src: s, info: typeCheck(s), ids: map[ast.Node]string{}}
+	info := typeCheck(s)
+	b := &builder{src: s, info: info, ids: map[ast.Node]string{}}
 	cands := b.collect()
 
 	sort.SliceStable(cands, func(i, j int) bool { return cands[i].off < cands[j].off })
@@ -78,9 +113,17 @@ func analyze(filename string, src []byte) Result {
 		loops = append(loops, l)
 	}
 
-	return Result{
-		Scene:       scene.Scene{Version: scene.Version, File: filename, Loops: loops},
-		Diagnostics: s.diagnostics(src),
+	nodes := map[string]ast.Stmt{}
+	for n, id := range b.ids {
+		nodes[id] = n.(ast.Stmt)
+	}
+	return &Program{
+		Fset: s.fset, File: s.file, Info: info, src: s,
+		LoopNodes: nodes, LoopIDs: b.ids,
+		Result: Result{
+			Scene:       scene.Scene{Version: scene.Version, File: filename, Loops: loops},
+			Diagnostics: s.diagnostics(src),
+		},
 	}
 }
 
@@ -205,7 +248,11 @@ func (stubImporter) Import(path string) (*types.Package, error) {
 }
 
 func typeCheck(s source) *types.Info {
-	info := &types.Info{Types: map[ast.Expr]types.TypeAndValue{}}
+	info := &types.Info{
+		Types: map[ast.Expr]types.TypeAndValue{},
+		Defs:  map[*ast.Ident]types.Object{},
+		Uses:  map[*ast.Ident]types.Object{},
+	}
 	conf := types.Config{Importer: stubImporter{}, Error: func(error) {}, FakeImportC: true}
 	func() {
 		// AST dari kode setengah jadi bisa aneh; kegagalan di sini cukup berarti "tipe tidak diketahui".
@@ -416,6 +463,9 @@ func (b *builder) nodes(list []ast.Stmt) []scene.Node {
 	out := []scene.Node{}
 	for _, st := range list {
 		if n, ok := b.node(st); ok {
+			if end := b.src.line(st.End() - 1); end > n.Line {
+				n.EndLine = end
+			}
 			out = append(out, n)
 		}
 	}

@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "file": "16_snippet.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "range-slice",
+    "line": 2,
+    "endLine": 4,
+    "vars": [
+      "v"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 2,
+      "iteration": 0,
+      "vars": {
+        "nums": "[3 1 2]"
+      },
+      "note": "range nums (3 elemen)",
+      "items": [
+        "3",
+        "1",
+        "2"
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 2,
+      "iteration": 0,
+      "vars": {
+        "nums": "[3 1 2]",
+        "v": "3"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: v = 3",
+      "ops": [
+        {
+          "op": "read",
+          "a": 0
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 3,
+      "iteration": 0,
+      "vars": {
+        "nums": "[3 1 2]",
+        "v": "3"
+      },
+      "note": "println(v) → cetak \"3\"",
+      "output": "3\n"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 2,
+      "iteration": 1,
+      "vars": {
+        "nums": "[3 1 2]",
+        "v": "1"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: v = 1",
+      "ops": [
+        {
+          "op": "read",
+          "a": 1
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 3,
+      "iteration": 1,
+      "vars": {
+        "nums": "[3 1 2]",
+        "v": "1"
+      },
+      "note": "println(v) → cetak \"1\"",
+      "output": "1\n"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 2,
+      "iteration": 2,
+      "vars": {
+        "nums": "[3 1 2]",
+        "v": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: v = 2",
+      "ops": [
+        {
+          "op": "read",
+          "a": 2
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 3,
+      "iteration": 2,
+      "vars": {
+        "nums": "[3 1 2]",
+        "v": "2"
+      },
+      "note": "println(v) → cetak \"2\"",
+      "output": "2\n"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 2,
+      "iteration": 3,
+      "vars": {
+        "nums": "[3 1 2]"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 2,
+      "iteration": 3,
+      "vars": {
+        "nums": "[3 1 2]"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "collection": {
+    "kind": "slice",
+    "items": [
+      "3",
+      "1",
+      "2"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "file": "10_range_func.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L2",
+    "kind": "range-func",
+    "line": 16,
+    "endLine": 18,
+    "vars": [
+      "v"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L2",
+      "run": 1,
+      "phase": "init",
+      "line": 16,
+      "iteration": 0,
+      "note": "range countdown(3) (iterator)"
+    },
+    {
+      "n": 1,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "v": "3"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: v = 3"
+    },
+    {
+      "n": 2,
+      "loop": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "v": "3"
+      },
+      "note": "fmt.Println(v) → cetak \"3\"",
+      "output": "3\n"
+    },
+    {
+      "n": 3,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 1,
+      "vars": {
+        "v": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: v = 2"
+    },
+    {
+      "n": 4,
+      "loop": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 1,
+      "vars": {
+        "v": "2"
+      },
+      "note": "fmt.Println(v) → cetak \"2\"",
+      "output": "2\n"
+    },
+    {
+      "n": 5,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 2,
+      "vars": {
+        "v": "1"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: v = 1"
+    },
+    {
+      "n": 6,
+      "loop": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 2,
+      "vars": {
+        "v": "1"
+      },
+      "note": "fmt.Println(v) → cetak \"1\"",
+      "output": "1\n"
+    },
+    {
+      "n": 7,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 3,
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 8,
+      "loop": "L2",
+      "run": 1,
+      "phase": "exit",
+      "line": 16,
+      "iteration": 3,
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

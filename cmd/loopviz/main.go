@@ -6,9 +6,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 	"unicode/utf8"
@@ -17,10 +19,11 @@ import (
 	"goloopviz/internal/protocol"
 	"goloopviz/internal/scene"
 	"goloopviz/internal/serve"
+	"goloopviz/internal/sim"
 	"goloopviz/internal/trace"
 )
 
-const version = "0.1.0"
+const version = "0.2.0"
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr))
@@ -28,9 +31,8 @@ func main() {
 
 // Perintah yang sudah direncanakan tapi belum dibuat, beserta fasenya.
 var planned = map[string]string{
-	"trace": "Fase 4",
-	"show":  "Fase 5",
-	"on":    "Fase 5",
+	"show": "Fase 5",
+	"on":   "Fase 5",
 }
 
 func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
@@ -41,6 +43,8 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	switch cmd := args[0]; cmd {
 	case "list":
 		return cmdList(args[1:], stdin, stdout, stderr)
+	case "trace":
+		return cmdTrace(args[1:], stdin, stdout, stderr)
 	case "serve":
 		if err := serve.New(version).Run(stdin, stdout); err != nil {
 			fmt.Fprintf(stderr, "loopviz serve: %v\n", err)
@@ -70,11 +74,13 @@ func usage(w io.Writer) {
 
 Pemakaian:
   loopviz list [--json] <file.go>   daftar semua loop dan jenisnya (- untuk stdin)
+  loopviz trace [--json] <file.go>:<baris>
+                                    langkah demi langkah satu loop (nilai variabel, kondisi, output)
   loopviz serve                     server JSON lines lewat stdin/stdout (dipakai ekstensi IDE)
   loopviz version                   versi binary dan skema data
   loopviz help                      tampilkan bantuan ini
 
-Segera hadir: on, show, trace.
+Segera hadir: on, show.
 `)
 }
 
@@ -99,20 +105,10 @@ func cmdList(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 2
 	}
 
-	name := files[0]
-	var src []byte
-	var err error
-	if name == "-" {
-		name = "stdin.go"
-		src, err = io.ReadAll(stdin)
-	} else {
-		src, err = os.ReadFile(name)
-	}
-	if err != nil {
-		fmt.Fprintf(stderr, "gagal membaca %s: %v\n", name, err)
+	name, src, ok := readSource(files[0], stdin, stderr)
+	if !ok {
 		return 1
 	}
-	src = bytes.ReplaceAll(src, []byte("\r\n"), []byte("\n"))
 	res := analyzer.Analyze(name, src)
 
 	if asJSON {
@@ -126,6 +122,96 @@ func cmdList(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	}
 	printList(stdout, res)
 	return 0
+}
+
+func readSource(name string, stdin io.Reader, stderr io.Writer) (string, []byte, bool) {
+	var src []byte
+	var err error
+	if name == "-" {
+		name = "stdin.go"
+		src, err = io.ReadAll(stdin)
+	} else {
+		src, err = os.ReadFile(name)
+	}
+	if err != nil {
+		fmt.Fprintf(stderr, "gagal membaca %s: %v\n", name, err)
+		return name, nil, false
+	}
+	return name, bytes.ReplaceAll(src, []byte("\r\n"), []byte("\n")), true
+}
+
+func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
+	var asJSON bool
+	var targets []string
+	for _, a := range args {
+		switch {
+		case a == "--json" || a == "-json":
+			asJSON = true
+		case strings.HasPrefix(a, "-") && a != "-":
+			fmt.Fprintf(stderr, "flag tidak dikenal: %s\n", a)
+			return 2
+		default:
+			targets = append(targets, a)
+		}
+	}
+	const use = "pemakaian: loopviz trace [--json] <file.go>:<baris>"
+	if len(targets) != 1 {
+		fmt.Fprintln(stderr, use)
+		return 2
+	}
+	i := strings.LastIndex(targets[0], ":")
+	line, err := strconv.Atoi(targets[0][i+1:])
+	if i <= 0 || err != nil {
+		fmt.Fprintln(stderr, use)
+		return 2
+	}
+	name, src, ok := readSource(targets[0][:i], stdin, stderr)
+	if !ok {
+		return 1
+	}
+	prog := analyzer.Load(name, src)
+	id, found := prog.Result.Scene.LoopAt(line)
+	if !found {
+		fmt.Fprintf(stderr, "tidak ada loop di baris %d\n", line)
+		return 1
+	}
+	tr := sim.Trace(prog, id, sim.Options{})
+
+	if asJSON {
+		enc := json.NewEncoder(stdout)
+		enc.SetEscapeHTML(false)
+		enc.SetIndent("", "  ")
+		if err := enc.Encode(tr); err != nil {
+			fmt.Fprintf(stderr, "gagal membuat JSON: %v\n", err)
+			return 1
+		}
+		return 0
+	}
+	printTrace(stdout, tr)
+	return 0
+}
+
+func printTrace(w io.Writer, tr trace.Trace) {
+	fmt.Fprintf(w, "%s %s baris %d-%d · mode %s · %d langkah\n", tr.Loop.ID, kindNames[tr.Loop.Kind], tr.Loop.Line, tr.Loop.EndLine, tr.Mode, len(tr.Steps))
+	for _, warn := range tr.Warnings {
+		fmt.Fprintf(w, "  ! %s\n", warn)
+	}
+	if tr.Collection != nil {
+		fmt.Fprintf(w, "  koleksi: %v\n", tr.Collection.Items)
+	}
+	fmt.Fprintln(w)
+	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+	for _, s := range tr.Steps {
+		out := ""
+		if s.Output != "" {
+			out = "  ⇒ " + strings.TrimSuffix(s.Output, "\n")
+		}
+		fmt.Fprintf(tw, "%d\t%s\t%s\tbaris %d\t%s%s\n", s.N, s.Loop, s.Phase, s.Line, s.Note, out)
+	}
+	tw.Flush()
+	if tr.Truncated {
+		fmt.Fprintln(w, "… (dipotong)")
+	}
 }
 
 var kindNames = map[scene.Kind]string{

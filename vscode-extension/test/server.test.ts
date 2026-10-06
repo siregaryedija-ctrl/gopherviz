@@ -57,8 +57,8 @@ test('error dari server menjadi ServerError', async () => {
   const client = new LoopvizClient(bin.path);
   try {
     await client.start();
-    await assert.rejects(client.request('trace', { file: 'a.go', loopId: 'L1' }), (e: unknown) => {
-      return e instanceof ServerError && /Fase 4/.test(e.message);
+    await assert.rejects(client.request('trace', { file: 'belum-dikirim.go', loopId: 'L1' }), (e: unknown) => {
+      return e instanceof ServerError && /belum pernah dikirim/.test(e.message);
     });
   } finally {
     client.dispose();

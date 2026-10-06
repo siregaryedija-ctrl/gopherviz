@@ -56,6 +56,7 @@
       this.gateOpen = 0;
       this.gateTarget = 0;
       this.clock = 0; // satu-satunya sumber waktu (ms), dimajukan oleh update()
+      this.mode = 'struct'; // 'struct' = contoh alur; 'trace' = nilai asli lewat renderTrace()
       this.reset();
       this.resize(VIEW);
     }
@@ -289,7 +290,12 @@
       this.clock += dt;
       const now = this.clock;
       this.updateParticles(dt);
+      if (this.mode === 'trace') return; // posisi diatur renderTrace() oleh pemutar langkah
       this.gateOpen += P.clamp(this.gateTarget - this.gateOpen, -dt / 220, dt / 220);
+      const b0 = this.beat;
+      this.arrowActive = !!(b0 && b0.name === 'back');
+      this.activeItem = b0 && b0.phase === 'act' ? b0.item : null;
+      this.hud = null;
       if (!this.loop || this.waiting) {
         this.walking = false;
         this.gy = 0;
@@ -327,6 +333,163 @@
       else if (this.face === 'blink') this.face = 'idle';
     }
 
+    // ---------- mode trace: nilai asli dari simulator ----------
+
+    /** Mengubah langkah trace menjadi aksi di level. Langkah loop anak yang berurutan digabung jadi satu. */
+    prepareTrace(trace) {
+      this.mode = 'trace';
+      this.trace = trace;
+      const focus = this.loop.id;
+      const nodes = this.nodes();
+      const start = this.find('start'), gate = this.find('gate'), post = this.find('post'), fin = this.find('finish');
+      const partOf = line => {
+        let best = -1;
+        this.loop.body.forEach((n, i) => { if (line >= n.line && line <= (n.endLine || n.line)) best = i; });
+        return best;
+      };
+      const view = [];
+      for (const s of trace.steps) {
+        if (s.loop !== focus && s.reason !== 'panic') {
+          const idx = partOf(s.line);
+          const prev = view[view.length - 1];
+          if (prev && prev.act === 'child' && prev.idx === idx) { prev.group.push(s); prev.step = s; continue; }
+          view.push({ step: s, act: 'child', idx, item: nodes[idx] || gate || start, group: [s] });
+          continue;
+        }
+        let act = 'hit', item = gate || start, idx = -1;
+        switch (s.phase) {
+          case 'init': act = 'init'; item = start; break;
+          case 'cond': act = s.result ? 'open' : 'closed'; item = gate || start; break;
+          case 'post': act = 'post'; item = post || gate || start; break;
+          case 'exit':
+            item = fin;
+            act = s.reason === 'panic' ? 'panic' : s.reason === 'cond-false' || s.reason === 'range-done' ? 'leap' : 'warp-exit';
+            if (act === 'panic') item = view.length ? view[view.length - 1].item : start;
+            break;
+          default:
+            idx = partOf(s.line);
+            item = nodes[idx] || gate || start;
+            act = item.type === 'node' && !item.air ? 'visit' : s.result != null ? 'if' : 'hit';
+        }
+        view.push({ step: s, act, item, idx });
+      }
+      // posisi tujuan, perpindahan mundur (putaran baru = warp), dan keadaan gerbang per langkah
+      let px = start.x, gateState = { open: 0, red: false, sign: '?' }, iter = 0;
+      for (const v of view) {
+        v.x = v.item.type === 'node' && !v.item.air ? v.item.x - 13 : v.item.x;
+        v.fromX = px;
+        v.warp = v.act === 'warp-exit' || (v.x < px - 2 && v.act !== 'leap');
+        if (v.warp) gateState = { open: 0, red: false, sign: '?' };
+        v.gateFrom = gateState;
+        if (v.act === 'open') gateState = { open: 1, red: false, sign: 'T' };
+        else if (v.act === 'closed' || v.act === 'leap') gateState = { open: 0, red: true, sign: 'F' };
+        v.gateTo = gateState;
+        if (v.step.loop === focus && v.step.iteration != null) iter = v.step.iteration;
+        v.iter = iter;
+        px = v.act === 'panic' ? px : v.x;
+      }
+      // "closed" langsung disusul "leap": gabungkan supaya gerbang merah lalu gopher melompat
+      this.view = view.filter((v, i) => !(v.act === 'closed' && view[i + 1] && view[i + 1].act === 'leap'));
+      return this.view;
+    }
+
+    traceDuration(i) {
+      const v = this.view[i], last = i === this.view.length - 1;
+      switch (v.act) {
+        case 'init': return 650;
+        case 'open': return 650;
+        case 'closed': return 900;
+        case 'post': return 500;
+        case 'visit': return 850;
+        case 'child': return 1000;
+        case 'if': return 850;
+        case 'leap': case 'warp-exit': return last ? 2400 : 1400;
+        case 'panic': return 2200;
+      }
+      return 750;
+    }
+
+    traceCues(i) {
+      const v = this.view[i], st = v.step, out = [];
+      const last = i === this.view.length - 1;
+      const sound = {
+        init: 'blip', open: 'gate', closed: 'gateNo', post: 'tickLow', child: 'warp', panic: 'panic',
+        visit: GROUND_SOUND[v.item.kind] || 'blip', leap: 'gateNo', 'warp-exit': 'warp',
+      }[v.act];
+      if (sound) out.push({ t: 0, sound });
+      if (v.act === 'hit' || v.act === 'if') {
+        out.push({ t: 0, sound: 'jump' });
+        const hit = v.act === 'if' ? (st.result ? 'yes' : 'no') : HIT_SOUND[v.item.kind] || 'blip';
+        out.push({ t: 0.5, sound: hit, fx: () => { if (v.item.type === 'node') this.hitFx(v.item); } });
+      }
+      const outs = v.group ? v.group.map(s => s.output || '').join('') : st.output;
+      if (outs) out.push({ t: 0.6, sound: 'coin', fx: () => this.burst(this.gx, GY - 26, 6, ['#f3c75a', '#fff3b8'], { sp: 30, up: 60, g: 140, life: 500, s: 2 }) });
+      if (last && (v.act === 'leap' || v.act === 'warp-exit')) out.push({ t: 0.7, sound: 'jingle', fx: () => this.confetti(this.find('finish').x) });
+      return out;
+    }
+
+    /** Menggambar langkah i pada waktu t (0..1). Tanpa state: maju/mundur cukup memanggil ulang. */
+    renderTrace(i, t) {
+      const v = this.view[i];
+      if (!v) return;
+      const now = this.clock;
+      let gx = v.x, gy = 0, alpha = 1, a = 1, walking = false;
+      if (v.act === 'leap') {
+        const gate = this.find('gate') || this.find('start');
+        if (t < 0.3) { gx = v.fromX; a = 0; } else {
+          const u = (t - 0.3) / 0.7;
+          gx = P.lerp(gate.x, v.x, P.ease(u));
+          gy = -Math.sin(Math.PI * u) * 26;
+          a = u;
+        }
+      } else if (v.warp) {
+        if (t < 0.3) { gx = v.fromX; alpha = 1 - t / 0.3; a = 0; }
+        else if (t < 0.5) { alpha = (t - 0.3) / 0.2; a = 0; }
+        else a = (t - 0.5) / 0.5;
+      } else {
+        const dist = Math.abs(v.x - v.fromX);
+        const wf = dist > 1 ? Math.min(0.5, dist / 80) : 0;
+        if (t < wf) { gx = P.lerp(v.fromX, v.x, t / wf); walking = true; a = 0; } else a = wf < 1 ? (t - wf) / (1 - wf) : 1;
+      }
+      let face = now % 3400 < 130 ? 'blink' : 'idle';
+      if (v.act === 'hit' || v.act === 'if') {
+        gy = -Math.round(Math.sin(Math.PI * a) * 12);
+        if (a >= 0.45 && v.item.type === 'node') v.item.bump = now - (a - 0.45) * 400;
+      }
+      if ((v.act === 'visit' || v.act === 'child' || v.act === 'post') && a > 0) v.item.pulse = now - a * 300;
+      if (v.act === 'panic') face = 'shock';
+      if ((v.act === 'leap' || v.act === 'warp-exit') && i === this.view.length - 1 && a > 0.5) face = 'happy';
+      if (v.act === 'if' && a > 0.5) face = v.step.result ? 'happy' : 'idle';
+
+      // gerbang
+      const g0 = v.gateFrom, g1 = v.gateTo;
+      const ga = v.act === 'open' || v.act === 'closed' || v.act === 'leap' ? P.clamp(a * 2, 0, 1) : 1;
+      this.gateOpen = P.lerp(g0.open, g1.open, ga);
+      this.gateRed = ga >= 0.5 ? g1.red : g0.red;
+      const sign = ga >= 0.5 ? g1.sign : g0.sign;
+      this.gateResult = sign === 'T' ? true : null;
+      this.flagT = (v.act === 'leap' || v.act === 'warp-exit') ? P.clamp((a - 0.3) / 0.7, 0, 1) : 0;
+
+      this.gx = gx; this.gy = gy; this.alpha = alpha; this.face = face; this.walking = walking;
+      this.arrowActive = v.warp && v.act !== 'warp-exit' && t < 0.5;
+      this.activeItem = a > 0 ? v.item : null;
+      const vars = (this.trace.loop.vars || []).map(n => v.step.vars && v.step.vars[n] != null ? `${n}=${v.step.vars[n]}` : null).filter(Boolean);
+      this.hud = { left: v.act === 'panic' ? 'PANIC!' : `PUTARAN ${v.iter + 1}`, vars: vars.join(' ') };
+      if (v.act === 'child') this.hud.vars = `${this.hud.vars}  ${v.item.ref || ''} X${v.group.length}`.trim();
+      this.render();
+      if (v.act === 'panic' && a > 0.2) { // stempel di atas layar, ukuran 2x piksel dunia
+        const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.width / VIEW, k = 2 * S;
+        this.ctx.drawImage(img, Math.round(this.cv.width / 2 - (img.width * k) / 2), Math.round(26 * S), img.width * k, img.height * k);
+      }
+    }
+
+    /** Kembali ke mode struktur (mis. kode berubah dan trace lama tidak berlaku lagi). */
+    stopTrace() {
+      this.mode = 'struct';
+      this.view = null;
+      this.reset();
+    }
+
     // ---------- partikel ----------
 
     burst(x, y, n, cols, o) {
@@ -359,28 +522,7 @@
     // ---------- gambar ----------
 
     paintBg() {
-      const c = this.bg.getContext('2d'), W = this.worldW;
-      const bands = ['#fcd3e1', '#fddbe6', '#fde3eb', '#feeaf0', '#fff1f4'];
-      const bh = Math.ceil(GY / bands.length);
-      bands.forEach((col, k) => P.rect(c, 0, k * bh, W, bh + 1, col));
-      for (let k = 1; k < bands.length; k++) {
-        c.fillStyle = bands[k - 1];
-        for (let x = 0; x < W; x += 2) c.fillRect(x, k * bh, 1, 1);
-        for (let x = 1; x < W; x += 4) c.fillRect(x, k * bh + 1, 1, 1);
-      }
-      for (let x = 20; x < W; x += 64) {
-        const y = 8 + ((x * 7) % 14);
-        P.ell(c, x, y, 8, 3, '#fff8fb'); P.ell(c, x - 6, y + 1, 5, 2, '#fff8fb'); P.ell(c, x + 7, y + 1, 6, 2, '#fff8fb');
-      }
-      for (let x = 30, k = 0; x < W; x += 58, k++) {
-        const col = k % 2 ? '#dcefb8' : '#fbe7a6', r = 10 + (k % 3) * 2, cy = 40 + (k % 2) * 8;
-        P.rect(c, x - 1, cy + r - 2, 3, GY - (cy + r - 2), '#efcab9');
-        P.disc(c, x, cy, r, P.mix(col, '#fde3eb', 0.35));
-      }
-      P.rect(c, 0, GY, W, H - GY, '#fbe3e8');
-      P.rect(c, 0, GY, W, 1, '#f2c4d2');
-      P.rect(c, 0, GY + 1, W, 1, '#f7d3dd');
-      for (let x = 3; x < W; x += 8) P.ell(c, x, H - 4, 2, 1, '#f5b3c7');
+      P.paintWorld(this.bg.getContext('2d'), this.worldW, H, GY);
     }
 
     render() {
@@ -413,7 +555,10 @@
 
     drawHud(w, cx) {
       if (!this.loop) return;
-      if (this.waiting) {
+      if (this.hud) {
+        P.text(w, this.hud.left, cx + 4, 3, P.INK);
+        if (this.hud.vars) P.text(w, this.hud.vars, cx + 4, 10, '#c2457a');
+      } else if (this.waiting) {
         P.text(w, 'BELUM LENGKAP', cx + 4, 3, '#c2457a');
       } else {
         const it = this.loop.kind === 'infinite' ? 'PUTARAN ' + this.iter : 'PUTARAN ' + Math.min(this.iter, ITER);
@@ -426,7 +571,7 @@
       const from = this.find('post') || this.nodes()[this.nodes().length - 1];
       const to = this.find('gate') || this.nodes()[0];
       if (!from || !to) return;
-      const active = this.beat && this.beat.name === 'back';
+      const active = this.arrowActive;
       const col = active ? '#d9467c' : '#e6b3c6';
       const y = 18, x0 = to.x, x1 = from.x;
       const off = active ? Math.floor(now / 60) % 4 : 0;
@@ -438,7 +583,7 @@
     }
 
     labelFor(w, it, now) {
-      const hl = this.beat && this.beat.item === it && this.beat.phase === 'act';
+      const hl = this.activeItem === it;
       P.textCenter(w, it.label, it.x, GY + 6, hl ? '#c2457a' : '#c58ba3');
     }
 

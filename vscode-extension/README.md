@@ -5,13 +5,18 @@ Lihat cara kerja loop Go sebagai level game pixel-art, langsung saat kamu menget
 - **Realtime.** Ketik `for i := 0; i < 3; i++ {}` dan level-nya langsung muncul. Body kosong tampil sebagai blok bata
   kosong; setiap baris yang kamu tulis di dalam `{ }` menjadi blok baru.
 - **Mengikuti kursor.** Panel selalu menampilkan loop tempat kursormu berada. Klik bagian di panel untuk melompat ke barisnya.
+- **Nilai asli dari kodemu.** Setelah kamu berhenti mengetik sebentar, `loopviz` menghitung programmu langkah demi
+  langkah: nilai `i` di setiap putaran, hasil setiap kondisi (`i < 3 → 2 < 3 → true`), dan output `fmt.Println`.
+  Putar, jeda, maju/mundur per langkah, atau geser slider.
 - **Gopher menelusuri alurnya.** Init, gerbang kondisi (T/F), menyundul blok satu per satu, post, lalu kembali ke gerbang.
   `break` digambar sebagai pipa, `continue` sebagai pegas, `return` sebagai pintu, loop di dalam loop sebagai pipa ungu.
+- **Mode data.** Loop yang mengolah slice atau array (sort, cari, jumlahkan) tampil sebagai barisan gopher setinggi
+  nilainya: lihat mereka dibandingkan, bertukar tempat, dan berubah nilai.
 - **Kode setengah jadi tidak apa-apa.** Loop yang belum lengkap tampil sebagai blok "hantu" sampai selesai diketik.
 - Efek suara dan musik chiptune 8-bit (bisa dimatikan).
 
-Saat ini panel menampilkan **mode struktur**: alur loop dengan contoh 3 putaran. Nilai variabel asli di setiap putaran
-akan hadir di versi berikutnya.
+Bila nilainya tidak bisa dihitung tanpa menjalankan program (input dari keyboard, package yang belum didukung,
+goroutine), panel kembali ke **mode struktur** dan menjelaskan alasannya.
 
 ## Pemakaian
 
@@ -33,7 +38,8 @@ akan hadir di versi berikutnya.
 ## Cara kerja
 
 Ekstensi menjalankan `loopviz serve` (ditulis dalam Go, ikut di dalam paket ekstensi) dan mengirim isi editor setiap kamu
-mengetik. `loopviz` membaca kode dengan parser Go asli lalu mengirim balik struktur loop-nya. Kode kamu tidak pernah dijalankan.
+mengetik. `loopviz` membaca kode dengan parser Go asli, lalu mensimulasikannya dengan aturan Go (pembagian integer,
+`append` yang berbagi array, urutan map yang acak, dan seterusnya). Kode kamu tidak pernah benar-benar dijalankan.
 
 ## Atribusi
 

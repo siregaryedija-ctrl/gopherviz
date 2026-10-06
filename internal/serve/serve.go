@@ -12,22 +12,23 @@ import (
 	"goloopviz/internal/analyzer"
 	"goloopviz/internal/protocol"
 	"goloopviz/internal/scene"
+	"goloopviz/internal/sim"
 	"goloopviz/internal/trace"
 )
 
 // maxLine adalah ukuran maksimum satu request (isi file Go dikirim utuh).
 const maxLine = 32 << 20
 
-// Server menyimpan Scene terakhir per file supaya MethodFocus tidak perlu
-// mengirim ulang seluruh teks setiap kali kursor bergerak.
+// Server menyimpan hasil parse terakhir per file supaya MethodFocus dan
+// MethodTrace tidak perlu mengirim ulang seluruh teks.
 type Server struct {
 	version string
-	scenes  map[string]scene.Scene
+	progs   map[string]*analyzer.Program
 }
 
 // New membuat Server. version adalah versi binary loopviz.
 func New(version string) *Server {
-	return &Server{version: version, scenes: map[string]scene.Scene{}}
+	return &Server{version: version, progs: map[string]*analyzer.Program{}}
 }
 
 // Run memproses request dari r sampai EOF. Hanya response yang ditulis ke w;
@@ -77,8 +78,9 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 			return fail(req.ID, err.Error())
 		}
 		text := bytes.ReplaceAll([]byte(p.Text), []byte("\r\n"), []byte("\n"))
-		res := analyzer.Analyze(p.File, text)
-		s.scenes[p.File] = res.Scene
+		prog := analyzer.Load(p.File, text)
+		s.progs[p.File] = prog
+		res := prog.Result
 		focus, _ := res.Scene.LoopAt(p.Cursor.Line)
 		return ok(req.ID, protocol.UpdateResult{Scene: res.Scene, FocusLoop: focus, Diagnostics: res.Diagnostics})
 
@@ -87,11 +89,11 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		if err := decode(req.Params, &p); err != nil {
 			return fail(req.ID, err.Error())
 		}
-		sc, found := s.scenes[p.File]
+		prog, found := s.progs[p.File]
 		if !found {
 			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
 		}
-		focus, _ := sc.LoopAt(p.Cursor.Line)
+		focus, _ := prog.Result.Scene.LoopAt(p.Cursor.Line)
 		return ok(req.ID, protocol.FocusResult{FocusLoop: focus})
 
 	case protocol.MethodClose:
@@ -99,11 +101,19 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		if err := decode(req.Params, &p); err != nil {
 			return fail(req.ID, err.Error())
 		}
-		delete(s.scenes, p.File)
+		delete(s.progs, p.File)
 		return ok(req.ID, struct{}{})
 
 	case protocol.MethodTrace:
-		return fail(req.ID, "trace belum tersedia (direncanakan di Fase 4)")
+		var p protocol.TraceParams
+		if err := decode(req.Params, &p); err != nil {
+			return fail(req.ID, err.Error())
+		}
+		prog, found := s.progs[p.File]
+		if !found {
+			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
+		}
+		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, p.LoopID, sim.Options{})})
 
 	default:
 		return fail(req.ID, fmt.Sprintf("method tidak dikenal: %q", req.Method))

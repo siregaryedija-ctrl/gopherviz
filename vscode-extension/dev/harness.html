@@ -1,6 +1,10 @@
 <!doctype html>
 <!-- Harness pengembangan: memuat webview panel di browser biasa dengan VS Code tiruan.
-     Buka langsung file ini di browser. ?step=N menahan pada langkah ketikan ke-N. -->
+     Markup di bawah harus sama dengan src/panel.ts.
+       harness.html?step=N              simulasi mengetik (mode struktur), tahan di tahap N
+       harness.html?sample=bubble       trace asli dari dev/samples.js (buat: node scripts/dev-samples.mjs)
+       &at=K&t=0.6                      bekukan di langkah K pada waktu t (untuk screenshot headless)
+       &advance=ms                      (mode step) majukan animasi struktur lalu bekukan -->
 <html lang="id">
 <head>
 <meta charset="utf-8">
@@ -19,6 +23,7 @@
     --vscode-button-secondaryBackground: #3a3d41; --vscode-button-secondaryForeground: #fff;
     --vscode-badge-background: #4d4d4d; --vscode-badge-foreground: #fff; --vscode-focusBorder: #007fd4;
     --vscode-editor-findMatchHighlightBackground: rgba(234, 92, 0, .33);
+    --vscode-terminal-background: #181818;
   }
 </style>
 </head>
@@ -33,8 +38,19 @@
     <canvas id="stage" width="768" height="384"></canvas>
     <div id="overlay" class="overlay" hidden><p id="overlayText"></p><button id="btnRestart" class="btn" hidden>Mulai ulang server</button></div>
   </div>
+  <div id="tracebar" class="tracebar" hidden>
+    <button id="tPrev" class="icon-btn" title="Langkah sebelumnya"><svg viewBox="0 0 16 16"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg></button>
+    <button id="tPlay" class="icon-btn primary" title="Putar / jeda"></button>
+    <button id="tNext" class="icon-btn" title="Langkah berikutnya"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
+    <button id="tRestart" class="icon-btn" title="Ulang dari awal"><svg viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z"/></svg></button>
+    <input type="range" id="tScrub" min="0" max="0" value="0">
+    <span id="tLabel" class="tlabel"></span>
+  </div>
+  <p id="stepNote" class="step-note" hidden></p>
   <p id="note" class="note"></p>
   <section id="partsSection"><h2>Isi loop</h2><ol id="parts" class="parts"></ol></section>
+  <section id="varsSection" hidden><h2>Variabel</h2><div id="vars" class="vars"></div></section>
+  <section id="outSection" hidden><h2>Output</h2><pre id="out" class="out"></pre></section>
   <section id="navSection"><h2 id="navTitle">Loop di file ini</h2><div id="nav" class="nav"></div></section>
   <footer class="controls">
     <div class="speed" role="group"><button data-speed="0.5">0.5×</button><button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button></div>
@@ -45,47 +61,67 @@
 </main>
 <script>
   window.acquireVsCodeApi = () => ({ postMessage: m => console.log('[ke ekstensi]', JSON.stringify(m)) });
+  // Error dicatat di atribut <html data-err> supaya terbaca lewat chrome --dump-dom.
+  window.addEventListener('error', e => {
+    const el = document.documentElement;
+    el.dataset.err = (el.dataset.err || '') + `${e.message} @${(e.filename || '').split('/').pop()}:${e.lineno} | `;
+  });
 </script>
+<script src="samples.js"></script>
 <script src="../media/pixel.js"></script>
 <script src="../media/sound.js"></script>
 <script src="../media/level.js"></script>
+<script src="../media/datastage.js"></script>
 <script src="../media/main.js"></script>
 <script>
-  // Urutan "mengetik" yang meniru hasil `loopviz serve` untuk tiap tahap.
-  const hdr = { text: 'for i := 0; i < 3; i++', init: 'i := 0', cond: 'i < 3', post: 'i++' };
-  const loop = (state, body, extra) => Object.assign({ id: 'L1', kind: 'for3', line: 6, endLine: 6 + body.length + 1, state, header: hdr, vars: ['i'], body }, extra);
-  const steps = [
-    { loops: [loop('incomplete', [], { header: { text: 'for i := 0; i <', init: 'i := 0', cond: 'i <' }, endLine: 6 })],
-      diagnostics: [{ line: 6, col: 17, message: "expected '{', found newline" }] },
-    { loops: [loop('complete', [])] },
-    { loops: [loop('complete', [{ kind: 'stmt', line: 7, text: 'fmt.Println(i)' }])] },
-    { loops: [loop('complete', [
-      { kind: 'stmt', line: 7, text: 'fmt.Println(i)' },
-      { kind: 'if', line: 8, text: 'if i == 2', then: [{ kind: 'break', line: 9, text: 'break' }] },
-      { kind: 'loop', line: 11, ref: 'L2' },
-      { kind: 'continue', line: 14, text: 'continue' },
-    ], { children: ['L2'], endLine: 15 }),
-    { id: 'L2', kind: 'range-slice', line: 11, endLine: 13, state: 'complete', parent: 'L1',
-      header: { text: 'for _, v := range nums', key: '_', value: 'v', define: true, range: 'nums' }, vars: ['v'], body: [] }] },
-  ];
-  const send = k => window.postMessage({
-    type: 'state', file: 'main.go', focusLoop: 'L1', server: { ok: true },
-    result: { scene: { version: 1, loops: steps[k].loops }, diagnostics: steps[k].diagnostics || [] },
-  }, '*');
   const q = new URLSearchParams(location.search);
-  const fixed = q.get('step');
-  if (fixed !== null) {
-    send(+fixed);
-    // ?advance=ms: majukan animasi secara sinkron lalu bekukan (untuk screenshot headless).
-    const adv = +(q.get('advance') || 0);
-    if (adv) setTimeout(() => {
-      const lv = GLV.app.level;
-      for (let t = 0; t < adv; t += 16) lv.update(16);
-      lv.render();
-      lv.update = () => {};
-    }, 50);
+  const post = m => window.postMessage(m, '*');
+
+  if (q.get('sample')) {
+    const s = window.SAMPLES[q.get('sample')];
+    post({ type: 'state', file: s.file, focusLoop: s.focusLoop, server: { ok: true }, result: { scene: s.scene.scene, diagnostics: [] } });
+    post({ type: 'trace', loopId: s.focusLoop, trace: s.trace });
+    if (q.get('at') !== null) setTimeout(() => {
+      const app = GLV.app, tp = app.tp;
+      tp.playing = false;
+      app.goto(+q.get('at'), false);
+      tp.el = tp.r.duration(tp.i) * +(q.get('t') || 0.6);
+      for (let k = 0; k < 90; k++) app.tickTrace(16); // kamera mencapai posisinya
+    }, 80);
+  } else {
+    // Urutan "mengetik" yang meniru hasil `loopviz serve` untuk tiap tahap (mode struktur).
+    const hdr = { text: 'for i := 0; i < 3; i++', init: 'i := 0', cond: 'i < 3', post: 'i++' };
+    const loop = (state, body, extra) => Object.assign({ id: 'L1', kind: 'for3', line: 6, endLine: 6 + body.length + 1, state, header: hdr, vars: ['i'], body }, extra);
+    const steps = [
+      { loops: [loop('incomplete', [], { header: { text: 'for i := 0; i <', init: 'i := 0', cond: 'i <' }, endLine: 6 })],
+        diagnostics: [{ line: 6, col: 17, message: "expected '{', found newline" }] },
+      { loops: [loop('complete', [])] },
+      { loops: [loop('complete', [{ kind: 'stmt', line: 7, text: 'fmt.Println(i)' }])] },
+      { loops: [loop('complete', [
+        { kind: 'stmt', line: 7, text: 'fmt.Println(i)' },
+        { kind: 'if', line: 8, endLine: 10, text: 'if i == 2', then: [{ kind: 'break', line: 9, text: 'break' }] },
+        { kind: 'loop', line: 11, endLine: 13, ref: 'L2' },
+        { kind: 'continue', line: 14, text: 'continue' },
+      ], { children: ['L2'], endLine: 15 }),
+      { id: 'L2', kind: 'range-slice', line: 11, endLine: 13, state: 'complete', parent: 'L1',
+        header: { text: 'for _, v := range nums', key: '_', value: 'v', define: true, range: 'nums' }, vars: ['v'], body: [] }] },
+    ];
+    const send = k => post({
+      type: 'state', file: 'main.go', focusLoop: 'L1', server: { ok: true },
+      result: { scene: { version: 1, loops: steps[k].loops }, diagnostics: steps[k].diagnostics || [] },
+    });
+    const fixed = q.get('step');
+    if (fixed !== null) {
+      send(+fixed);
+      const adv = +(q.get('advance') || 0);
+      if (adv) setTimeout(() => {
+        const lv = GLV.app.level;
+        for (let t = 0; t < adv; t += 16) lv.update(16);
+        lv.render();
+        lv.update = () => {};
+      }, 50);
+    } else { let k = 0; send(0); setInterval(() => send(k = (k + 1) % steps.length), 4000); }
   }
-  else { let k = 0; send(0); setInterval(() => send(k = (k + 1) % steps.length), 4000); }
 </script>
 </body>
 </html>

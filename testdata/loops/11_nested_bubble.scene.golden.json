@@ -27,11 +27,13 @@
           {
             "kind": "loop",
             "line": 10,
+            "endLine": 15,
             "ref": "L2"
           },
           {
             "kind": "if",
             "line": 16,
+            "endLine": 18,
             "text": "if !swapped",
             "then": [
               {
@@ -65,6 +67,7 @@
           {
             "kind": "if",
             "line": 11,
+            "endLine": 14,
             "text": "if a[j] > a[j+1]",
             "then": [
               {

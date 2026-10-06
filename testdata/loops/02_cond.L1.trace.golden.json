@@ -1,0 +1,475 @@
+{
+  "version": 1,
+  "file": "02_cond.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "cond",
+    "line": 6,
+    "endLine": 13
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 0,
+      "vars": {
+        "n": "6",
+        "steps": "0"
+      },
+      "result": true,
+      "note": "n != 1 → 6 != 1 → true"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "n": "6",
+        "steps": "0"
+      },
+      "result": true,
+      "note": "if n%2 == 0 → 0 == 0 → true"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "n": "3",
+        "steps": "0"
+      },
+      "note": "n = n / 2 → n = 3"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 0,
+      "vars": {
+        "n": "3",
+        "steps": "1"
+      },
+      "note": "steps++ → steps = 1"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 1,
+      "vars": {
+        "n": "3",
+        "steps": "1"
+      },
+      "result": true,
+      "note": "n != 1 → 3 != 1 → true"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "n": "3",
+        "steps": "1"
+      },
+      "result": false,
+      "note": "if n%2 == 0 → 1 == 0 → false"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 1,
+      "vars": {
+        "n": "10",
+        "steps": "1"
+      },
+      "note": "n = 3*n + 1 → n = 10"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 1,
+      "vars": {
+        "n": "10",
+        "steps": "2"
+      },
+      "note": "steps++ → steps = 2"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 2,
+      "vars": {
+        "n": "10",
+        "steps": "2"
+      },
+      "result": true,
+      "note": "n != 1 → 10 != 1 → true"
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "n": "10",
+        "steps": "2"
+      },
+      "result": true,
+      "note": "if n%2 == 0 → 0 == 0 → true"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "n": "5",
+        "steps": "2"
+      },
+      "note": "n = n / 2 → n = 5"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 2,
+      "vars": {
+        "n": "5",
+        "steps": "3"
+      },
+      "note": "steps++ → steps = 3"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 3,
+      "vars": {
+        "n": "5",
+        "steps": "3"
+      },
+      "result": true,
+      "note": "n != 1 → 5 != 1 → true"
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "n": "5",
+        "steps": "3"
+      },
+      "result": false,
+      "note": "if n%2 == 0 → 1 == 0 → false"
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 3,
+      "vars": {
+        "n": "16",
+        "steps": "3"
+      },
+      "note": "n = 3*n + 1 → n = 16"
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 3,
+      "vars": {
+        "n": "16",
+        "steps": "4"
+      },
+      "note": "steps++ → steps = 4"
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 4,
+      "vars": {
+        "n": "16",
+        "steps": "4"
+      },
+      "result": true,
+      "note": "n != 1 → 16 != 1 → true"
+    },
+    {
+      "n": 17,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 4,
+      "vars": {
+        "n": "16",
+        "steps": "4"
+      },
+      "result": true,
+      "note": "if n%2 == 0 → 0 == 0 → true"
+    },
+    {
+      "n": 18,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 4,
+      "vars": {
+        "n": "8",
+        "steps": "4"
+      },
+      "note": "n = n / 2 → n = 8"
+    },
+    {
+      "n": 19,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 4,
+      "vars": {
+        "n": "8",
+        "steps": "5"
+      },
+      "note": "steps++ → steps = 5"
+    },
+    {
+      "n": 20,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 5,
+      "vars": {
+        "n": "8",
+        "steps": "5"
+      },
+      "result": true,
+      "note": "n != 1 → 8 != 1 → true"
+    },
+    {
+      "n": 21,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 5,
+      "vars": {
+        "n": "8",
+        "steps": "5"
+      },
+      "result": true,
+      "note": "if n%2 == 0 → 0 == 0 → true"
+    },
+    {
+      "n": 22,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 5,
+      "vars": {
+        "n": "4",
+        "steps": "5"
+      },
+      "note": "n = n / 2 → n = 4"
+    },
+    {
+      "n": 23,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 5,
+      "vars": {
+        "n": "4",
+        "steps": "6"
+      },
+      "note": "steps++ → steps = 6"
+    },
+    {
+      "n": 24,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 6,
+      "vars": {
+        "n": "4",
+        "steps": "6"
+      },
+      "result": true,
+      "note": "n != 1 → 4 != 1 → true"
+    },
+    {
+      "n": 25,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 6,
+      "vars": {
+        "n": "4",
+        "steps": "6"
+      },
+      "result": true,
+      "note": "if n%2 == 0 → 0 == 0 → true"
+    },
+    {
+      "n": 26,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 6,
+      "vars": {
+        "n": "2",
+        "steps": "6"
+      },
+      "note": "n = n / 2 → n = 2"
+    },
+    {
+      "n": 27,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 6,
+      "vars": {
+        "n": "2",
+        "steps": "7"
+      },
+      "note": "steps++ → steps = 7"
+    },
+    {
+      "n": 28,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 7,
+      "vars": {
+        "n": "2",
+        "steps": "7"
+      },
+      "result": true,
+      "note": "n != 1 → 2 != 1 → true"
+    },
+    {
+      "n": 29,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 7,
+      "vars": {
+        "n": "2",
+        "steps": "7"
+      },
+      "result": true,
+      "note": "if n%2 == 0 → 0 == 0 → true"
+    },
+    {
+      "n": 30,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 7,
+      "vars": {
+        "n": "1",
+        "steps": "7"
+      },
+      "note": "n = n / 2 → n = 1"
+    },
+    {
+      "n": 31,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 7,
+      "vars": {
+        "n": "1",
+        "steps": "8"
+      },
+      "note": "steps++ → steps = 8"
+    },
+    {
+      "n": 32,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 8,
+      "vars": {
+        "n": "1",
+        "steps": "8"
+      },
+      "result": false,
+      "note": "n != 1 → 1 != 1 → false"
+    },
+    {
+      "n": 33,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 6,
+      "iteration": 8,
+      "vars": {
+        "n": "1",
+        "steps": "8"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

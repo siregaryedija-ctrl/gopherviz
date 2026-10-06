@@ -17,6 +17,7 @@
           {
             "kind": "if",
             "line": 7,
+            "endLine": 11,
             "text": "if n%2 == 0",
             "then": [
               {

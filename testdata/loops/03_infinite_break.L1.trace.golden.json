@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "file": "03_infinite_break.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "infinite",
+    "line": 7,
+    "endLine": 13
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "x": "3"
+      },
+      "note": "x += 3 → x = 3"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 0,
+      "vars": {
+        "x": "3"
+      },
+      "result": false,
+      "note": "if x > 10 → 3 > 10 → false"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 0,
+      "vars": {
+        "x": "3"
+      },
+      "note": "fmt.Println(x) → cetak \"3\"",
+      "output": "3\n"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 1,
+      "vars": {
+        "x": "6"
+      },
+      "note": "x += 3 → x = 6"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 1,
+      "vars": {
+        "x": "6"
+      },
+      "result": false,
+      "note": "if x > 10 → 6 > 10 → false"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 1,
+      "vars": {
+        "x": "6"
+      },
+      "note": "fmt.Println(x) → cetak \"6\"",
+      "output": "6\n"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "x": "9"
+      },
+      "note": "x += 3 → x = 9"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 2,
+      "vars": {
+        "x": "9"
+      },
+      "result": false,
+      "note": "if x > 10 → 9 > 10 → false"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 2,
+      "vars": {
+        "x": "9"
+      },
+      "note": "fmt.Println(x) → cetak \"9\"",
+      "output": "9\n"
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 3,
+      "vars": {
+        "x": "12"
+      },
+      "note": "x += 3 → x = 12"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 3,
+      "vars": {
+        "x": "12"
+      },
+      "result": true,
+      "note": "if x > 10 → 12 > 10 → true"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "run": 1,
+      "phase": "break",
+      "line": 10,
+      "iteration": 3,
+      "vars": {
+        "x": "12"
+      },
+      "note": "break → keluar dari loop"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "x": "12"
+      },
+      "note": "keluar dari loop karena break",
+      "reason": "break"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

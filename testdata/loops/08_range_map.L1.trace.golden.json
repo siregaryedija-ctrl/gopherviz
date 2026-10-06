@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "file": "08_range_map.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "range-map",
+    "line": 7,
+    "endLine": 9,
+    "vars": [
+      "name",
+      "age"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "ages": "map[ani:20 budi:25 citra:22]"
+      },
+      "note": "range ages (3 pasangan)"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "age": "20",
+        "ages": "map[ani:20 budi:25 citra:22]",
+        "name": "\"ani\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: name = \"ani\", age = 20"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "age": "20",
+        "ages": "map[ani:20 budi:25 citra:22]",
+        "name": "\"ani\""
+      },
+      "note": "fmt.Println(name, age) → cetak \"ani 20\"",
+      "output": "ani 20\n"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "age": "22",
+        "ages": "map[ani:20 budi:25 citra:22]",
+        "name": "\"citra\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: name = \"citra\", age = 22"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 1,
+      "vars": {
+        "age": "22",
+        "ages": "map[ani:20 budi:25 citra:22]",
+        "name": "\"citra\""
+      },
+      "note": "fmt.Println(name, age) → cetak \"citra 22\"",
+      "output": "citra 22\n"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "age": "25",
+        "ages": "map[ani:20 budi:25 citra:22]",
+        "name": "\"budi\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: name = \"budi\", age = 25"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "age": "25",
+        "ages": "map[ani:20 budi:25 citra:22]",
+        "name": "\"budi\""
+      },
+      "note": "fmt.Println(name, age) → cetak \"budi 25\"",
+      "output": "budi 25\n"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "ages": "map[ani:20 budi:25 citra:22]"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "ages": "map[ani:20 budi:25 citra:22]"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "truncated": false,
+  "warnings": [
+    "urutan range atas map diacak: di Go urutannya tidak dijamin dan bisa berbeda setiap kali dijalankan"
+  ]
+}

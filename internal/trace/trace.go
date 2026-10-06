@@ -43,6 +43,7 @@ const (
 	ReasonReturn    Reason = "return"
 	ReasonGoto      Reason = "goto"
 	ReasonStepLimit Reason = "step-limit"
+	ReasonPanic     Reason = "panic" // program akan panic di sini (mis. index di luar batas)
 )
 
 // OpKind adalah operasi pada koleksi yang terlihat di mode data.
@@ -84,6 +85,8 @@ type LoopInfo struct {
 // renderer tidak perlu memahami tipe Go.
 type Step struct {
 	N         int               `json:"n"`
+	Loop      string            `json:"loop"`          // loop terdalam yang sedang berjalan (fokus atau anaknya)
+	Run       int               `json:"run,omitempty"` // eksekusi ke-berapa dari loop fokus (loop dalam bisa berjalan berkali-kali)
 	Phase     Phase             `json:"phase"`
 	Line      int               `json:"line,omitempty"`
 	Iteration *int              `json:"iteration,omitempty"`
@@ -93,6 +96,7 @@ type Step struct {
 	Output    string            `json:"output,omitempty"`
 	Reason    Reason            `json:"reason,omitempty"`
 	Ops       []Op              `json:"ops,omitempty"`
+	Items     []string          `json:"items,omitempty"` // isi koleksi terbaru, hanya bila berubah di langkah ini
 	Child     string            `json:"child,omitempty"` // ID loop anak pada PhaseEnterChild
 }
 

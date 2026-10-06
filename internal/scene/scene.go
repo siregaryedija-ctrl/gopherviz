@@ -84,14 +84,15 @@ const (
 
 // Node adalah satu bagian di dalam body loop.
 type Node struct {
-	Kind  NodeKind `json:"kind"`
-	Line  int      `json:"line,omitempty"`
-	Text  string   `json:"text,omitempty"`
-	Label string   `json:"label,omitempty"` // label pada break/continue/goto
-	Ref   string   `json:"ref,omitempty"`   // ID loop untuk Kind == "loop"
-	Then  []Node   `json:"then,omitempty"`
-	Else  []Node   `json:"else,omitempty"`
-	Body  []Node   `json:"body,omitempty"` // isi untuk Kind == "block"
+	Kind    NodeKind `json:"kind"`
+	Line    int      `json:"line,omitempty"`
+	EndLine int      `json:"endLine,omitempty"` // hanya diisi bila bagian ini lebih dari satu baris
+	Text    string   `json:"text,omitempty"`
+	Label   string   `json:"label,omitempty"` // label pada break/continue/goto
+	Ref     string   `json:"ref,omitempty"`   // ID loop untuk Kind == "loop"
+	Then    []Node   `json:"then,omitempty"`
+	Else    []Node   `json:"else,omitempty"`
+	Body    []Node   `json:"body,omitempty"` // isi untuk Kind == "block"
 }
 
 // Diagnostic adalah pesan dari parser, dengan nomor baris file asli.

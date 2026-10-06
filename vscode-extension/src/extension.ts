@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { LoopvizClient, type FocusResult, type LoopKind, type UpdateResult } from './server';
+import { LoopvizClient, type FocusResult, type LoopKind, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
 import { LoopPanel, type FromPanel } from './panel';
 import { LoopCodeLens } from './codelens';
 
 const UPDATE_DELAY_MS = 75; // jeda setelah ketikan terakhir sebelum scene dihitung ulang
 const FOCUS_DELAY_MS = 40;
+const TRACE_DELAY_MS = 300; // trace (nilai asli) menyusul setelah user berhenti mengetik
 const CRASH_LIMIT = 3; // berhenti mencoba bila server mati sebanyak ini dalam satu menit
 
 const KIND_NAMES: Record<LoopKind, string> = {
@@ -38,6 +39,8 @@ class Controller implements vscode.Disposable {
   private readonly seq = new Map<string, number>();
   private readonly timers = new Map<string, NodeJS.Timeout>();
   private focusTimer?: NodeJS.Timeout;
+  private traceTimer?: NodeJS.Timeout;
+  private traceKey = ''; // dokumen|versi|loop dari trace terakhir yang dikirim ke panel
   private editor?: vscode.TextEditor; // editor Go terakhir yang aktif
 
   private readonly panel: LoopPanel;
@@ -170,6 +173,7 @@ class Controller implements vscode.Disposable {
     this.client = undefined;
     this.serverError = undefined;
     this.crashes = [];
+    this.traceKey = '';
     this.results.clear();
     this.pushState();
     if (this.editor) {
@@ -251,6 +255,30 @@ class Controller implements vscode.Disposable {
       this.panel.show(true);
     }
     this.pushState();
+    clearTimeout(this.traceTimer);
+    this.traceTimer = setTimeout(() => void this.sendTrace(uri), TRACE_DELAY_MS);
+  }
+
+  private async sendTrace(uri: string): Promise<void> {
+    const doc = this.editor?.document;
+    const loopId = this.focus.get(uri);
+    if (!doc || doc.uri.toString() !== uri || !loopId || !this.client?.running) {
+      return;
+    }
+    const key = `${uri}|${this.seq.get(uri)}|${loopId}`;
+    if (key === this.traceKey) {
+      return; // kode dan loop fokus tidak berubah sejak trace terakhir
+    }
+    try {
+      const res = await this.client.request<TraceResult>('trace', { file: doc.fileName, loopId });
+      if (this.focus.get(uri) !== loopId || key !== `${uri}|${this.seq.get(uri)}|${loopId}`) {
+        return; // user sudah mengetik atau pindah loop lagi
+      }
+      this.traceKey = key;
+      this.panel.post({ type: 'trace', loopId, trace: res.trace });
+    } catch (e) {
+      this.output.appendLine(`trace gagal: ${errMsg(e)}`);
+    }
   }
 
   private forget(doc: vscode.TextDocument): void {
@@ -358,6 +386,7 @@ class Controller implements vscode.Disposable {
     return {
       result: (uri: string) => this.results.get(uri),
       focus: (uri: string) => this.focus.get(uri),
+      traceKey: () => this.traceKey,
       panelOpen: () => this.panel.isOpen,
     };
   }
@@ -367,6 +396,7 @@ class Controller implements vscode.Disposable {
       clearTimeout(t);
     }
     clearTimeout(this.focusTimer);
+    clearTimeout(this.traceTimer);
     this.client?.dispose();
     for (const d of this.disposables) {
       d.dispose();

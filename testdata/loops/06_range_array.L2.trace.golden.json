@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "file": "06_range_array.go",
+  "mode": "structural",
+  "loop": {
+    "id": "L2",
+    "kind": "range-array",
+    "line": 10,
+    "endLine": 12,
+    "vars": [
+      "i"
+    ]
+  },
+  "steps": [],
+  "truncated": false,
+  "warnings": [
+    "nilai tidak bisa dihitung, jadi yang tampil hanya alurnya: range \"&arr\" di baris 10 tidak bisa dihitung: operator & belum disimulasikan"
+  ]
+}

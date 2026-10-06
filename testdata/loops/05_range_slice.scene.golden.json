@@ -24,6 +24,7 @@
           {
             "kind": "if",
             "line": 9,
+            "endLine": 11,
             "text": "if v%2 == 1",
             "then": [
               {

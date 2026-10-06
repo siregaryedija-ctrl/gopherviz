@@ -35,6 +35,12 @@ test('kursor di loop dalam: fokus L2 dan panel terbuka otomatis', async api => {
   await waitFor('panel terbuka', () => api.panelOpen());
 });
 
+test('trace nilai asli dikirim ke panel setelah berhenti mengetik', async api => {
+  const ed = vscode.window.activeTextEditor!;
+  const uri = ed.document.uri.toString();
+  await waitFor('trace L2', () => api.traceKey().startsWith(uri) && api.traceKey().endsWith('|L2'));
+});
+
 test('mengetik loop baru tanpa menyimpan langsung terlihat (realtime)', async api => {
   const ed = vscode.window.activeTextEditor!;
   await ed.edit(e => e.insert(new vscode.Position(6, 0), '\tfor k := range 3 {\n\t}\n'));

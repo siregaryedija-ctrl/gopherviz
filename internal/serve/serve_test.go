@@ -110,7 +110,7 @@ func TestErrors(t *testing.T) {
 		`{"id":4,"method":"trace","params":{"file":"main.go","loopId":"L1"}}`,
 		update(5, "for {", 1),
 	)
-	wants := []string{"bukan JSON", "tidak dikenal", "wajib", "Fase 4", ""}
+	wants := []string{"bukan JSON", "tidak dikenal", "wajib", "belum pernah dikirim", ""}
 	for i, want := range wants {
 		r := resps[i]
 		switch {
@@ -119,6 +119,29 @@ func TestErrors(t *testing.T) {
 		case want != "" && (r.Error == nil || !strings.Contains(r.Error.Message, want)):
 			t.Errorf("request %d: error = %+v, mau memuat %q", i+1, r.Error, want)
 		}
+	}
+}
+
+func TestTrace(t *testing.T) {
+	src := "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfor i := 0; i < 2; i++ {\n\t\tfmt.Println(i)\n\t}\n}\n"
+	resps := session(t, update(1, src, 6), `{"id":2,"method":"trace","params":{"file":"main.go","loopId":"L1"}}`)
+	var res struct {
+		Trace struct {
+			Mode  string `json:"mode"`
+			Steps []struct {
+				Output string `json:"output"`
+			} `json:"steps"`
+		} `json:"trace"`
+	}
+	if err := json.Unmarshal(resps[1].Result, &res); err != nil {
+		t.Fatalf("%v: %s", err, resps[1].Result)
+	}
+	var out strings.Builder
+	for _, s := range res.Trace.Steps {
+		out.WriteString(s.Output)
+	}
+	if res.Trace.Mode != "simulated" || out.String() != "0\n1\n" {
+		t.Errorf("mode %s, output %q", res.Trace.Mode, out.String())
 	}
 }
 

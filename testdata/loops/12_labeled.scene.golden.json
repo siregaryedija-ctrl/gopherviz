@@ -24,6 +24,7 @@
           {
             "kind": "loop",
             "line": 9,
+            "endLine": 17,
             "ref": "L2"
           }
         ],
@@ -51,6 +52,7 @@
           {
             "kind": "if",
             "line": 10,
+            "endLine": 12,
             "text": "if v == 1",
             "then": [
               {
@@ -64,6 +66,7 @@
           {
             "kind": "if",
             "line": 13,
+            "endLine": 15,
             "text": "if v == 3",
             "then": [
               {

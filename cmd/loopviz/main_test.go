@@ -59,6 +59,19 @@ func TestListJSONFromStdin(t *testing.T) {
 	}
 }
 
+func TestTraceCmd(t *testing.T) {
+	code, out, _ := runCmd(t, "", "trace", "../../testdata/loops/01_for3.go:7")
+	for _, want := range []string{"mode simulated", "i < 3 → 0 < 3 → true", "⇒ 2", "kondisi false"} {
+		if code != 0 || !strings.Contains(out, want) {
+			t.Errorf("output tidak memuat %q (exit %d):\n%s", want, code, out)
+		}
+	}
+	code, out, _ = runCmd(t, "", "trace", "--json", "../../testdata/loops/01_for3.go:7")
+	if code != 0 || !strings.Contains(out, `"mode": "simulated"`) {
+		t.Errorf("JSON trace salah (exit %d): %.200s", code, out)
+	}
+}
+
 func TestServe(t *testing.T) {
 	code, out, _ := runCmd(t, `{"id":7,"method":"hello","params":{"client":"t","protocol":1}}`+"\n", "serve")
 	if code != 0 || !strings.Contains(out, `"id":7`) || !strings.Contains(out, `"protocol":1`) {
@@ -74,7 +87,9 @@ func TestCommands(t *testing.T) {
 	}{
 		{[]string{"version"}, 0, "scene v1"},
 		{[]string{"help"}, 0, "Pemakaian"},
-		{[]string{"trace"}, 2, "Fase 4"},
+		{[]string{"trace"}, 2, "pemakaian: loopviz trace"},
+		{[]string{"trace", "../../testdata/loops/01_for3.go:2"}, 1, "tidak ada loop di baris 2"},
+		{[]string{"show"}, 2, "Fase 5"},
 		{[]string{"terbang"}, 2, "tidak dikenal"},
 		{[]string{"list"}, 2, "pemakaian"},
 		{[]string{"list", "--warna", "a.go"}, 2, "flag tidak dikenal"},

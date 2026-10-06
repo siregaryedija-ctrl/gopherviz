@@ -21,6 +21,7 @@
           {
             "kind": "if",
             "line": 9,
+            "endLine": 11,
             "text": "if x > 10",
             "then": [
               {

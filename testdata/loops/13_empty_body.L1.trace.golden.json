@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "file": "13_empty_body.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "for3",
+    "line": 4,
+    "endLine": 5,
+    "vars": [
+      "i"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 4,
+      "iteration": 0,
+      "vars": {
+        "i": "0"
+      },
+      "note": "i := 0 → i = 0"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 4,
+      "iteration": 0,
+      "vars": {
+        "i": "0"
+      },
+      "result": true,
+      "note": "i < 3 → 0 < 3 → true"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 4,
+      "iteration": 0,
+      "vars": {
+        "i": "1"
+      },
+      "note": "i++ → i = 1"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 4,
+      "iteration": 1,
+      "vars": {
+        "i": "1"
+      },
+      "result": true,
+      "note": "i < 3 → 1 < 3 → true"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 4,
+      "iteration": 1,
+      "vars": {
+        "i": "2"
+      },
+      "note": "i++ → i = 2"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 4,
+      "iteration": 2,
+      "vars": {
+        "i": "2"
+      },
+      "result": true,
+      "note": "i < 3 → 2 < 3 → true"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 4,
+      "iteration": 2,
+      "vars": {
+        "i": "3"
+      },
+      "note": "i++ → i = 3"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 4,
+      "iteration": 3,
+      "vars": {
+        "i": "3"
+      },
+      "result": false,
+      "note": "i < 3 → 3 < 3 → false"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 4,
+      "iteration": 3,
+      "vars": {
+        "i": "3"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

@@ -1,0 +1,335 @@
+{
+  "version": 1,
+  "file": "05_range_slice.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "range-slice",
+    "line": 8,
+    "endLine": 14,
+    "vars": [
+      "i",
+      "v"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "nums": "[4 8 15 16]",
+        "sum": "0"
+      },
+      "note": "range nums (4 elemen)",
+      "items": [
+        "4",
+        "8",
+        "15",
+        "16"
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "nums": "[4 8 15 16]",
+        "sum": "0",
+        "v": "4"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: i = 0, v = 4",
+      "ops": [
+        {
+          "op": "read",
+          "a": 0
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "nums": "[4 8 15 16]",
+        "sum": "0",
+        "v": "4"
+      },
+      "result": false,
+      "note": "if v%2 == 1 → 0 == 1 → false"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "nums": "[4 8 15 16]",
+        "sum": "4",
+        "v": "4"
+      },
+      "note": "sum += v → sum = 4"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "nums": "[4 8 15 16]",
+        "sum": "4",
+        "v": "4"
+      },
+      "note": "fmt.Println(i, v) → cetak \"0 4\"",
+      "output": "0 4\n"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "nums": "[4 8 15 16]",
+        "sum": "4",
+        "v": "8"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: i = 1, v = 8",
+      "ops": [
+        {
+          "op": "read",
+          "a": 1
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "nums": "[4 8 15 16]",
+        "sum": "4",
+        "v": "8"
+      },
+      "result": false,
+      "note": "if v%2 == 1 → 0 == 1 → false"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "8"
+      },
+      "note": "sum += v → sum = 12"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "8"
+      },
+      "note": "fmt.Println(i, v) → cetak \"1 8\"",
+      "output": "1 8\n"
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "15"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: i = 2, v = 15",
+      "ops": [
+        {
+          "op": "read",
+          "a": 2
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "15"
+      },
+      "result": true,
+      "note": "if v%2 == 1 → 1 == 1 → true"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "run": 1,
+      "phase": "continue",
+      "line": 10,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "15"
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "16"
+      },
+      "result": true,
+      "note": "ambil elemen ke-4: i = 3, v = 16",
+      "ops": [
+        {
+          "op": "read",
+          "a": 3
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "nums": "[4 8 15 16]",
+        "sum": "12",
+        "v": "16"
+      },
+      "result": false,
+      "note": "if v%2 == 1 → 0 == 1 → false"
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "nums": "[4 8 15 16]",
+        "sum": "28",
+        "v": "16"
+      },
+      "note": "sum += v → sum = 28"
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "nums": "[4 8 15 16]",
+        "sum": "28",
+        "v": "16"
+      },
+      "note": "fmt.Println(i, v) → cetak \"3 16\"",
+      "output": "3 16\n"
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 4,
+      "vars": {
+        "nums": "[4 8 15 16]",
+        "sum": "28"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 17,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 8,
+      "iteration": 4,
+      "vars": {
+        "nums": "[4 8 15 16]",
+        "sum": "28"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "collection": {
+    "kind": "slice",
+    "items": [
+      "4",
+      "8",
+      "15",
+      "16"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "file": "04_range_int.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L2",
+    "kind": "range-int",
+    "line": 9,
+    "endLine": 11
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L2",
+      "run": 1,
+      "phase": "init",
+      "line": 9,
+      "iteration": 0,
+      "note": "range 3 (angka 3)"
+    },
+    {
+      "n": 1,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 0,
+      "result": true,
+      "note": "ambil elemen ke-1"
+    },
+    {
+      "n": 2,
+      "loop": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 0,
+      "note": "fmt.Println(\"halo\") → cetak \"halo\"",
+      "output": "halo\n"
+    },
+    {
+      "n": 3,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 1,
+      "result": true,
+      "note": "ambil elemen ke-2"
+    },
+    {
+      "n": 4,
+      "loop": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 1,
+      "note": "fmt.Println(\"halo\") → cetak \"halo\"",
+      "output": "halo\n"
+    },
+    {
+      "n": 5,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 2,
+      "result": true,
+      "note": "ambil elemen ke-3"
+    },
+    {
+      "n": 6,
+      "loop": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 2,
+      "note": "fmt.Println(\"halo\") → cetak \"halo\"",
+      "output": "halo\n"
+    },
+    {
+      "n": 7,
+      "loop": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 3,
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 8,
+      "loop": "L2",
+      "run": 1,
+      "phase": "exit",
+      "line": 9,
+      "iteration": 3,
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

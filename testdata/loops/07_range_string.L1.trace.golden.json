@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "file": "07_range_string.go",
+  "mode": "simulated",
+  "loop": {
+    "id": "L1",
+    "kind": "range-string",
+    "line": 6,
+    "endLine": 8,
+    "vars": [
+      "i",
+      "r"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 6,
+      "iteration": 0,
+      "note": "range \"héllo\" (5 karakter)"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "r": "104"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: i = 0, r = 104 ('h')"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "r": "104"
+      },
+      "note": "fmt.Println(i, string(r)) → cetak \"0 h\"",
+      "output": "0 h\n"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "r": "233"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: i = 1, r = 233 ('é')"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "r": "233"
+      },
+      "note": "fmt.Println(i, string(r)) → cetak \"1 é\"",
+      "output": "1 é\n"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 2,
+      "vars": {
+        "i": "3",
+        "r": "108"
+      },
+      "result": true,
+      "note": "ambil elemen ke-4: i = 3, r = 108 ('l')"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "i": "3",
+        "r": "108"
+      },
+      "note": "fmt.Println(i, string(r)) → cetak \"3 l\"",
+      "output": "3 l\n"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 3,
+      "vars": {
+        "i": "4",
+        "r": "108"
+      },
+      "result": true,
+      "note": "ambil elemen ke-5: i = 4, r = 108 ('l')"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "i": "4",
+        "r": "108"
+      },
+      "note": "fmt.Println(i, string(r)) → cetak \"4 l\"",
+      "output": "4 l\n"
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 4,
+      "vars": {
+        "i": "5",
+        "r": "111"
+      },
+      "result": true,
+      "note": "ambil elemen ke-6: i = 5, r = 111 ('o')"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 4,
+      "vars": {
+        "i": "5",
+        "r": "111"
+      },
+      "note": "fmt.Println(i, string(r)) → cetak \"5 o\"",
+      "output": "5 o\n"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 5,
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 6,
+      "iteration": 5,
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

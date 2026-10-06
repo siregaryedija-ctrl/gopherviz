@@ -41,6 +41,9 @@
     onPhase: highlightPhase,
     sound: name => snd.play(name),
   });
+  const data = new G.DataStage($('stage'), {});
+  let loops = [];
+  let traceNote = ''; // peringatan dari trace mode struktur
 
   // ---------- state dari ekstensi ----------
 
@@ -48,6 +51,7 @@
     const m = e.data;
     if (m.type === 'config') applyConfig(m);
     else if (m.type === 'state') applyState(m);
+    else if (m.type === 'trace') applyTrace(m);
   });
 
   function applyConfig(m) {
@@ -64,7 +68,7 @@
   function applyState(m) {
     state = m;
     const res = m.result;
-    const loops = res ? res.scene.loops : [];
+    loops = res ? res.scene.loops : [];
     const loop = loops.find(l => l.id === m.focusLoop) || null;
 
     if (!m.server.ok) overlay(m.server.message || 'Server loopviz tidak berjalan.', true);
@@ -78,6 +82,7 @@
     const key = loop ? JSON.stringify(loop) : '';
     if (key !== (currentLoop ? JSON.stringify(currentLoop) : '')) {
       currentLoop = loop;
+      stopTrace(); // kode berubah: trace lama tidak berlaku, tampilkan struktur sampai trace baru datang
       level.setLoop(loop);
       renderParts(loop, loops);
     }
@@ -135,8 +140,16 @@
       note.className = 'note warn';
       return;
     }
-    note.textContent = 'Mode struktur: Gopher menelusuri alur loop sebagai contoh 3 putaran. Nilai variabel asli tiap putaran menyusul.';
-    note.className = 'note';
+    if (tp.active) {
+      const warn = tp.trace.warnings.length ? tp.trace.warnings.join(' ') : '';
+      note.textContent = (tp.trace.truncated ? 'Trace dipotong. ' : '') + warn;
+      note.className = warn ? 'note warn' : 'note';
+      return;
+    }
+    note.textContent = traceNote
+      ? 'Mode struktur: ' + traceNote
+      : 'Mode struktur: Gopher menelusuri alur loop sebagai contoh 3 putaran. Nilai asli muncul setelah kamu berhenti mengetik sebentar.';
+    note.className = traceNote ? 'note warn' : 'note';
   }
 
   function renderParts(loop, loops) {
@@ -185,6 +198,158 @@
     document.querySelectorAll('#head .hp').forEach(el => el.classList.toggle('on', el.dataset.p === p));
   }
 
+  // ---------- pemutar trace ----------
+
+  const tp = { active: false, trace: null, view: [], r: null, i: 0, el: 0, playing: true, once: false, cues: [], ci: 0, hold: 0 };
+
+  /** Adapter supaya Level (platformer) dan DataStage (barisan elemen) diputar dengan cara yang sama. */
+  const levelR = {
+    prepare: tr => level.prepareTrace(tr),
+    duration: i => level.traceDuration(i),
+    cues: i => level.traceCues(i),
+    render: (i, t) => level.renderTrace(i, t),
+  };
+  const dataR = {
+    prepare: tr => data.prepare(tr, currentLoop, loops),
+    duration: i => data.duration(i),
+    cues: i => data.cues(i),
+    render: (i, t) => data.render(i, t),
+  };
+
+  function applyTrace(m) {
+    if (!currentLoop || m.loopId !== currentLoop.id) return; // trace untuk loop lain
+    const tr = m.trace;
+    stopTrace();
+    if (tr.mode !== 'simulated' || !tr.steps.length) {
+      traceNote = tr.warnings[0] || '';
+      renderNote(currentLoop, (state && state.result && state.result.diagnostics) || []);
+      return;
+    }
+    // Mode data hanya untuk koleksi berisi nilai sederhana (angka, string pendek); slice bersarang memakai platformer.
+    const scalar = v => v.length <= 12 && !/^(\[|map\[|\{)/.test(v);
+    const dataMode = !!tr.collection && tr.collection.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.length);
+    tp.stats = tr.steps.some(s => (s.ops || []).some(o => o.op === 'compare' || o.op === 'swap'));
+    tp.r = dataMode ? dataR : levelR;
+    if (dataMode) level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
+    tp.trace = tr;
+    tp.view = tp.r.prepare(tr);
+    tp.active = true;
+    tp.playing = true;
+    tp.prevVars = null;
+    $('tracebar').hidden = false;
+    $('stepNote').hidden = false;
+    $('varsSection').hidden = false;
+    $('tScrub').max = String(tp.view.length - 1);
+    goto(0, false);
+    syncPlay();
+    renderNote(currentLoop, []);
+  }
+
+  function stopTrace() {
+    if (tp.active) level.stopTrace();
+    tp.active = false;
+    tp.trace = null;
+    traceNote = '';
+    for (const id of ['tracebar', 'stepNote', 'varsSection', 'outSection']) $(id).hidden = true;
+    highlightPart(null);
+    highlightPhase(null);
+  }
+
+  function goto(i, silent) {
+    tp.i = Math.max(0, Math.min(i, tp.view.length - 1));
+    tp.el = 0;
+    tp.hold = 0;
+    tp.cues = tp.r.cues(tp.i).sort((a, b) => a.t - b.t);
+    tp.ci = silent ? tp.cues.length : 0;
+    stepUI();
+  }
+
+  function fireCues(t) {
+    while (tp.ci < tp.cues.length && tp.cues[tp.ci].t <= t) {
+      const c = tp.cues[tp.ci++];
+      if (c.sound) snd.play(c.sound);
+      if (c.fx) c.fx();
+    }
+  }
+
+  function partOf(line) {
+    let best = -1;
+    if (currentLoop && line) currentLoop.body.forEach((n, k) => { if (line >= n.line && line <= (n.endLine || n.line)) best = k; });
+    return best;
+  }
+
+  function stepUI() {
+    const v = tp.view[tp.i], s = v.step;
+    const group = v.group && v.group.length > 1 ? `${s.loop} menjalankan ${v.group.length} langkah · ` : '';
+    $('stepNote').textContent = group + (s.note || '');
+    $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
+
+    // variabel: sorot yang berubah dibanding langkah sebelumnya
+    const prev = tp.i > 0 ? tp.view[tp.i - 1].step.vars || {} : {};
+    const vars = s.vars || {};
+    $('vars').innerHTML = Object.keys(vars).sort().map(k => {
+      const changed = tp.i > 0 && prev[k] !== vars[k];
+      return `<span class="var${changed ? ' changed' : ''}"><b>${esc(k)}</b> = ${esc(vars[k])}</span>`;
+    }).join('') || '<span class="muted">Belum ada variabel.</span>';
+
+    // output kumulatif sampai langkah ini
+    let out = '';
+    for (let k = 0; k <= tp.i; k++) {
+      const vk = tp.view[k];
+      for (const st of vk.group || [vk.step]) out += st.output || '';
+    }
+    $('outSection').hidden = !out;
+    $('out').textContent = out;
+    $('out').scrollTop = $('out').scrollHeight;
+
+    highlightPart(partOf(s.line));
+    highlightPhase(s.loop === currentLoop.id ? { init: 'init', cond: 'cond', post: 'post' }[s.phase] || null : null);
+
+    let label = `Langkah ${tp.i + 1}/${tp.view.length}`;
+    if (v.cmpCount != null && tp.stats) label += ` · banding ${v.cmpCount} · tukar ${v.swpCount}`;
+    $('tLabel').textContent = label;
+    $('tScrub').value = String(tp.i);
+  }
+
+  function syncPlay() {
+    const pause = 'M3 2h4v12H3zM9 2h4v12H9z', play = 'M3 1v14l11-7z';
+    $('tPlay').innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${tp.playing ? pause : play}"/></svg>`;
+    $('tPlay').title = tp.playing ? 'Jeda' : 'Putar';
+  }
+
+  function tickTrace(dt) {
+    const d = tp.r.duration(tp.i);
+    if (tp.playing || tp.once) {
+      if (tp.el < d) {
+        tp.el = Math.min(d, tp.el + dt * config.speed);
+        fireCues(tp.el / d);
+      } else if (tp.i < tp.view.length - 1) {
+        if (tp.once) { tp.once = false; } else goto(tp.i + 1, false);
+      } else if (tp.playing) {
+        tp.hold += dt; // jeda sebentar di akhir, lalu putar ulang
+        if (tp.hold > 2500) goto(0, false);
+      } else tp.once = false;
+    }
+    tp.r.render(tp.i, Math.min(1, tp.el / d));
+  }
+
+  $('tPlay').addEventListener('click', () => { tp.playing = !tp.playing; tp.once = false; syncPlay(); });
+  $('tPrev').addEventListener('click', () => {
+    tp.playing = false; tp.once = false; syncPlay();
+    goto(tp.i - 1, true);
+    tp.el = tp.r.duration(tp.i);
+  });
+  $('tNext').addEventListener('click', () => {
+    tp.playing = false; syncPlay();
+    if (tp.i < tp.view.length - 1) { goto(tp.i + 1, false); tp.once = true; }
+  });
+  $('tRestart').addEventListener('click', () => { goto(0, false); tp.playing = true; syncPlay(); });
+  $('tScrub').addEventListener('input', () => {
+    tp.playing = false; tp.once = false; syncPlay();
+    goto(+$('tScrub').value, true);
+    tp.el = tp.r.duration(tp.i);
+  });
+
   // ---------- interaksi ----------
 
   document.addEventListener('click', e => {
@@ -213,13 +378,16 @@
     const dt = Math.min(64, now - last);
     last = now;
     level.update(dt);
-    level.render();
-    const playing = !!currentLoop && currentLoop.state === 'complete' && document.visibilityState === 'visible';
+    data.update(dt);
+    if (tp.active) tickTrace(dt);
+    else level.render();
+    const playing = !!currentLoop && currentLoop.state === 'complete' && document.visibilityState === 'visible' &&
+      (!tp.active || tp.playing);
     snd.music(config.music && playing);
     requestAnimationFrame(frame);
   }
 
-  G.app = { level }; // untuk dev/harness.html
+  G.app = { level, data, tp, tickTrace, goto }; // untuk dev/harness.html
   snd.unlock(); // di VS Code suara kadang boleh langsung; kalau tidak, menunggu klik
   applyConfig(config);
   overlay('Menyiapkan…');

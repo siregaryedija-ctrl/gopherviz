@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "file": "14_incomplete_noclose.go",
+  "mode": "structural",
+  "loop": {
+    "id": "L1",
+    "kind": "for3",
+    "line": 4,
+    "endLine": 5,
+    "vars": [
+      "i"
+    ]
+  },
+  "steps": [],
+  "truncated": false,
+  "warnings": [
+    "kode belum lengkap atau masih ada error; selesaikan dulu supaya nilainya bisa dihitung"
+  ]
+}

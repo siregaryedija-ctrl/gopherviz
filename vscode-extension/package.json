@@ -2,7 +2,7 @@
   "name": "goloopviz",
   "displayName": "GoLoopViz",
   "description": "Visual pixel-art dan animasi cara kerja loop di Go, realtime saat kamu mengetik.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "goloopviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",

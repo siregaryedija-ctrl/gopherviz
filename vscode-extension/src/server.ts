@@ -76,6 +76,47 @@ export interface FocusResult {
   focusLoop?: string;
 }
 
+// ---------- Trace (cermin dari internal/trace) ----------
+
+export interface TraceOp {
+  op: 'read' | 'compare' | 'swap' | 'set' | 'append' | 'settle';
+  a: number;
+  b?: number;
+  result?: string;
+  value?: string;
+}
+
+export interface TraceStep {
+  n: number;
+  loop: string;
+  run?: number;
+  phase: 'init' | 'cond' | 'body' | 'post' | 'continue' | 'break' | 'enter-child' | 'exit';
+  line?: number;
+  iteration?: number;
+  vars?: Record<string, string>;
+  result?: boolean;
+  note?: string;
+  output?: string;
+  reason?: 'cond-false' | 'range-done' | 'break' | 'return' | 'goto' | 'step-limit' | 'panic';
+  ops?: TraceOp[];
+  items?: string[];
+}
+
+export interface Trace {
+  version: number;
+  file?: string;
+  mode: 'simulated' | 'structural' | 'instrumented';
+  loop: { id: string; kind: LoopKind; line: number; endLine: number; label?: string; vars?: string[]; children?: string[] };
+  steps: TraceStep[];
+  collection?: { kind: string; items: string[] };
+  truncated: boolean;
+  warnings: string[];
+}
+
+export interface TraceResult {
+  trace: Trace;
+}
+
 // ---------- klien ----------
 
 interface Pending {
