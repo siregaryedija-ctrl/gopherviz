@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"goloopviz/internal/analyzer"
-	"goloopviz/internal/trace"
+	"gopherviz/internal/analyzer"
+	"gopherviz/internal/trace"
 )
 
 var update = flag.Bool("update", false, "perbarui file *.trace.golden.json")

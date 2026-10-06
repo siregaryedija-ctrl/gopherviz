@@ -1,11 +1,11 @@
-# GoLoopViz
+# GopherViz
 
 Lihat cara kerja loop Go sebagai level game pixel-art, langsung saat kamu mengetik.
 
 - **Realtime.** Ketik `for i := 0; i < 3; i++ {}` dan level-nya langsung muncul. Body kosong tampil sebagai blok bata
   kosong; setiap baris yang kamu tulis di dalam `{ }` menjadi blok baru.
 - **Mengikuti kursor.** Panel selalu menampilkan loop tempat kursormu berada. Klik bagian di panel untuk melompat ke barisnya.
-- **Nilai asli dari kodemu.** Setelah kamu berhenti mengetik sebentar, `loopviz` menghitung programmu langkah demi
+- **Nilai asli dari kodemu.** Setelah kamu berhenti mengetik sebentar, `gopherviz` menghitung programmu langkah demi
   langkah: nilai `i` di setiap putaran, hasil setiap kondisi (`i < 3 → 2 < 3 → true`), dan output `fmt.Println`.
   Putar, jeda, maju/mundur per langkah, atau geser slider.
 - **Gopher menelusuri alurnya.** Init, gerbang kondisi (T/F), menyundul blok satu per satu, post, lalu kembali ke gerbang.
@@ -21,24 +21,24 @@ goroutine), panel kembali ke **mode struktur** dan menjelaskan alasannya.
 ## Pemakaian
 
 1. Buka file `.go`. Ekstensi aktif otomatis.
-2. Taruh kursor di dalam sebuah `for`. Panel GoLoopViz terbuka di samping (bisa dimatikan lewat `goloopviz.autoOpen`).
+2. Taruh kursor di dalam sebuah `for`. Panel GopherViz terbuka di samping (bisa dimatikan lewat `gopherviz.autoOpen`).
 3. Atau klik **▶ Visualisasikan loop** di atas `for`, atau tekan `Ctrl+Alt+L`.
 
 ## Pengaturan
 
 | Setting | Bawaan | Fungsi |
 |---|---|---|
-| `goloopviz.realtime` | `true` | Perbarui di setiap ketikan; `false` = hanya saat disimpan |
-| `goloopviz.autoOpen` | `true` | Buka panel otomatis saat kursor masuk ke loop |
-| `goloopviz.codeLens` | `true` | Tombol "Visualisasikan loop" di atas `for` |
-| `goloopviz.speed` | `1` | Kecepatan animasi: 0.5, 1, 2, 4 |
-| `goloopviz.sound` / `goloopviz.music` | `true` | Efek suara / musik latar |
-| `goloopviz.binaryPath` | kosong | Pakai binary `loopviz` sendiri, bukan bawaan ekstensi |
+| `gopherviz.realtime` | `true` | Perbarui di setiap ketikan; `false` = hanya saat disimpan |
+| `gopherviz.autoOpen` | `true` | Buka panel otomatis saat kursor masuk ke loop |
+| `gopherviz.codeLens` | `true` | Tombol "Visualisasikan loop" di atas `for` |
+| `gopherviz.speed` | `1` | Kecepatan animasi: 0.5, 1, 2, 4 |
+| `gopherviz.sound` / `gopherviz.music` | `true` | Efek suara / musik latar |
+| `gopherviz.binaryPath` | kosong | Pakai binary `gopherviz` sendiri, bukan bawaan ekstensi |
 
 ## Cara kerja
 
-Ekstensi menjalankan `loopviz serve` (ditulis dalam Go, ikut di dalam paket ekstensi) dan mengirim isi editor setiap kamu
-mengetik. `loopviz` membaca kode dengan parser Go asli, lalu mensimulasikannya dengan aturan Go (pembagian integer,
+Ekstensi menjalankan `gopherviz serve` (ditulis dalam Go, ikut di dalam paket ekstensi) dan mengirim isi editor setiap kamu
+mengetik. `gopherviz` membaca kode dengan parser Go asli, lalu mensimulasikannya dengan aturan Go (pembagian integer,
 `append` yang berbagi array, urutan map yang acak, dan seterusnya). Kode kamu tidak pernah benar-benar dijalankan.
 
 ## Atribusi

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"goloopviz/internal/analyzer"
-	"goloopviz/internal/trace"
+	"gopherviz/internal/analyzer"
+	"gopherviz/internal/trace"
 )
 
 // abort menghentikan simulasi lewat panic yang ditangkap di Trace.

@@ -1,4 +1,4 @@
-// Build binary loopviz dan taruh di bin/<platform>-<arch>/ supaya ikut dibundel di .vsix.
+// Build binary gopherviz dan taruh di bin/<platform>-<arch>/ supaya ikut dibundel di .vsix.
 //   node scripts/build-bin.mjs        hanya untuk platform komputer ini
 //   node scripts/build-bin.mjs --all  semua platform yang didukung
 import { execFileSync } from 'node:child_process';
@@ -26,9 +26,9 @@ if (selected.length === 0) {
 }
 
 for (const [goos, goarch, dir] of selected) {
-  const out = path.join(extRoot, 'bin', dir, goos === 'windows' ? 'loopviz.exe' : 'loopviz');
+  const out = path.join(extRoot, 'bin', dir, goos === 'windows' ? 'gopherviz.exe' : 'gopherviz');
   console.log(`go build ${goos}/${goarch} -> ${path.relative(extRoot, out)}`);
-  execFileSync('go', ['build', '-trimpath', '-ldflags=-s -w', '-o', out, './cmd/loopviz'], {
+  execFileSync('go', ['build', '-trimpath', '-ldflags=-s -w', '-o', out, './cmd/gopherviz'], {
     cwd: repoRoot,
     stdio: 'inherit',
     env: { ...process.env, GOOS: goos, GOARCH: goarch, CGO_ENABLED: '0' },

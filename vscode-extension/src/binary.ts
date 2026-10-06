@@ -7,8 +7,8 @@ export interface ResolvedBinary {
 }
 
 /**
- * Menentukan binary loopviz: setting user → binary bawaan ekstensi
- * (bin/<platform>-<arch>/) → `loopviz` di PATH.
+ * Menentukan binary gopherviz: setting user → binary bawaan ekstensi
+ * (bin/<platform>-<arch>/) → `gopherviz` di PATH.
  */
 export function resolveBinary(
   extensionPath: string,
@@ -19,7 +19,7 @@ export function resolveBinary(
   if (configured.trim() !== '') {
     return { path: configured.trim(), source: 'setting' };
   }
-  const exe = platform === 'win32' ? 'loopviz.exe' : 'loopviz';
+  const exe = platform === 'win32' ? 'gopherviz.exe' : 'gopherviz';
   const bundled = path.join(extensionPath, 'bin', `${platform}-${arch}`, exe);
   if (fs.existsSync(bundled)) {
     return { path: bundled, source: 'bundled' };

@@ -1,13 +1,13 @@
-// Test integrasi: menjalankan binary loopviz sungguhan lewat LoopvizClient.
+// Test integrasi: menjalankan binary gopherviz sungguhan lewat GophervizClient.
 // Jalankan dengan `npm test` (binary dibangun dulu oleh build:bin).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as path from 'node:path';
-import { LoopvizClient, ServerError, type UpdateResult } from '../src/server';
+import { GophervizClient, ServerError, type UpdateResult } from '../src/server';
 import { resolveBinary } from '../src/binary';
 
 const extRoot = path.resolve(__dirname, '..', '..');
-const bin = resolveBinary(extRoot, process.env.LOOPVIZ_BIN ?? '');
+const bin = resolveBinary(extRoot, process.env.GOPHERVIZ_BIN ?? '');
 
 const code = (body: string) => `package main\n\nfunc main() {\n${body}\n}\n`;
 
@@ -16,7 +16,7 @@ test('binary bawaan ditemukan', () => {
 });
 
 test('hello, update, dan focus', async () => {
-  const client = new LoopvizClient(bin.path);
+  const client = new GophervizClient(bin.path);
   try {
     const hello = await client.start();
     assert.equal(hello.protocol, 1);
@@ -36,7 +36,7 @@ test('hello, update, dan focus', async () => {
 });
 
 test('banyak request sekaligus dijawab ke pemanggil yang benar', async () => {
-  const client = new LoopvizClient(bin.path);
+  const client = new GophervizClient(bin.path);
   try {
     await client.start();
     const jobs = Array.from({ length: 25 }, (_, n) => {
@@ -54,7 +54,7 @@ test('banyak request sekaligus dijawab ke pemanggil yang benar', async () => {
 });
 
 test('error dari server menjadi ServerError', async () => {
-  const client = new LoopvizClient(bin.path);
+  const client = new GophervizClient(bin.path);
   try {
     await client.start();
     await assert.rejects(client.request('trace', { file: 'belum-dikirim.go', loopId: 'L1' }), (e: unknown) => {
@@ -66,13 +66,13 @@ test('error dari server menjadi ServerError', async () => {
 });
 
 test('binary tidak ada: start gagal dengan pesan jelas', async () => {
-  const client = new LoopvizClient(path.join(extRoot, 'tidak-ada', 'loopviz.exe'));
+  const client = new GophervizClient(path.join(extRoot, 'tidak-ada', 'gopherviz.exe'));
   await assert.rejects(client.start(), /gagal menjalankan/);
 });
 
 test('server mati di tengah jalan: onExit dipanggil dan request ditolak', async () => {
   let reason = '';
-  const client = new LoopvizClient(bin.path, r => {
+  const client = new GophervizClient(bin.path, r => {
     reason = r;
   });
   await client.start();

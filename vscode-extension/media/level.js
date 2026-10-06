@@ -714,4 +714,4 @@
   }
 
   G.Level = Level;
-})(window.GLV = window.GLV || {});
+})(window.GV = window.GV || {});

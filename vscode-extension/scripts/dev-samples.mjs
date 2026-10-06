@@ -1,4 +1,4 @@
-// Membuat dev/samples.js: scene + trace asli dari binary loopviz untuk dev/harness.html.
+// Membuat dev/samples.js: scene + trace asli dari binary gopherviz untuk dev/harness.html.
 //   node scripts/dev-samples.mjs   (jalankan npm run build:bin dulu)
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const exe = path.join(root, 'bin', `${process.platform}-${process.arch}`, process.platform === 'win32' ? 'loopviz.exe' : 'loopviz');
+const exe = path.join(root, 'bin', `${process.platform}-${process.arch}`, process.platform === 'win32' ? 'gopherviz.exe' : 'gopherviz');
 const loops = path.join(root, '..', 'testdata', 'loops');
 
 // nama sampel → [file, baris loop fokus]

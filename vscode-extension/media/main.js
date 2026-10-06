@@ -71,7 +71,7 @@
     loops = res ? res.scene.loops : [];
     const loop = loops.find(l => l.id === m.focusLoop) || null;
 
-    if (!m.server.ok) overlay(m.server.message || 'Server loopviz tidak berjalan.', true);
+    if (!m.server.ok) overlay(m.server.message || 'Server gopherviz tidak berjalan.', true);
     else if (!m.file) overlay('Buka file Go untuk mulai.');
     else if (!res) overlay('Menganalisis…');
     else if (!loops.length) overlay('Belum ada loop di file ini.\nCoba ketik:  for i := 0; i < 3; i++ {}');
@@ -121,7 +121,7 @@
   }
 
   function renderHeader(loop) {
-    $('loopId').textContent = loop ? loop.id : 'GoLoopViz';
+    $('loopId').textContent = loop ? loop.id : 'GopherViz';
     $('kind').textContent = loop ? KIND[loop.kind] || loop.kind : (state && state.file) || '';
     $('head').innerHTML = loop ? headHTML(loop) + ' {' : '';
     $('head').hidden = !loop;
@@ -393,4 +393,4 @@
   overlay('Menyiapkan…');
   requestAnimationFrame(frame);
   vscode.postMessage({ type: 'ready' });
-})(window.GLV = window.GLV || {});
+})(window.GV = window.GV || {});

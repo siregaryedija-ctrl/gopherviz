@@ -1,5 +1,5 @@
 // Package protocol mendefinisikan pesan JSON lines v1 antara editor dan
-// `loopviz serve` (satu objek JSON per baris, lewat stdin/stdout).
+// `gopherviz serve` (satu objek JSON per baris, lewat stdin/stdout).
 //
 // Ini KONTRAK. Field baru boleh ditambah; mengubah atau menghapus field berarti
 // menaikkan Version dan memperbarui CLI + ekstensi sekaligus.
@@ -8,8 +8,8 @@ package protocol
 import (
 	"encoding/json"
 
-	"goloopviz/internal/scene"
-	"goloopviz/internal/trace"
+	"gopherviz/internal/scene"
+	"gopherviz/internal/trace"
 )
 
 // Version adalah versi protokol.
@@ -55,14 +55,14 @@ type CloseParams struct {
 	File string `json:"file"`
 }
 
-// Request dikirim editor ke loopviz.
+// Request dikirim editor ke gopherviz.
 type Request struct {
 	ID     int             `json:"id"`
 	Method string          `json:"method"`
 	Params json.RawMessage `json:"params,omitempty"`
 }
 
-// Response dikirim loopviz ke editor. Tepat satu dari Result atau Error terisi.
+// Response dikirim gopherviz ke editor. Tepat satu dari Result atau Error terisi.
 type Response struct {
 	ID     int    `json:"id"`
 	Result any    `json:"result,omitempty"`

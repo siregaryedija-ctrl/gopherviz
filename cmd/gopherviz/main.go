@@ -1,4 +1,4 @@
-// Command loopviz menampilkan cara kerja loop Go secara visual.
+// Command gopherviz menampilkan cara kerja loop Go secara visual.
 //
 // Fase 1 baru menyediakan `list` dan `version`; perintah lain menyusul sesuai
 // roadmap di CLAUDE.md.
@@ -15,12 +15,12 @@ import (
 	"text/tabwriter"
 	"unicode/utf8"
 
-	"goloopviz/internal/analyzer"
-	"goloopviz/internal/protocol"
-	"goloopviz/internal/scene"
-	"goloopviz/internal/serve"
-	"goloopviz/internal/sim"
-	"goloopviz/internal/trace"
+	"gopherviz/internal/analyzer"
+	"gopherviz/internal/protocol"
+	"gopherviz/internal/scene"
+	"gopherviz/internal/serve"
+	"gopherviz/internal/sim"
+	"gopherviz/internal/trace"
 )
 
 const version = "0.2.0"
@@ -47,12 +47,12 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return cmdTrace(args[1:], stdin, stdout, stderr)
 	case "serve":
 		if err := serve.New(version).Run(stdin, stdout); err != nil {
-			fmt.Fprintf(stderr, "loopviz serve: %v\n", err)
+			fmt.Fprintf(stderr, "gopherviz serve: %v\n", err)
 			return 1
 		}
 		return 0
 	case "version", "--version", "-v":
-		fmt.Fprintf(stdout, "loopviz %s (scene v%d, trace v%d, protokol v%d)\n",
+		fmt.Fprintf(stdout, "gopherviz %s (scene v%d, trace v%d, protokol v%d)\n",
 			version, scene.Version, trace.Version, protocol.Version)
 		return 0
 	case "help", "--help", "-h":
@@ -60,7 +60,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 0
 	default:
 		if phase, ok := planned[cmd]; ok {
-			fmt.Fprintf(stderr, "loopviz %s belum tersedia (direncanakan di %s).\n", cmd, phase)
+			fmt.Fprintf(stderr, "gopherviz %s belum tersedia (direncanakan di %s).\n", cmd, phase)
 			return 2
 		}
 		fmt.Fprintf(stderr, "perintah tidak dikenal: %q\n\n", cmd)
@@ -70,15 +70,15 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 }
 
 func usage(w io.Writer) {
-	fmt.Fprint(w, `loopviz: visualisasi cara kerja loop di Go
+	fmt.Fprint(w, `gopherviz: visualisasi cara kerja loop di Go
 
 Pemakaian:
-  loopviz list [--json] <file.go>   daftar semua loop dan jenisnya (- untuk stdin)
-  loopviz trace [--json] <file.go>:<baris>
+  gopherviz list [--json] <file.go>   daftar semua loop dan jenisnya (- untuk stdin)
+  gopherviz trace [--json] <file.go>:<baris>
                                     langkah demi langkah satu loop (nilai variabel, kondisi, output)
-  loopviz serve                     server JSON lines lewat stdin/stdout (dipakai ekstensi IDE)
-  loopviz version                   versi binary dan skema data
-  loopviz help                      tampilkan bantuan ini
+  gopherviz serve                     server JSON lines lewat stdin/stdout (dipakai ekstensi IDE)
+  gopherviz version                   versi binary dan skema data
+  gopherviz help                      tampilkan bantuan ini
 
 Segera hadir: on, show.
 `)
@@ -101,7 +101,7 @@ func cmdList(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		}
 	}
 	if len(files) != 1 {
-		fmt.Fprintln(stderr, "pemakaian: loopviz list [--json] <file.go>")
+		fmt.Fprintln(stderr, "pemakaian: gopherviz list [--json] <file.go>")
 		return 2
 	}
 
@@ -154,7 +154,7 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			targets = append(targets, a)
 		}
 	}
-	const use = "pemakaian: loopviz trace [--json] <file.go>:<baris>"
+	const use = "pemakaian: gopherviz trace [--json] <file.go>:<baris>"
 	if len(targets) != 1 {
 		fmt.Fprintln(stderr, use)
 		return 2

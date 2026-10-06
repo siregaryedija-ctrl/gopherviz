@@ -1,4 +1,4 @@
-<title>GoLoopViz Bubble Sort</title>
+<title>GopherViz Bubble Sort</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Nunito:wght@500;700;800&family=Pixelify+Sans:wght@500;700&display=swap">
@@ -85,7 +85,7 @@ code{font-family:var(--f-code);font-size:.92em}
 
 <main class="wrap">
   <header>
-    <span class="eyebrow">GoLoopViz · Prototipe 01</span>
+    <span class="eyebrow">GopherViz · Prototipe 01</span>
     <h1>Bubble Sort</h1>
     <p class="sub">yang paling tinggi naik ke ujung</p>
   </header>
@@ -153,7 +153,7 @@ code{font-family:var(--f-code);font-size:.92em}
 
   <footer>
     <p>Tombol: <kbd>Spasi</kbd> putar/jeda, <kbd>←</kbd> <kbd>→</kbd> per langkah, <kbd>R</kbd> ulang, <kbd>M</kbd> musik. Angka 1 sampai 9, isi 3 sampai 7 angka.</p>
-    <p>Prototipe Fase 2. Trace dibuat langsung di browser dengan bentuk yang sama seperti kontrak Trace di CLAUDE.md. Di ekstensi nanti, datanya datang dari <code>loopviz serve</code>.</p>
+    <p>Prototipe Fase 2. Trace dibuat langsung di browser dengan bentuk yang sama seperti kontrak Trace di CLAUDE.md. Di ekstensi nanti, datanya datang dari <code>gopherviz serve</code>.</p>
     <p>Gopher pixel digambar ulang dari desain Go Gopher karya Renée French (CC BY 4.0). Semua suara dan musik dibangkitkan langsung dengan Web Audio, tanpa file audio.</p>
   </footer>
 </main>
@@ -614,8 +614,8 @@ function updateUI() {
 }
 
 // ---------- suara 8-bit (dibangkitkan Web Audio, tanpa file audio) ----------
-const pref = (k, d) => { try { const v = localStorage.getItem('glv-' + k); return v === null ? d : v === '1'; } catch (e) { return d; } };
-const savePref = (k, v) => { try { localStorage.setItem('glv-' + k, v ? '1' : '0'); } catch (e) { /* abaikan */ } };
+const pref = (k, d) => { try { const v = localStorage.getItem('gv-' + k); return v === null ? d : v === '1'; } catch (e) { return d; } };
+const savePref = (k, v) => { try { localStorage.setItem('gv-' + k, v ? '1' : '0'); } catch (e) { /* abaikan */ } };
 const Snd = (() => {
   const FX_VOL = .3, MUS_VOL = .09, STEP = .24;
   let ac = null, master, fx, mus, noiseBuf, timer = 0, nextT = 0, stepN = 0;

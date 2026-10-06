@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"goloopviz/internal/scene"
+	"gopherviz/internal/scene"
 )
 
 // Result adalah hasil analisis satu file.

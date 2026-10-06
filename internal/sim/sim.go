@@ -12,9 +12,9 @@ import (
 	"go/types"
 	"math/rand"
 
-	"goloopviz/internal/analyzer"
-	"goloopviz/internal/scene"
-	"goloopviz/internal/trace"
+	"gopherviz/internal/analyzer"
+	"gopherviz/internal/scene"
+	"gopherviz/internal/trace"
 )
 
 // Options membatasi simulasi supaya selalu cepat dan aman dipanggil di setiap ketikan.

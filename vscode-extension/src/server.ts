@@ -1,4 +1,4 @@
-// Klien untuk `loopviz serve`. Tidak memakai API vscode supaya bisa dites
+// Klien untuk `gopherviz serve`. Tidak memakai API vscode supaya bisa dites
 // langsung dengan Node.
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import * as readline from 'node:readline';
@@ -127,7 +127,7 @@ interface Pending {
 
 export class ServerError extends Error {}
 
-export class LoopvizClient {
+export class GophervizClient {
   private proc?: ChildProcessWithoutNullStreams;
   private nextId = 1;
   private readonly pending = new Map<number, Pending>();
@@ -136,7 +136,7 @@ export class LoopvizClient {
   private readonly onExit?: (reason: string) => void;
 
   /**
-   * @param command path binary loopviz
+   * @param command path binary gopherviz
    * @param onExit dipanggil sekali bila proses berhenti tanpa diminta
    */
   constructor(command: string, onExit?: (reason: string) => void) {
@@ -144,7 +144,7 @@ export class LoopvizClient {
     this.onExit = onExit;
   }
 
-  /** Menjalankan `loopviz serve` dan memeriksa versi protokol. */
+  /** Menjalankan `gopherviz serve` dan memeriksa versi protokol. */
   async start(): Promise<HelloResult> {
     const proc = spawn(this.command, ['serve'], { stdio: 'pipe', windowsHide: true });
     this.proc = proc;
@@ -154,13 +154,13 @@ export class LoopvizClient {
     });
     readline.createInterface({ input: proc.stdout }).on('line', line => this.onLine(line));
     proc.on('error', err => this.stop(`gagal menjalankan ${this.command}: ${err.message}`));
-    proc.on('exit', code => this.stop(`loopviz berhenti (kode ${code ?? '?'})${this.stderrTail ? ': ' + this.stderrTail.trim() : ''}`));
+    proc.on('exit', code => this.stop(`gopherviz berhenti (kode ${code ?? '?'})${this.stderrTail ? ': ' + this.stderrTail.trim() : ''}`));
 
     const hello = await this.request<HelloResult>('hello', { client: 'vscode', protocol: PROTOCOL_VERSION });
     if (hello.protocol !== PROTOCOL_VERSION) {
       this.dispose();
       throw new ServerError(
-        `versi protokol loopviz ${hello.protocol} tidak cocok dengan ekstensi (${PROTOCOL_VERSION}); perbarui binary atau ekstensinya`,
+        `versi protokol gopherviz ${hello.protocol} tidak cocok dengan ekstensi (${PROTOCOL_VERSION}); perbarui binary atau ekstensinya`,
       );
     }
     return hello;
@@ -173,13 +173,13 @@ export class LoopvizClient {
   request<T>(method: string, params: unknown, timeoutMs = 5000): Promise<T> {
     const proc = this.proc;
     if (!proc) {
-      return Promise.reject(new ServerError('server loopviz tidak berjalan'));
+      return Promise.reject(new ServerError('server gopherviz tidak berjalan'));
     }
     const id = this.nextId++;
     return new Promise<T>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(id);
-        reject(new ServerError(`loopviz tidak menjawab "${method}" dalam ${timeoutMs} ms`));
+        reject(new ServerError(`gopherviz tidak menjawab "${method}" dalam ${timeoutMs} ms`));
       }, timeoutMs);
       this.pending.set(id, { resolve: resolve as (v: unknown) => void, reject, timer });
       proc.stdin.write(JSON.stringify({ id, method, params }) + '\n');
@@ -190,7 +190,7 @@ export class LoopvizClient {
   dispose(): void {
     const proc = this.proc;
     this.proc = undefined;
-    this.rejectAll('server loopviz dihentikan');
+    this.rejectAll('server gopherviz dihentikan');
     proc?.kill();
   }
 

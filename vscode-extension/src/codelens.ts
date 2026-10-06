@@ -30,7 +30,7 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
   }
 
   provideCodeLenses(doc: vscode.TextDocument): vscode.CodeLens[] {
-    if (!vscode.workspace.getConfiguration('goloopviz').get<boolean>('codeLens', true)) {
+    if (!vscode.workspace.getConfiguration('gopherviz').get<boolean>('codeLens', true)) {
       return [];
     }
     const scene = this.getScene(doc.uri.toString());
@@ -43,7 +43,7 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
         const range = new vscode.Range(l.line - 1, 0, l.line - 1, 0);
         return new vscode.CodeLens(range, {
           title: `▶ Visualisasikan loop ${l.id}`,
-          command: 'goloopviz.visualizeAtCursor',
+          command: 'gopherviz.visualizeAtCursor',
           arguments: [doc.uri, l.line],
         });
       });

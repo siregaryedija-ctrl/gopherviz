@@ -34,7 +34,7 @@ export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
   </div>
   <p id="stepNote" class="step-note" hidden></p>`;
 
-/** Panel webview GoLoopViz. Pesan terakhir disimpan dan dikirim ulang saat webview siap. */
+/** Panel webview GopherViz. Pesan terakhir disimpan dan dikirim ulang saat webview siap. */
 export class LoopPanel implements vscode.Disposable {
   private panel?: vscode.WebviewPanel;
   private ready = false;
@@ -66,8 +66,8 @@ export class LoopPanel implements vscode.Disposable {
     }
     const media = vscode.Uri.joinPath(this.extensionUri, 'media');
     const panel = vscode.window.createWebviewPanel(
-      'goloopviz.panel',
-      'GoLoopViz',
+      'gopherviz.panel',
+      'GopherViz',
       { viewColumn: vscode.ViewColumn.Beside, preserveFocus },
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [media] },
     );
@@ -128,7 +128,7 @@ export class LoopPanel implements vscode.Disposable {
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="${src('panel.css')}">
-<title>GoLoopViz</title>
+<title>GopherViz</title>
 </head>
 <body>
 <main class="app">

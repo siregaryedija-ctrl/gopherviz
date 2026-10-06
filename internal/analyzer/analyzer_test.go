@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"goloopviz/internal/scene"
+	"gopherviz/internal/scene"
 )
 
 var update = flag.Bool("update", false, "perbarui file *.scene.golden.json")

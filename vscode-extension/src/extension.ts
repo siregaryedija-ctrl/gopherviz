@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { LoopvizClient, type FocusResult, type LoopKind, type TraceResult, type UpdateResult } from './server';
+import { GophervizClient, type FocusResult, type LoopKind, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
 import { LoopPanel, type FromPanel } from './panel';
 import { LoopCodeLens } from './codelens';
@@ -26,11 +26,11 @@ const KIND_NAMES: Record<LoopKind, string> = {
 
 const isGo = (doc: vscode.TextDocument) => doc.languageId === 'go';
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
-const config = () => vscode.workspace.getConfiguration('goloopviz');
+const config = () => vscode.workspace.getConfiguration('gopherviz');
 
 class Controller implements vscode.Disposable {
-  private client?: LoopvizClient;
-  private starting?: Promise<LoopvizClient | undefined>;
+  private client?: GophervizClient;
+  private starting?: Promise<GophervizClient | undefined>;
   private serverError?: string;
   private crashes: number[] = [];
 
@@ -52,11 +52,11 @@ class Controller implements vscode.Disposable {
 
   constructor(ctx: vscode.ExtensionContext) {
     this.ctx = ctx;
-    this.output = vscode.window.createOutputChannel('GoLoopViz');
+    this.output = vscode.window.createOutputChannel('GopherViz');
     this.panel = new LoopPanel(ctx.extensionUri, m => this.onPanelMessage(m));
     this.lens = new LoopCodeLens(uri => this.results.get(uri)?.scene);
     this.status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    this.status.command = 'goloopviz.showPanel';
+    this.status.command = 'gopherviz.showPanel';
 
     this.disposables.push(
       this.output,
@@ -64,11 +64,11 @@ class Controller implements vscode.Disposable {
       this.lens,
       this.status,
       vscode.languages.registerCodeLensProvider({ language: 'go' }, this.lens),
-      vscode.commands.registerCommand('goloopviz.showPanel', () => this.panel.show(true)),
-      vscode.commands.registerCommand('goloopviz.visualizeAtCursor', (uri?: vscode.Uri, line?: number) =>
+      vscode.commands.registerCommand('gopherviz.showPanel', () => this.panel.show(true)),
+      vscode.commands.registerCommand('gopherviz.visualizeAtCursor', (uri?: vscode.Uri, line?: number) =>
         this.visualize(uri, line),
       ),
-      vscode.commands.registerCommand('goloopviz.restartServer', () => this.restart()),
+      vscode.commands.registerCommand('gopherviz.restartServer', () => this.restart()),
       vscode.window.onDidChangeActiveTextEditor(e => {
         if (e && isGo(e.document)) {
           this.editor = e;
@@ -95,10 +95,10 @@ class Controller implements vscode.Disposable {
       }),
       vscode.workspace.onDidCloseTextDocument(doc => this.forget(doc)),
       vscode.workspace.onDidChangeConfiguration(e => {
-        if (!e.affectsConfiguration('goloopviz')) {
+        if (!e.affectsConfiguration('gopherviz')) {
           return;
         }
-        if (e.affectsConfiguration('goloopviz.binaryPath')) {
+        if (e.affectsConfiguration('gopherviz.binaryPath')) {
           void this.restart();
         }
         this.postConfig();
@@ -117,7 +117,7 @@ class Controller implements vscode.Disposable {
 
   // ---------- server ----------
 
-  private ensureClient(): Promise<LoopvizClient | undefined> {
+  private ensureClient(): Promise<GophervizClient | undefined> {
     if (this.client?.running) {
       return Promise.resolve(this.client);
     }
@@ -126,15 +126,15 @@ class Controller implements vscode.Disposable {
     }
     this.starting ??= (async () => {
       const bin = resolveBinary(this.ctx.extensionPath, config().get('binaryPath', ''));
-      const client = new LoopvizClient(bin.path, reason => this.onServerExit(reason));
+      const client = new GophervizClient(bin.path, reason => this.onServerExit(reason));
       try {
         const hello = await client.start();
         this.client = client;
-        this.output.appendLine(`loopviz ${hello.version} siap (${bin.source}: ${bin.path})`);
+        this.output.appendLine(`gopherviz ${hello.version} siap (${bin.source}: ${bin.path})`);
         return client;
       } catch (e) {
         client.dispose();
-        this.setServerError(`server loopviz tidak bisa dijalankan: ${errMsg(e)}`);
+        this.setServerError(`server gopherviz tidak bisa dijalankan: ${errMsg(e)}`);
         return undefined;
       } finally {
         this.starting = undefined;
@@ -159,7 +159,7 @@ class Controller implements vscode.Disposable {
     this.serverError = message;
     this.output.appendLine(message);
     this.pushState();
-    void vscode.window.showErrorMessage(`GoLoopViz: ${message}`, 'Mulai ulang', 'Lihat log').then(choice => {
+    void vscode.window.showErrorMessage(`GopherViz: ${message}`, 'Mulai ulang', 'Lihat log').then(choice => {
       if (choice === 'Mulai ulang') {
         void this.restart();
       } else if (choice === 'Lihat log') {
@@ -327,13 +327,13 @@ class Controller implements vscode.Disposable {
     const uri = ed.document.uri.toString();
     const loop = this.results.get(uri)?.scene.loops.find(l => l.id === this.focus.get(uri));
     if (this.serverError) {
-      this.status.text = '$(warning) GoLoopViz';
+      this.status.text = '$(warning) GopherViz';
       this.status.tooltip = this.serverError;
     } else if (loop) {
       this.status.text = `$(sync) ${loop.id} · ${KIND_NAMES[loop.kind]}`;
-      this.status.tooltip = 'Buka panel GoLoopViz';
+      this.status.tooltip = 'Buka panel GopherViz';
     } else {
-      this.status.text = '$(sync) GoLoopViz';
+      this.status.text = '$(sync) GopherViz';
       this.status.tooltip = 'Taruh kursor di dalam loop for, lalu klik untuk membuka panel';
     }
     this.status.show();

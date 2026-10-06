@@ -193,4 +193,4 @@
     INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
   };
-})(window.GLV = window.GLV || {});
+})(window.GV = window.GV || {});

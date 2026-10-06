@@ -107,4 +107,4 @@
       setMus(v) { musOn = v; if (mus) mus.gain.value = v ? MUS_VOL : 0; },
     };
   };
-})(window.GLV = window.GLV || {});
+})(window.GV = window.GV || {});

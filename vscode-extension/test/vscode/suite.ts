@@ -63,8 +63,8 @@ test('CodeLens muncul di atas setiap for', async () => {
 });
 
 export async function run(): Promise<void> {
-  const ext = vscode.extensions.getExtension<TestApi>('goloopviz.goloopviz');
-  assert.ok(ext, 'ekstensi goloopviz tidak ditemukan');
+  const ext = vscode.extensions.getExtension<TestApi>('gopherviz.gopherviz');
+  assert.ok(ext, 'ekstensi gopherviz tidak ditemukan');
   await vscode.workspace.openTextDocument(file).then(d => vscode.window.showTextDocument(d));
   const api = await ext.activate();
   let failed = 0;

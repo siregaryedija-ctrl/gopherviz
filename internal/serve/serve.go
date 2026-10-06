@@ -1,4 +1,4 @@
-// Package serve menjalankan `loopviz serve`: membaca request JSON lines dari
+// Package serve menjalankan `gopherviz serve`: membaca request JSON lines dari
 // editor dan membalas satu response per baris (lihat package protocol).
 package serve
 
@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"io"
 
-	"goloopviz/internal/analyzer"
-	"goloopviz/internal/protocol"
-	"goloopviz/internal/scene"
-	"goloopviz/internal/sim"
-	"goloopviz/internal/trace"
+	"gopherviz/internal/analyzer"
+	"gopherviz/internal/protocol"
+	"gopherviz/internal/scene"
+	"gopherviz/internal/sim"
+	"gopherviz/internal/trace"
 )
 
 // maxLine adalah ukuran maksimum satu request (isi file Go dikirim utuh).
@@ -26,7 +26,7 @@ type Server struct {
 	progs   map[string]*analyzer.Program
 }
 
-// New membuat Server. version adalah versi binary loopviz.
+// New membuat Server. version adalah versi binary gopherviz.
 func New(version string) *Server {
 	return &Server{version: version, progs: map[string]*analyzer.Program{}}
 }
@@ -68,7 +68,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 	switch req.Method {
 	case protocol.MethodHello:
 		return ok(req.ID, protocol.HelloResult{
-			Name: "loopviz", Version: s.version,
+			Name: "gopherviz", Version: s.version,
 			Protocol: protocol.Version, Scene: scene.Version, Trace: trace.Version,
 		})
 

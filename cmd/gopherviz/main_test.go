@@ -87,7 +87,7 @@ func TestCommands(t *testing.T) {
 	}{
 		{[]string{"version"}, 0, "scene v1"},
 		{[]string{"help"}, 0, "Pemakaian"},
-		{[]string{"trace"}, 2, "pemakaian: loopviz trace"},
+		{[]string{"trace"}, 2, "pemakaian: gopherviz trace"},
 		{[]string{"trace", "../../testdata/loops/01_for3.go:2"}, 1, "tidak ada loop di baris 2"},
 		{[]string{"show"}, 2, "Fase 5"},
 		{[]string{"terbang"}, 2, "tidak dikenal"},

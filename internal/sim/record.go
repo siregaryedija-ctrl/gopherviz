@@ -4,7 +4,7 @@ import (
 	"go/ast"
 	"strings"
 
-	"goloopviz/internal/trace"
+	"gopherviz/internal/trace"
 )
 
 // recorder mengumpulkan langkah-langkah selama loop fokus (dan loop di dalamnya) berjalan.

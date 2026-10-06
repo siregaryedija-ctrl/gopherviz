@@ -10,7 +10,7 @@ import (
 	"strings"
 	"unicode"
 
-	"goloopviz/internal/trace"
+	"gopherviz/internal/trace"
 )
 
 func (it *interp) eval(x ast.Expr, e *env) value {

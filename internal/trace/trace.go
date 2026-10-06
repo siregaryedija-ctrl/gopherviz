@@ -5,7 +5,7 @@
 // menghapus field berarti menaikkan Version dan memperbarui CLI + ekstensi sekaligus.
 package trace
 
-import "goloopviz/internal/scene"
+import "gopherviz/internal/scene"
 
 // Version adalah versi skema Trace.
 const Version = 1

@@ -1,9 +1,9 @@
 {
-  "name": "goloopviz",
-  "displayName": "GoLoopViz",
+  "name": "gopherviz",
+  "displayName": "GopherViz",
   "description": "Visual pixel-art dan animasi cara kerja loop di Go, realtime saat kamu mengetik.",
   "version": "0.2.0",
-  "publisher": "goloopviz",
+  "publisher": "gopherviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",
   "engines": {
@@ -27,48 +27,48 @@
   "contributes": {
     "commands": [
       {
-        "command": "goloopviz.showPanel",
+        "command": "gopherviz.showPanel",
         "title": "Tampilkan panel",
-        "category": "GoLoopViz"
+        "category": "GopherViz"
       },
       {
-        "command": "goloopviz.visualizeAtCursor",
+        "command": "gopherviz.visualizeAtCursor",
         "title": "Visualisasikan loop di kursor",
-        "category": "GoLoopViz"
+        "category": "GopherViz"
       },
       {
-        "command": "goloopviz.restartServer",
-        "title": "Mulai ulang server loopviz",
-        "category": "GoLoopViz"
+        "command": "gopherviz.restartServer",
+        "title": "Mulai ulang server gopherviz",
+        "category": "GopherViz"
       }
     ],
     "keybindings": [
       {
-        "command": "goloopviz.visualizeAtCursor",
+        "command": "gopherviz.visualizeAtCursor",
         "key": "ctrl+alt+l",
         "mac": "cmd+alt+l",
         "when": "editorLangId == go"
       }
     ],
     "configuration": {
-      "title": "GoLoopViz",
+      "title": "GopherViz",
       "properties": {
-        "goloopviz.realtime": {
+        "gopherviz.realtime": {
           "type": "boolean",
           "default": true,
           "description": "Perbarui visual di setiap ketikan, tanpa menunggu file disimpan."
         },
-        "goloopviz.autoOpen": {
+        "gopherviz.autoOpen": {
           "type": "boolean",
           "default": true,
           "description": "Buka panel otomatis saat kursor pertama kali masuk ke sebuah loop."
         },
-        "goloopviz.codeLens": {
+        "gopherviz.codeLens": {
           "type": "boolean",
           "default": true,
           "description": "Tampilkan tombol \"Visualisasikan loop\" di atas setiap for."
         },
-        "goloopviz.speed": {
+        "gopherviz.speed": {
           "type": "number",
           "default": 1,
           "enum": [
@@ -79,20 +79,20 @@
           ],
           "description": "Kecepatan animasi."
         },
-        "goloopviz.sound": {
+        "gopherviz.sound": {
           "type": "boolean",
           "default": true,
           "description": "Efek suara 8-bit."
         },
-        "goloopviz.music": {
+        "gopherviz.music": {
           "type": "boolean",
           "default": true,
           "description": "Musik latar chiptune."
         },
-        "goloopviz.binaryPath": {
+        "gopherviz.binaryPath": {
           "type": "string",
           "default": "",
-          "description": "Path ke binary loopviz. Kosongkan untuk memakai binary bawaan ekstensi."
+          "description": "Path ke binary gopherviz. Kosongkan untuk memakai binary bawaan ekstensi."
         }
       }
     }

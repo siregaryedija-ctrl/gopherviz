@@ -9,7 +9,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GoLoopViz Harness</title>
+<title>GopherViz Harness</title>
 <link rel="stylesheet" href="../media/panel.css">
 <style>
   /* Variabel tema VS Code Dark+ tiruan */
@@ -82,14 +82,14 @@
     post({ type: 'state', file: s.file, focusLoop: s.focusLoop, server: { ok: true }, result: { scene: s.scene.scene, diagnostics: [] } });
     post({ type: 'trace', loopId: s.focusLoop, trace: s.trace });
     if (q.get('at') !== null) setTimeout(() => {
-      const app = GLV.app, tp = app.tp;
+      const app = GV.app, tp = app.tp;
       tp.playing = false;
       app.goto(+q.get('at'), false);
       tp.el = tp.r.duration(tp.i) * +(q.get('t') || 0.6);
       for (let k = 0; k < 90; k++) app.tickTrace(16); // kamera mencapai posisinya
     }, 80);
   } else {
-    // Urutan "mengetik" yang meniru hasil `loopviz serve` untuk tiap tahap (mode struktur).
+    // Urutan "mengetik" yang meniru hasil `gopherviz serve` untuk tiap tahap (mode struktur).
     const hdr = { text: 'for i := 0; i < 3; i++', init: 'i := 0', cond: 'i < 3', post: 'i++' };
     const loop = (state, body, extra) => Object.assign({ id: 'L1', kind: 'for3', line: 6, endLine: 6 + body.length + 1, state, header: hdr, vars: ['i'], body }, extra);
     const steps = [
@@ -115,7 +115,7 @@
       send(+fixed);
       const adv = +(q.get('advance') || 0);
       if (adv) setTimeout(() => {
-        const lv = GLV.app.level;
+        const lv = GV.app.level;
         for (let t = 0; t < adv; t += 16) lv.update(16);
         lv.render();
         lv.update = () => {};
