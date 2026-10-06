@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- Harness pengembangan: memuat webview panel di browser biasa dengan VS Code tiruan.
+     Buka langsung file ini di browser. ?step=N menahan pada langkah ketikan ke-N. -->
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoLoopViz Harness</title>
+<link rel="stylesheet" href="../media/panel.css">
+<style>
+  /* Variabel tema VS Code Dark+ tiruan */
+  :root {
+    --vscode-font-family: "Segoe UI", system-ui, sans-serif; --vscode-font-size: 13px;
+    --vscode-editor-font-family: Consolas, monospace; --vscode-editor-font-size: 13px;
+    --vscode-foreground: #cccccc; --vscode-editor-background: #1e1e1e; --vscode-descriptionForeground: #9d9d9d;
+    --vscode-textCodeBlock-background: #2b2b2b; --vscode-list-hoverBackground: #2a2d2e;
+    --vscode-list-activeSelectionBackground: #04395e; --vscode-list-activeSelectionForeground: #ffffff;
+    --vscode-button-background: #0e639c; --vscode-button-foreground: #fff;
+    --vscode-button-secondaryBackground: #3a3d41; --vscode-button-secondaryForeground: #fff;
+    --vscode-badge-background: #4d4d4d; --vscode-badge-foreground: #fff; --vscode-focusBorder: #007fd4;
+    --vscode-editor-findMatchHighlightBackground: rgba(234, 92, 0, .33);
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div class="title"><span id="loopId" class="loop-id"></span><span id="kind" class="kind"></span><span id="stateChip" class="chip" hidden></span></div>
+    <code id="head" class="head"></code>
+    <p id="explain" class="explain"></p>
+  </header>
+  <div class="stage">
+    <canvas id="stage" width="768" height="384"></canvas>
+    <div id="overlay" class="overlay" hidden><p id="overlayText"></p><button id="btnRestart" class="btn" hidden>Mulai ulang server</button></div>
+  </div>
+  <p id="note" class="note"></p>
+  <section id="partsSection"><h2>Isi loop</h2><ol id="parts" class="parts"></ol></section>
+  <section id="navSection"><h2 id="navTitle">Loop di file ini</h2><div id="nav" class="nav"></div></section>
+  <footer class="controls">
+    <div class="speed" role="group"><button data-speed="0.5">0.5×</button><button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button></div>
+    <button id="btnFx" class="btn tog" aria-pressed="true">Efek</button>
+    <button id="btnMus" class="btn tog" aria-pressed="true">Musik</button>
+    <span id="sndHint" class="hint" hidden>Klik panel untuk menyalakan suara.</span>
+  </footer>
+</main>
+<script>
+  window.acquireVsCodeApi = () => ({ postMessage: m => console.log('[ke ekstensi]', JSON.stringify(m)) });
+</script>
+<script src="../media/pixel.js"></script>
+<script src="../media/sound.js"></script>
+<script src="../media/level.js"></script>
+<script src="../media/main.js"></script>
+<script>
+  // Urutan "mengetik" yang meniru hasil `loopviz serve` untuk tiap tahap.
+  const hdr = { text: 'for i := 0; i < 3; i++', init: 'i := 0', cond: 'i < 3', post: 'i++' };
+  const loop = (state, body, extra) => Object.assign({ id: 'L1', kind: 'for3', line: 6, endLine: 6 + body.length + 1, state, header: hdr, vars: ['i'], body }, extra);
+  const steps = [
+    { loops: [loop('incomplete', [], { header: { text: 'for i := 0; i <', init: 'i := 0', cond: 'i <' }, endLine: 6 })],
+      diagnostics: [{ line: 6, col: 17, message: "expected '{', found newline" }] },
+    { loops: [loop('complete', [])] },
+    { loops: [loop('complete', [{ kind: 'stmt', line: 7, text: 'fmt.Println(i)' }])] },
+    { loops: [loop('complete', [
+      { kind: 'stmt', line: 7, text: 'fmt.Println(i)' },
+      { kind: 'if', line: 8, text: 'if i == 2', then: [{ kind: 'break', line: 9, text: 'break' }] },
+      { kind: 'loop', line: 11, ref: 'L2' },
+      { kind: 'continue', line: 14, text: 'continue' },
+    ], { children: ['L2'], endLine: 15 }),
+    { id: 'L2', kind: 'range-slice', line: 11, endLine: 13, state: 'complete', parent: 'L1',
+      header: { text: 'for _, v := range nums', key: '_', value: 'v', define: true, range: 'nums' }, vars: ['v'], body: [] }] },
+  ];
+  const send = k => window.postMessage({
+    type: 'state', file: 'main.go', focusLoop: 'L1', server: { ok: true },
+    result: { scene: { version: 1, loops: steps[k].loops }, diagnostics: steps[k].diagnostics || [] },
+  }, '*');
+  const q = new URLSearchParams(location.search);
+  const fixed = q.get('step');
+  if (fixed !== null) {
+    send(+fixed);
+    // ?advance=ms: majukan animasi secara sinkron lalu bekukan (untuk screenshot headless).
+    const adv = +(q.get('advance') || 0);
+    if (adv) setTimeout(() => {
+      const lv = GLV.app.level;
+      for (let t = 0; t < adv; t += 16) lv.update(16);
+      lv.render();
+      lv.update = () => {};
+    }, 50);
+  }
+  else { let k = 0; send(0); setInterval(() => send(k = (k + 1) % steps.length), 4000); }
+</script>
+</body>
+</html>

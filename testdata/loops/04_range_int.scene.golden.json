@@ -1,0 +1,50 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "04_range_int.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-int",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": {
+          "text": "for i := range 5",
+          "key": "i",
+          "define": true,
+          "range": "5"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "fmt.Println(i)"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-int",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "header": {
+          "text": "for range 3",
+          "range": "3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "fmt.Println(\"halo\")"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

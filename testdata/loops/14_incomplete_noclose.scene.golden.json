@@ -1,0 +1,43 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "14_incomplete_noclose.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 4,
+        "endLine": 5,
+        "state": "incomplete",
+        "header": {
+          "text": "for i := 0; i < 3; i++",
+          "init": "i := 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 5,
+            "text": "println(i)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": [
+    {
+      "line": 5,
+      "col": 14,
+      "message": "expected ';', found 'EOF'"
+    },
+    {
+      "line": 5,
+      "col": 14,
+      "message": "expected '}', found 'EOF'"
+    }
+  ]
+}

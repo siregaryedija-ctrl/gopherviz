@@ -1,0 +1,32 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "09_range_chan.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-chan",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "header": {
+          "text": "for v := range ch",
+          "key": "v",
+          "define": true,
+          "range": "ch"
+        },
+        "vars": [
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "fmt.Println(v)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

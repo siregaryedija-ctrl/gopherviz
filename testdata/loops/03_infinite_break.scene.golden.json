@@ -1,0 +1,43 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "03_infinite_break.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "infinite",
+        "line": 7,
+        "endLine": 13,
+        "state": "complete",
+        "header": {
+          "text": "for"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "x += 3"
+          },
+          {
+            "kind": "if",
+            "line": 9,
+            "text": "if x > 10",
+            "then": [
+              {
+                "kind": "break",
+                "line": 10,
+                "text": "break"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "fmt.Println(x)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

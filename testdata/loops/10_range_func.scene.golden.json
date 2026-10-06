@@ -1,0 +1,62 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "10_range_func.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 7,
+        "endLine": 11,
+        "state": "complete",
+        "header": {
+          "text": "for i := n; i > 0; i--",
+          "init": "i := n",
+          "cond": "i > 0",
+          "post": "i--"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 8,
+            "text": "if !yield(i)",
+            "then": [
+              {
+                "kind": "return",
+                "line": 9,
+                "text": "return"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-func",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": {
+          "text": "for v := range countdown(3)",
+          "key": "v",
+          "define": true,
+          "range": "countdown(3)"
+        },
+        "vars": [
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "fmt.Println(v)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

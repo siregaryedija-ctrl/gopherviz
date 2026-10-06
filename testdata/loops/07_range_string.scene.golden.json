@@ -1,0 +1,34 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "07_range_string.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-string",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": {
+          "text": "for i, r := range \"héllo\"",
+          "key": "i",
+          "value": "r",
+          "define": true,
+          "range": "\"héllo\""
+        },
+        "vars": [
+          "i",
+          "r"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "fmt.Println(i, string(r))"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

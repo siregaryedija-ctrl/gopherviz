@@ -1,0 +1,34 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "08_range_map.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-map",
+        "line": 7,
+        "endLine": 9,
+        "state": "complete",
+        "header": {
+          "text": "for name, age := range ages",
+          "key": "name",
+          "value": "age",
+          "define": true,
+          "range": "ages"
+        },
+        "vars": [
+          "name",
+          "age"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "fmt.Println(name, age)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

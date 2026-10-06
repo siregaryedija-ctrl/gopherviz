@@ -1,0 +1,33 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "16_snippet.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 2,
+        "endLine": 4,
+        "state": "complete",
+        "header": {
+          "text": "for _, v := range nums",
+          "key": "_",
+          "value": "v",
+          "define": true,
+          "range": "nums"
+        },
+        "vars": [
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 3,
+            "text": "println(v)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

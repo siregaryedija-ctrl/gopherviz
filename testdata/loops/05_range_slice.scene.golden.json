@@ -1,0 +1,51 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "05_range_slice.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 8,
+        "endLine": 14,
+        "state": "complete",
+        "header": {
+          "text": "for i, v := range nums",
+          "key": "i",
+          "value": "v",
+          "define": true,
+          "range": "nums"
+        },
+        "vars": [
+          "i",
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 9,
+            "text": "if v%2 == 1",
+            "then": [
+              {
+                "kind": "continue",
+                "line": 10,
+                "text": "continue"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "sum += v"
+          },
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "fmt.Println(i, v)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

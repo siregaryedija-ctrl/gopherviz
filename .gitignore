@@ -1,0 +1,15 @@
+# hasil build
+/bin/
+*.exe
+*.vsix
+node_modules/
+vscode-extension/dist/
+vscode-extension/out/
+vscode-extension/bin/
+vscode-extension/.vscode-test/
+
+# video referensi (milik pihak lain, ukuran besar)
+/referensi/
+
+# hasil fuzzing lokal
+**/testdata/fuzz/

@@ -1,0 +1,875 @@
+<title>GoLoopViz Bubble Sort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Nunito:wght@500;700;800&family=Pixelify+Sans:wght@500;700&display=swap">
+<style>
+/* Layout: panggung pixel di kiri, kartu kode + data di kanan; ditumpuk vertikal di layar sempit (seperti panel VS Code).
+   Satu tampilan pastel yang disengaja, tanpa mode gelap. */
+:root{
+  color-scheme: light;
+  --bg:#fbe8ee; --paper:#fffafc; --ink:#3f2c47; --muted:#86708f; --line:#f0d3de;
+  --accent:#d9467c; --eval:#fff0b3; --mutate:#ffd6e3; --flow:#e6dcff;
+  --ok:#2f8a5c; --okbg:#dcf3e6; --gold:#e7a92f;
+  --f-display:"Pixelify Sans","Courier New",monospace;
+  --f-body:"Nunito","Segoe UI",system-ui,sans-serif;
+  --f-code:"JetBrains Mono",Consolas,"Courier New",monospace;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:20px 32px}
+header{display:grid;gap:2px;margin-bottom:16px}
+.eyebrow{font-family:var(--f-display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.05;text-wrap:balance}
+.sub{margin:0;color:var(--muted);font-weight:700}
+.layout{display:grid;gap:18px;align-items:start}
+@media (min-width:900px){.layout{grid-template-columns:1.2fr 1fr}}
+.stage-col{min-width:0}
+.stage{border:3px solid var(--ink);border-radius:12px;overflow:hidden;box-shadow:0 4px 0 var(--ink);background:#fde3eb}
+.stage canvas{display:block;width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;image-rendering:crisp-edges}
+.narr{min-height:3.2em;margin:14px 2px 10px;font-weight:700;font-size:15.5px;text-wrap:pretty}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-size:15px;color:var(--ink);background:var(--paper);
+  border:2px solid var(--ink);border-radius:8px;box-shadow:0 3px 0 var(--ink);padding:5px 12px;cursor:pointer}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.btn:focus-visible,.speed button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);color:#fff;min-width:96px;justify-content:center}
+.btn svg{width:14px;height:14px;fill:currentColor}
+.speed{display:inline-flex;border:2px solid var(--ink);border-radius:8px;overflow:hidden;margin-left:auto}
+.speed button{font-family:var(--f-display);font-size:14px;border:0;background:var(--paper);color:var(--ink);padding:5px 9px;cursor:pointer}
+.speed button+button{border-left:2px solid var(--ink)}
+.speed button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.scrub{display:flex;align-items:center;gap:10px;margin-top:12px}
+.scrub input{flex:1;min-width:0;accent-color:var(--accent)}
+.scrub span{font-family:var(--f-display);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sound{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.sound .btn{font-size:14px;padding:4px 10px}
+.btn.tog[aria-pressed="false"]{opacity:.55;text-decoration:line-through}
+.hint{font-size:13px;color:var(--accent);font-weight:700}
+.arr{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:2px dashed var(--line)}
+.arr label{font-weight:800;font-size:14px}
+.arr input{font-family:var(--f-code);font-size:14px;width:17ch;max-width:100%;border:2px solid var(--ink);border-radius:8px;padding:5px 8px;background:#fff;color:var(--ink)}
+.arr .btn{font-size:14px;padding:4px 10px}
+#arrErr{color:var(--accent);font-weight:700;font-size:13px;width:100%}
+#arrErr:empty{display:none}
+.card{min-width:0;background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:14px;box-shadow:0 6px 18px rgba(170,90,120,.12)}
+.stats{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.stat{font-size:13px;color:var(--muted);font-weight:700}
+.stat b{font-family:var(--f-display);font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;margin-left:3px}
+.chip{margin-left:auto;font-family:var(--f-code);font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--okbg);color:var(--ok)}
+.chip.on{background:var(--mutate);color:var(--accent)}
+.label{font-family:var(--f-display);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.chart{position:relative;height:96px;border-bottom:2px solid var(--line)}
+.bar{position:absolute;bottom:0;border-radius:4px 4px 0 0;transition:left .35s ease,box-shadow .2s;display:flex;align-items:flex-end;justify-content:center;
+  font-family:var(--f-display);font-size:13px;color:var(--ink);padding-bottom:2px}
+.bar.focus{box-shadow:0 0 0 2px var(--ink)}
+.bar.done::after{content:"";position:absolute;top:-8px;left:50%;width:6px;height:6px;margin-left:-3px;background:var(--gold);box-shadow:0 0 0 1px #fff}
+.code{margin:0;font-family:var(--f-code);font-size:13px;line-height:1.7;tab-size:3;-moz-tab-size:3;overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 0}
+.ln{display:block;white-space:pre;padding-right:12px;transition:background .15s}
+.ln .no{display:inline-block;width:2.2em;text-align:right;color:#cfb4c2;margin-right:12px;user-select:none}
+.ln.eval{background:var(--eval)} .ln.mutate{background:var(--mutate)} .ln.flow{background:var(--flow)}
+.tag{margin-left:10px;font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px;color:#fff}
+.tag.t{background:var(--ok)} .tag.f{background:var(--accent)}
+.kw{color:#b0397a;font-weight:600} .ty{color:#7a55c7} .num{color:#c8701f} .lit{color:var(--ok);font-weight:600} .fn{color:#4f68c9}
+.vars{display:flex;flex-wrap:wrap;gap:6px}
+.var{font-family:var(--f-code);font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:2px 9px}
+.var b{color:var(--accent)}
+.var.changed{animation:flash .7s ease-out}
+@keyframes flash{from{background:var(--eval);border-color:var(--gold)}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);font-weight:700}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+footer{margin-top:22px;font-size:13px;color:var(--muted);max-width:72ch;display:grid;gap:6px}
+footer p{margin:0}
+kbd{font-family:var(--f-code);font-size:11.5px;background:var(--paper);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--ink)}
+code{font-family:var(--f-code);font-size:.92em}
+@media (prefers-reduced-motion:reduce){.bar,.ln{transition:none}.var.changed{animation:none}}
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">GoLoopViz · Prototipe 01</span>
+    <h1>Bubble Sort</h1>
+    <p class="sub">yang paling tinggi naik ke ujung</p>
+  </header>
+
+  <div class="layout">
+    <section class="stage-col">
+      <div class="stage">
+        <canvas id="stage" width="768" height="512" aria-label="Panggung pixel: barisan gopher yang tingginya sama dengan nilai di array a"></canvas>
+      </div>
+      <p class="narr" id="narr" aria-live="polite"></p>
+      <div class="controls">
+        <button class="btn" id="btnBack" title="Langkah sebelumnya (←)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg>Mundur</button>
+        <button class="btn primary" id="btnPlay" title="Putar / jeda (spasi)"></button>
+        <button class="btn" id="btnNext" title="Langkah berikutnya (→)">Maju<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
+        <button class="btn" id="btnRestart" title="Ulang dari awal (R)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z"/></svg>Ulang</button>
+        <div class="speed" role="group" aria-label="Kecepatan">
+          <button data-s="0.5">0.5×</button><button data-s="1" aria-pressed="true">1×</button><button data-s="2">2×</button><button data-s="4">4×</button>
+        </div>
+      </div>
+      <div class="scrub">
+        <input type="range" id="scrub" min="0" max="1" value="0" aria-label="Posisi langkah">
+        <span id="stepLbl"></span>
+      </div>
+      <div class="sound">
+        <button class="btn tog" id="btnFx" aria-pressed="true" title="Efek suara"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 6h3l4-3.5v11L4 10H1zM10 5h1.5v6H10zM12.5 3.5H14v9h-1.5z"/></svg>Efek</button>
+        <button class="btn tog" id="btnMus" aria-pressed="true" title="Musik latar (M)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1.5h8v9.2a2.3 2.3 0 1 1-1.8-2.2V4.3H7.8v7.4A2.3 2.3 0 1 1 6 9.5z"/></svg>Musik</button>
+        <span class="hint" id="sndHint">Klik di mana saja untuk menyalakan suara.</span>
+      </div>
+      <div class="arr">
+        <label for="arrIn">Isi array</label>
+        <input id="arrIn" value="3, 1, 5, 2, 6, 4" spellcheck="false" autocomplete="off">
+        <button class="btn" id="btnApply">Pakai</button>
+        <button class="btn" id="btnShuffle">Acak</button>
+        <button class="btn" id="btnNearly">Hampir urut</button>
+        <span id="arrErr" role="alert"></span>
+      </div>
+    </section>
+
+    <aside class="card" aria-label="Kode dan data">
+      <div class="stats">
+        <span class="stat">Putaran<b id="sPass">–</b></span>
+        <span class="stat">Perbandingan<b id="sCmp">0</b></span>
+        <span class="stat">Pertukaran<b id="sSwp">0</b></span>
+        <span class="chip" id="chip">swapped = –</span>
+      </div>
+      <div>
+        <div class="label">Isi a</div>
+        <div class="chart" id="chart"></div>
+      </div>
+      <div>
+        <div class="label">Kode Go</div>
+        <pre class="code" id="code"></pre>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--eval)"></i>sedang dicek</span>
+        <span><i style="background:var(--mutate)"></i>mengubah data</span>
+        <span><i style="background:var(--flow)"></i>alur loop</span>
+      </div>
+      <div>
+        <div class="label">Variabel</div>
+        <div class="vars" id="vars"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Tombol: <kbd>Spasi</kbd> putar/jeda, <kbd>←</kbd> <kbd>→</kbd> per langkah, <kbd>R</kbd> ulang, <kbd>M</kbd> musik. Angka 1 sampai 9, isi 3 sampai 7 angka.</p>
+    <p>Prototipe Fase 2. Trace dibuat langsung di browser dengan bentuk yang sama seperti kontrak Trace di CLAUDE.md. Di ekstensi nanti, datanya datang dari <code>loopviz serve</code>.</p>
+    <p>Gopher pixel digambar ulang dari desain Go Gopher karya Renée French (CC BY 4.0). Semua suara dan musik dibangkitkan langsung dengan Web Audio, tanpa file audio.</p>
+  </footer>
+</main>
+
+<script>
+(() => {
+'use strict';
+// ---------- dunia pixel ----------
+const W = 192, H = 128, S = 4, GY = 104;
+const cv = document.getElementById('stage'), ctx = cv.getContext('2d');
+const world = document.createElement('canvas'); world.width = W; world.height = H;
+const wx = world.getContext('2d');
+const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+const bx = bg.getContext('2d');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const INK = '#4a3550';
+
+const VCOL = {1:'#f5a3bf',2:'#f7b779',3:'#f1d064',4:'#9fd88f',5:'#8ec4f0',6:'#b8a2ee',7:'#86d6cb',8:'#f39a8a',9:'#c9b3d8'};
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+function bounce(t) {
+  const n = 7.5625, d = 2.75;
+  if (t < 1 / d) return n * t * t;
+  if (t < 2 / d) return n * (t -= 1.5 / d) * t + .75;
+  if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + .9375;
+  return n * (t -= 2.625 / d) * t + .984375;
+}
+function mix(a, b, f) {
+  const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16);
+  const c = [16, 8, 0].map(s => Math.round(((x >> s) & 255) + ((((y >> s) & 255) - ((x >> s) & 255)) * f)));
+  return '#' + c.map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+// ---------- sprite gopher (grid teks, sama seperti rencana assets/sprites) ----------
+const HEAD = [
+  '.oo..oooooo..oo.',
+  'oeeoobbbbbbooeeo',
+  'oeebbbbbbbbbbeeo',
+  '.obwwwwbbwwwwbo.',
+  '.obwwkwbbwkwwbo.',
+  '.obwwkwbbwkwwbo.',
+  '.obbwwbbbbwwbbo.',
+  '.obpbbnnnnbbpbo.',
+  '.obbbnnkknnbbbo.',
+  '.obbbbnnnnbbbbo.',
+  '.obbbbbttbbbbbo.',
+];
+const FACES = {
+  happy: ['.obbbbbbbbbbbbo.', '.obbkkbbbbkkbbo.', '.obkbbkbbkbbkbo.', '.obbbbbbbbbbbbo.'],
+  blink: ['.obbbbbbbbbbbbo.', '.obbbbbbbbbbbbo.', '.obkkkkbbkkkkbo.', '.obbbbbbbbbbbbo.'],
+  shock: ['.obwwwwbbwwwwbo.', '.obwwwwbbwwwwbo.', '.obwwwwbbwwwwbo.', '.obbwwbbbbwwbbo.'],
+  think: ['.obwwkwbbwkwwbo.', '.obwwwwbbwwwwbo.', '.obwwwwbbwwwwbo.', '.obbwwbbbbwwbbo.'],
+};
+const BODY = '.olbbbbbbbbbbbo.';
+const ARMS = 'onlbbbbbbbbbbbno';
+const FEET = ['..olbbbbbbbbbo..', '..onnno..onnno..', '...ooo....ooo...'];
+const spriteCache = new Map();
+function gopher(v, face) {
+  const key = v + face;
+  if (spriteCache.has(key)) return spriteCache.get(key);
+  const head = HEAD.slice();
+  if (FACES[face]) FACES[face].forEach((r, k) => { head[3 + k] = r; });
+  const body = [];
+  for (let r = 0; r < 2 + v * 2; r++) body.push(r === 1 ? ARMS : BODY);
+  const rows = [...head, ...body, ...FEET];
+  const base = VCOL[v];
+  const pal = { o: INK, b: base, l: mix(base, '#ffffff', .45), e: mix(base, INK, .25), n: '#f7ddb9', k: '#2a1f30', w: '#ffffff', t: '#ffffff', p: '#ff8fae' };
+  const c = document.createElement('canvas'); c.width = 16; c.height = rows.length;
+  const x = c.getContext('2d');
+  rows.forEach((row, y) => {
+    for (let i = 0; i < 16; i++) {
+      const ch = row[i];
+      if (!ch || ch === '.') continue;
+      x.fillStyle = pal[ch]; x.fillRect(i, y, 1, 1);
+    }
+  });
+  spriteCache.set(key, c);
+  return c;
+}
+const gTop = v => GY + 2 - (16 + 2 * v);
+
+// ---------- font pixel 3x5 ----------
+const G = {
+  '0':['###','#.#','#.#','#.#','###'], '1':['.#.','##.','.#.','.#.','###'], '2':['###','..#','###','#..','###'],
+  '3':['###','..#','.##','..#','###'], '4':['#.#','#.#','###','..#','..#'], '5':['###','#..','###','..#','###'],
+  '6':['###','#..','###','#.#','###'], '7':['###','..#','..#','.#.','.#.'], '8':['###','#.#','###','#.#','###'],
+  '9':['###','#.#','###','..#','###'], 'A':['.#.','#.#','###','#.#','#.#'], 'B':['##.','#.#','##.','#.#','##.'],
+  'E':['###','#..','##.','#..','###'], 'I':['###','.#.','.#.','.#.','###'], 'J':['..#','..#','..#','#.#','###'],
+  'K':['#.#','#.#','##.','#.#','#.#'], 'L':['#..','#..','#..','#..','###'], 'R':['##.','#.#','##.','#.#','#.#'],
+  'S':['.##','#..','.#.','..#','##.'], 'T':['###','.#.','.#.','.#.','.#.'], 'U':['#.#','#.#','#.#','#.#','###'],
+  '!':['.#.','.#.','.#.','...','.#.'], '?':['##.','..#','.#.','...','.#.'], '<':['..#','.#.','#..','.#.','..#'],
+  '>':['#..','.#.','..#','.#.','#..'], '=':['...','###','...','###','...'], '+':['...','.#.','###','.#.','...'],
+  ' ':['...','...','...','...','...'],
+};
+const textW = s => s.length * 4 - 1;
+function drawText(c, s, x, y, col) {
+  c.fillStyle = col;
+  for (let i = 0; i < s.length; i++) {
+    const g = G[s[i]];
+    if (!g) continue;
+    for (let r = 0; r < 5; r++) for (let q = 0; q < 3; q++) if (g[r][q] === '#') c.fillRect(x + i * 4 + q, y + r, 1, 1);
+  }
+}
+
+// ---------- bentuk dasar ----------
+function disc(c, cx, cy, r, col) {
+  c.fillStyle = col;
+  for (let dy = -r; dy <= r; dy++) {
+    const w = Math.floor(Math.sqrt(Math.max(0, r * r + r * .6 - dy * dy)));
+    c.fillRect(cx - w, cy + dy, w * 2 + 1, 1);
+  }
+}
+function ell(c, cx, cy, rx, ry, col) {
+  c.fillStyle = col;
+  for (let dy = -ry; dy <= ry; dy++) {
+    const w = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / ((ry + .5) * (ry + .5)))));
+    c.fillRect(cx - w, cy + dy, w * 2 + 1, 1);
+  }
+}
+
+function paintBg() {
+  const bands = ['#fcd3e1', '#fddbe6', '#fde3eb', '#feeaf0', '#fff1f4'];
+  const bh = Math.ceil(GY / bands.length);
+  bands.forEach((col, k) => { bx.fillStyle = col; bx.fillRect(0, k * bh, W, bh + 1); });
+  for (let k = 1; k < bands.length; k++) {
+    const y0 = k * bh;
+    bx.fillStyle = bands[k - 1];
+    for (let x = 0; x < W; x += 2) bx.fillRect(x, y0, 1, 1);
+    for (let x = 1; x < W; x += 4) bx.fillRect(x, y0 + 1, 1, 1);
+  }
+  // gelembung kecil di langit
+  [[22, 12, 3], [100, 20, 2], [150, 8, 3], [178, 30, 2], [60, 30, 2]].forEach(([x, y, r]) => {
+    disc(bx, x, y, r, '#f6bfd2'); disc(bx, x, y, r - 1, '#fde6ee');
+  });
+  // awan
+  [[34, 16], [124, 12], [172, 22], [80, 28]].forEach(([x, y]) => {
+    ell(bx, x, y, 8, 3, '#fff8fb'); ell(bx, x - 6, y + 1, 5, 2, '#fff8fb'); ell(bx, x + 7, y + 1, 6, 2, '#fff8fb');
+  });
+  // pohon lolipop
+  [[14, 54, 13, '#fbe7a6'], [56, 42, 15, '#dcefb8'], [104, 58, 12, '#fbe7a6'], [146, 46, 14, '#dcefb8'], [184, 60, 11, '#fbe7a6']]
+    .forEach(([x, cy, r, col]) => {
+      bx.fillStyle = '#efcab9'; bx.fillRect(x - 1, cy + r - 2, 3, GY - (cy + r - 2));
+      disc(bx, x, cy, r, col);
+      disc(bx, x - Math.round(r / 3), cy - Math.round(r / 3), Math.round(r / 3), mix(col, '#ffffff', .5));
+    });
+  // tanah
+  bx.fillStyle = '#fbe3e8'; bx.fillRect(0, GY, W, H - GY);
+  bx.fillStyle = '#f2c4d2'; bx.fillRect(0, GY, W, 1);
+  bx.fillStyle = '#f7d3dd'; bx.fillRect(0, GY + 1, W, 1);
+  for (let x = 3; x < W; x += 8) ell(bx, x, H - 5, 2, 1, '#f5b3c7');
+  [[12, 120], [44, 121], [90, 119], [132, 121], [170, 120]].forEach(([x, y]) => {
+    bx.fillStyle = '#f8c95f'; bx.fillRect(x - 1, y, 3, 1); bx.fillRect(x, y - 1, 1, 3);
+    bx.fillStyle = '#ffffff'; bx.fillRect(x, y, 1, 1);
+  });
+}
+
+// ---------- trace (bentuknya mengikuti kontrak Trace v1 + ops) ----------
+let vals = [3, 1, 5, 2, 6, 4];
+function genTrace(vals) {
+  const n = vals.length, order = vals.map((_, k) => k), cnt = { pass: 0, compares: 0, swaps: 0 }, settled = new Set(), vars = {};
+  const steps = [];
+  const push = s => steps.push(Object.assign({ ops: [], focus: null }, s,
+    { vars: { ...vars }, order: [...order], counters: { ...cnt }, settled: [...settled] }));
+  push({ phase: 'enter', line: 1, kind: 'mutate', dur: 1700,
+    note: `a := []int{${vals.join(', ')}}. ${n} gopher masuk panggung, tinggi badannya sama dengan nilainya.` });
+  vars.n = String(n);
+  push({ phase: 'init', line: 2, kind: 'mutate', dur: 900, note: `n := len(a) → ${n}.` });
+  let i = 0; vars.i = '0';
+  push({ phase: 'init', line: 3, kind: 'mutate', dur: 800, note: 'Loop luar dimulai: i := 0.' });
+  for (;;) {
+    const c = i < n - 1;
+    push({ phase: 'cond', line: 3, kind: 'eval', result: c, dur: 800, note: `Cek kondisi loop luar: i < n-1 → ${i} < ${n - 1} → ${c}.` });
+    if (!c) { for (let k = 0; k < n; k++) settled.add(k); break; }
+    cnt.pass = i + 1;
+    let sw = false; vars.swapped = 'false';
+    push({ phase: 'body', line: 4, kind: 'mutate', dur: 800, note: `Putaran ${i + 1} dimulai. swapped := false, belum ada pertukaran.` });
+    let j = 0; vars.j = '0';
+    push({ phase: 'init', line: 5, kind: 'mutate', dur: 600, focus: [0, 1], note: 'Loop dalam dimulai: j := 0.' });
+    const lim = n - 1 - i;
+    for (;;) {
+      const cj = j < lim;
+      push({ phase: 'cond', line: 5, kind: 'eval', result: cj, dur: 500, focus: cj ? [j, j + 1] : null,
+        note: `Cek j < n-1-i → ${j} < ${lim} → ${cj}.` });
+      if (!cj) break;
+      const A = vals[order[j]], B = vals[order[j + 1]], gt = A > B;
+      cnt.compares++;
+      push({ phase: 'body', line: 6, kind: 'eval', result: gt, dur: 1400, focus: [j, j + 1],
+        ops: [{ op: 'compare', a: j, b: j + 1, result: gt ? '>' : (A === B ? '=' : '<') }],
+        note: gt ? `Bandingkan a[${j}] dan a[${j + 1}]: ${A} > ${B} → true. Yang kiri lebih tinggi, jadi harus ditukar.`
+                 : `Bandingkan a[${j}] dan a[${j + 1}]: ${A} > ${B} → false. Urutannya sudah benar, tidak ditukar.` });
+      if (gt) {
+        const prev = [...order];
+        [order[j], order[j + 1]] = [order[j + 1], order[j]];
+        cnt.swaps++;
+        push({ phase: 'body', line: 7, kind: 'mutate', dur: 1200, focus: [j, j + 1], prevOrder: prev,
+          ops: [{ op: 'swap', a: j, b: j + 1 }], note: `Tukar! ${A} pindah ke a[${j + 1}], ${B} pindah ke a[${j}].` });
+        sw = true; vars.swapped = 'true';
+        push({ phase: 'body', line: 8, kind: 'mutate', dur: 550, focus: [j, j + 1], note: 'swapped = true. Putaran ini ada pertukaran.' });
+      }
+      j++; vars.j = String(j);
+      push({ phase: 'post', line: 5, kind: 'mutate', dur: 400, focus: j < lim ? [j, j + 1] : null, note: `j++ → ${j}.` });
+    }
+    settled.add(lim);
+    push({ phase: 'exit', line: 5, kind: 'flow', reason: 'cond-false', dur: 1300, ops: [{ op: 'settle', a: lim }],
+      note: `Loop dalam selesai. Gopher ${vals[order[lim]]} sudah di tempat akhirnya, a[${lim}].` });
+    push({ phase: 'cond', line: 11, kind: 'eval', result: !sw, dur: 1000,
+      note: sw ? 'Cek !swapped → false. Masih ada pertukaran, lanjut ke putaran berikutnya.'
+               : 'Cek !swapped → true. Tidak ada pertukaran sama sekali, berarti data sudah urut.' });
+    if (!sw) {
+      for (let k = 0; k < n; k++) settled.add(k);
+      push({ phase: 'break', line: 12, kind: 'flow', reason: 'break', dur: 1900, stamp: 'BREAK!',
+        note: 'break: keluar lebih awal dari loop luar. Putaran sisanya tidak perlu dijalankan.' });
+      break;
+    }
+    i++; vars.i = String(i);
+    push({ phase: 'post', line: 3, kind: 'mutate', dur: 600, note: `i++ → ${i}.` });
+  }
+  push({ phase: 'exit', line: 14, kind: 'flow', reason: 'done', dur: 3200, stamp: 'SELESAI!', done: true,
+    note: `Selesai! a = []int{${order.map(id => vals[id]).join(', ')}}. Yang paling tinggi sudah naik ke ujung.` });
+  return steps;
+}
+
+// ---------- kode Go + highlight ----------
+const codeSrc = () => [
+  `a := []int{${vals.join(', ')}}`,
+  'n := len(a)',
+  'for i := 0; i < n-1; i++ {',
+  '\tswapped := false',
+  '\tfor j := 0; j < n-1-i; j++ {',
+  '\t\tif a[j] > a[j+1] {',
+  '\t\t\ta[j], a[j+1] = a[j+1], a[j]',
+  '\t\t\tswapped = true',
+  '\t\t}',
+  '\t}',
+  '\tif !swapped {',
+  '\t\tbreak',
+  '\t}',
+  '}',
+];
+const KW = new Set(['for', 'if', 'break', 'func', 'range', 'return']);
+const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+function hl(line) {
+  return (line.match(/\s+|[A-Za-z_]\w*|\d+|./g) || []).map(t => {
+    if (KW.has(t)) return `<span class="kw">${t}</span>`;
+    if (t === 'int') return `<span class="ty">${t}</span>`;
+    if (t === 'true' || t === 'false') return `<span class="lit">${t}</span>`;
+    if (t === 'len') return `<span class="fn">${t}</span>`;
+    if (/^\d+$/.test(t)) return `<span class="num">${t}</span>`;
+    return esc(t);
+  }).join('');
+}
+
+// ---------- state pemutar ----------
+let steps = [], idx = 0, el = 0, playing = false, once = false, speed = 1, dustAt = -1, userTouched = false;
+const cam = { x: W / 2, y: H / 2, z: 1 };
+let parts = [];
+const $ = id => document.getElementById(id);
+const codeEl = $('code'), narr = $('narr'), chart = $('chart'), scrub = $('scrub'), varsEl = $('vars');
+let codeLines = [], bars = [], chartKey = '';
+
+const slotX = k => (k + .5) * W / vals.length;
+
+function layout(st, t, time) {
+  const n = vals.length, out = [];
+  const cmp = st.ops.find(o => o.op === 'compare'), sw = st.ops.find(o => o.op === 'swap');
+  for (let id = 0; id < n; id++) {
+    const slot = st.order.indexOf(id);
+    let x = slotX(slot), y = 0, z = 0;
+    let face = ((time + id * 1370) % 3400) < 130 ? 'blink' : 'idle';
+    if (st.phase === 'enter') {
+      const tk = clamp((t - id * .07) / .45, 0, 1);
+      y = -Math.round(90 * (1 - bounce(tk)));
+      if (tk < 1) face = 'shock';
+    } else if (sw && st.prevOrder) {
+      const ps = st.prevOrder.indexOf(id);
+      if (ps !== slot) {
+        const e = ease(t);
+        x = lerp(slotX(ps), slotX(slot), e);
+        y = -Math.sin(Math.PI * e) * (slot > ps ? 18 : 7);
+        face = slot > ps ? 'happy' : 'shock';
+        z = slot > ps ? 2 : 1;
+      }
+    } else if (cmp && (slot === cmp.a || slot === cmp.b)) {
+      face = t < .45 ? 'think' : (cmp.result === '>' ? (slot === cmp.a ? 'happy' : 'shock') : 'idle');
+    }
+    if (st.phase === 'exit' && st.ops.some(o => o.op === 'settle' && o.a === slot)) face = 'happy';
+    if (st.phase === 'break') face = 'happy';
+    if (st.done) { face = 'happy'; y = -Math.round(Math.abs(Math.sin(time / 170 + id * .8)) * 5); }
+    out.push({ x, y, z, face, slot, top: 0 });
+  }
+  return out;
+}
+
+function bubble(x, y, ch, col) {
+  const w = 11, h = 11, L = Math.round(x - w / 2), T = Math.round(y), cx = Math.round(x);
+  wx.fillStyle = INK; wx.fillRect(L + 1, T, w - 2, h); wx.fillRect(L, T + 1, w, h - 2);
+  wx.fillStyle = '#ffffff'; wx.fillRect(L + 1, T + 1, w - 2, h - 2);
+  wx.fillStyle = INK; wx.fillRect(cx - 1, T + h, 1, 1); wx.fillRect(cx + 1, T + h, 1, 1); wx.fillRect(cx, T + h + 1, 1, 1);
+  wx.fillStyle = '#ffffff'; wx.fillRect(cx, T + h - 1, 1, 2);
+  drawText(wx, ch, cx - 1, T + 3, col);
+}
+function dashed(x0, x1, y, col) { wx.fillStyle = col; for (let x = x0; x <= x1; x += 3) wx.fillRect(x, y, 2, 1); }
+
+const stampCache = {};
+function stampImg(text) {
+  if (stampCache[text]) return stampCache[text];
+  const w = textW(text) + 8, h = 13, c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const x = c.getContext('2d');
+  x.fillStyle = '#d9467c'; x.fillRect(0, 0, w, h);
+  x.fillStyle = '#fff8fb'; x.fillRect(1, 1, w - 2, h - 2);
+  x.fillStyle = '#d9467c'; x.fillRect(2, 2, w - 4, 1); x.fillRect(2, h - 3, w - 4, 1);
+  drawText(x, text, 4, 4, '#d9467c');
+  return (stampCache[text] = c);
+}
+
+function burst(x, y, n, cols, o) {
+  for (let k = 0; k < n; k++) parts.push({
+    x: x + (Math.random() - .5) * (o.spread || 0), y,
+    vx: (Math.random() - .5) * o.sp, vy: -Math.random() * o.up + (o.down || 0),
+    g: o.g, life: o.life * (.6 + Math.random() * .6), col: cols[k % cols.length], s: o.s || 1, sway: o.sway || 0, ph: Math.random() * 6,
+  });
+}
+function stepParticles(dt) {
+  const f = dt / 1000;
+  parts = parts.filter(p => {
+    p.vy += p.g * f; p.x += (p.vx + Math.sin(p.ph += f * 4) * p.sway) * f; p.y += p.vy * f; p.life -= dt;
+    return p.life > 0 && p.y < H + 4;
+  });
+}
+
+function renderWorld(time) {
+  const st = steps[idx], t = clamp(el / st.dur, 0, 1), n = vals.length, settled = new Set(st.settled);
+  wx.drawImage(bg, 0, 0);
+  for (let k = 0; k < n; k++) drawText(wx, String(k), Math.round(slotX(k) - 1), GY + 6, '#d9a0b6');
+  if (st.focus) {
+    const [a, b] = st.focus;
+    drawText(wx, 'J', Math.round(slotX(a) - 1), GY + 13, '#c2457a');
+    drawText(wx, 'J+1', Math.round(slotX(b) - 5), GY + 13, '#c2457a');
+  }
+  const L = layout(st, t, time);
+  L.forEach((g, id) => ell(wx, Math.round(g.x), GY + 1, 9, 2, settled.has(g.slot) ? '#f3c75a' : mix(VCOL[vals[id]], '#ffffff', .3)));
+  const drawOrder = L.map((_, id) => id).sort((a, b) => L[a].z - L[b].z);
+  for (const id of drawOrder) {
+    const g = L[id], v = vals[id], spr = gopher(v, g.face);
+    const dx = Math.round(g.x - 8), dy = Math.round(GY + 2 - spr.height + g.y);
+    wx.drawImage(spr, dx, dy);
+    g.top = dy;
+    const bxc = Math.round(g.x), by = dy - 7;
+    disc(wx, bxc, by, 4, '#ffffff');
+    disc(wx, bxc, by, 3, settled.has(g.slot) ? '#e0a22a' : mix(VCOL[v], INK, .4));
+    drawText(wx, String(v), bxc - 1, by - 2, '#ffffff');
+  }
+  const cmp = st.ops.find(o => o.op === 'compare');
+  if (cmp) {
+    const ga = L[st.order[cmp.a]], gb = L[st.order[cmp.b]];
+    if (t > .15) {
+      const x0 = Math.round(ga.x - 11), x1 = Math.round(gb.x + 11);
+      dashed(x0, x1, ga.top, '#c2457a');
+      if (gb.top !== ga.top) {
+        dashed(x0, x1, gb.top, '#c2457a');
+        wx.fillStyle = '#c2457a';
+        const y0 = Math.min(ga.top, gb.top), y1 = Math.max(ga.top, gb.top);
+        wx.fillRect(x1 + 2, y0, 1, y1 - y0 + 1); wx.fillRect(x1 + 1, y0, 3, 1); wx.fillRect(x1 + 1, y1, 3, 1);
+      }
+    }
+    const ch = t < .45 ? '?' : cmp.result;
+    const col = t < .45 ? INK : (cmp.result === '>' ? '#d9467c' : '#2f8a5c');
+    const bob = t < .45 && Math.floor(time / 200) % 2 ? -1 : 0;
+    bubble((ga.x + gb.x) / 2, Math.min(ga.top, gb.top) - 26 + bob, ch, col);
+  }
+  if (st.prevOrder && t > .55) {
+    const sw = st.ops.find(o => o.op === 'swap');
+    const ga = L[st.order[sw.a]], gb = L[st.order[sw.b]];
+    const s = 'TUKAR!', y = Math.min(ga.top, gb.top) - 22 - Math.round((t - .55) * 16);
+    drawText(wx, s, Math.round((ga.x + gb.x) / 2 - textW(s) / 2), y, '#d9467c');
+  }
+  if (st.stamp) {
+    const img = stampImg(st.stamp);
+    const k = reduce ? 2 : (t < .06 ? 4 : t < .12 ? 3 : 2);
+    wx.drawImage(img, Math.round(W / 2 - img.width * k / 2), Math.round(34 - img.height * k / 2), img.width * k, img.height * k);
+  }
+  for (const p of parts) { wx.fillStyle = p.col; wx.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s); }
+}
+
+function camTarget(st) {
+  if (reduce || !st.focus) return { x: W / 2, y: H / 2, z: 1 };
+  const [a, b] = st.focus;
+  return { x: (slotX(a) + slotX(b)) / 2, y: GY - 26, z: 1.75 };
+}
+function present() {
+  const z = cam.z, s = S * z, hw = W / (2 * z), hh = H / (2 * z);
+  const cx = clamp(cam.x, hw, W - hw), cy = clamp(cam.y, hh, H - hh);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(world, Math.round(cv.width / 2 - cx * s), Math.round(cv.height / 2 - cy * s), Math.round(W * s), Math.round(H * s));
+}
+
+// ---------- kartu info ----------
+function buildCard() {
+  codeEl.innerHTML = codeSrc().map((l, k) => `<span class="ln"><span class="no">${k + 1}</span>${hl(l)}</span>`).join('');
+  codeLines = [...codeEl.querySelectorAll('.ln')];
+  const max = Math.max(...vals), n = vals.length;
+  chart.innerHTML = '';
+  bars = vals.map(v => {
+    const d = document.createElement('div');
+    d.className = 'bar';
+    d.style.height = (22 + 78 * v / max) + '%';
+    d.style.width = `calc(100% / ${n} - 6px)`;
+    d.style.background = VCOL[v];
+    d.textContent = v;
+    chart.appendChild(d);
+    return d;
+  });
+  chartKey = '';
+}
+function updateChart(st, t) {
+  const ord = st.prevOrder && t < .5 ? st.prevOrder : st.order;
+  const key = ord.join() + '|' + (st.focus || '') + '|' + st.settled.join();
+  if (key === chartKey) return;
+  chartKey = key;
+  const n = vals.length, settled = new Set(st.settled);
+  bars.forEach((d, id) => {
+    const slot = ord.indexOf(id);
+    d.style.left = `calc(${slot} * 100% / ${n} + 3px)`;
+    d.classList.toggle('focus', !!st.focus && st.focus.includes(slot));
+    d.classList.toggle('done', settled.has(slot));
+  });
+}
+function updateUI() {
+  const st = steps[idx], prev = steps[idx - 1];
+  codeLines.forEach((ln, k) => {
+    ln.className = 'ln' + (k === st.line - 1 ? ' ' + st.kind : '');
+    const tg = ln.querySelector('.tag'); if (tg) tg.remove();
+  });
+  if (st.result !== undefined) {
+    const tag = document.createElement('span');
+    tag.className = 'tag ' + (st.result ? 't' : 'f');
+    tag.textContent = '→ ' + st.result;
+    codeLines[st.line - 1].appendChild(tag);
+  }
+  narr.textContent = st.note;
+  $('sPass').textContent = st.counters.pass || '–';
+  $('sCmp').textContent = st.counters.compares;
+  $('sSwp').textContent = st.counters.swaps;
+  const swv = st.vars.swapped;
+  const chip = $('chip');
+  chip.textContent = 'swapped = ' + (swv ?? '–');
+  chip.classList.toggle('on', swv === 'true');
+  varsEl.innerHTML = ['n', 'i', 'j', 'swapped'].map(k => {
+    const v = st.vars[k] ?? '–';
+    const changed = prev && prev.vars[k] !== st.vars[k];
+    return `<span class="var${changed ? ' changed' : ''}"><b>${k}</b> = ${v}</span>`;
+  }).join('');
+  scrub.value = idx;
+  $('stepLbl').textContent = `Langkah ${idx + 1} / ${steps.length}`;
+}
+
+// ---------- suara 8-bit (dibangkitkan Web Audio, tanpa file audio) ----------
+const pref = (k, d) => { try { const v = localStorage.getItem('glv-' + k); return v === null ? d : v === '1'; } catch (e) { return d; } };
+const savePref = (k, v) => { try { localStorage.setItem('glv-' + k, v ? '1' : '0'); } catch (e) { /* abaikan */ } };
+const Snd = (() => {
+  const FX_VOL = .3, MUS_VOL = .09, STEP = .24;
+  let ac = null, master, fx, mus, noiseBuf, timer = 0, nextT = 0, stepN = 0;
+  let fxOn = pref('fx', true), musOn = pref('mus', true);
+  const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+  const ready = () => !!ac && ac.state === 'running';
+  const hint = $('sndHint');
+  const onState = () => { hint.hidden = ready() || (!fxOn && !musOn); };
+
+  function unlock() {
+    if (!ac) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      ac = new AC();
+      ac.onstatechange = onState;
+      master = ac.createGain(); master.gain.value = .6; master.connect(ac.destination);
+      fx = ac.createGain(); fx.gain.value = fxOn ? FX_VOL : 0; fx.connect(master);
+      mus = ac.createGain(); mus.gain.value = musOn ? MUS_VOL : 0; mus.connect(master);
+      noiseBuf = ac.createBuffer(1, Math.floor(ac.sampleRate * .5), ac.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (ac.state === 'suspended') ac.resume().then(onState, () => {});
+    onState();
+  }
+  function tone(f, o = {}) {
+    if (!ready()) return;
+    const t0 = o.when ?? ac.currentTime + (o.at || 0), dur = o.dur || .08;
+    const osc = ac.createOscillator(), g = ac.createGain();
+    osc.type = o.type || 'square';
+    osc.frequency.setValueAtTime(f, t0);
+    if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t0 + dur);
+    g.gain.setValueAtTime(.0001, t0);
+    g.gain.exponentialRampToValueAtTime(o.vol || .5, t0 + .006);
+    g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    osc.connect(g); g.connect(o.dest || fx);
+    osc.start(t0); osc.stop(t0 + dur + .03);
+  }
+  function noise(o = {}) {
+    if (!ready()) return;
+    const t0 = o.when ?? ac.currentTime + (o.at || 0), dur = o.dur || .06;
+    const src = ac.createBufferSource(), flt = ac.createBiquadFilter(), g = ac.createGain();
+    src.buffer = noiseBuf; flt.type = o.ft || 'lowpass'; flt.frequency.value = o.cut || 1200;
+    g.gain.setValueAtTime(o.vol || .4, t0);
+    g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    src.connect(flt); flt.connect(g); g.connect(o.dest || fx);
+    src.start(t0); src.stop(t0 + dur + .02);
+  }
+
+  // nada per nilai: tangga nada pentatonik, gopher tinggi = nada tinggi
+  const PENT = [0, 60, 62, 64, 67, 69, 72, 74, 76, 79];
+  const S = {
+    land: v => { tone(hz(PENT[v] || 60), { dur: .07, vol: .35 }); noise({ dur: .04, cut: 900, vol: .2 }); },
+    tick: () => tone(1320, { dur: .03, vol: .18 }),
+    tickLow: () => tone(880, { dur: .03, vol: .14 }),
+    blip: () => tone(1046, { dur: .05, vol: .22 }),
+    think: () => { tone(523, { to: 659, dur: .1, type: 'triangle', vol: .45 }); tone(659, { to: 587, dur: .12, type: 'triangle', vol: .4, at: .11 }); },
+    yes: () => { tone(784, { dur: .06, vol: .3 }); tone(1175, { dur: .1, vol: .3, at: .07 }); },
+    no: () => tone(330, { to: 294, dur: .14, type: 'triangle', vol: .45 }),
+    jump: () => { tone(330, { to: 990, dur: .18, vol: .28 }); tone(262, { to: 660, dur: .16, vol: .18, at: .05 }); },
+    thud: () => noise({ dur: .07, cut: 700, vol: .45 }),
+    sparkle: () => [1568, 2093, 2637, 3136].forEach((f, k) => tone(f, { dur: .09, type: 'triangle', vol: .25, at: k * .055 })),
+    stamp: () => { noise({ dur: .14, cut: 420, vol: .7 }); tone(147, { to: 98, dur: .16, vol: .35 }); },
+    jingle: () => {
+      [72, 76, 79, 84, 79, 84, 88].forEach((m, k) => tone(hz(m), { dur: k === 6 ? .5 : .11, vol: .26, at: .2 + k * .12 }));
+      [48, 55, 60].forEach((m, k) => tone(hz(m), { dur: .3, type: 'triangle', vol: .45, at: .2 + k * .28 }));
+    },
+  };
+
+  // musik latar: 32 ketukan seperdelapan, bass segitiga + melodi kotak pelan + hi-hat noise
+  const BASS = [48, 48, 55, 55, 57, 57, 53, 55];
+  const MEL = [76, 0, 79, 76, 72, 0, 74, 0, 76, 0, 79, 81, 79, 0, 76, 74, 72, 0, 74, 76, 79, 0, 76, 0, 74, 0, 72, 74, 67, 0, 72, 0];
+  function schedule() {
+    if (!ready()) return;
+    if (nextT < ac.currentTime - .1) nextT = ac.currentTime + .05;
+    while (nextT < ac.currentTime + .25) {
+      const s = stepN % 32;
+      if (s % 2 === 0) tone(hz(BASS[Math.floor(s / 4)]), { when: nextT, dur: STEP * 1.6, type: 'triangle', vol: .5, dest: mus });
+      if (MEL[s]) tone(hz(MEL[s]), { when: nextT, dur: STEP * .8, vol: .16, dest: mus });
+      if (s % 2 === 1) noise({ when: nextT, dur: .03, ft: 'highpass', cut: 6000, vol: .12, dest: mus });
+      nextT += STEP; stepN++;
+    }
+  }
+  return {
+    unlock,
+    play(name, arg) { if (fxOn && ready() && S[name]) S[name](arg); },
+    music(on) {
+      if (on && !timer) { stepN = 0; nextT = 0; timer = setInterval(schedule, 60); }
+      else if (!on && timer) { clearInterval(timer); timer = 0; }
+    },
+    get fxOn() { return fxOn; },
+    get musOn() { return musOn; },
+    setFx(v) { fxOn = v; savePref('fx', v); if (fx) fx.gain.value = v ? FX_VOL : 0; onState(); },
+    setMus(v) { musOn = v; savePref('mus', v); if (mus) mus.gain.value = v ? MUS_VOL : 0; onState(); },
+  };
+})();
+['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, () => Snd.unlock()));
+function syncSoundBtns() {
+  $('btnFx').setAttribute('aria-pressed', String(Snd.fxOn));
+  $('btnMus').setAttribute('aria-pressed', String(Snd.musOn));
+}
+$('btnFx').addEventListener('click', () => { Snd.setFx(!Snd.fxOn); syncSoundBtns(); });
+$('btnMus').addEventListener('click', () => { Snd.setMus(!Snd.musOn); syncSoundBtns(); });
+syncSoundBtns();
+
+function soundFor(st) {
+  if (st.done) { Snd.play('stamp'); Snd.play('jingle'); }
+  else if (st.phase === 'break') Snd.play('stamp');
+  else if (st.phase === 'cond') Snd.play(st.result ? 'tick' : 'tickLow');
+  else if (st.ops.some(o => o.op === 'compare')) Snd.play('think');
+  else if (st.prevOrder) Snd.play('jump');
+  else if (st.ops.some(o => o.op === 'settle')) Snd.play('sparkle');
+  else if (st.phase === 'post') Snd.play('tickLow');
+  else if (st.phase !== 'enter') Snd.play('blip');
+}
+
+// ---------- kontrol ----------
+let fired = new Set();
+function onEnter() {
+  const st = steps[idx];
+  soundFor(st);
+  const settle = st.ops.find(o => o.op === 'settle');
+  if (settle) {
+    const id = st.order[settle.a];
+    burst(slotX(settle.a), gTop(vals[id]) - 4, 14, ['#f3c75a', '#ffffff', '#ffd98a'], { sp: 70, up: 55, g: 60, life: 800, spread: 8 });
+  }
+  if (st.phase === 'break') burst(W / 2, 40, 16, ['#d9467c', '#ffffff'], { sp: 110, up: 40, g: 40, life: 600, spread: 40 });
+  if (st.done) {
+    const cols = ['#f5a3bf', '#f7b779', '#f1d064', '#9fd88f', '#8ec4f0', '#b8a2ee', '#ffffff'];
+    for (let k = 0; k < (reduce ? 20 : 110); k++) {
+      parts.push({ x: Math.random() * W, y: -Math.random() * 40, vx: (Math.random() - .5) * 20, vy: 18 + Math.random() * 25, g: 8,
+        life: 4200, col: cols[k % cols.length], s: Math.random() < .3 ? 2 : 1, sway: 14, ph: Math.random() * 6 });
+    }
+  }
+}
+function go(i, atEnd = false) {
+  idx = clamp(i, 0, steps.length - 1);
+  el = atEnd ? steps[idx].dur : 0;
+  fired = new Set();
+  if (atEnd) { dustAt = idx; fired.add('*'); } else onEnter();
+  updateUI();
+}
+function syncPlay() {
+  Snd.music(playing);
+  $('btnPlay').innerHTML = playing
+    ? '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg>Jeda'
+    : '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1v14l11-7z"/></svg>Putar';
+}
+function togglePlay() {
+  userTouched = true;
+  if (!playing && idx === steps.length - 1) { go(0); playing = true; }
+  else playing = !playing;
+  syncPlay();
+}
+function next() { userTouched = true; playing = false; once = false; syncPlay(); if (idx < steps.length - 1) { go(idx + 1); once = true; } }
+function back() { userTouched = true; playing = false; once = false; syncPlay(); parts = []; go(idx - 1, true); }
+function restart() { userTouched = true; parts = []; go(0); playing = true; syncPlay(); }
+
+function rebuild(autoplay) {
+  steps = genTrace(vals);
+  scrub.max = steps.length - 1;
+  parts = []; spriteCache.clear();
+  buildCard();
+  if (autoplay) { go(0); playing = true; } else { go(0, true); playing = false; }
+  syncPlay();
+}
+
+$('btnPlay').addEventListener('click', togglePlay);
+$('btnNext').addEventListener('click', next);
+$('btnBack').addEventListener('click', back);
+$('btnRestart').addEventListener('click', restart);
+scrub.addEventListener('input', () => { userTouched = true; playing = false; once = false; syncPlay(); parts = []; go(+scrub.value, true); });
+document.querySelectorAll('.speed button').forEach(b => b.addEventListener('click', () => {
+  speed = +b.dataset.s;
+  document.querySelectorAll('.speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input')) return;
+  if (e.target.closest('button') && (e.key === ' ' || e.key === 'Enter')) return;
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+  else if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') back();
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'm' || e.key === 'M') $('btnMus').click();
+});
+
+function parseVals(s) {
+  const p = s.split(/[\s,]+/).filter(Boolean);
+  if (p.length < 3 || p.length > 7) return 'Isi 3 sampai 7 angka, pisahkan dengan koma.';
+  const nums = p.map(Number);
+  if (nums.some(x => !Number.isInteger(x) || x < 1 || x > 9)) return 'Pakai angka bulat dari 1 sampai 9.';
+  return nums;
+}
+function applyVals(v) { vals = v; $('arrIn').value = v.join(', '); $('arrErr').textContent = ''; userTouched = true; rebuild(true); }
+$('btnApply').addEventListener('click', () => {
+  const r = parseVals($('arrIn').value);
+  if (typeof r === 'string') { $('arrErr').textContent = r; return; }
+  applyVals(r);
+});
+$('arrIn').addEventListener('keydown', e => { if (e.key === 'Enter') $('btnApply').click(); });
+$('btnShuffle').addEventListener('click', () => {
+  for (;;) {
+    const pool = [1, 2, 3, 4, 5, 6, 7, 8, 9], out = [];
+    while (out.length < 6) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    if (out.some((v, i) => i && out[i - 1] > v)) return applyVals(out);
+  }
+});
+$('btnNearly').addEventListener('click', () => applyVals([1, 2, 4, 3, 5, 6]));
+
+// ---------- loop animasi ----------
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(64, now - last); last = now;
+  const st = steps[idx];
+  if (playing || once) {
+    el += dt * speed;
+    if (el >= st.dur) {
+      if (playing && idx < steps.length - 1) go(idx + 1);
+      else {
+        el = st.dur; once = false;
+        if (playing && idx === steps.length - 1) { playing = false; syncPlay(); }
+      }
+    }
+  }
+  const cur = steps[idx], t = clamp(el / cur.dur, 0, 1);
+  const tg = camTarget(cur), k = 1 - Math.exp(-dt / 200);
+  cam.x += (tg.x - cam.x) * k; cam.y += (tg.y - cam.y) * k; cam.z += (tg.z - cam.z) * k;
+  if (cur.prevOrder && t >= .92 && dustAt !== idx) {
+    dustAt = idx;
+    const sw = cur.ops.find(o => o.op === 'swap');
+    [sw.a, sw.b].forEach(s => burst(slotX(s), GY, 6, ['#f2c4d2', '#ffffff'], { sp: 60, up: 25, g: 90, life: 380, spread: 12 }));
+    Snd.play('thud');
+  }
+  if (!fired.has('*')) {
+    if (cur.phase === 'enter') {
+      // bunyi saat tiap gopher pertama kali menyentuh tanah (pantulan pertama easing bounce)
+      vals.forEach((v, id) => {
+        if (t >= id * .07 + .45 / 2.75 && !fired.has('l' + id)) { fired.add('l' + id); Snd.play('land', v); }
+      });
+    }
+    const cmp = cur.ops.find(o => o.op === 'compare');
+    if (cmp && t >= .45 && !fired.has('r')) { fired.add('r'); Snd.play(cmp.result === '>' ? 'yes' : 'no'); }
+  }
+  stepParticles(dt);
+  renderWorld(now);
+  present();
+  updateChart(cur, t);
+  requestAnimationFrame(frame);
+}
+
+paintBg();
+rebuild(false);
+requestAnimationFrame(frame);
+// Frame pertama menampilkan barisan gopher; setelah jeda singkat, demo mulai jalan sendiri.
+if (!reduce) setTimeout(() => { if (!userTouched) { playing = true; syncPlay(); } }, 1200);
+})();
+</script>

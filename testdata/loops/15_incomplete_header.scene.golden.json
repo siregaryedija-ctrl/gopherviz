@@ -1,0 +1,51 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "15_incomplete_header.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 5,
+        "endLine": 5,
+        "state": "incomplete",
+        "header": {
+          "text": "for i := 0; i <",
+          "init": "i := 0",
+          "cond": "i <"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": []
+      }
+    ]
+  },
+  "diagnostics": [
+    {
+      "line": 5,
+      "col": 14,
+      "message": "expected boolean or range expression, found simple statement (missing parentheses around composite literal?)"
+    },
+    {
+      "line": 7,
+      "col": 1,
+      "message": "expected operand, found '}'"
+    },
+    {
+      "line": 7,
+      "col": 3,
+      "message": "expected ';', found 'EOF'"
+    },
+    {
+      "line": 7,
+      "col": 3,
+      "message": "expected '{', found 'EOF'"
+    },
+    {
+      "line": 7,
+      "col": 3,
+      "message": "expected '}', found 'EOF'"
+    }
+  ]
+}

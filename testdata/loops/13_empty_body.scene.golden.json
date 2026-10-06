@@ -1,0 +1,26 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "13_empty_body.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 4,
+        "endLine": 5,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < 3; i++",
+          "init": "i := 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": []
+      }
+    ]
+  },
+  "diagnostics": []
+}

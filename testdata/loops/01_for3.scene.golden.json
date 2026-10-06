@@ -1,0 +1,32 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "01_for3.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < 3; i++",
+          "init": "i := 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "fmt.Println(i)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

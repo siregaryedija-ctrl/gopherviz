@@ -1,0 +1,4 @@
+# Simpan semua file teks dengan akhir baris LF (standar Go; file golden dibandingkan byte per byte).
+* text=auto eol=lf
+*.png binary
+*.mp4 binary

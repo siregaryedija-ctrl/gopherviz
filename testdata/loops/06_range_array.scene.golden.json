@@ -1,0 +1,56 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "06_range_array.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-array",
+        "line": 7,
+        "endLine": 9,
+        "state": "complete",
+        "header": {
+          "text": "for _, s := range arr",
+          "key": "_",
+          "value": "s",
+          "define": true,
+          "range": "arr"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "fmt.Println(s)"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-array",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "header": {
+          "text": "for i := range &arr",
+          "key": "i",
+          "define": true,
+          "range": "&arr"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "arr[i] = \"x\""
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

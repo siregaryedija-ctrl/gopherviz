@@ -1,0 +1,88 @@
+{
+  "scene": {
+    "version": 1,
+    "file": "11_nested_bubble.go",
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 8,
+        "endLine": 19,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < n-1; i++",
+          "init": "i := 0",
+          "cond": "i < n-1",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "swapped := false"
+          },
+          {
+            "kind": "loop",
+            "line": 10,
+            "ref": "L2"
+          },
+          {
+            "kind": "if",
+            "line": 16,
+            "text": "if !swapped",
+            "then": [
+              {
+                "kind": "break",
+                "line": 17,
+                "text": "break"
+              }
+            ]
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "for3",
+        "line": 10,
+        "endLine": 15,
+        "state": "complete",
+        "header": {
+          "text": "for j := 0; j < n-1-i; j++",
+          "init": "j := 0",
+          "cond": "j < n-1-i",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 11,
+            "text": "if a[j] > a[j+1]",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 12,
+                "text": "a[j], a[j+1] = a[j+1], a[j]"
+              },
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "swapped = true"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ]
+  },
+  "diagnostics": []
+}

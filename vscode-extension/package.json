@@ -1,0 +1,118 @@
+{
+  "name": "goloopviz",
+  "displayName": "GoLoopViz",
+  "description": "Visual pixel-art dan animasi cara kerja loop di Go, realtime saat kamu mengetik.",
+  "version": "0.1.0",
+  "publisher": "goloopviz",
+  "private": true,
+  "license": "SEE LICENSE IN README.md",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Education",
+    "Visualization"
+  ],
+  "keywords": [
+    "go",
+    "golang",
+    "loop",
+    "belajar",
+    "visualisasi"
+  ],
+  "activationEvents": [
+    "onLanguage:go"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "goloopviz.showPanel",
+        "title": "Tampilkan panel",
+        "category": "GoLoopViz"
+      },
+      {
+        "command": "goloopviz.visualizeAtCursor",
+        "title": "Visualisasikan loop di kursor",
+        "category": "GoLoopViz"
+      },
+      {
+        "command": "goloopviz.restartServer",
+        "title": "Mulai ulang server loopviz",
+        "category": "GoLoopViz"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "goloopviz.visualizeAtCursor",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l",
+        "when": "editorLangId == go"
+      }
+    ],
+    "configuration": {
+      "title": "GoLoopViz",
+      "properties": {
+        "goloopviz.realtime": {
+          "type": "boolean",
+          "default": true,
+          "description": "Perbarui visual di setiap ketikan, tanpa menunggu file disimpan."
+        },
+        "goloopviz.autoOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Buka panel otomatis saat kursor pertama kali masuk ke sebuah loop."
+        },
+        "goloopviz.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Tampilkan tombol \"Visualisasikan loop\" di atas setiap for."
+        },
+        "goloopviz.speed": {
+          "type": "number",
+          "default": 1,
+          "enum": [
+            0.5,
+            1,
+            2,
+            4
+          ],
+          "description": "Kecepatan animasi."
+        },
+        "goloopviz.sound": {
+          "type": "boolean",
+          "default": true,
+          "description": "Efek suara 8-bit."
+        },
+        "goloopviz.music": {
+          "type": "boolean",
+          "default": true,
+          "description": "Musik latar chiptune."
+        },
+        "goloopviz.binaryPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path ke binary loopviz. Kosongkan untuk memakai binary bawaan ekstensi."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "build:bin": "node scripts/build-bin.mjs",
+    "build:bin:all": "node scripts/build-bin.mjs --all",
+    "test": "npm run build:bin && node scripts/build.mjs --test && node --test out/test/*.test.js",
+    "test:vscode": "npm run build:bin && npm run compile && node scripts/test-vscode.mjs",
+    "package": "npm run build:bin:all && npm run compile && vsce package --skip-license"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}
