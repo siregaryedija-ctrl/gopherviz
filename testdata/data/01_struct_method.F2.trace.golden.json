@@ -1,0 +1,374 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_struct_method.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 14,
+    "endLine": 16,
+    "name": "Birthday"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 20,
+      "func": "Person.Birthday",
+      "args": "p = &{Ani 20}",
+      "vars": {
+        "p": "&{Ani 20}"
+      },
+      "note": "panggil Person.Birthday(p = &{Ani 20})",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "20"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "p": "&{Ani 21}"
+      },
+      "note": "p.Age++",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 16,
+      "func": "Person.Birthday",
+      "vars": {
+        "p": "&{Ani 21}"
+      },
+      "note": "Person.Birthday(p = &{Ani 20}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "call",
+      "line": 28,
+      "func": "Person.Birthday",
+      "args": "p = &{Budi 30}",
+      "vars": {
+        "p": "&{Budi 30}"
+      },
+      "note": "panggil Person.Birthday(p = &{Budi 30})",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Budi\""
+              },
+              {
+                "name": "Age",
+                "value": "30"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "p": "&{Budi 31}"
+      },
+      "note": "p.Age++",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Budi\""
+              },
+              {
+                "name": "Age",
+                "value": "31"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "return",
+      "line": 16,
+      "func": "Person.Birthday",
+      "vars": {
+        "p": "&{Budi 31}"
+      },
+      "note": "Person.Birthday(p = &{Budi 30}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Budi\""
+              },
+              {
+                "name": "Age",
+                "value": "31"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "call",
+      "line": 28,
+      "func": "Person.Birthday",
+      "args": "p = &{Citra 25}",
+      "vars": {
+        "p": "&{Citra 25}"
+      },
+      "note": "panggil Person.Birthday(p = &{Citra 25})",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Citra\""
+              },
+              {
+                "name": "Age",
+                "value": "25"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "p": "&{Citra 26}"
+      },
+      "note": "p.Age++",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Citra\""
+              },
+              {
+                "name": "Age",
+                "value": "26"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "return",
+      "line": 16,
+      "func": "Person.Birthday",
+      "vars": {
+        "p": "&{Citra 26}"
+      },
+      "note": "Person.Birthday(p = &{Citra 25}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Citra\""
+              },
+              {
+                "name": "Age",
+                "value": "26"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

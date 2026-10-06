@@ -1,0 +1,194 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "05_select.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 10,
+    "endLine": 13,
+    "name": "func"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 10,
+      "func": "func",
+      "note": "panggil func()",
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch2",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 11,
+      "note": "G2 tidur 45ms (waktu simulasi t=0s, bangun di t=45ms)",
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch2",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "note": "done <- \"beres\" → kirim \"beres\" ke done",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "t=10ms",
+          "key": "ch2"
+        },
+        {
+          "op": "send",
+          "a": 0,
+          "value": "beres",
+          "key": "ch1"
+        }
+      ],
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [
+            "beres"
+          ]
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 13,
+      "func": "func",
+      "note": "func() selesai",
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [
+            "beres"
+          ]
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

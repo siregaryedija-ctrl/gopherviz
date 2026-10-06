@@ -1,0 +1,276 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "06_errors.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Error",
+        "header": "func (e *RangeError) Error() string",
+        "body": [
+          {
+            "kind": "return",
+            "line": 16,
+            "text": "return \"nilai \" + strconv.Itoa(e.Value) + \" di luar batas\""
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 19,
+        "endLine": 31,
+        "state": "complete",
+        "name": "parse",
+        "header": "func parse(s string) (int, error)",
+        "params": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 20,
+            "endLine": 22,
+            "text": "if s == \"\"",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 21,
+                "text": "return 0, ErrKosong"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "n, err := strconv.Atoi(s)"
+          },
+          {
+            "kind": "if",
+            "line": 24,
+            "endLine": 26,
+            "text": "if err != nil",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "return",
+                "line": 25,
+                "text": "return 0, fmt.Errorf(\"parse %q: %w\", s, err)"
+              }
+            ]
+          },
+          {
+            "kind": "if",
+            "line": 27,
+            "endLine": 29,
+            "text": "if n > 100",
+            "ref": "I3",
+            "then": [
+              {
+                "kind": "return",
+                "line": 28,
+                "text": "return 0, &RangeError{Value: n}"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 30,
+            "text": "return n, nil"
+          }
+        ],
+        "children": [
+          "I1",
+          "I2",
+          "I3"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 20,
+        "endLine": 22,
+        "state": "complete",
+        "header": "if s == \"\"",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "s == \"\"",
+            "line": 20,
+            "body": [
+              {
+                "kind": "return",
+                "line": 21,
+                "text": "return 0, ErrKosong"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 24,
+        "endLine": 26,
+        "state": "complete",
+        "header": "if err != nil",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "err != nil",
+            "line": 24,
+            "body": [
+              {
+                "kind": "return",
+                "line": 25,
+                "text": "return 0, fmt.Errorf(\"parse %q: %w\", s, err)"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "I3",
+        "kind": "if",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": "if n > 100",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n > 100",
+            "line": 27,
+            "body": [
+              {
+                "kind": "return",
+                "line": 28,
+                "text": "return 0, &RangeError{Value: n}"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 33,
+        "endLine": 42,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "loop",
+            "line": 34,
+            "endLine": 41,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 34,
+        "endLine": 41,
+        "state": "complete",
+        "header": "for _, s := range []string{\"42\", \"\", \"abc\", \"500\"}",
+        "parent": "F3",
+        "children": [
+          "I4"
+        ]
+      },
+      {
+        "id": "I4",
+        "kind": "if",
+        "line": 36,
+        "endLine": 39,
+        "state": "complete",
+        "header": "if err != nil",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "err != nil",
+            "line": 36,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 37,
+                "text": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong))"
+              },
+              {
+                "kind": "continue",
+                "line": 38,
+                "text": "continue"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 34,
+        "endLine": 41,
+        "state": "complete",
+        "header": {
+          "text": "for _, s := range []string{\"42\", \"\", \"abc\", \"500\"}",
+          "key": "_",
+          "value": "s",
+          "define": true,
+          "range": "[]string{\"42\", \"\", \"abc\", \"500\"}"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 35,
+            "text": "n, err := parse(s)"
+          },
+          {
+            "kind": "if",
+            "line": 36,
+            "endLine": 39,
+            "text": "if err != nil",
+            "ref": "I4",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 37,
+                "text": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong))"
+              },
+              {
+                "kind": "continue",
+                "line": 38,
+                "text": "continue"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 40,
+            "text": "fmt.Println(\"ok:\", n)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

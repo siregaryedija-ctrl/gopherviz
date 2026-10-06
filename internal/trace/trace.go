@@ -65,6 +65,8 @@ const (
 	OpAppend  OpKind = "append"
 	OpSettle  OpKind = "settle" // elemen sudah di posisi akhirnya
 	OpDelete  OpKind = "delete" // key dihapus dari map
+	OpSend    OpKind = "send"   // nilai masuk ke channel Key (ID channel) di slot A
+	OpRecv    OpKind = "recv"   // nilai diambil dari slot A channel Key
 )
 
 // Trace adalah hasil eksekusi satu blok.
@@ -126,6 +128,29 @@ type Step struct {
 	Keys      []string          `json:"keys,omitempty"`  // key map yang sejajar dengan Items (koleksi map)
 	Mem       *Memory           `json:"mem,omitempty"`   // potret memori (bila program memakai struct/pointer)
 	Child     string            `json:"child,omitempty"` // ID loop anak pada PhaseEnterChild
+	G         int               `json:"g,omitempty"`     // goroutine yang menjalankan langkah ini (1 = main); 0 bila tanpa goroutine
+	Gs        []GState          `json:"gs,omitempty"`    // potret semua goroutine (bila program memakai go)
+	Chans     []ChanState       `json:"chans,omitempty"` // potret semua channel
+}
+
+// GState adalah keadaan satu goroutine: jalan, siap, menunggu, tidur, atau selesai.
+type GState struct {
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	State string `json:"state"`
+	Why   string `json:"why,omitempty"`
+}
+
+// ChanState adalah isi satu channel. Items = nilai di buffer, lalu nilai yang dibawa
+// pengirim yang sedang menunggu (Senders) pada channel unbuffered.
+type ChanState struct {
+	ID        string   `json:"id"`
+	Name      string   `json:"name,omitempty"`
+	Cap       int      `json:"cap"`
+	Closed    bool     `json:"closed,omitempty"`
+	Items     []string `json:"items"`
+	Senders   int      `json:"senders,omitempty"`
+	Receivers int      `json:"receivers,omitempty"`
 }
 
 // Memory adalah potret variabel fungsi yang sedang berjalan dan objek di heap yang

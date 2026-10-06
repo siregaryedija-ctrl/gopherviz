@@ -252,16 +252,8 @@ func (s source) diagnostics(orig []byte) []scene.Diagnostic {
 
 // ---------- tipe ----------
 
-// stubImporter membuat paket impor kosong. Tipe dari paket lain jadi tidak
-// diketahui, tapi pemeriksaan tetap cepat (tanpa `go list`) dan tipe lokal
-// seperti []int atau map[string]int tetap terbaca.
-type stubImporter struct{}
-
-func (stubImporter) Import(path string) (*types.Package, error) {
-	p := types.NewPackage(path, path[strings.LastIndex(path, "/")+1:])
-	p.MarkComplete()
-	return p, nil
-}
+// stubImporter ada di stubs.go: package standar yang sering dipakai punya tanda tangan
+// tiruan, package lain kosong (tipenya tidak diketahui, tapi pemeriksaan tetap cepat).
 
 func typeCheck(s source) *types.Info {
 	info := &types.Info{

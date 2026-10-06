@@ -108,11 +108,45 @@ export interface FocusResult {
 // ---------- Trace (cermin dari internal/trace) ----------
 
 export interface TraceOp {
-  op: 'read' | 'compare' | 'swap' | 'set' | 'append' | 'settle';
+  op: 'read' | 'compare' | 'swap' | 'set' | 'append' | 'delete' | 'settle' | 'send' | 'recv';
+  /** Indeks elemen; untuk send/recv = slot di pipa channel. */
   a: number;
   b?: number;
   result?: string;
   value?: string;
+  /** Key map (set/read/delete pada map), atau ID channel (send/recv). */
+  key?: string;
+}
+
+/** Potret memori untuk diagram peti (variabel) dan tali (pointer). */
+export interface Memory {
+  vars: { name: string; kind: string; type?: string; value?: string; fields?: MemField[]; points?: string }[];
+  heap?: { id: string; kind: string; type?: string; value?: string; fields?: MemField[] }[];
+}
+
+export interface MemField {
+  name: string;
+  value?: string;
+  points?: string;
+}
+
+/** Keadaan satu goroutine (1 = main). */
+export interface GState {
+  id: number;
+  name: string;
+  state: 'jalan' | 'siap' | 'menunggu' | 'tidur' | 'selesai';
+  why?: string;
+}
+
+/** Isi satu channel: buffer, lalu nilai yang dibawa pengirim yang menunggu. */
+export interface ChanState {
+  id: string;
+  name?: string;
+  cap: number;
+  closed?: boolean;
+  items: string[];
+  senders?: number;
+  receivers?: number;
 }
 
 export interface TraceStep {
@@ -135,6 +169,12 @@ export interface TraceStep {
   reason?: 'cond-false' | 'range-done' | 'break' | 'continue' | 'return' | 'goto' | 'step-limit' | 'panic' | 'done';
   ops?: TraceOp[];
   items?: string[];
+  keys?: string[];
+  mem?: Memory;
+  child?: string;
+  g?: number;
+  gs?: GState[];
+  chans?: ChanState[];
 }
 
 export interface Trace {
@@ -145,7 +185,7 @@ export interface Trace {
   block: { id: string; kind: BlockKind; line: number; endLine: number; name?: string };
   loop: { id: string; kind: LoopKind; line: number; endLine: number; label?: string; vars?: string[]; children?: string[] };
   steps: TraceStep[];
-  collection?: { kind: string; items: string[] };
+  collection?: { kind: string; items: string[]; keys?: string[] };
   truncated: boolean;
   warnings: string[];
 }

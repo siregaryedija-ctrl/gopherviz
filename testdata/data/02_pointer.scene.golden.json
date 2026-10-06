@@ -1,0 +1,149 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "02_pointer.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "name": "swap",
+        "header": "func swap(a, b *int)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "*a, *b = *b, *a"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 13,
+        "endLine": 34,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "x, y := 1, 2"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "swap(&x, &y)"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "fmt.Println(x, y)"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "p := &x"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "*p = 10"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "fmt.Println(x, *p, p == &x)"
+          },
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "q := new(int)"
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "*q += 5"
+          },
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "fmt.Println(*q)"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "c := &Counter{}"
+          },
+          {
+            "kind": "loop",
+            "line": 27,
+            "endLine": 29,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "fmt.Println(c.n, *c)"
+          },
+          {
+            "kind": "stmt",
+            "line": 32,
+            "text": "var nothing *Counter"
+          },
+          {
+            "kind": "stmt",
+            "line": 33,
+            "text": "fmt.Println(nothing == nil)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": "for i := 0; i < 3; i++",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < 3; i++",
+          "init": "i := 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "c.n += i"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

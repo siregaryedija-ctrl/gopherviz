@@ -29,6 +29,13 @@ const samples = {
   wordcount: ['data/04_map_count.go', 8],
   defer: ['data/05_defer_recover.go', 26],
   errors: ['data/06_errors.go', 34],
+  unbuffered: ['conc/01_unbuffered.go', 14],
+  waitgroup: ['conc/02_waitgroup.go', 13],
+  workers: ['conc/03_workers.go', 13],
+  mutex: ['conc/04_mutex.go', 21],
+  select: ['conc/05_select.go', 9],
+  pingpong: ['conc/06_pingpong.go', 20],
+  deadlock: ['conc/07_deadlock.go', 6],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

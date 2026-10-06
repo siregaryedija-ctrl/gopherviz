@@ -1,0 +1,2335 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_linked_list.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 14,
+    "endLine": 25,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 14,
+      "func": "main",
+      "note": "panggil main()",
+      "mem": {
+        "vars": []
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "head": "<nil>"
+      },
+      "note": "var head *Node",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "head": "<nil>"
+      },
+      "note": "range []int{3, 2, 1} (3 elemen)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "head": "<nil>",
+        "v": "3"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: v = 3",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 17,
+      "func": "push",
+      "args": "head = <nil>, v = 3",
+      "vars": {
+        "head": "<nil>",
+        "v": "3"
+      },
+      "note": "panggil push(head = <nil>, v = 3)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 12,
+      "func": "push",
+      "return": "&{3 <nil>}",
+      "vars": {
+        "head": "<nil>",
+        "v": "3"
+      },
+      "note": "push(head = <nil>, v = 3) mengembalikan &{3 <nil>}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "3"
+      },
+      "note": "head = push(head, v) → head = &{3 <nil>}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 1,
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: v = 2",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 17,
+      "func": "push",
+      "args": "head = &{3 <nil>}, v = 2",
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "2"
+      },
+      "note": "panggil push(head = &{3 <nil>}, v = 2)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 12,
+      "func": "push",
+      "return": "&{2 &{3 <nil>}}",
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "2"
+      },
+      "note": "push(head = &{3 <nil>}, v = 2) mengembalikan &{2 &{3 <nil>}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 1,
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "2"
+      },
+      "note": "head = push(head, v) → head = &{2 &{3 <nil>}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 2,
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "1"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: v = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 17,
+      "func": "push",
+      "args": "head = &{2 &{3 <nil>}}, v = 1",
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "1"
+      },
+      "note": "panggil push(head = &{2 &{3 <nil>}}, v = 1)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 12,
+      "func": "push",
+      "return": "&{1 &{2 &{3 <nil>}}}",
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "1"
+      },
+      "note": "push(head = &{2 &{3 <nil>}}, v = 1) mengembalikan &{1 &{2 &{3 <nil>}}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 2,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "v": "1"
+      },
+      "note": "head = push(head, v) → head = &{1 &{2 &{3 <nil>}}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 3,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 16,
+      "iteration": 3,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "total": "0"
+      },
+      "note": "total := 0 → total = 0",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "0"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 18,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "init",
+      "line": 20,
+      "iteration": 0,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{1 &{2 &{3 <nil>}}}",
+        "total": "0"
+      },
+      "note": "n := head → n = &{1 &{2 &{3 <nil>}}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 19,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 20,
+      "iteration": 0,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{1 &{2 &{3 <nil>}}}",
+        "total": "0"
+      },
+      "result": true,
+      "note": "n != nil → &{1 &{2 &{3 <nil>}}} != nil → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 20,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "iteration": 0,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{1 &{2 &{3 <nil>}}}",
+        "total": "1"
+      },
+      "note": "total += n.Val → total = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 21,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "iteration": 0,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{1 &{2 &{3 <nil>}}}",
+        "total": "1"
+      },
+      "note": "fmt.Print(n.Val, \" \") → cetak \"1 \"",
+      "output": "1 ",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj3"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 22,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "post",
+      "line": 20,
+      "iteration": 0,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{2 &{3 <nil>}}",
+        "total": "1"
+      },
+      "note": "n = n.Next → n = &{2 &{3 <nil>}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 23,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 20,
+      "iteration": 1,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{2 &{3 <nil>}}",
+        "total": "1"
+      },
+      "result": true,
+      "note": "n != nil → &{2 &{3 <nil>}} != nil → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 24,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "iteration": 1,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{2 &{3 <nil>}}",
+        "total": "3"
+      },
+      "note": "total += n.Val → total = 3",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 25,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "iteration": 1,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{2 &{3 <nil>}}",
+        "total": "3"
+      },
+      "note": "fmt.Print(n.Val, \" \") → cetak \"2 \"",
+      "output": "2 ",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 26,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "post",
+      "line": 20,
+      "iteration": 1,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{3 <nil>}",
+        "total": "3"
+      },
+      "note": "n = n.Next → n = &{3 <nil>}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 27,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 20,
+      "iteration": 2,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{3 <nil>}",
+        "total": "3"
+      },
+      "result": true,
+      "note": "n != nil → &{3 <nil>} != nil → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 28,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "iteration": 2,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{3 <nil>}",
+        "total": "6"
+      },
+      "note": "total += n.Val → total = 6",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 29,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "iteration": 2,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{3 <nil>}",
+        "total": "6"
+      },
+      "note": "fmt.Print(n.Val, \" \") → cetak \"3 \"",
+      "output": "3 ",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 30,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "post",
+      "line": 20,
+      "iteration": 2,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "<nil>",
+        "total": "6"
+      },
+      "note": "n = n.Next → n = <nil>",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "nil"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 31,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 20,
+      "iteration": 3,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "<nil>",
+        "total": "6"
+      },
+      "result": false,
+      "note": "n != nil → <nil> != nil → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "nil"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 32,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "exit",
+      "line": 20,
+      "iteration": 3,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "<nil>",
+        "total": "6"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          },
+          {
+            "name": "n",
+            "kind": "pointer",
+            "points": "nil"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 33,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "total": "6"
+      },
+      "note": "fmt.Println(\"total\", total) → cetak \"total 6\"",
+      "output": "total 6\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 34,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 25,
+      "func": "main",
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "total": "6"
+      },
+      "note": "main() selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj3"
+          },
+          {
+            "name": "total",
+            "kind": "value",
+            "value": "6"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj3",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "1"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj2"
+              }
+            ]
+          },
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

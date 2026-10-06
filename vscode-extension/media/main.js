@@ -33,6 +33,7 @@
     'switch': 'Nilainya dicocokkan dengan setiap case dari atas. Case pertama yang cocok dijalankan.',
     'func': 'Setiap pemanggilan fungsi = Gopher masuk pipa ke lantai baru membawa argumen; return = naik lagi membawa koin berisi nilai. Rekursi = lantai bertumpuk ke bawah.',
     'main': 'Timeline seluruh program dari awal main. Setiap fungsi yang dipanggil turun ke lantai baru.',
+    'lanes': 'Setiap goroutine = satu Gopher di jalurnya sendiri. Channel = pipa: kirim melempar bola masuk, terima mengambilnya. Gopher yang menunggu berhenti sampai pasangannya datang. Urutan di sini mengikuti penjadwal Go dengan satu prosesor; di komputer kamu urutannya bisa berbeda.',
   };
   const NODE = {
     stmt: 'perintah', if: 'percabangan if', switch: 'switch', loop: 'loop', break: 'break: keluar dari loop',
@@ -52,6 +53,7 @@
   const data = new G.DataStage($('stage'), {});
   const branch = new G.BranchStage($('stage'), {});
   const func = new G.FuncStage($('stage'), {});
+  const lanes = new G.LaneStage($('stage'), {});
 
   // ---------- state dari ekstensi ----------
 
@@ -263,6 +265,7 @@
   };
   const branchR = { prepare: tr => branch.prepare(tr), duration: i => branch.duration(i), cues: i => branch.cues(i), render: (i, t) => branch.render(i, t) };
   const funcR = { prepare: tr => func.prepare(tr), duration: i => func.duration(i), cues: i => func.cues(i), render: (i, t) => func.render(i, t) };
+  const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
 
   /** Langkah call/return hanya berarti di mode fungsi; di renderer lain digabung ke langkah berikutnya. */
   function foldCalls(tr) {
@@ -296,7 +299,10 @@
       ? tr.steps.some(s => s.ops && s.ops.some(o => o.key != null && o.op !== 'read')) // map: loker
       : coll.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.some(o => o.op !== 'read')));
     tp.stats = tr.steps.some(s => (s.ops || []).some(o => o.op === 'compare' || o.op === 'swap'));
-    tp.r = dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    // Program dengan goroutine: jalur per goroutine + pipa channel, apa pun jenis blok fokusnya.
+    const laneMode = tr.steps.some(s => s.gs) || (kind === 'func' && tr.steps.some(s => s.chans));
+    if (laneMode) $('explain').textContent = BLOCK_EXPLAIN.lanes;
+    tp.r = laneMode ? laneR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
@@ -354,7 +360,7 @@
   function stepUI() {
     const v = tp.view[tp.i], s = v.step;
     const group = v.group && v.group.length > 1 ? `${s.loop} menjalankan ${v.group.length} langkah · ` : '';
-    const floor = s.depth ? `lantai ${s.depth} · ` : '';
+    const floor = tp.r === laneR ? (s.g && !(s.note || '').startsWith(`G${s.g} `) ? `G${s.g} · ` : '') : s.depth ? `lantai ${s.depth} · ` : '';
     $('stepNote').textContent = floor + group + (s.note || '');
     $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
 
@@ -463,6 +469,7 @@
     data.update(dt);
     branch.update(dt);
     func.update(dt);
+    lanes.update(dt);
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();

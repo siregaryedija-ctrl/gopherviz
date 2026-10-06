@@ -85,9 +85,15 @@ type funcVal struct {
 }
 
 type chanVal struct {
-	buf    []value
-	cap    int
-	closed bool
+	id       int
+	name     string // nama variabel pertama yang memegang channel ini (untuk tampilan)
+	buf      []value
+	cap      int
+	closed   bool
+	sendq    []*waiter // goroutine yang menunggu untuk mengirim
+	recvq    []*waiter // goroutine yang menunggu untuk menerima
+	inflight []*waiter // nilai sudah diserahkan ke penerima yang belum sempat jalan
+	timer    int       // time.After: 1 = menunggu bunyi, 2 = sudah berbunyi
 }
 
 func unknown(why string) value { return value{k: kUnknown, why: why} }

@@ -1,0 +1,1182 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "05_select.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 8,
+    "endLine": 23,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 8,
+      "func": "main",
+      "note": "panggil main()",
+      "mem": {
+        "vars": []
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "done := make(chan string) → done = chan",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "go func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }() → goroutine G2 dibuat (siap jalan)",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 0,
+      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch2",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 10,
+      "func": "func",
+      "note": "panggil func()",
+      "mem": {
+        "vars": []
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch2",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 11,
+      "note": "G2 tidur 45ms (waktu simulasi t=0s, bangun di t=45ms)",
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch2",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "iteration": 0,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "select: terima \"t=10ms\" dari time.After(10 * time.Millisecond)",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "t=10ms",
+          "key": "ch2"
+        },
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "t=10ms",
+          "key": "ch2"
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "iteration": 0,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "output": "menunggu...\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 1,
+      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch3",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "iteration": 1,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "select: terima \"t=20ms\" dari time.After(10 * time.Millisecond)",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "t=20ms",
+          "key": "ch3"
+        },
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "t=20ms",
+          "key": "ch3"
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "iteration": 1,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "output": "menunggu...\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 2,
+      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch4",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "iteration": 2,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "select: terima \"t=30ms\" dari time.After(10 * time.Millisecond)",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "t=30ms",
+          "key": "ch4"
+        },
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "t=30ms",
+          "key": "ch4"
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "iteration": 2,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "output": "menunggu...\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 3,
+      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch5",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "iteration": 3,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "select: terima \"t=40ms\" dari time.After(10 * time.Millisecond)",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "t=40ms",
+          "key": "ch5"
+        },
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "t=40ms",
+          "key": "ch5"
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "iteration": 3,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "output": "menunggu...\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 4,
+      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "select (menunggu salah satu case siap)"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "tidur",
+          "why": "tidur 45ms"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [],
+          "receivers": 1
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 12,
+      "note": "done <- \"beres\" → kirim \"beres\" ke done",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "beres",
+          "key": "ch1"
+        }
+      ],
+      "mem": {
+        "vars": []
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [
+            "beres"
+          ]
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 13,
+      "func": "func",
+      "note": "func() selesai",
+      "mem": {
+        "vars": []
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": [
+            "beres"
+          ]
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 20,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 16,
+      "iteration": 4,
+      "vars": {
+        "done": "chan",
+        "msg": "\"beres\""
+      },
+      "note": "select: terima \"beres\" dari done",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "beres",
+          "key": "ch1"
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          },
+          {
+            "name": "msg",
+            "kind": "value",
+            "value": "\"beres\""
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 21,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 4,
+      "vars": {
+        "done": "chan",
+        "msg": "\"beres\""
+      },
+      "note": "fmt.Println(\"dapat:\", msg) → cetak \"dapat: beres\"",
+      "output": "dapat: beres\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          },
+          {
+            "name": "msg",
+            "kind": "value",
+            "value": "\"beres\""
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 22,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 4,
+      "vars": {
+        "done": "chan",
+        "msg": "\"beres\""
+      },
+      "note": "return → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          },
+          {
+            "name": "msg",
+            "kind": "value",
+            "value": "\"beres\""
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 23,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 14,
+      "iteration": 4,
+      "vars": {
+        "done": "chan"
+      },
+      "note": "keluar dari loop karena return",
+      "reason": "return",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 23,
+      "func": "main",
+      "vars": {
+        "done": "chan"
+      },
+      "note": "main() selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "done",
+            "kind": "value",
+            "value": "chan"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "done",
+          "cap": 0,
+          "items": []
+        },
+        {
+          "id": "ch6",
+          "name": "time.After(10ms)",
+          "cap": 1,
+          "items": []
+        }
+      ]
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

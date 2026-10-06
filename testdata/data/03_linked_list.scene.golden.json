@@ -1,0 +1,144 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "03_linked_list.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "name": "push",
+        "header": "func push(head *Node, v int) *Node",
+        "params": [
+          "head",
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 11,
+            "text": "return &Node{Val: v, Next: head}"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 14,
+        "endLine": 25,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "var head *Node"
+          },
+          {
+            "kind": "loop",
+            "line": 16,
+            "endLine": 18,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "total := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 20,
+            "endLine": 23,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "fmt.Println(\"total\", total)"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": "for _, v := range []int{3, 2, 1}",
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 20,
+        "endLine": 23,
+        "state": "complete",
+        "header": "for n := head; n != nil; n = n.Next",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": {
+          "text": "for _, v := range []int{3, 2, 1}",
+          "key": "_",
+          "value": "v",
+          "define": true,
+          "range": "[]int{3, 2, 1}"
+        },
+        "vars": [
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "head = push(head, v)"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "for3",
+        "line": 20,
+        "endLine": 23,
+        "state": "complete",
+        "header": {
+          "text": "for n := head; n != nil; n = n.Next",
+          "init": "n := head",
+          "cond": "n != nil",
+          "post": "n = n.Next"
+        },
+        "vars": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "total += n.Val"
+          },
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "fmt.Print(n.Val, \" \")"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

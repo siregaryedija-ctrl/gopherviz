@@ -1,0 +1,3100 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_waitgroup.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 13,
+    "endLine": 22,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 13,
+      "func": "main",
+      "note": "panggil main()",
+      "mem": {
+        "vars": []
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 14,
+      "vars": {
+        "wg": "{0}"
+      },
+      "note": "var wg sync.WaitGroup",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "results": "[0 0 0 0]",
+        "wg": "{0}"
+      },
+      "note": "results := make([]int, 4) → results = [0 0 0 0]",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "results": "[0 0 0 0]",
+        "wg": "{0}"
+      },
+      "note": "i := 0 → i = 0",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "0"
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "results": "[0 0 0 0]",
+        "wg": "{0}"
+      },
+      "result": true,
+      "note": "i < 4 → 0 < 4 → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "0"
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "results": "[0 0 0 0]",
+        "wg": "{1}"
+      },
+      "note": "wg.Add(1) → hitungan = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "0"
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "results": "[0 0 0 0]",
+        "wg": "{1}"
+      },
+      "note": "go square(i, results, &wg) → goroutine G2 dibuat (siap jalan)",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "0"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 16,
+      "iteration": 0,
+      "vars": {
+        "i": "1",
+        "results": "[0 0 0 0]",
+        "wg": "{1}"
+      },
+      "note": "i++ → i = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "results": "[0 0 0 0]",
+        "wg": "{1}"
+      },
+      "result": true,
+      "note": "i < 4 → 1 < 4 → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "results": "[0 0 0 0]",
+        "wg": "{2}"
+      },
+      "note": "wg.Add(1) → hitungan = 2",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "results": "[0 0 0 0]",
+        "wg": "{2}"
+      },
+      "note": "go square(i, results, &wg) → goroutine G3 dibuat (siap jalan)",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 16,
+      "iteration": 1,
+      "vars": {
+        "i": "2",
+        "results": "[0 0 0 0]",
+        "wg": "{2}"
+      },
+      "note": "i++ → i = 2",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "results": "[0 0 0 0]",
+        "wg": "{2}"
+      },
+      "result": true,
+      "note": "i < 4 → 2 < 4 → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "results": "[0 0 0 0]",
+        "wg": "{3}"
+      },
+      "note": "wg.Add(1) → hitungan = 3",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "results": "[0 0 0 0]",
+        "wg": "{3}"
+      },
+      "note": "go square(i, results, &wg) → goroutine G4 dibuat (siap jalan)",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 16,
+      "iteration": 2,
+      "vars": {
+        "i": "3",
+        "results": "[0 0 0 0]",
+        "wg": "{3}"
+      },
+      "note": "i++ → i = 3",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "results": "[0 0 0 0]",
+        "wg": "{3}"
+      },
+      "result": true,
+      "note": "i < 4 → 3 < 4 → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "results": "[0 0 0 0]",
+        "wg": "{4}"
+      },
+      "note": "wg.Add(1) → hitungan = 4",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "results": "[0 0 0 0]",
+        "wg": "{4}"
+      },
+      "note": "go square(i, results, &wg) → goroutine G5 dibuat (siap jalan)",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 16,
+      "iteration": 3,
+      "vars": {
+        "i": "4",
+        "results": "[0 0 0 0]",
+        "wg": "{4}"
+      },
+      "note": "i++ → i = 4",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "4"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 20,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 16,
+      "iteration": 4,
+      "vars": {
+        "i": "4",
+        "results": "[0 0 0 0]",
+        "wg": "{4}"
+      },
+      "result": false,
+      "note": "i < 4 → 4 < 4 → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "4"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 21,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 16,
+      "iteration": 4,
+      "vars": {
+        "i": "4",
+        "results": "[0 0 0 0]",
+        "wg": "{4}"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "4"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 22,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "note": "G1 menunggu: wg.Wait() (hitungan 4)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        }
+      ]
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 18,
+      "func": "square",
+      "args": "id = 3, results = [0 0 0 0], wg = &{4}",
+      "vars": {
+        "id": "3",
+        "results": "[0 0 0 0]",
+        "wg": "&{4}"
+      },
+      "note": "panggil square(id = 3, results = [0 0 0 0], wg = &{4})",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 5,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        }
+      ]
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "3",
+        "results": "[0 0 0 0]",
+        "wg": "&{4}"
+      },
+      "note": "defer dicatat: wg.Done() (dijalankan saat fungsi selesai)",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 0]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 5,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        }
+      ]
+    },
+    {
+      "n": 25,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "id": "3",
+        "results": "[0 0 0 9]",
+        "wg": "&{4}"
+      },
+      "note": "results[id] = id * id → results[id] = 9",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "4"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 5,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        }
+      ]
+    },
+    {
+      "n": 26,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "note": "menjalankan defer: wg.Done()",
+      "g": 5,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        }
+      ]
+    },
+    {
+      "n": 27,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "3",
+        "results": "[0 0 0 9]",
+        "wg": "&{3}"
+      },
+      "note": "wg.Done() → hitungan = 3",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 5,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        }
+      ]
+    },
+    {
+      "n": 28,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 11,
+      "func": "square",
+      "vars": {
+        "id": "3",
+        "results": "[0 0 0 9]",
+        "wg": "&{3}"
+      },
+      "note": "square(id = 3, results = [0 0 0 0], wg = &{4}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "3"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 5,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        }
+      ]
+    },
+    {
+      "n": 29,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 18,
+      "func": "square",
+      "args": "id = 0, results = [0 0 0 9], wg = &{3}",
+      "vars": {
+        "id": "0",
+        "results": "[0 0 0 9]",
+        "wg": "&{3}"
+      },
+      "note": "panggil square(id = 0, results = [0 0 0 9], wg = &{3})",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 30,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "0",
+        "results": "[0 0 0 9]",
+        "wg": "&{3}"
+      },
+      "note": "defer dicatat: wg.Done() (dijalankan saat fungsi selesai)",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 31,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "id": "0",
+        "results": "[0 0 0 9]",
+        "wg": "&{3}"
+      },
+      "note": "results[id] = id * id → results[id] = 0",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 32,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "note": "menjalankan defer: wg.Done()",
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 33,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "0",
+        "results": "[0 0 0 9]",
+        "wg": "&{2}"
+      },
+      "note": "wg.Done() → hitungan = 2",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 34,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 11,
+      "func": "square",
+      "vars": {
+        "id": "0",
+        "results": "[0 0 0 9]",
+        "wg": "&{2}"
+      },
+      "note": "square(id = 0, results = [0 0 0 9], wg = &{3}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 2,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 35,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 18,
+      "func": "square",
+      "args": "id = 1, results = [0 0 0 9], wg = &{2}",
+      "vars": {
+        "id": "1",
+        "results": "[0 0 0 9]",
+        "wg": "&{2}"
+      },
+      "note": "panggil square(id = 1, results = [0 0 0 9], wg = &{2})",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 36,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "1",
+        "results": "[0 0 0 9]",
+        "wg": "&{2}"
+      },
+      "note": "defer dicatat: wg.Done() (dijalankan saat fungsi selesai)",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 0 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 37,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "id": "1",
+        "results": "[0 1 0 9]",
+        "wg": "&{2}"
+      },
+      "note": "results[id] = id * id → results[id] = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 38,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "note": "menjalankan defer: wg.Done()",
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 39,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "1",
+        "results": "[0 1 0 9]",
+        "wg": "&{1}"
+      },
+      "note": "wg.Done() → hitungan = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 40,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 11,
+      "func": "square",
+      "vars": {
+        "id": "1",
+        "results": "[0 1 0 9]",
+        "wg": "&{1}"
+      },
+      "note": "square(id = 1, results = [0 0 0 9], wg = &{2}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "siap"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 41,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 18,
+      "func": "square",
+      "args": "id = 2, results = [0 1 0 9], wg = &{1}",
+      "vars": {
+        "id": "2",
+        "results": "[0 1 0 9]",
+        "wg": "&{1}"
+      },
+      "note": "panggil square(id = 2, results = [0 1 0 9], wg = &{1})",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 4,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 42,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "2",
+        "results": "[0 1 0 9]",
+        "wg": "&{1}"
+      },
+      "note": "defer dicatat: wg.Done() (dijalankan saat fungsi selesai)",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 0 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 4,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 43,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "id": "2",
+        "results": "[0 1 4 9]",
+        "wg": "&{1}"
+      },
+      "note": "results[id] = id * id → results[id] = 4",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 4 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 4,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 44,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "note": "menjalankan defer: wg.Done()",
+      "g": 4,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 45,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "id": "2",
+        "results": "[0 1 4 9]",
+        "wg": "&{0}"
+      },
+      "note": "wg.Done() → hitungan = 0",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 4 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 4,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "wg.Wait() (hitungan 4)"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 46,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 11,
+      "func": "square",
+      "vars": {
+        "id": "2",
+        "results": "[0 1 4 9]",
+        "wg": "&{0}"
+      },
+      "note": "square(id = 2, results = [0 1 0 9], wg = &{1}) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "id",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 4 9]"
+          },
+          {
+            "name": "wg",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "g": 4,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "jalan"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 47,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "results": "[0 1 4 9]",
+        "wg": "{0}"
+      },
+      "note": "wg.Wait() selesai: hitungan sudah 0",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 4 9]"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 48,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "results": "[0 1 4 9]",
+        "wg": "{0}"
+      },
+      "note": "fmt.Println(results) → cetak \"[0 1 4 9]\"",
+      "output": "[0 1 4 9]\n",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 4 9]"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    },
+    {
+      "n": 49,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 22,
+      "func": "main",
+      "vars": {
+        "results": "[0 1 4 9]",
+        "wg": "{0}"
+      },
+      "note": "main() selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "wg",
+            "kind": "struct",
+            "type": "WaitGroup",
+            "fields": [
+              {
+                "name": "n",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "name": "results",
+            "kind": "slice",
+            "value": "[0 1 4 9]"
+          }
+        ]
+      },
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 3,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 4,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        },
+        {
+          "id": 5,
+          "name": "square(i, results, &wg)",
+          "state": "selesai"
+        }
+      ]
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

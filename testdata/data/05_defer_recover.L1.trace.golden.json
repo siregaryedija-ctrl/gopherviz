@@ -1,0 +1,186 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "05_defer_recover.go",
+  "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 9,
+    "endLine": 11
+  },
+  "loop": {
+    "id": "L1",
+    "kind": "for3",
+    "line": 9,
+    "endLine": 11,
+    "vars": [
+      "i"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 9,
+      "iteration": 0,
+      "vars": {
+        "i": "1"
+      },
+      "note": "i := 1 → i = 1"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 0,
+      "vars": {
+        "i": "1"
+      },
+      "result": true,
+      "note": "i <= 3 → 1 <= 3 → true"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 0,
+      "vars": {
+        "i": "1"
+      },
+      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 9,
+      "iteration": 0,
+      "vars": {
+        "i": "2"
+      },
+      "note": "i++ → i = 2"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 1,
+      "vars": {
+        "i": "2"
+      },
+      "result": true,
+      "note": "i <= 3 → 2 <= 3 → true"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 1,
+      "vars": {
+        "i": "2"
+      },
+      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 9,
+      "iteration": 1,
+      "vars": {
+        "i": "3"
+      },
+      "note": "i++ → i = 3"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 2,
+      "vars": {
+        "i": "3"
+      },
+      "result": true,
+      "note": "i <= 3 → 3 <= 3 → true"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "iteration": 2,
+      "vars": {
+        "i": "3"
+      },
+      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "post",
+      "line": 9,
+      "iteration": 2,
+      "vars": {
+        "i": "4"
+      },
+      "note": "i++ → i = 4"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "iteration": 3,
+      "vars": {
+        "i": "4"
+      },
+      "result": false,
+      "note": "i <= 3 → 4 <= 3 → false"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 9,
+      "iteration": 3,
+      "vars": {
+        "i": "4"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

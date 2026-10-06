@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type TraceResult, type UpdateResult } from './server';
+import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type Trace, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
 import { LoopPanel, type FromPanel } from './panel';
 import { LoopCodeLens } from './codelens';
@@ -45,6 +45,7 @@ class Controller implements vscode.Disposable {
   private focusTimer?: NodeJS.Timeout;
   private traceTimer?: NodeJS.Timeout;
   private traceKey = ''; // dokumen|versi|loop dari trace terakhir yang dikirim ke panel
+  private lastTrace?: Trace;
   private editor?: vscode.TextEditor; // editor Go terakhir yang aktif
 
   private readonly panel: LoopPanel;
@@ -281,6 +282,7 @@ class Controller implements vscode.Disposable {
         return; // user sudah mengetik atau pindah blok lagi
       }
       this.traceKey = key;
+      this.lastTrace = res.trace;
       this.panel.post({ type: 'trace', blockId, trace: res.trace });
     } catch (e) {
       this.output.appendLine(`trace gagal: ${errMsg(e)}`);
@@ -396,6 +398,7 @@ class Controller implements vscode.Disposable {
       result: (uri: string) => this.results.get(uri),
       focus: (uri: string) => this.focus.get(uri),
       traceKey: () => this.traceKey,
+      lastTrace: () => this.lastTrace,
       panelOpen: () => this.panel.isOpen,
     };
   }

@@ -1,0 +1,359 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "04_map_count.go",
+  "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 8,
+    "endLine": 10
+  },
+  "loop": {
+    "id": "L1",
+    "kind": "range-slice",
+    "line": 8,
+    "endLine": 10,
+    "vars": [
+      "w"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "counts": "map[]",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "range words (6 elemen)"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "counts": "map[]",
+        "w": "\"apel\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: w = \"apel\""
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 0,
+      "vars": {
+        "counts": "map[apel:1]",
+        "w": "\"apel\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "counts[w]++ → counts[w] = 1",
+      "ops": [
+        {
+          "op": "set",
+          "a": -1,
+          "value": "1",
+          "key": "apel"
+        }
+      ],
+      "items": [
+        "1"
+      ],
+      "keys": [
+        "apel"
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 1,
+      "vars": {
+        "counts": "map[apel:1]",
+        "w": "\"jeruk\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: w = \"jeruk\""
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 1,
+      "vars": {
+        "counts": "map[apel:1 jeruk:1]",
+        "w": "\"jeruk\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "counts[w]++ → counts[w] = 1",
+      "ops": [
+        {
+          "op": "set",
+          "a": -1,
+          "value": "1",
+          "key": "jeruk"
+        }
+      ],
+      "items": [
+        "1",
+        "1"
+      ],
+      "keys": [
+        "apel",
+        "jeruk"
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "counts": "map[apel:1 jeruk:1]",
+        "w": "\"apel\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: w = \"apel\""
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 2,
+      "vars": {
+        "counts": "map[apel:2 jeruk:1]",
+        "w": "\"apel\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "counts[w]++ → counts[w] = 2",
+      "ops": [
+        {
+          "op": "set",
+          "a": -1,
+          "value": "2",
+          "key": "apel"
+        }
+      ],
+      "items": [
+        "2",
+        "1"
+      ],
+      "keys": [
+        "apel",
+        "jeruk"
+      ]
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 3,
+      "vars": {
+        "counts": "map[apel:2 jeruk:1]",
+        "w": "\"mangga\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-4: w = \"mangga\""
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 3,
+      "vars": {
+        "counts": "map[apel:2 jeruk:1 mangga:1]",
+        "w": "\"mangga\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "counts[w]++ → counts[w] = 1",
+      "ops": [
+        {
+          "op": "set",
+          "a": -1,
+          "value": "1",
+          "key": "mangga"
+        }
+      ],
+      "items": [
+        "2",
+        "1",
+        "1"
+      ],
+      "keys": [
+        "apel",
+        "jeruk",
+        "mangga"
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 4,
+      "vars": {
+        "counts": "map[apel:2 jeruk:1 mangga:1]",
+        "w": "\"apel\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-5: w = \"apel\""
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 4,
+      "vars": {
+        "counts": "map[apel:3 jeruk:1 mangga:1]",
+        "w": "\"apel\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "counts[w]++ → counts[w] = 3",
+      "ops": [
+        {
+          "op": "set",
+          "a": -1,
+          "value": "3",
+          "key": "apel"
+        }
+      ],
+      "items": [
+        "3",
+        "1",
+        "1"
+      ],
+      "keys": [
+        "apel",
+        "jeruk",
+        "mangga"
+      ]
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 5,
+      "vars": {
+        "counts": "map[apel:3 jeruk:1 mangga:1]",
+        "w": "\"jeruk\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-6: w = \"jeruk\""
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "iteration": 5,
+      "vars": {
+        "counts": "map[apel:3 jeruk:2 mangga:1]",
+        "w": "\"jeruk\"",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "counts[w]++ → counts[w] = 2",
+      "ops": [
+        {
+          "op": "set",
+          "a": -1,
+          "value": "2",
+          "key": "jeruk"
+        }
+      ],
+      "items": [
+        "3",
+        "2",
+        "1"
+      ],
+      "keys": [
+        "apel",
+        "jeruk",
+        "mangga"
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 8,
+      "iteration": 6,
+      "vars": {
+        "counts": "map[apel:3 jeruk:2 mangga:1]",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 8,
+      "iteration": 6,
+      "vars": {
+        "counts": "map[apel:3 jeruk:2 mangga:1]",
+        "words": "[apel jeruk apel mangga apel jeruk]"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "collection": {
+    "kind": "map",
+    "items": []
+  },
+  "truncated": false,
+  "warnings": []
+}

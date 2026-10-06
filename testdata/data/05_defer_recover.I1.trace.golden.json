@@ -1,0 +1,145 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "05_defer_recover.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I1",
+    "kind": "if",
+    "line": 17,
+    "endLine": 19
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "<nil>"
+      },
+      "note": "r := recover() → r = <nil>"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "<nil>"
+      },
+      "result": false,
+      "note": "if r != nil → <nil> != nil → false"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "branch",
+      "line": 17,
+      "branch": 1,
+      "vars": {
+        "r": "<nil>"
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "exit",
+      "line": 19,
+      "vars": {
+        "r": "<nil>"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 17,
+      "note": "recover() menangkap panic: runtime error: integer divide by zero → program lanjut"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "note": "r := recover() → r = error(\"runtime error: integer divide by…"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "result": true,
+      "note": "if r != nil → error(\"runtime error: integer divide by… != nil → true"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "branch",
+      "line": 17,
+      "branch": 0,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "note": "masuk cabang ke-1 (if r != nil)"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 18,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "note": "err = errors.New(\"pembagian gagal\") → err = error(\"pembagian gagal\")"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "exit",
+      "line": 19,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

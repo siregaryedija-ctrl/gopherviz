@@ -1,0 +1,295 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "05_defer_recover.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 15,
+    "endLine": 23,
+    "name": "safeDivide"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "safeDivide",
+      "args": "a = 10, b = 2",
+      "vars": {
+        "a": "10",
+        "b": "2"
+      },
+      "note": "panggil safeDivide(a = 10, b = 2)"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 16,
+      "vars": {
+        "a": "10",
+        "b": "2",
+        "err": "<nil>",
+        "result": "0"
+      },
+      "note": "defer dicatat: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }() (dijalankan saat fungsi selesai)"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "a": "10",
+        "b": "2",
+        "err": "<nil>",
+        "result": "5"
+      },
+      "note": "result = a / b → result = 5"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "vars": {
+        "a": "10",
+        "b": "2",
+        "err": "<nil>",
+        "result": "5"
+      },
+      "note": "return result, nil → keluar dari fungsi"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 16,
+      "note": "menjalankan defer: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }()"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 16,
+      "func": "func",
+      "note": "panggil func()"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "<nil>"
+      },
+      "note": "r := recover() → r = <nil>"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "<nil>"
+      },
+      "result": false,
+      "note": "if r != nil → <nil> != nil → false"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 20,
+      "func": "func",
+      "note": "func() selesai"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 23,
+      "func": "safeDivide",
+      "return": "5, <nil>",
+      "vars": {
+        "a": "10",
+        "b": "2",
+        "err": "<nil>",
+        "result": "5"
+      },
+      "note": "safeDivide(a = 10, b = 2) mengembalikan 5, <nil>"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "call",
+      "line": 28,
+      "func": "safeDivide",
+      "args": "a = 1, b = 0",
+      "vars": {
+        "a": "1",
+        "b": "0"
+      },
+      "note": "panggil safeDivide(a = 1, b = 0)"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "body",
+      "line": 16,
+      "vars": {
+        "a": "1",
+        "b": "0",
+        "err": "<nil>",
+        "result": "0"
+      },
+      "note": "defer dicatat: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }() (dijalankan saat fungsi selesai)"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "body",
+      "line": 21,
+      "note": "panic: runtime error: integer divide by zero → mencari recover() di defer"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "body",
+      "line": 16,
+      "note": "menjalankan defer: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }()"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F3",
+      "run": 2,
+      "depth": 1,
+      "phase": "call",
+      "line": 16,
+      "func": "func",
+      "note": "panggil func()"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "depth": 1,
+      "phase": "body",
+      "line": 17,
+      "note": "recover() menangkap panic: runtime error: integer divide by zero → program lanjut"
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "depth": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "note": "r := recover() → r = error(\"runtime error: integer divide by…"
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "depth": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "result": true,
+      "note": "if r != nil → error(\"runtime error: integer divide by… != nil → true"
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "depth": 1,
+      "phase": "body",
+      "line": 18,
+      "vars": {
+        "r": "error(\"runtime error: integer divide by…"
+      },
+      "note": "err = errors.New(\"pembagian gagal\") → err = error(\"pembagian gagal\")"
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "F3",
+      "run": 2,
+      "depth": 1,
+      "phase": "return",
+      "line": 20,
+      "func": "func",
+      "note": "func() selesai"
+    },
+    {
+      "n": 20,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "return",
+      "line": 23,
+      "func": "safeDivide",
+      "return": "0, error(\"pembagian gagal\")",
+      "vars": {
+        "a": "1",
+        "b": "0",
+        "err": "error(\"pembagian gagal\")",
+        "result": "0"
+      },
+      "note": "safeDivide(a = 1, b = 0) mengembalikan 0, error(\"pembagian gagal\")"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

@@ -1,0 +1,181 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "01_struct_method.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "name": "Greet",
+        "header": "func (p Person) Greet() string",
+        "body": [
+          {
+            "kind": "return",
+            "line": 11,
+            "text": "return \"Halo, aku \" + p.Name"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 14,
+        "endLine": 16,
+        "state": "complete",
+        "name": "Birthday",
+        "header": "func (p *Person) Birthday()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "p.Age++"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 18,
+        "endLine": 36,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "ani := Person{Name: \"Ani\", Age: 20}"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "ani.Birthday()"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "fmt.Println(ani.Greet(), ani.Age)"
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "people := []Person{{\"Budi\", 30}, {\"Citra\", 25}}"
+          },
+          {
+            "kind": "loop",
+            "line": 24,
+            "endLine": 26,
+            "ref": "L1"
+          },
+          {
+            "kind": "loop",
+            "line": 27,
+            "endLine": 29,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "fmt.Println(people)"
+          },
+          {
+            "kind": "stmt",
+            "line": 31,
+            "text": "fmt.Printf(\"%+v\\n\", people[0])"
+          },
+          {
+            "kind": "stmt",
+            "line": 33,
+            "text": "copyAni := ani"
+          },
+          {
+            "kind": "stmt",
+            "line": 34,
+            "text": "copyAni.Name = \"Salinan\""
+          },
+          {
+            "kind": "stmt",
+            "line": 35,
+            "text": "fmt.Println(ani.Name, copyAni.Name)"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 24,
+        "endLine": 26,
+        "state": "complete",
+        "header": "for _, p := range people",
+        "parent": "F3"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": "for i := range people",
+        "parent": "F3"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 24,
+        "endLine": 26,
+        "state": "complete",
+        "header": {
+          "text": "for _, p := range people",
+          "key": "_",
+          "value": "p",
+          "define": true,
+          "range": "people"
+        },
+        "vars": [
+          "p"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "p.Age = 99"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "for i := range people",
+          "key": "i",
+          "define": true,
+          "range": "people"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "people[i].Birthday()"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

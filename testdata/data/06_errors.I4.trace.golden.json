@@ -1,0 +1,319 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I4",
+    "kind": "if",
+    "line": 36,
+    "endLine": 39
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 36,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if err != nil → <nil> != nil → false"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I4",
+      "run": 1,
+      "phase": "branch",
+      "line": 36,
+      "branch": 1,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I4",
+      "run": 1,
+      "phase": "exit",
+      "line": 39,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I4",
+      "run": 2,
+      "phase": "body",
+      "line": 36,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "result": true,
+      "note": "if err != nil → error(\"input kosong\") != nil → true"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I4",
+      "run": 2,
+      "phase": "branch",
+      "line": 36,
+      "branch": 0,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "masuk cabang ke-1 (if err != nil)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I4",
+      "run": 2,
+      "phase": "body",
+      "line": 37,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: input kosong true\"",
+      "output": "error: input kosong true\n"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I4",
+      "run": 2,
+      "phase": "continue",
+      "line": 38,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I4",
+      "run": 2,
+      "phase": "exit",
+      "line": 39,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya",
+      "reason": "continue"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I4",
+      "run": 3,
+      "phase": "body",
+      "line": 36,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "result": true,
+      "note": "if err != nil → error(\"parse \\\"abc\\\": strconv.Atoi: par… != nil → true"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I4",
+      "run": 3,
+      "phase": "branch",
+      "line": 36,
+      "branch": 0,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "masuk cabang ke-1 (if err != nil)"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "I4",
+      "run": 3,
+      "phase": "body",
+      "line": 37,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: parse \\\"abc\\\": strconv.Atoi: parsing \\\"abc\\\": invalid syntax false\"",
+      "output": "error: parse \"abc\": strconv.Atoi: parsing \"abc\": invalid syntax false\n"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "I4",
+      "run": 3,
+      "phase": "continue",
+      "line": 38,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "I4",
+      "run": 3,
+      "phase": "exit",
+      "line": 39,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya",
+      "reason": "continue"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "I4",
+      "run": 4,
+      "phase": "body",
+      "line": 36,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "result": true,
+      "note": "if err != nil → &{500} != nil → true"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "I4",
+      "run": 4,
+      "phase": "branch",
+      "line": 36,
+      "branch": 0,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "masuk cabang ke-1 (if err != nil)"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "depth": 1,
+      "phase": "call",
+      "line": 37,
+      "func": "RangeError.Error",
+      "args": "e = &{500}",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "panggil RangeError.Error(e = &{500})"
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "RangeError.Error",
+      "return": "\"nilai 500 di luar batas\"",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\""
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "I4",
+      "run": 4,
+      "phase": "body",
+      "line": 37,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: nilai 500 di luar batas false\"",
+      "output": "error: nilai 500 di luar batas false\n"
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "I4",
+      "run": 4,
+      "phase": "continue",
+      "line": 38,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "I4",
+      "run": 4,
+      "phase": "exit",
+      "line": 39,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya",
+      "reason": "continue"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

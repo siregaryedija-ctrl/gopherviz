@@ -22,7 +22,7 @@ const blocksDir = "../../testdata/blocks"
 func examples(t testing.TB) []string {
 	t.Helper()
 	var files []string
-	for _, dir := range []string{loopsDir, blocksDir} {
+	for _, dir := range []string{loopsDir, blocksDir, "../../testdata/data", "../../testdata/conc"} {
 		f, err := filepath.Glob(filepath.Join(dir, "*.go"))
 		if err != nil || len(f) == 0 {
 			t.Fatalf("contoh tidak ditemukan di %s: %v", dir, err)

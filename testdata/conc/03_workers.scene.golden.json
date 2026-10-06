@@ -1,0 +1,224 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "03_workers.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 9,
+        "state": "complete",
+        "name": "worker",
+        "header": "func worker(id int, jobs <-chan int, results chan<- int)",
+        "params": [
+          "id",
+          "jobs",
+          "results"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 6,
+            "endLine": 8,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": "for j := range jobs",
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 11,
+        "endLine": 26,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "jobs := make(chan int, 5)"
+          },
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "results := make(chan int, 5)"
+          },
+          {
+            "kind": "loop",
+            "line": 14,
+            "endLine": 16,
+            "ref": "L2"
+          },
+          {
+            "kind": "loop",
+            "line": 17,
+            "endLine": 19,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "close(jobs)"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "sum := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 22,
+            "endLine": 24,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "fmt.Println(\"total\", sum)"
+          }
+        ],
+        "children": [
+          "L2",
+          "L3",
+          "L4"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 14,
+        "endLine": 16,
+        "state": "complete",
+        "header": "for w := 1; w <= 2; w++",
+        "parent": "F2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 17,
+        "endLine": 19,
+        "state": "complete",
+        "header": "for j := 1; j <= 5; j++",
+        "parent": "F2"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 22,
+        "endLine": 24,
+        "state": "complete",
+        "header": "for i := 0; i < 5; i++",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-chan",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": {
+          "text": "for j := range jobs",
+          "key": "j",
+          "define": true,
+          "range": "jobs"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "results <- j * 2"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "for3",
+        "line": 14,
+        "endLine": 16,
+        "state": "complete",
+        "header": {
+          "text": "for w := 1; w <= 2; w++",
+          "init": "w := 1",
+          "cond": "w <= 2",
+          "post": "w++"
+        },
+        "vars": [
+          "w"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "go worker(w, jobs, results)"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 17,
+        "endLine": 19,
+        "state": "complete",
+        "header": {
+          "text": "for j := 1; j <= 5; j++",
+          "init": "j := 1",
+          "cond": "j <= 5",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "jobs <- j"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "for3",
+        "line": 22,
+        "endLine": 24,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < 5; i++",
+          "init": "i := 0",
+          "cond": "i < 5",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "sum += <-results"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

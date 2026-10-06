@@ -1,0 +1,217 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_interface.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F3",
+    "kind": "func",
+    "line": 21,
+    "endLine": 21,
+    "name": "String"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.String",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.String(r = {2 3})",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "return",
+      "line": 21,
+      "func": "Rect.String",
+      "return": "\"Rect(2x3)\"",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.String(r = {2 3}) mengembalikan \"Rect(2x3)\"",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F3",
+      "run": 2,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.String",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.String(r = {1 1})",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F3",
+      "run": 2,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F3",
+      "run": 2,
+      "phase": "return",
+      "line": 21,
+      "func": "Rect.String",
+      "return": "\"Rect(1x1)\"",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.String(r = {1 1}) mengembalikan \"Rect(1x1)\"",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

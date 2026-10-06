@@ -1,0 +1,129 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 15,
+    "endLine": 17,
+    "name": "Error"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 37,
+      "func": "RangeError.Error",
+      "args": "e = &{500}",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "panggil RangeError.Error(e = &{500})",
+      "mem": {
+        "vars": [
+          {
+            "name": "e",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "RangeError",
+            "fields": [
+              {
+                "name": "Value",
+                "value": "500"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 16,
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "return \"nilai \" + strconv.Itoa(e.Value) + \" di luar batas\" → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "e",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "RangeError",
+            "fields": [
+              {
+                "name": "Value",
+                "value": "500"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "RangeError.Error",
+      "return": "\"nilai 500 di luar batas\"",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\"",
+      "mem": {
+        "vars": [
+          {
+            "name": "e",
+            "kind": "pointer",
+            "points": "obj1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "RangeError",
+            "fields": [
+              {
+                "name": "Value",
+                "value": "500"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

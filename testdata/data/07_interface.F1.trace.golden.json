@@ -1,0 +1,411 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_interface.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 17,
+    "endLine": 17,
+    "name": "Area"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "Rect.Area",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.Area(r = {2 3})",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "6",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.Area(r = {2 3}) mengembalikan 6",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.Area",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.Area(r = {2 3})",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "6",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.Area(r = {2 3}) mengembalikan 6",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "2"
+              },
+              {
+                "name": "H",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "call",
+      "line": 27,
+      "func": "Rect.Area",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.Area(r = {1 1})",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "1",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.Area(r = {1 1}) mengembalikan 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.Area",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.Area(r = {1 1})",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "1",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.Area(r = {1 1}) mengembalikan 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "r",
+            "kind": "struct",
+            "type": "Rect",
+            "fields": [
+              {
+                "name": "W",
+                "value": "1"
+              },
+              {
+                "name": "H",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

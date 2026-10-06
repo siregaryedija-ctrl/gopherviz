@@ -77,18 +77,21 @@ func (e *env) define(name string, v value) *value {
 }
 
 type interp struct {
-	p       *analyzer.Program
-	globals *env
-	funcs   map[string]*ast.FuncDecl
-	methods map[string]map[string]*ast.FuncDecl // nama tipe → nama method → deklarasi
-	budget  int
-	depth   int
-	rec     *recorder
-	rng     *rand.Rand
-	quiet   int
-	pids    int          // penghitung identitas pointer (untuk alamat palsu yang deterministik)
-	eids    int          // penghitung identitas error (untuk == dan errors.Is)
-	calls   []*callFrame // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
+	p        *analyzer.Program
+	globals  *env
+	funcs    map[string]*ast.FuncDecl
+	methods  map[string]map[string]*ast.FuncDecl // nama tipe → nama method → deklarasi
+	budget   int
+	depth    int
+	rec      *recorder
+	rng      *rand.Rand
+	quiet    int
+	pids     int          // penghitung identitas pointer (untuk alamat palsu yang deterministik)
+	eids     int          // penghitung identitas error (untuk == dan errors.Is)
+	calls    []*callFrame // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
+	sch      *sched       // penjadwal goroutine
+	goEntry  bool         // pemanggilan berikutnya adalah fungsi awal sebuah goroutine
+	selfStep ast.Expr     // pemanggilan yang sudah merekam langkahnya sendiri
 }
 
 // callFrame menyimpan defer satu pemanggilan fungsi dan panic yang sedang terjadi.
@@ -172,6 +175,9 @@ func (it *interp) add(s trace.Step, e *env) {
 	var vars map[string]string
 	if e != nil {
 		vars = it.snapshot(e)
+	}
+	if sch := it.sch; sch != nil && (sch.used || len(sch.chans) > 0) {
+		s.G, s.Gs, s.Chans = it.curG(), it.gStates(), it.chanStates(e)
 	}
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) }, func() *trace.Memory { return it.memory(e) })
 }
@@ -372,6 +378,10 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 		return it.execList(n.List, newEnv(e, false))
 	case *ast.ExprStmt:
 		it.eval(n.X, e)
+		if it.selfStep == n.X {
+			it.selfStep = nil // pemanggilan ini sudah mencatat langkahnya sendiri (mis. wg.Add)
+			break
+		}
 		note := ""
 		if out := it.rec.out.String(); out != "" && it.recording() {
 			note = it.text(n) + " → cetak " + fmt.Sprintf("%q", strings.TrimSuffix(out, "\n"))
@@ -441,20 +451,13 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 	case *ast.SendStmt:
 		ch := it.eval(n.Chan, e)
 		v := it.eval(n.Value, e)
-		if ch.k != kChan || ch.ch == nil {
-			it.structural("kirim ke channel ini belum disimulasikan")
-		}
-		if ch.ch.closed {
-			it.panicf(n, "send on closed channel")
-		}
-		if len(ch.ch.buf) >= ch.ch.cap {
-			it.structural("channel penuh: program butuh goroutine lain (belum disimulasikan)")
-		}
-		ch.ch.buf = append(ch.ch.buf, v)
-		it.step(n, e, "")
+		it.chanSend(ch, v, n, it.chanName(n.Chan))
+		it.step(n, e, fmt.Sprintf("%s → kirim %s ke %s", it.text(n), show(v), it.chanName(n.Chan)))
+	case *ast.SelectStmt:
+		return it.execSelect(n, e)
 	case *ast.EmptyStmt:
 	case *ast.GoStmt:
-		it.warn(fmt.Sprintf("goroutine (baris %d) tidak disimulasikan", it.line(n)))
+		it.goStmt(n, e)
 	case *ast.DeferStmt:
 		it.deferCall(n, e)
 		it.step(n, e, "defer dicatat: "+it.text(n.Call)+" (dijalankan saat fungsi selesai)")
@@ -883,18 +886,13 @@ func (it *interp) execRange(n *ast.RangeStmt, label string, e *env) flow {
 			}
 		}
 	case kChan:
-		if x.ch == nil {
-			it.structural("range atas channel nil akan menunggu selamanya")
-		}
+		// range atas channel: terima terus sampai channel ditutup dan kosong
+		elem := chanElem(it.p.Info.Types[n.X].Type)
 		for i := 0; ; i++ {
-			if len(x.ch.buf) == 0 {
-				if x.ch.closed {
-					break
-				}
-				it.structural("channel kosong dan belum ditutup: program butuh goroutine lain (belum disimulasikan)")
+			v, ok := it.chanRecv(x, n, it.chanName(n.X), elem)
+			if !ok {
+				break
 			}
-			v := x.ch.buf[0]
-			x.ch.buf = x.ch.buf[1:]
 			if !iterate(v, value{}, i) {
 				return result
 			}
@@ -1271,6 +1269,10 @@ func (it *interp) deferCall(n *ast.DeferStmt, e *env) {
 		d.run = func() { it.callValue(fv, args, call) }
 		d.hasRecover = fv.k == kFunc && fv.fn != nil && fv.fn.decl != nil && callsRecover(fv.fn.decl.Body)
 	case *ast.SelectorExpr:
+		if typ := syncType(it.p.Info.Selections[f]); typ != "" {
+			d.run = func() { it.syncCall(f, call, e, typ, f.Sel.Name) }
+			break
+		}
 		if pn, ok := it.p.Info.Uses[identOf(f.X)].(*types.PkgName); ok {
 			args := it.args(call, e)
 			path, name := pn.Imported().Path(), f.Sel.Name

@@ -1,0 +1,141 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "04_mutex.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 13,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Inc",
+        "header": "func (c *Counter) Inc()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "c.mu.Lock()"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "defer c.mu.Unlock()"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "c.n++"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 19,
+        "endLine": 31,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "c := &Counter{}"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "var wg sync.WaitGroup"
+          },
+          {
+            "kind": "loop",
+            "line": 22,
+            "endLine": 28,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 29,
+            "text": "wg.Wait()"
+          },
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "fmt.Println(\"hitungan\", c.n)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 22,
+        "endLine": 28,
+        "state": "complete",
+        "header": "for i := 0; i < 3; i++",
+        "parent": "F2",
+        "children": [
+          "F3"
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 24,
+        "endLine": 27,
+        "state": "complete",
+        "name": "func",
+        "header": "func()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "defer wg.Done()"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "c.Inc()"
+          }
+        ],
+        "parent": "L1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 22,
+        "endLine": 28,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < 3; i++",
+          "init": "i := 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "wg.Add(1)"
+          },
+          {
+            "kind": "stmt",
+            "line": 24,
+            "endLine": 27,
+            "text": "go func() { …"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,382 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_struct_method.go",
+  "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 24,
+    "endLine": 26
+  },
+  "loop": {
+    "id": "L1",
+    "kind": "range-slice",
+    "line": 24,
+    "endLine": 26,
+    "vars": [
+      "p"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 24,
+      "iteration": 0,
+      "vars": {
+        "ani": "{Ani 21}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "range people (2 elemen)",
+      "items": [
+        "{Budi 30}",
+        "{Citra 25}"
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 24,
+      "iteration": 0,
+      "vars": {
+        "ani": "{Ani 21}",
+        "p": "{Budi 30}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: p = {Budi 30}",
+      "ops": [
+        {
+          "op": "read",
+          "a": 0
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          },
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Budi\""
+              },
+              {
+                "name": "Age",
+                "value": "30"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 25,
+      "iteration": 0,
+      "vars": {
+        "ani": "{Ani 21}",
+        "p": "{Budi 99}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "p.Age = 99",
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          },
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Budi\""
+              },
+              {
+                "name": "Age",
+                "value": "99"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 24,
+      "iteration": 1,
+      "vars": {
+        "ani": "{Ani 21}",
+        "p": "{Citra 25}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: p = {Citra 25}",
+      "ops": [
+        {
+          "op": "read",
+          "a": 1
+        }
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          },
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Citra\""
+              },
+              {
+                "name": "Age",
+                "value": "25"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 25,
+      "iteration": 1,
+      "vars": {
+        "ani": "{Ani 21}",
+        "p": "{Citra 99}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "p.Age = 99",
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          },
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Citra\""
+              },
+              {
+                "name": "Age",
+                "value": "99"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 24,
+      "iteration": 2,
+      "vars": {
+        "ani": "{Ani 21}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi",
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 24,
+      "iteration": 2,
+      "vars": {
+        "ani": "{Ani 21}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done",
+      "mem": {
+        "vars": [
+          {
+            "name": "ani",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          },
+          {
+            "name": "people",
+            "kind": "slice",
+            "value": "[{Budi 30} {Citra 25}]"
+          }
+        ]
+      }
+    }
+  ],
+  "collection": {
+    "kind": "slice",
+    "items": [
+      "{Budi 30}",
+      "{Citra 25}"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

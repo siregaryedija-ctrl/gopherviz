@@ -1,0 +1,3872 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_workers.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 11,
+    "endLine": 26,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 11,
+      "func": "main",
+      "note": "panggil main()"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "vars": {
+        "jobs": "chan"
+      },
+      "note": "jobs := make(chan int, 5) → jobs = chan",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "results := make(chan int, 5) → results = chan",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "init",
+      "line": 14,
+      "iteration": 0,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "1"
+      },
+      "note": "w := 1 → w = 1",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 14,
+      "iteration": 0,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "1"
+      },
+      "result": true,
+      "note": "w <= 2 → 1 <= 2 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 0,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "1"
+      },
+      "note": "go worker(w, jobs, results) → goroutine G2 dibuat (siap jalan)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "post",
+      "line": 14,
+      "iteration": 0,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "2"
+      },
+      "note": "w++ → w = 2",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 14,
+      "iteration": 1,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "2"
+      },
+      "result": true,
+      "note": "w <= 2 → 2 <= 2 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "iteration": 1,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "2"
+      },
+      "note": "go worker(w, jobs, results) → goroutine G3 dibuat (siap jalan)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "post",
+      "line": 14,
+      "iteration": 1,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "3"
+      },
+      "note": "w++ → w = 3",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 14,
+      "iteration": 2,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "3"
+      },
+      "result": false,
+      "note": "w <= 2 → 3 <= 2 → false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "exit",
+      "line": 14,
+      "iteration": 2,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "w": "3"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "init",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "j": "1",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "j := 1 → j = 1",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "cond",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "j": "1",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "j <= 5 → 1 <= 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 0,
+      "vars": {
+        "j": "1",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "jobs <- j → kirim 1 ke jobs",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "1",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "post",
+      "line": 17,
+      "iteration": 0,
+      "vars": {
+        "j": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "j++ → j = 2",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "cond",
+      "line": 17,
+      "iteration": 1,
+      "vars": {
+        "j": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "j <= 5 → 2 <= 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 1,
+      "vars": {
+        "j": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "jobs <- j → kirim 2 ke jobs",
+      "ops": [
+        {
+          "op": "send",
+          "a": 1,
+          "value": "2",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "post",
+      "line": 17,
+      "iteration": 1,
+      "vars": {
+        "j": "3",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "j++ → j = 3",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "cond",
+      "line": 17,
+      "iteration": 2,
+      "vars": {
+        "j": "3",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "j <= 5 → 3 <= 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 20,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 2,
+      "vars": {
+        "j": "3",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "jobs <- j → kirim 3 ke jobs",
+      "ops": [
+        {
+          "op": "send",
+          "a": 2,
+          "value": "3",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 21,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "post",
+      "line": 17,
+      "iteration": 2,
+      "vars": {
+        "j": "4",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "j++ → j = 4",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 22,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "cond",
+      "line": 17,
+      "iteration": 3,
+      "vars": {
+        "j": "4",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "j <= 5 → 4 <= 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 23,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 3,
+      "vars": {
+        "j": "4",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "jobs <- j → kirim 4 ke jobs",
+      "ops": [
+        {
+          "op": "send",
+          "a": 3,
+          "value": "4",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 24,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "post",
+      "line": 17,
+      "iteration": 3,
+      "vars": {
+        "j": "5",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "j++ → j = 5",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 25,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "cond",
+      "line": 17,
+      "iteration": 4,
+      "vars": {
+        "j": "5",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "j <= 5 → 5 <= 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 26,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "iteration": 4,
+      "vars": {
+        "j": "5",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "jobs <- j → kirim 5 ke jobs",
+      "ops": [
+        {
+          "op": "send",
+          "a": 4,
+          "value": "5",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 27,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "post",
+      "line": 17,
+      "iteration": 4,
+      "vars": {
+        "j": "6",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "j++ → j = 6",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 28,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "cond",
+      "line": 17,
+      "iteration": 5,
+      "vars": {
+        "j": "6",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": false,
+      "note": "j <= 5 → 6 <= 5 → false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 29,
+      "loop": "L3",
+      "block": "L3",
+      "run": 1,
+      "phase": "exit",
+      "line": 17,
+      "iteration": 5,
+      "vars": {
+        "j": "6",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 30,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "close(jobs)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 31,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "0"
+      },
+      "note": "sum := 0 → sum = 0",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 32,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "init",
+      "line": 22,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "0"
+      },
+      "note": "i := 0 → i = 0",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 33,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "0"
+      },
+      "result": true,
+      "note": "i < 5 → 0 < 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 34,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 0,
+      "note": "G1 menunggu: <-results (menunggu data)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "<-results (menunggu data)"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 35,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 15,
+      "func": "worker",
+      "args": "id = 2, jobs = chan, results = chan",
+      "vars": {
+        "id": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "panggil worker(id = 2, jobs = chan, results = chan)",
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "<-results (menunggu data)"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 36,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "init",
+      "line": 6,
+      "iteration": 0,
+      "vars": {
+        "id": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "range jobs (channel)",
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "<-results (menunggu data)"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 37,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 0,
+      "vars": {
+        "id": "2",
+        "j": "1",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: j = 1",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "1",
+          "key": "ch1"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "menunggu",
+          "why": "<-results (menunggu data)"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [],
+          "receivers": 1
+        }
+      ]
+    },
+    {
+      "n": 38,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "id": "2",
+        "j": "1",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "results <- j * 2 → kirim 2 ke results",
+      "ops": [
+        {
+          "op": "send",
+          "a": 0,
+          "value": "2",
+          "key": "ch2"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 39,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 1,
+      "vars": {
+        "id": "2",
+        "j": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: j = 2",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "2",
+          "key": "ch1"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 40,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "id": "2",
+        "j": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "results <- j * 2 → kirim 4 ke results",
+      "ops": [
+        {
+          "op": "send",
+          "a": 1,
+          "value": "4",
+          "key": "ch2"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 41,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 2,
+      "vars": {
+        "id": "2",
+        "j": "3",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: j = 3",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "3",
+          "key": "ch1"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 42,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "id": "2",
+        "j": "3",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "results <- j * 2 → kirim 6 ke results",
+      "ops": [
+        {
+          "op": "send",
+          "a": 2,
+          "value": "6",
+          "key": "ch2"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "4",
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 43,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 3,
+      "vars": {
+        "id": "2",
+        "j": "4",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "ambil elemen ke-4: j = 4",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "4",
+          "key": "ch1"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 44,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "id": "2",
+        "j": "4",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "results <- j * 2 → kirim 8 ke results",
+      "ops": [
+        {
+          "op": "send",
+          "a": 3,
+          "value": "8",
+          "key": "ch2"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": [
+            "5"
+          ]
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6",
+            "8"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 45,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 4,
+      "vars": {
+        "id": "2",
+        "j": "5",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": true,
+      "note": "ambil elemen ke-5: j = 5",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "5",
+          "key": "ch1"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6",
+            "8"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 46,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 7,
+      "iteration": 4,
+      "vars": {
+        "id": "2",
+        "j": "5",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "results <- j * 2 → kirim 10 ke results",
+      "ops": [
+        {
+          "op": "send",
+          "a": 4,
+          "value": "10",
+          "key": "ch2"
+        }
+      ],
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 47,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "cond",
+      "line": 6,
+      "iteration": 5,
+      "vars": {
+        "id": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi",
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 48,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "depth": 1,
+      "phase": "exit",
+      "line": 6,
+      "iteration": 5,
+      "vars": {
+        "id": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done",
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 49,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 9,
+      "func": "worker",
+      "vars": {
+        "id": "2",
+        "jobs": "chan",
+        "results": "chan"
+      },
+      "note": "worker(id = 2, jobs = chan, results = chan) selesai",
+      "g": 3,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "siap"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "2",
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 50,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "0"
+      },
+      "note": "terima 2 dari results",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "2",
+          "key": "ch2"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 51,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 0,
+      "vars": {
+        "i": "0",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "2"
+      },
+      "note": "sum += <-results → sum = 2",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 52,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "post",
+      "line": 22,
+      "iteration": 0,
+      "vars": {
+        "i": "1",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "2"
+      },
+      "note": "i++ → i = 1",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 53,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "2"
+      },
+      "result": true,
+      "note": "i < 5 → 1 < 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "4",
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 54,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "2"
+      },
+      "note": "terima 4 dari results",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "4",
+          "key": "ch2"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 55,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 1,
+      "vars": {
+        "i": "1",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "6"
+      },
+      "note": "sum += <-results → sum = 6",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 56,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "post",
+      "line": 22,
+      "iteration": 1,
+      "vars": {
+        "i": "2",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "6"
+      },
+      "note": "i++ → i = 2",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 57,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "6"
+      },
+      "result": true,
+      "note": "i < 5 → 2 < 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "6",
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 58,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "6"
+      },
+      "note": "terima 6 dari results",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "6",
+          "key": "ch2"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 59,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 2,
+      "vars": {
+        "i": "2",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "12"
+      },
+      "note": "sum += <-results → sum = 12",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 60,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "post",
+      "line": 22,
+      "iteration": 2,
+      "vars": {
+        "i": "3",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "12"
+      },
+      "note": "i++ → i = 3",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 61,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "12"
+      },
+      "result": true,
+      "note": "i < 5 → 3 < 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "8",
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 62,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "12"
+      },
+      "note": "terima 8 dari results",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "8",
+          "key": "ch2"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 63,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 3,
+      "vars": {
+        "i": "3",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "20"
+      },
+      "note": "sum += <-results → sum = 20",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 64,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "post",
+      "line": 22,
+      "iteration": 3,
+      "vars": {
+        "i": "4",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "20"
+      },
+      "note": "i++ → i = 4",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 65,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "iteration": 4,
+      "vars": {
+        "i": "4",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "20"
+      },
+      "result": true,
+      "note": "i < 5 → 4 < 5 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": [
+            "10"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 66,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 4,
+      "vars": {
+        "i": "4",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "20"
+      },
+      "note": "terima 10 dari results",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "10",
+          "key": "ch2"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 67,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "iteration": 4,
+      "vars": {
+        "i": "4",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "30"
+      },
+      "note": "sum += <-results → sum = 30",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 68,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "post",
+      "line": 22,
+      "iteration": 4,
+      "vars": {
+        "i": "5",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "30"
+      },
+      "note": "i++ → i = 5",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 69,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "iteration": 5,
+      "vars": {
+        "i": "5",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "30"
+      },
+      "result": false,
+      "note": "i < 5 → 5 < 5 → false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 70,
+      "loop": "L4",
+      "block": "L4",
+      "run": 1,
+      "phase": "exit",
+      "line": 22,
+      "iteration": 5,
+      "vars": {
+        "i": "5",
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "30"
+      },
+      "note": "kondisi false → keluar dari loop",
+      "reason": "cond-false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 71,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 25,
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "30"
+      },
+      "note": "fmt.Println(\"total\", sum) → cetak \"total 30\"",
+      "output": "total 30\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 72,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 26,
+      "func": "main",
+      "vars": {
+        "jobs": "chan",
+        "results": "chan",
+        "sum": "30"
+      },
+      "note": "main() selesai",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        },
+        {
+          "id": 2,
+          "name": "worker(w, jobs, results)",
+          "state": "siap"
+        },
+        {
+          "id": 3,
+          "name": "worker(w, jobs, results)",
+          "state": "selesai"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "jobs",
+          "cap": 5,
+          "closed": true,
+          "items": []
+        },
+        {
+          "id": "ch2",
+          "name": "results",
+          "cap": 5,
+          "items": []
+        }
+      ]
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

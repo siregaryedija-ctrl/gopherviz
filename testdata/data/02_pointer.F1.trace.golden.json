@@ -1,0 +1,143 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_pointer.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 5,
+    "endLine": 7,
+    "name": "swap"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 15,
+      "func": "swap",
+      "args": "a = → 1, b = → 2",
+      "vars": {
+        "a": "→ 1",
+        "b": "→ 2"
+      },
+      "note": "panggil swap(a = → 1, b = → 2)",
+      "mem": {
+        "vars": [
+          {
+            "name": "a",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "b",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "value",
+            "value": "1"
+          },
+          {
+            "id": "obj2",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "a": "→ 2",
+        "b": "→ 1"
+      },
+      "note": "*a, *b = *b, *a",
+      "mem": {
+        "vars": [
+          {
+            "name": "a",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "b",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "id": "obj2",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 7,
+      "func": "swap",
+      "vars": {
+        "a": "→ 2",
+        "b": "→ 1"
+      },
+      "note": "swap(a = → 1, b = → 2) selesai",
+      "mem": {
+        "vars": [
+          {
+            "name": "a",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "b",
+            "kind": "pointer",
+            "points": "obj2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "value",
+            "value": "2"
+          },
+          {
+            "id": "obj2",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

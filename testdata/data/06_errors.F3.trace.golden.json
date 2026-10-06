@@ -1,0 +1,520 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F3",
+    "kind": "func",
+    "line": 33,
+    "endLine": 42,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "call",
+      "line": 33,
+      "func": "main",
+      "note": "panggil main()"
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 34,
+      "iteration": 0,
+      "note": "range []string{\"42\", \"\", \"abc\", \"500\"} (4 elemen)"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 34,
+      "iteration": 0,
+      "vars": {
+        "s": "\"42\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: s = \"42\""
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"42\"",
+      "vars": {
+        "s": "\"42\""
+      },
+      "note": "panggil parse(s = \"42\")"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "42, <nil>",
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "parse(s = \"42\") mengembalikan 42, <nil>"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 35,
+      "iteration": 0,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "n, err := parse(s) → n = 42, err = <nil>"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 36,
+      "iteration": 0,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if err != nil → <nil> != nil → false"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 40,
+      "iteration": 0,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "fmt.Println(\"ok:\", n) → cetak \"ok: 42\"",
+      "output": "ok: 42\n"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 34,
+      "iteration": 1,
+      "vars": {
+        "s": "\"\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: s = \"\""
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"\"",
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "panggil parse(s = \"\")"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "0, error(\"input kosong\")",
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "parse(s = \"\") mengembalikan 0, error(\"input kosong\")"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 35,
+      "iteration": 1,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "n, err := parse(s) → n = 0, err = error(\"input kosong\")"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 36,
+      "iteration": 1,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "result": true,
+      "note": "if err != nil → error(\"input kosong\") != nil → true"
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 37,
+      "iteration": 1,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: input kosong true\"",
+      "output": "error: input kosong true\n"
+    },
+    {
+      "n": 14,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "continue",
+      "line": 38,
+      "iteration": 1,
+      "vars": {
+        "err": "error(\"input kosong\")",
+        "n": "0",
+        "s": "\"\""
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 34,
+      "iteration": 2,
+      "vars": {
+        "s": "\"abc\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: s = \"abc\""
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"abc\"",
+      "vars": {
+        "s": "\"abc\""
+      },
+      "note": "panggil parse(s = \"abc\")"
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "0, error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "parse(s = \"abc\") mengembalikan 0, error(\"parse \\\"abc\\\": strconv.Atoi: par…"
+    },
+    {
+      "n": 18,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 35,
+      "iteration": 2,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "n, err := parse(s) → n = 0, err = error(\"parse \\\"abc\\\": strconv.Atoi: par…"
+    },
+    {
+      "n": 19,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 36,
+      "iteration": 2,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "result": true,
+      "note": "if err != nil → error(\"parse \\\"abc\\\": strconv.Atoi: par… != nil → true"
+    },
+    {
+      "n": 20,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 37,
+      "iteration": 2,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: parse \\\"abc\\\": strconv.Atoi: parsing \\\"abc\\\": invalid syntax false\"",
+      "output": "error: parse \"abc\": strconv.Atoi: parsing \"abc\": invalid syntax false\n"
+    },
+    {
+      "n": 21,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "continue",
+      "line": 38,
+      "iteration": 2,
+      "vars": {
+        "err": "error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 22,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 34,
+      "iteration": 3,
+      "vars": {
+        "s": "\"500\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-4: s = \"500\""
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"500\"",
+      "vars": {
+        "s": "\"500\""
+      },
+      "note": "panggil parse(s = \"500\")"
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "0, &{500}",
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "parse(s = \"500\") mengembalikan 0, &{500}"
+    },
+    {
+      "n": 25,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 35,
+      "iteration": 3,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "n, err := parse(s) → n = 0, err = &{500}"
+    },
+    {
+      "n": 26,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 36,
+      "iteration": 3,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "result": true,
+      "note": "if err != nil → &{500} != nil → true"
+    },
+    {
+      "n": 27,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 37,
+      "func": "RangeError.Error",
+      "args": "e = &{500}",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "panggil RangeError.Error(e = &{500})"
+    },
+    {
+      "n": 28,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "RangeError.Error",
+      "return": "\"nilai 500 di luar batas\"",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\""
+    },
+    {
+      "n": 29,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "body",
+      "line": 37,
+      "iteration": 3,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: nilai 500 di luar batas false\"",
+      "output": "error: nilai 500 di luar batas false\n"
+    },
+    {
+      "n": 30,
+      "loop": "L1",
+      "block": "I4",
+      "run": 1,
+      "phase": "continue",
+      "line": 38,
+      "iteration": 3,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "continue → langsung ke putaran berikutnya"
+    },
+    {
+      "n": 31,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 34,
+      "iteration": 4,
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 32,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 34,
+      "iteration": 4,
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    },
+    {
+      "n": 33,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "return",
+      "line": 42,
+      "func": "main",
+      "note": "main() selesai"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

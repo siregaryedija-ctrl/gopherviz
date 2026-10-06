@@ -1,0 +1,190 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I1",
+    "kind": "if",
+    "line": 20,
+    "endLine": 22
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if s == \"\" → \"42\" == \"\" → false"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "branch",
+      "line": 20,
+      "branch": 1,
+      "vars": {
+        "s": "\"42\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "exit",
+      "line": 22,
+      "vars": {
+        "s": "\"42\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"\""
+      },
+      "result": true,
+      "note": "if s == \"\" → \"\" == \"\" → true"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "branch",
+      "line": 20,
+      "branch": 0,
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "masuk cabang ke-1 (if s == \"\")"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "return 0, ErrKosong → keluar dari fungsi"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "exit",
+      "line": 22,
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"abc\""
+      },
+      "result": false,
+      "note": "if s == \"\" → \"abc\" == \"\" → false"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "branch",
+      "line": 20,
+      "branch": 1,
+      "vars": {
+        "s": "\"abc\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "exit",
+      "line": 22,
+      "vars": {
+        "s": "\"abc\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "I1",
+      "run": 4,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"500\""
+      },
+      "result": false,
+      "note": "if s == \"\" → \"500\" == \"\" → false"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "I1",
+      "run": 4,
+      "phase": "branch",
+      "line": 20,
+      "branch": 1,
+      "vars": {
+        "s": "\"500\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "I1",
+      "run": 4,
+      "phase": "exit",
+      "line": 22,
+      "vars": {
+        "s": "\"500\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

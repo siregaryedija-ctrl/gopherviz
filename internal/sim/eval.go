@@ -394,18 +394,11 @@ func (it *interp) unary(n *ast.UnaryExpr, e *env) value {
 
 func (it *interp) recv(n *ast.UnaryExpr, e *env) (value, bool) {
 	ch := it.eval(n.X, e)
-	if ch.k != kChan || ch.ch == nil {
-		it.structural("menerima dari channel ini belum disimulasikan")
+	v, ok := it.chanRecv(ch, n, it.chanName(n.X), chanElem(it.p.Info.Types[n.X].Type))
+	if it.recording() {
+		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Note: fmt.Sprintf("terima %s dari %s", show(v), it.chanName(n.X))}, e)
 	}
-	if len(ch.ch.buf) == 0 {
-		if ch.ch.closed {
-			return zeroOf(it.p.Info.Types[n].Type), false
-		}
-		it.structural("channel kosong: program butuh goroutine lain (belum disimulasikan)")
-	}
-	v := ch.ch.buf[0]
-	ch.ch.buf = ch.ch.buf[1:]
-	return v, true
+	return v, ok
 }
 
 func (it *interp) evalIndex(n *ast.IndexExpr, e *env) value {
@@ -515,6 +508,9 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 		}
 	case *ast.SelectorExpr:
 		if sel := it.p.Info.Selections[f]; sel != nil && sel.Kind() == types.MethodVal {
+			if typ := syncType(sel); typ != "" {
+				return it.syncCall(f, n, e, typ, f.Sel.Name)
+			}
 			return it.callMethod(f, n, e)
 		}
 		if pn, ok := it.p.Info.Uses[identOf(f.X)].(*types.PkgName); ok {
@@ -544,6 +540,8 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 }
 
 func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
+	goEntry := it.goEntry
+	it.goEntry = false
 	if fn.builtin != nil {
 		return fn.builtin(args)
 	}
@@ -653,7 +651,7 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	}
 	// Fungsi yang ditulis di luar blok fokus tetap dijalankan, tetapi langkah di dalamnya
 	// tidak direkam supaya trace hanya berisi kode blok itu sendiri. Output-nya tetap tercatat.
-	quietBody := it.rec.on() && !it.insideFocus(body)
+	quietBody := it.rec.on() && !it.insideFocus(body) && !goEntry
 	if quietBody {
 		it.quiet++
 	}
@@ -789,7 +787,7 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
 		case *types.Map:
 			return one(value{k: kMap, m: newMap()})
 		case *types.Chan:
-			return one(value{k: kChan, ch: &chanVal{cap: size}})
+			return one(it.newChan(size))
 		}
 		return one(unknown("make untuk tipe ini belum disimulasikan"))
 	case "delete":
@@ -857,13 +855,7 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
 		it.output(strings.Join(parts, sep) + end)
 		return nil
 	case "close":
-		ch := it.eval(n.Args[0], e)
-		if ch.k == kChan && ch.ch != nil {
-			if ch.ch.closed {
-				it.panicf(n, "close of closed channel")
-			}
-			ch.ch.closed = true
-		}
+		it.chanClose(it.eval(n.Args[0], e), n)
 		return nil
 	}
 	return one(unknown(fmt.Sprintf("fungsi bawaan %s belum disimulasikan", name)))
@@ -983,6 +975,26 @@ func (it *interp) pkgCall(pkg, name string, n *ast.CallExpr, e *env) []value {
 func (it *interp) pkgApply(pkg, name string, args []value, n ast.Node) (res []value) {
 	defer guardRuntime(&res, pkg+"."+name)
 	switch pkg + "." + name {
+	case "time.Sleep":
+		if len(args) == 1 && args[0].k == kInt {
+			it.sleep(args[0].i, n)
+		}
+		return nil
+	case "time.After":
+		if len(args) == 1 && args[0].k == kInt {
+			return []value{it.timeAfter(args[0].i)}
+		}
+	case "runtime.Gosched":
+		it.gosched()
+		return nil
+	case "runtime.NumGoroutine":
+		n := 0
+		for _, g := range it.sch.gs {
+			if !g.done {
+				n++
+			}
+		}
+		return []value{intV(int64(n))}
 	case "errors.New":
 		if len(args) == 1 && args[0].k == kString {
 			return []value{it.newErr(args[0].s, nil)}

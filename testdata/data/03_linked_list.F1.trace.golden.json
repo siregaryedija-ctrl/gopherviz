@@ -1,0 +1,434 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_linked_list.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 10,
+    "endLine": 12,
+    "name": "push"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 17,
+      "func": "push",
+      "args": "head = <nil>, v = 3",
+      "vars": {
+        "head": "<nil>",
+        "v": "3"
+      },
+      "note": "panggil push(head = <nil>, v = 3)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 11,
+      "vars": {
+        "head": "<nil>",
+        "v": "3"
+      },
+      "note": "return &Node{Val: v, Next: head} → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 12,
+      "func": "push",
+      "return": "&{3 <nil>}",
+      "vars": {
+        "head": "<nil>",
+        "v": "3"
+      },
+      "note": "push(head = <nil>, v = 3) mengembalikan &{3 <nil>}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "nil"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "3"
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 17,
+      "func": "push",
+      "args": "head = &{3 <nil>}, v = 2",
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "2"
+      },
+      "note": "panggil push(head = &{3 <nil>}, v = 2)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 11,
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "2"
+      },
+      "note": "return &Node{Val: v, Next: head} → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 12,
+      "func": "push",
+      "return": "&{2 &{3 <nil>}}",
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "2"
+      },
+      "note": "push(head = &{3 <nil>}, v = 2) mengembalikan &{2 &{3 <nil>}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj1"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "2"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "call",
+      "line": 17,
+      "func": "push",
+      "args": "head = &{2 &{3 <nil>}}, v = 1",
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "1"
+      },
+      "note": "panggil push(head = &{2 &{3 <nil>}}, v = 1)",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "body",
+      "line": 11,
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "1"
+      },
+      "note": "return &Node{Val: v, Next: head} → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "return",
+      "line": 12,
+      "func": "push",
+      "return": "&{1 &{2 &{3 <nil>}}}",
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "1"
+      },
+      "note": "push(head = &{2 &{3 <nil>}}, v = 1) mengembalikan &{1 &{2 &{3 <nil>}}}",
+      "mem": {
+        "vars": [
+          {
+            "name": "head",
+            "kind": "pointer",
+            "points": "obj2"
+          },
+          {
+            "name": "v",
+            "kind": "value",
+            "value": "1"
+          }
+        ],
+        "heap": [
+          {
+            "id": "obj2",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "2"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "obj1"
+              }
+            ]
+          },
+          {
+            "id": "obj1",
+            "kind": "struct",
+            "type": "Node",
+            "fields": [
+              {
+                "name": "Val",
+                "value": "3"
+              },
+              {
+                "name": "Next",
+                "value": "",
+                "points": "nil"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

@@ -1,0 +1,93 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "05_select.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 8,
+        "endLine": 23,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "done := make(chan string)"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "endLine": 13,
+            "text": "go func() { …"
+          },
+          {
+            "kind": "loop",
+            "line": 14,
+            "endLine": 22,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "F2",
+          "L1"
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 10,
+        "endLine": 13,
+        "state": "complete",
+        "name": "func",
+        "header": "func()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "time.Sleep(45 * time.Millisecond)"
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "done <- \"beres\""
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 14,
+        "endLine": 22,
+        "state": "complete",
+        "header": "for",
+        "parent": "F1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "infinite",
+        "line": 14,
+        "endLine": 22,
+        "state": "complete",
+        "header": {
+          "text": "for"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "endLine": 21,
+            "text": "select { …"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

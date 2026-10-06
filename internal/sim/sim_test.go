@@ -3,13 +3,16 @@ package sim
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/trace"
@@ -66,7 +69,11 @@ const blocksDir = "../../testdata/blocks"
 // TestGolden: setiap loop di testdata/loops dan setiap blok di testdata/blocks.
 func TestGolden(t *testing.T) {
 	loopFiles, _ := filepath.Glob(filepath.Join(loopsDir, "*.go"))
-	blockFiles, _ := filepath.Glob(filepath.Join(blocksDir, "*.go"))
+	var blockFiles []string
+	for _, dir := range []string{blocksDir, dataDir, concDir} {
+		f, _ := filepath.Glob(filepath.Join(dir, "*.go"))
+		blockFiles = append(blockFiles, f...)
+	}
 	type target struct{ path, id string }
 	var targets []target
 	for _, path := range loopFiles {
@@ -493,6 +500,78 @@ func TestDataStructures(t *testing.T) {
 	})
 }
 
+const concDir = "../../testdata/conc"
+
+func TestConcurrency(t *testing.T) {
+	mainOf := func(t *testing.T, name string) *trace.Trace {
+		t.Helper()
+		p := load(t, filepath.Join(concDir, name))
+		for _, b := range p.Result.Scene.Blocks {
+			if b.Kind == "func" && b.Name == "main" {
+				tr := Trace(p, b.ID, Options{MaxSteps: 5000})
+				return &tr
+			}
+		}
+		t.Fatal("main tidak ditemukan")
+		return nil
+	}
+	t.Run("goroutine tercatat per langkah", func(t *testing.T) {
+		tr := mainOf(t, "06_pingpong.go")
+		gs := map[int]bool{}
+		for _, s := range tr.Steps {
+			if s.G > 0 {
+				gs[s.G] = true
+			}
+		}
+		if !gs[1] || !gs[2] || !gs[3] {
+			t.Errorf("goroutine yang tercatat: %v", gs)
+		}
+		last := tr.Steps[len(tr.Steps)-1]
+		if len(last.Gs) != 3 || len(last.Chans) != 3 {
+			t.Errorf("potret akhir: gs %+v chans %+v", last.Gs, last.Chans)
+		}
+	})
+	t.Run("deadlock dilaporkan", func(t *testing.T) {
+		tr := mainOf(t, "07_deadlock.go")
+		last := tr.Steps[len(tr.Steps)-1]
+		if last.Reason != trace.ReasonPanic || !strings.Contains(last.Note, "deadlock") {
+			t.Errorf("langkah terakhir = %+v", last)
+		}
+		if !strings.Contains(strings.Join(tr.Warnings, "|"), "deadlock") {
+			t.Errorf("peringatan = %v", tr.Warnings)
+		}
+	})
+	t.Run("unbuffered: pengirim menunggu penerima", func(t *testing.T) {
+		tr := mainOf(t, "01_unbuffered.go")
+		waits := 0
+		for _, s := range tr.Steps {
+			if strings.Contains(s.Note, "menunggu") {
+				waits++
+			}
+		}
+		if waits == 0 {
+			t.Error("tidak ada langkah menunggu")
+		}
+	})
+	t.Run("send ke channel tertutup panic", func(t *testing.T) {
+		src := `package main
+
+func main() {
+	ch := make(chan int, 1)
+	close(ch)
+	for i := 0; i < 1; i++ {
+		ch <- i
+	}
+}
+`
+		p := analyzer.Load("x.go", []byte(src))
+		tr := Trace(p, "L1", Options{})
+		if !strings.Contains(strings.Join(tr.Warnings, "|"), "send on closed channel") {
+			t.Errorf("peringatan = %v", tr.Warnings)
+		}
+	})
+}
+
 // TestAgainstGo membandingkan output seluruh program (fokus pada main) dengan `go run`
 // sungguhan. Ini bukti terkuat bahwa simulator setia pada aturan Go.
 func TestAgainstGo(t *testing.T) {
@@ -504,7 +583,7 @@ func TestAgainstGo(t *testing.T) {
 		t.Skip("go tidak ada di PATH")
 	}
 	var files []string
-	for _, dir := range []string{"../../testdata/data", blocksDir} {
+	for _, dir := range []string{"../../testdata/data", blocksDir, concDir} {
 		f, _ := filepath.Glob(filepath.Join(dir, "*.go"))
 		files = append(files, f...)
 	}
@@ -525,7 +604,8 @@ func TestAgainstGo(t *testing.T) {
 			cmd := exec.Command(goBin, "run", filepath.Base(path))
 			cmd.Dir = filepath.Dir(path)
 			want, err := cmd.Output()
-			if err != nil {
+			var exit *exec.ExitError
+			if err != nil && !errors.As(err, &exit) { // program yang deadlock/panic tetap dibandingkan stdout-nya
 				t.Fatalf("go run gagal: %v", err)
 			}
 			if got := output(tr); got != strings.ReplaceAll(string(want), "\r\n", "\n") {
@@ -537,7 +617,8 @@ func TestAgainstGo(t *testing.T) {
 
 func FuzzTrace(f *testing.F) {
 	files, _ := filepath.Glob(filepath.Join(loopsDir, "*.go"))
-	for _, path := range files {
+	conc, _ := filepath.Glob(filepath.Join(concDir, "*.go"))
+	for _, path := range append(files, conc...) {
 		src, _ := os.ReadFile(path)
 		f.Add(src)
 	}
@@ -552,4 +633,28 @@ func FuzzTrace(f *testing.F) {
 			}
 		}
 	})
+}
+
+// TestNoGoroutineLeak memastikan goroutine Go milik penjadwal ikut berhenti setelah trace
+// selesai, termasuk saat trace dipotong atau program deadlock (gopherviz serve berjalan lama).
+func TestNoGoroutineLeak(t *testing.T) {
+	files, _ := filepath.Glob(filepath.Join(concDir, "*.go"))
+	before := runtime.NumGoroutine()
+	for i := 0; i < 20; i++ {
+		for _, path := range files {
+			p := load(t, path)
+			for _, b := range p.Result.Scene.Blocks {
+				Trace(p, b.ID, Options{MaxSteps: 15}) // sengaja dipotong di tengah jalan
+				Trace(p, b.ID, Options{})
+			}
+		}
+	}
+	deadline := time.Now().Add(2 * time.Second)
+	for runtime.NumGoroutine() > before+2 && time.Now().Before(deadline) {
+		runtime.Gosched()
+	}
+	if n := runtime.NumGoroutine(); n > before+2 {
+		buf := make([]byte, 1<<16)
+		t.Errorf("goroutine bocor: %d sebelum, %d sesudah\n%s", before, n, buf[:runtime.Stack(buf, true)])
+	}
 }

@@ -1,0 +1,95 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "04_map_count.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 15,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "words := []string{\"apel\", \"jeruk\", \"apel\", \"mangga\", \"apel\"…"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "counts := map[string]int{}"
+          },
+          {
+            "kind": "loop",
+            "line": 8,
+            "endLine": 10,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "delete(counts, \"mangga\")"
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "n, ok := counts[\"mangga\"]"
+          },
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "fmt.Println(counts[\"apel\"], counts[\"jeruk\"], n, ok, len(cou…"
+          },
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "fmt.Println(counts)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 8,
+        "endLine": 10,
+        "state": "complete",
+        "header": "for _, w := range words",
+        "parent": "F1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 8,
+        "endLine": 10,
+        "state": "complete",
+        "header": {
+          "text": "for _, w := range words",
+          "key": "_",
+          "value": "w",
+          "define": true,
+          "range": "words"
+        },
+        "vars": [
+          "w"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "counts[w]++"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,196 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "06_pingpong.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 16,
+        "state": "complete",
+        "name": "player",
+        "header": "func player(name string, in <-chan int, out chan<- int, don…",
+        "params": [
+          "name",
+          "in",
+          "out",
+          "done"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 6,
+            "endLine": 14,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "done <- true"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 6,
+        "endLine": 14,
+        "state": "complete",
+        "header": "for ball := range in",
+        "parent": "F1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 8,
+        "endLine": 12,
+        "state": "complete",
+        "header": "if ball >= 4",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "ball >= 4",
+            "line": 8,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 9,
+                "text": "close(out)"
+              },
+              {
+                "kind": "stmt",
+                "line": 10,
+                "text": "done <- true"
+              },
+              {
+                "kind": "return",
+                "line": 11,
+                "text": "return"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 18,
+        "endLine": 28,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "ping := make(chan int)"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "pong := make(chan int)"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "done := make(chan bool)"
+          },
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "go player(\"ping\", ping, pong, done)"
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "go player(\"pong\", pong, ping, done)"
+          },
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "ping <- 1"
+          },
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "<-done"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "<-done"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "fmt.Println(\"permainan selesai\")"
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-chan",
+        "line": 6,
+        "endLine": 14,
+        "state": "complete",
+        "header": {
+          "text": "for ball := range in",
+          "key": "ball",
+          "define": true,
+          "range": "in"
+        },
+        "vars": [
+          "ball"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "fmt.Println(name, ball)"
+          },
+          {
+            "kind": "if",
+            "line": 8,
+            "endLine": 12,
+            "text": "if ball >= 4",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 9,
+                "text": "close(out)"
+              },
+              {
+                "kind": "stmt",
+                "line": 10,
+                "text": "done <- true"
+              },
+              {
+                "kind": "return",
+                "line": 11,
+                "text": "return"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "out <- ball + 1"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

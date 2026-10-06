@@ -1,0 +1,181 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "05_defer_recover.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 8,
+        "endLine": 13,
+        "state": "complete",
+        "name": "order",
+        "header": "func order()",
+        "body": [
+          {
+            "kind": "loop",
+            "line": 9,
+            "endLine": 11,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "fmt.Println(\"isi fungsi selesai\")"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "header": "for i := 1; i <= 3; i++",
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 15,
+        "endLine": 23,
+        "state": "complete",
+        "name": "safeDivide",
+        "header": "func safeDivide(a, b int) (result int, err error)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 16,
+            "endLine": 20,
+            "text": "defer func() { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "result = a / b"
+          },
+          {
+            "kind": "return",
+            "line": 22,
+            "text": "return result, nil"
+          }
+        ],
+        "children": [
+          "F3"
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 16,
+        "endLine": 20,
+        "state": "complete",
+        "name": "func",
+        "header": "func()",
+        "body": [
+          {
+            "kind": "if",
+            "line": 17,
+            "endLine": 19,
+            "text": "if r := recover(); r != nil",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "err = errors.New(\"pembagian gagal\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F2",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 17,
+        "endLine": 19,
+        "state": "complete",
+        "header": "if r := recover(); r != nil",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "r != nil",
+            "line": 17,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "err = errors.New(\"pembagian gagal\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F3"
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 25,
+        "endLine": 29,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "order()"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "fmt.Println(safeDivide(10, 2))"
+          },
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "fmt.Println(safeDivide(1, 0))"
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "header": {
+          "text": "for i := 1; i <= 3; i++",
+          "init": "i := 1",
+          "cond": "i <= 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "defer fmt.Println(\"defer\", i)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

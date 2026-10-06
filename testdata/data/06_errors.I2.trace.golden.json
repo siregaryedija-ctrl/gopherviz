@@ -1,0 +1,171 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I2",
+    "kind": "if",
+    "line": 24,
+    "endLine": 26
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if err != nil → <nil> != nil → false"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "branch",
+      "line": 24,
+      "branch": 1,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "exit",
+      "line": 26,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "result": true,
+      "note": "if err != nil → error(\"strconv.Atoi: parsing \\\"abc\\\": i… != nil → true"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "branch",
+      "line": 24,
+      "branch": 0,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "masuk cabang ke-1 (if err != nil)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "body",
+      "line": 25,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "return 0, fmt.Errorf(\"parse %q: %w\", s, err) → keluar dari fungsi"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "exit",
+      "line": 26,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "result": false,
+      "note": "if err != nil → <nil> != nil → false"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "branch",
+      "line": 24,
+      "branch": 1,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "exit",
+      "line": 26,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

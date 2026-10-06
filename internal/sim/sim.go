@@ -117,6 +117,14 @@ func (it *interp) run(node ast.Node) (structural string) {
 		if r == nil {
 			return
 		}
+		if ft, ok := r.(fatal); ok {
+			if !it.rec.reached {
+				structural = "program berhenti sebelum sampai ke blok ini: " + ft.msg
+			} else {
+				it.rec.warn("program berhenti: " + ft.msg)
+			}
+			return
+		}
 		if gp, ok := r.(goPanic); ok {
 			// panic yang tidak ditangkap recover() sampai ke puncak program
 			if !it.rec.reached {
@@ -147,15 +155,23 @@ func (it *interp) run(node ast.Node) (structural string) {
 			}
 		}
 	}()
-	it.initGlobals()
-	if main, ok := it.funcs["main"]; ok && main.Body != nil {
-		it.callFunc(&funcVal{name: "main", decl: main}, nil, main)
+	// Program (init global + main) berjalan sebagai goroutine main di penjadwal; panic atau
+	// abort dari goroutine mana pun diteruskan ke sini.
+	if r := it.runProgram(func() {
+		it.initGlobals()
+		if main, ok := it.funcs["main"]; ok && main.Body != nil {
+			it.callFunc(&funcVal{name: "main", decl: main}, nil, main)
+		}
+	}); r != nil {
+		panic(r)
 	}
 	if !it.rec.reached {
 		// Blok tidak tercapai dari main (atau tidak ada main): jalankan fungsi tempatnya
 		// berada dengan parameter yang tidak diketahui.
 		if fd := enclosingFunc(it.p.File, node); fd != nil && fd.Name.Name != "main" {
-			it.callFunc(&funcVal{name: fd.Name.Name, decl: fd}, nil, fd)
+			if r := it.runProgram(func() { it.callFunc(&funcVal{name: fd.Name.Name, decl: fd}, nil, fd) }); r != nil {
+				panic(r)
+			}
 		}
 	}
 	return ""

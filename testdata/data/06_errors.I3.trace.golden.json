@@ -1,0 +1,259 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I3",
+    "kind": "if",
+    "line": 27,
+    "endLine": 29
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I3",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if n > 100 → 42 > 100 → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I3",
+      "run": 1,
+      "phase": "branch",
+      "line": 27,
+      "branch": 1,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I3",
+      "run": 1,
+      "phase": "exit",
+      "line": 29,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I3",
+      "run": 2,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "result": true,
+      "note": "if n > 100 → 500 > 100 → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I3",
+      "run": 2,
+      "phase": "branch",
+      "line": 27,
+      "branch": 0,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "masuk cabang ke-1 (if n > 100)",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I3",
+      "run": 2,
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "return 0, &RangeError{Value: n} → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I3",
+      "run": 2,
+      "phase": "exit",
+      "line": 29,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "keluar karena return",
+      "reason": "return",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

@@ -74,6 +74,18 @@ test('CodeLens muncul di atas setiap blok', async () => {
   assert.equal(titles.filter(t => t.startsWith('▶')).length, 6); // main, 3 loop, 2 if
 });
 
+test('goroutine dan channel: trace membawa jalur goroutine dan isi channel', async api => {
+  const conc = path.resolve(path.dirname(file), '..', 'conc', '03_workers.go');
+  const ed = await vscode.workspace.openTextDocument(conc).then(d => vscode.window.showTextDocument(d));
+  ed.selection = new vscode.Selection(12, 1, 12, 1); // baris 13: di dalam main, di luar loop
+  const uri = ed.document.uri.toString();
+  await waitFor('trace F2', () => api.traceKey().startsWith(uri) && api.traceKey().endsWith('|F2'));
+  const tr = api.lastTrace()!;
+  assert.equal(tr.mode, 'simulated');
+  assert.ok(tr.steps.some(s => s.gs?.length === 3), 'tidak ada potret 3 goroutine');
+  assert.ok(tr.steps.some(s => s.ops?.some(o => o.op === 'send' && o.key === 'ch1')), 'tidak ada kirim ke jobs');
+});
+
 export async function run(): Promise<void> {
   const ext = vscode.extensions.getExtension<TestApi>('gopherviz.gopherviz');
   assert.ok(ext, 'ekstensi gopherviz tidak ditemukan');

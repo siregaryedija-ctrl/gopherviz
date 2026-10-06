@@ -1,0 +1,115 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "02_waitgroup.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 8,
+        "endLine": 11,
+        "state": "complete",
+        "name": "square",
+        "header": "func square(id int, results []int, wg *sync.WaitGroup)",
+        "params": [
+          "id",
+          "results",
+          "wg"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "defer wg.Done()"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "results[id] = id * id"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 13,
+        "endLine": 22,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "var wg sync.WaitGroup"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "results := make([]int, 4)"
+          },
+          {
+            "kind": "loop",
+            "line": 16,
+            "endLine": 19,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "wg.Wait()"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "fmt.Println(results)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 19,
+        "state": "complete",
+        "header": "for i := 0; i < 4; i++",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 16,
+        "endLine": 19,
+        "state": "complete",
+        "header": {
+          "text": "for i := 0; i < 4; i++",
+          "init": "i := 0",
+          "cond": "i < 4",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "wg.Add(1)"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "go square(i, results, &wg)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

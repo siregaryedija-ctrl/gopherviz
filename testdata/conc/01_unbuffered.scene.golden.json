@@ -1,0 +1,139 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "01_unbuffered.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 10,
+        "state": "complete",
+        "name": "produce",
+        "header": "func produce(ch chan int)",
+        "params": [
+          "ch"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 6,
+            "endLine": 8,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "close(ch)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": "for i := 1; i <= 3; i++",
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 12,
+        "endLine": 19,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "ch := make(chan int)"
+          },
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "go produce(ch)"
+          },
+          {
+            "kind": "loop",
+            "line": 15,
+            "endLine": 17,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "fmt.Println(\"selesai\")"
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "header": "for v := range ch",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": {
+          "text": "for i := 1; i <= 3; i++",
+          "init": "i := 1",
+          "cond": "i <= 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "ch <- i * 10"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-chan",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "header": {
+          "text": "for v := range ch",
+          "key": "v",
+          "define": true,
+          "range": "ch"
+        },
+        "vars": [
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "fmt.Println(\"terima\", v)"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

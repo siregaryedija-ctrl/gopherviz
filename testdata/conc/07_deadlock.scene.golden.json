@@ -1,0 +1,42 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "07_deadlock.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 10,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "ch := make(chan int)"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "fmt.Println(\"mulai\")"
+          },
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "ch <- 1"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "fmt.Println(\"tidak pernah sampai\")"
+          }
+        ]
+      }
+    ],
+    "loops": []
+  },
+  "diagnostics": []
+}

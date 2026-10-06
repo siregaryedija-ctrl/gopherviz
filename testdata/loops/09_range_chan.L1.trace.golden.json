@@ -30,7 +30,27 @@
       "vars": {
         "ch": "chan"
       },
-      "note": "range ch (channel)"
+      "note": "range ch (channel)",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": [
+            "1",
+            "2"
+          ]
+        }
+      ]
     },
     {
       "n": 1,
@@ -45,7 +65,34 @@
         "v": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 1"
+      "note": "ambil elemen ke-1: v = 1",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "1",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": [
+            "2"
+          ]
+        }
+      ]
     },
     {
       "n": 2,
@@ -60,7 +107,26 @@
         "v": "1"
       },
       "note": "fmt.Println(v) → cetak \"1\"",
-      "output": "1\n"
+      "output": "1\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": [
+            "2"
+          ]
+        }
+      ]
     },
     {
       "n": 3,
@@ -75,7 +141,32 @@
         "v": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-2: v = 2"
+      "note": "ambil elemen ke-2: v = 2",
+      "ops": [
+        {
+          "op": "recv",
+          "a": 0,
+          "value": "2",
+          "key": "ch1"
+        }
+      ],
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": []
+        }
+      ]
     },
     {
       "n": 4,
@@ -90,7 +181,24 @@
         "v": "2"
       },
       "note": "fmt.Println(v) → cetak \"2\"",
-      "output": "2\n"
+      "output": "2\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": []
+        }
+      ]
     },
     {
       "n": 5,
@@ -104,7 +212,24 @@
         "ch": "chan"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "tidak ada elemen lagi",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": []
+        }
+      ]
     },
     {
       "n": 6,
@@ -118,7 +243,24 @@
         "ch": "chan"
       },
       "note": "range selesai → keluar dari loop",
-      "reason": "range-done"
+      "reason": "range-done",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "closed": true,
+          "items": []
+        }
+      ]
     }
   ],
   "truncated": false,

@@ -1,0 +1,133 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "07_interface.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 17,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Area",
+        "header": "func (r Rect) Area() float64",
+        "body": [
+          {
+            "kind": "return",
+            "line": 17,
+            "text": "return r.W * r.H"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 19,
+        "endLine": 19,
+        "state": "complete",
+        "name": "Area",
+        "header": "func (c Circle) Area() float64",
+        "body": [
+          {
+            "kind": "return",
+            "line": 19,
+            "text": "return 3 * c.R * c.R"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 21,
+        "endLine": 21,
+        "state": "complete",
+        "name": "String",
+        "header": "func (r Rect) String() string",
+        "body": [
+          {
+            "kind": "return",
+            "line": 21,
+            "text": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H)"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 23,
+        "endLine": 31,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "shapes := []Shape{Rect{2, 3}, Circle{1}, Rect{1, 1}}"
+          },
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "total := 0.0"
+          },
+          {
+            "kind": "loop",
+            "line": 26,
+            "endLine": 29,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "fmt.Println(\"total\", total)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 26,
+        "endLine": 29,
+        "state": "complete",
+        "header": "for _, s := range shapes",
+        "parent": "F4"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 26,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "for _, s := range shapes",
+          "key": "_",
+          "value": "s",
+          "define": true,
+          "range": "shapes"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "total += s.Area()"
+          },
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "fmt.Println(s, s.Area())"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

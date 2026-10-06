@@ -1,0 +1,120 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_struct_method.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 10,
+    "endLine": 12,
+    "name": "Greet"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 21,
+      "func": "Person.Greet",
+      "args": "p = {Ani 21}",
+      "vars": {
+        "p": "{Ani 21}"
+      },
+      "note": "panggil Person.Greet(p = {Ani 21})",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 11,
+      "vars": {
+        "p": "{Ani 21}"
+      },
+      "note": "return \"Halo, aku \" + p.Name → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 12,
+      "func": "Person.Greet",
+      "return": "\"Halo, aku Ani\"",
+      "vars": {
+        "p": "{Ani 21}"
+      },
+      "note": "Person.Greet(p = {Ani 21}) mengembalikan \"Halo, aku Ani\"",
+      "mem": {
+        "vars": [
+          {
+            "name": "p",
+            "kind": "struct",
+            "type": "Person",
+            "fields": [
+              {
+                "name": "Name",
+                "value": "\"Ani\""
+              },
+              {
+                "name": "Age",
+                "value": "21"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

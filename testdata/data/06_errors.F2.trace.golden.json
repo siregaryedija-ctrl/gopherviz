@@ -1,0 +1,720 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 19,
+    "endLine": 31,
+    "name": "parse"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"42\"",
+      "vars": {
+        "s": "\"42\""
+      },
+      "note": "panggil parse(s = \"42\")",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if s == \"\" → \"42\" == \"\" → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "n, err := strconv.Atoi(s) → n = 42, err = <nil>",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if err != nil → <nil> != nil → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I3",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "result": false,
+      "note": "if n > 100 → 42 > 100 → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 30,
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "return n, nil → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "42, <nil>",
+      "vars": {
+        "err": "<nil>",
+        "n": "42",
+        "s": "\"42\""
+      },
+      "note": "parse(s = \"42\") mengembalikan 42, <nil>",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"42\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "42"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"\"",
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "panggil parse(s = \"\")",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"\""
+      },
+      "result": true,
+      "note": "if s == \"\" → \"\" == \"\" → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "return 0, ErrKosong → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "0, error(\"input kosong\")",
+      "vars": {
+        "s": "\"\""
+      },
+      "note": "parse(s = \"\") mengembalikan 0, error(\"input kosong\")",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"abc\"",
+      "vars": {
+        "s": "\"abc\""
+      },
+      "note": "panggil parse(s = \"abc\")",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"abc\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"abc\""
+      },
+      "result": false,
+      "note": "if s == \"\" → \"abc\" == \"\" → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"abc\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "n, err := strconv.Atoi(s) → n = 0, err = error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"abc\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "err",
+            "kind": "error",
+            "value": "strconv.Atoi: parsing \"abc\": invalid syntax"
+          }
+        ]
+      }
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "result": true,
+      "note": "if err != nil → error(\"strconv.Atoi: parsing \\\"abc\\\": i… != nil → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"abc\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "err",
+            "kind": "error",
+            "value": "strconv.Atoi: parsing \"abc\": invalid syntax"
+          }
+        ]
+      }
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "body",
+      "line": 25,
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "return 0, fmt.Errorf(\"parse %q: %w\", s, err) → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"abc\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "err",
+            "kind": "error",
+            "value": "strconv.Atoi: parsing \"abc\": invalid syntax"
+          }
+        ]
+      }
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "0, error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+      "vars": {
+        "err": "error(\"strconv.Atoi: parsing \\\"abc\\\": i…",
+        "n": "0",
+        "s": "\"abc\""
+      },
+      "note": "parse(s = \"abc\") mengembalikan 0, error(\"parse \\\"abc\\\": strconv.Atoi: par…",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"abc\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "0"
+          },
+          {
+            "name": "err",
+            "kind": "error",
+            "value": "strconv.Atoi: parsing \"abc\": invalid syntax"
+          }
+        ]
+      }
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "F2",
+      "run": 4,
+      "phase": "call",
+      "line": 35,
+      "func": "parse",
+      "args": "s = \"500\"",
+      "vars": {
+        "s": "\"500\""
+      },
+      "note": "panggil parse(s = \"500\")",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "I1",
+      "run": 4,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "s": "\"500\""
+      },
+      "result": false,
+      "note": "if s == \"\" → \"500\" == \"\" → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          }
+        ]
+      }
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "F2",
+      "run": 4,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "n, err := strconv.Atoi(s) → n = 500, err = <nil>",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 20,
+      "loop": "",
+      "block": "I2",
+      "run": 4,
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "result": false,
+      "note": "if err != nil → <nil> != nil → false",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 21,
+      "loop": "",
+      "block": "I3",
+      "run": 4,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "result": true,
+      "note": "if n > 100 → 500 > 100 → true",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 22,
+      "loop": "",
+      "block": "I3",
+      "run": 4,
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "return 0, &RangeError{Value: n} → keluar dari fungsi",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "F2",
+      "run": 4,
+      "phase": "return",
+      "line": 31,
+      "func": "parse",
+      "return": "0, &{500}",
+      "vars": {
+        "err": "<nil>",
+        "n": "500",
+        "s": "\"500\""
+      },
+      "note": "parse(s = \"500\") mengembalikan 0, &{500}",
+      "mem": {
+        "vars": [
+          {
+            "name": "s",
+            "kind": "value",
+            "value": "\"500\""
+          },
+          {
+            "name": "n",
+            "kind": "value",
+            "value": "500"
+          },
+          {
+            "name": "err",
+            "kind": "value",
+            "value": "<nil>"
+          }
+        ]
+      }
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

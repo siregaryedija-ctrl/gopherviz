@@ -1,0 +1,481 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_interface.go",
+  "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 26,
+    "endLine": 29
+  },
+  "loop": {
+    "id": "L1",
+    "kind": "range-slice",
+    "line": 26,
+    "endLine": 29,
+    "vars": [
+      "s"
+    ]
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 26,
+      "iteration": 0,
+      "vars": {
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "0"
+      },
+      "note": "range shapes (3 elemen)",
+      "items": [
+        "{2 3}",
+        "{1}",
+        "{1 1}"
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 26,
+      "iteration": 0,
+      "vars": {
+        "s": "{2 3}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "0"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: s = {2 3}",
+      "ops": [
+        {
+          "op": "read",
+          "a": 0
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "Rect.Area",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.Area(r = {2 3})"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "6",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.Area(r = {2 3}) mengembalikan 6"
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "iteration": 0,
+      "vars": {
+        "s": "{2 3}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "6"
+      },
+      "note": "total += s.Area() → total = 6"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.Area",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.Area(r = {2 3})"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "6",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.Area(r = {2 3}) mengembalikan 6"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.String",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.String(r = {2 3})"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 21,
+      "func": "Rect.String",
+      "return": "\"Rect(2x3)\"",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.String(r = {2 3}) mengembalikan \"Rect(2x3)\""
+    },
+    {
+      "n": 9,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 28,
+      "iteration": 0,
+      "vars": {
+        "s": "{2 3}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "6"
+      },
+      "note": "fmt.Println(s, s.Area()) → cetak \"Rect(2x3) 6\"",
+      "output": "Rect(2x3) 6\n"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 26,
+      "iteration": 1,
+      "vars": {
+        "s": "{1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "6"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: s = {1}",
+      "ops": [
+        {
+          "op": "read",
+          "a": 1
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "Circle.Area",
+      "args": "c = {1}",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "panggil Circle.Area(c = {1})"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 19,
+      "func": "Circle.Area",
+      "return": "3",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "Circle.Area(c = {1}) mengembalikan 3"
+    },
+    {
+      "n": 13,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "iteration": 1,
+      "vars": {
+        "s": "{1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "9"
+      },
+      "note": "total += s.Area() → total = 9"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 28,
+      "func": "Circle.Area",
+      "args": "c = {1}",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "panggil Circle.Area(c = {1})"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 19,
+      "func": "Circle.Area",
+      "return": "3",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "Circle.Area(c = {1}) mengembalikan 3"
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 28,
+      "iteration": 1,
+      "vars": {
+        "s": "{1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "9"
+      },
+      "note": "fmt.Println(s, s.Area()) → cetak \"{1} 3\"",
+      "output": "{1} 3\n"
+    },
+    {
+      "n": 17,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 26,
+      "iteration": 2,
+      "vars": {
+        "s": "{1 1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "9"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: s = {1 1}",
+      "ops": [
+        {
+          "op": "read",
+          "a": 2
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "Rect.Area",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.Area(r = {1 1})"
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "1",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.Area(r = {1 1}) mengembalikan 1"
+    },
+    {
+      "n": 20,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "iteration": 2,
+      "vars": {
+        "s": "{1 1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "total += s.Area() → total = 10"
+    },
+    {
+      "n": 21,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.Area",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.Area(r = {1 1})"
+    },
+    {
+      "n": 22,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "1",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.Area(r = {1 1}) mengembalikan 1"
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.String",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.String(r = {1 1})"
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 21,
+      "func": "Rect.String",
+      "return": "\"Rect(1x1)\"",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.String(r = {1 1}) mengembalikan \"Rect(1x1)\""
+    },
+    {
+      "n": 25,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 28,
+      "iteration": 2,
+      "vars": {
+        "s": "{1 1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "fmt.Println(s, s.Area()) → cetak \"Rect(1x1) 1\"",
+      "output": "Rect(1x1) 1\n"
+    },
+    {
+      "n": 26,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 26,
+      "iteration": 3,
+      "vars": {
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 27,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 26,
+      "iteration": 3,
+      "vars": {
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "collection": {
+    "kind": "slice",
+    "items": [
+      "{2 3}",
+      "{1}",
+      "{1 1}"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}
