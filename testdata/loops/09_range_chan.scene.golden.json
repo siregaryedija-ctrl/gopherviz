@@ -1,7 +1,59 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "09_range_chan.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 13,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "ch := make(chan int, 3)"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "ch <- 1"
+          },
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "ch <- 2"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "close(ch)"
+          },
+          {
+            "kind": "loop",
+            "line": 10,
+            "endLine": 12,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "header": "for v := range ch",
+        "parent": "F1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",

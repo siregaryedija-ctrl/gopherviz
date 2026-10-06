@@ -8,10 +8,10 @@ export type ToPanel =
       type: 'state';
       file?: string;
       result?: UpdateResult;
-      focusLoop?: string;
+      focusBlock?: string;
       server: { ok: boolean; message?: string };
     }
-  | { type: 'trace'; loopId: string; trace: Trace }
+  | { type: 'trace'; blockId: string; trace: Trace }
   | { type: 'config'; speed: number; sound: boolean; music: boolean };
 
 /** Pesan dari webview ke ekstensi. */
@@ -118,7 +118,7 @@ export class LoopPanel implements vscode.Disposable {
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
@@ -153,7 +153,7 @@ export class LoopPanel implements vscode.Disposable {
   <p id="note" class="note"></p>
 
   <section id="partsSection">
-    <h2>Isi loop</h2>
+    <h2 id="partsTitle">Isi loop</h2>
     <ol id="parts" class="parts"></ol>
   </section>
   <section id="varsSection" hidden>
@@ -166,7 +166,7 @@ export class LoopPanel implements vscode.Disposable {
   </section>
 
   <section id="navSection">
-    <h2 id="navTitle">Loop di file ini</h2>
+    <h2 id="navTitle">Blok di file ini</h2>
     <div id="nav" class="nav"></div>
   </section>
 

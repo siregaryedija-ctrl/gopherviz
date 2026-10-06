@@ -1,7 +1,92 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "02_cond.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 3,
+        "endLine": 15,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 4,
+            "text": "n := 6"
+          },
+          {
+            "kind": "stmt",
+            "line": 5,
+            "text": "steps := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 6,
+            "endLine": 13,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "_ = steps"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 6,
+        "endLine": 13,
+        "state": "complete",
+        "header": "for n != 1",
+        "parent": "F1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 7,
+        "endLine": 11,
+        "state": "complete",
+        "header": "if n%2 == 0",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n%2 == 0",
+            "line": 7,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 8,
+                "text": "n = n / 2"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 9,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 10,
+                "text": "n = 3*n + 1"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",
@@ -19,6 +104,7 @@
             "line": 7,
             "endLine": 11,
             "text": "if n%2 == 0",
+            "ref": "I1",
             "then": [
               {
                 "kind": "stmt",

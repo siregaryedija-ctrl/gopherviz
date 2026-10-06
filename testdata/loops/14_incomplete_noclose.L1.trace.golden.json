@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "14_incomplete_noclose.go",
   "mode": "structural",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 4,
+    "endLine": 5
+  },
   "loop": {
     "id": "L1",
     "kind": "for3",

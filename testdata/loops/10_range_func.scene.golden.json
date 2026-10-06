@@ -1,7 +1,121 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "10_range_func.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 13,
+        "state": "complete",
+        "name": "countdown",
+        "header": "func countdown(n int) func(yield func(int) bool)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 6,
+            "endLine": 12,
+            "text": "return func(yield func(int) bool) { for i := n; i > 0; i-- …"
+          }
+        ],
+        "children": [
+          "F2"
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 6,
+        "endLine": 12,
+        "state": "complete",
+        "name": "func",
+        "header": "func(yield func(int) bool)",
+        "params": [
+          "yield"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 7,
+            "endLine": 11,
+            "ref": "L1"
+          }
+        ],
+        "parent": "F1",
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 7,
+        "endLine": 11,
+        "state": "complete",
+        "header": "for i := n; i > 0; i--",
+        "parent": "F2",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 8,
+        "endLine": 10,
+        "state": "complete",
+        "header": "if !yield(i)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "!yield(i)",
+            "line": 8,
+            "body": [
+              {
+                "kind": "return",
+                "line": 9,
+                "text": "return"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 15,
+        "endLine": 19,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "loop",
+            "line": 16,
+            "endLine": 18,
+            "ref": "L2"
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": "for v := range countdown(3)",
+        "parent": "F3"
+      }
+    ],
     "loops": [
       {
         "id": "L1",
@@ -24,6 +138,7 @@
             "line": 8,
             "endLine": 10,
             "text": "if !yield(i)",
+            "ref": "I1",
             "then": [
               {
                 "kind": "return",

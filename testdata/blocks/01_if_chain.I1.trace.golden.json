@@ -1,0 +1,214 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_if_chain.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I1",
+    "kind": "if",
+    "line": 6,
+    "endLine": 14
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "score": "95"
+      },
+      "result": true,
+      "note": "if score >= 90 → 95 >= 90 → true"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "branch",
+      "line": 6,
+      "branch": 0,
+      "vars": {
+        "score": "95"
+      },
+      "note": "masuk cabang ke-1 (if score >= 90)"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "vars": {
+        "score": "95"
+      },
+      "note": "return \"A\" → keluar dari fungsi"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "exit",
+      "line": 14,
+      "vars": {
+        "score": "95"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "score": "80"
+      },
+      "result": false,
+      "note": "if score >= 90 → 80 >= 90 → false"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 8,
+      "vars": {
+        "score": "80"
+      },
+      "result": true,
+      "note": "else if score >= 75 → 80 >= 75 → true"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "branch",
+      "line": 6,
+      "branch": 1,
+      "vars": {
+        "score": "80"
+      },
+      "note": "masuk cabang ke-2 (else if score >= 75)"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "score": "80"
+      },
+      "note": "return \"B\" → keluar dari fungsi"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "exit",
+      "line": 14,
+      "vars": {
+        "score": "80"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "score": "40"
+      },
+      "result": false,
+      "note": "if score >= 90 → 40 >= 90 → false"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 8,
+      "vars": {
+        "score": "40"
+      },
+      "result": false,
+      "note": "else if score >= 75 → 40 >= 75 → false"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "score": "40"
+      },
+      "result": false,
+      "note": "else if score >= 60 → 40 >= 60 → false"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "branch",
+      "line": 6,
+      "branch": 3,
+      "vars": {
+        "score": "40"
+      },
+      "note": "semua kondisi false → masuk cabang else"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "score": "40"
+      },
+      "note": "return \"D\" → keluar dari fungsi"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "exit",
+      "line": 14,
+      "vars": {
+        "score": "40"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

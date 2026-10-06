@@ -1,4 +1,5 @@
-// Penghubung webview: menerima state dari ekstensi, mengisi HTML, dan menjalankan Level.
+// Penghubung webview: menerima state dari ekstensi, mengisi HTML, memilih renderer sesuai
+// blok yang difokuskan (loop, if/switch, fungsi), dan memutar trace langkah demi langkah.
 (function (G) {
   'use strict';
   /* global acquireVsCodeApi */
@@ -7,43 +8,50 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
   const KIND = {
-    'for3': 'for klasik', 'cond': 'for kondisi', 'infinite': 'for tanpa batas',
+    'for3': 'for klasik', 'cond': 'for kondisi', 'do-while': 'do-while', 'infinite': 'for tanpa batas',
     'range-int': 'range angka', 'range-slice': 'range slice', 'range-array': 'range array',
-    'range-string': 'range string', 'range-map': 'range map', 'range-chan': 'range channel',
+    'range-string': 'range string', 'range-map': 'range map', 'range-keys': 'range key', 'range-chan': 'range channel',
     'range-func': 'range iterator', 'range-unknown': 'range',
   };
   const EXPLAIN = {
     'for3': 'Init jalan sekali. Lalu berulang: cek kondisi, jalankan isi, jalankan post.',
     'cond': 'Isi diulang selama kondisinya true, seperti while di bahasa lain.',
+    'do-while': 'Isi dijalankan dulu sekali, baru kondisinya dicek; diulang selama kondisinya true.',
     'infinite': 'Isi diulang terus sampai bertemu break atau return.',
     'range-int': 'Diulang sebanyak angka itu; variabelnya mulai dari 0.',
-    'range-slice': 'Mengunjungi setiap elemen slice secara berurutan: indeks dan nilainya.',
+    'range-slice': 'Mengunjungi setiap elemen secara berurutan: indeks dan nilainya.',
     'range-array': 'Mengunjungi setiap elemen array secara berurutan: indeks dan nilainya.',
-    'range-string': 'Mengunjungi setiap karakter (rune). Indeksnya dihitung dalam byte.',
+    'range-string': 'Mengunjungi setiap karakter. Di Go, indeksnya dihitung dalam byte.',
     'range-map': 'Mengunjungi setiap pasangan key dan value. Urutannya tidak dijamin, bisa beda tiap dijalankan.',
+    'range-keys': 'Mengunjungi setiap key (nama properti) dari objek.',
     'range-chan': 'Mengambil nilai dari channel satu per satu sampai channel ditutup.',
     'range-func': 'Mengambil nilai dari fungsi iterator sampai iteratornya selesai.',
     'range-unknown': 'Mengunjungi setiap elemen. Tipe datanya belum diketahui (berasal dari package lain).',
   };
+  const BLOCK_EXPLAIN = {
+    'if': 'Kondisi dicek satu per satu dari atas. Cabang pertama yang true dijalankan, sisanya dilewati.',
+    'switch': 'Nilainya dicocokkan dengan setiap case dari atas. Case pertama yang cocok dijalankan.',
+    'func': 'Setiap pemanggilan fungsi = Gopher masuk pipa ke lantai baru membawa argumen; return = naik lagi membawa koin berisi nilai. Rekursi = lantai bertumpuk ke bawah.',
+    'main': 'Timeline seluruh program dari awal main. Setiap fungsi yang dipanggil turun ke lantai baru.',
+  };
   const NODE = {
-    stmt: 'perintah', if: 'percabangan if', loop: 'loop di dalam loop', break: 'break: keluar dari loop',
+    stmt: 'perintah', if: 'percabangan if', switch: 'switch', loop: 'loop', break: 'break: keluar dari loop',
     continue: 'continue: langsung ke putaran berikutnya', return: 'return: keluar dari fungsi',
     goto: 'goto', block: 'blok { }', bad: 'belum bisa dibaca (belum lengkap)',
   };
+  const BRANCH = { 'if': 'if', 'else-if': 'else if', 'else': 'else', 'case': 'case', 'default': 'default' };
 
   let state = null;
   let config = { speed: 1, sound: true, music: true };
-  let currentLoop = null;
+  let blocks = [], loops = [];
+  let currentBlock = null, currentLoop = null, blockKey = '';
+  let traceNote = ''; // peringatan dari trace mode struktur
 
   const snd = G.createSound(ok => { $('sndHint').hidden = ok || (!config.sound && !config.music); });
-  const level = new G.Level($('stage'), {
-    onPart: highlightPart,
-    onPhase: highlightPhase,
-    sound: name => snd.play(name),
-  });
+  const level = new G.Level($('stage'), { onPart: highlightPart, onPhase: highlightPhase, sound: name => snd.play(name) });
   const data = new G.DataStage($('stage'), {});
-  let loops = [];
-  let traceNote = ''; // peringatan dari trace mode struktur
+  const branch = new G.BranchStage($('stage'), {});
+  const func = new G.FuncStage($('stage'), {});
 
   // ---------- state dari ekstensi ----------
 
@@ -68,27 +76,33 @@
   function applyState(m) {
     state = m;
     const res = m.result;
-    loops = res ? res.scene.loops : [];
-    const loop = loops.find(l => l.id === m.focusLoop) || null;
+    blocks = res ? res.scene.blocks || [] : [];
+    loops = res ? res.scene.loops || [] : [];
+    const block = blocks.find(b => b.id === m.focusBlock) || null;
+    const loop = block && block.kind === 'loop' ? loops.find(l => l.id === block.id) || null : null;
 
     if (!m.server.ok) overlay(m.server.message || 'Server gopherviz tidak berjalan.', true);
-    else if (!m.file) overlay('Buka file Go untuk mulai.');
+    else if (!m.file) overlay('Buka file kode untuk mulai.');
     else if (!res) overlay('Menganalisis…');
-    else if (!loops.length) overlay('Belum ada loop di file ini.\nCoba ketik:  for i := 0; i < 3; i++ {}');
-    else if (!loop) overlay('Taruh kursor di dalam sebuah loop,\natau pilih loopnya di bawah.');
+    else if (!blocks.length) overlay('Belum ada fungsi atau loop di file ini.\nCoba ketik:  for i := 0; i < 3; i++ {}');
+    else if (!block) overlay('Taruh kursor di dalam fungsi, if, switch, atau loop,\natau pilih bloknya di bawah.');
     else overlay(null);
 
-    // Hanya kirim ke level bila isinya berubah, supaya animasi tidak tersendat.
-    const key = loop ? JSON.stringify(loop) : '';
-    if (key !== (currentLoop ? JSON.stringify(currentLoop) : '')) {
+    // Renderer hanya diperbarui bila isi blok berubah, supaya animasi tidak tersendat.
+    const key = block ? JSON.stringify([block, loop]) : '';
+    if (key !== blockKey) {
+      blockKey = key;
+      currentBlock = block;
       currentLoop = loop;
       stopTrace(); // kode berubah: trace lama tidak berlaku, tampilkan struktur sampai trace baru datang
       level.setLoop(loop);
-      renderParts(loop, loops);
+      if (block && (block.kind === 'if' || block.kind === 'switch')) branch.setBlock(block);
+      if (block && block.kind === 'func') func.setBlock(block, blocks);
+      renderParts();
     }
-    renderHeader(loop);
-    renderNote(loop, res ? res.diagnostics : []);
-    renderNav(loops, loop, m.file);
+    renderHeader();
+    renderNote(res ? res.diagnostics : []);
+    renderNav(m.file);
   }
 
   function overlay(text, restart) {
@@ -101,7 +115,7 @@
 
   const span = (p, text) => `<span class="hp" data-p="${p}">${esc(text)}</span>`;
 
-  function headHTML(loop) {
+  function loopHead(loop) {
     const h = loop.header;
     const label = loop.label ? esc(loop.label) + ': ' : '';
     if (loop.state === 'incomplete') return label + esc(h.text);
@@ -120,23 +134,38 @@
     }
   }
 
-  function renderHeader(loop) {
-    $('loopId').textContent = loop ? loop.id : 'GopherViz';
-    $('kind').textContent = loop ? KIND[loop.kind] || loop.kind : (state && state.file) || '';
-    $('head').innerHTML = loop ? headHTML(loop) + ' {' : '';
-    $('head').hidden = !loop;
-    $('explain').textContent = loop ? EXPLAIN[loop.kind] || '' : '';
+  function kindLabel(b) {
+    if (!b) return '';
+    if (b.kind === 'loop') {
+      const l = loops.find(x => x.id === b.id);
+      return l ? KIND[l.kind] || l.kind : 'loop';
+    }
+    if (b.kind === 'func') return `fungsi ${b.name || ''}`.trim();
+    const n = (b.branches || []).length;
+    return b.kind === 'if' ? `if · ${n} cabang` : `switch · ${n} case`;
+  }
+
+  function renderHeader() {
+    const b = currentBlock;
+    $('loopId').textContent = b ? b.id : 'GopherViz';
+    $('kind').textContent = b ? kindLabel(b) : (state && state.file) || '';
+    $('head').innerHTML = !b ? '' : currentLoop ? loopHead(currentLoop) + ' {' : esc(b.header) + ' {';
+    $('head').hidden = !b;
+    let explain = '';
+    if (currentLoop) explain = EXPLAIN[currentLoop.kind] || '';
+    else if (b) explain = b.kind === 'func' && b.name === 'main' ? BLOCK_EXPLAIN.main : BLOCK_EXPLAIN[b.kind] || '';
+    $('explain').textContent = explain;
     const chip = $('stateChip');
-    chip.hidden = !loop || loop.state !== 'incomplete';
+    chip.hidden = !b || b.state !== 'incomplete';
     chip.textContent = 'belum lengkap';
   }
 
-  function renderNote(loop, diags) {
-    const note = $('note');
-    if (!loop) { note.textContent = ''; return; }
-    if (loop.state === 'incomplete') {
-      const d = diags.find(x => x.line >= loop.line && x.line <= loop.endLine + 1) || diags[0];
-      note.textContent = 'Loop ini belum selesai diketik' + (d ? ` (baris ${d.line}: ${d.message})` : '') + '. Gopher menunggu sampai lengkap.';
+  function renderNote(diags) {
+    const note = $('note'), b = currentBlock;
+    if (!b) { note.textContent = ''; return; }
+    if (b.state === 'incomplete') {
+      const d = diags.find(x => x.line >= b.line && x.line <= b.endLine + 1) || diags[0];
+      note.textContent = 'Blok ini belum selesai diketik' + (d ? ` (baris ${d.line}: ${d.message})` : '') + '. Gopher menunggu sampai lengkap.';
       note.className = 'note warn';
       return;
     }
@@ -146,46 +175,70 @@
       note.className = warn ? 'note warn' : 'note';
       return;
     }
-    note.textContent = traceNote
-      ? 'Mode struktur: ' + traceNote
-      : 'Mode struktur: Gopher menelusuri alur loop sebagai contoh 3 putaran. Nilai asli muncul setelah kamu berhenti mengetik sebentar.';
+    const idle = currentLoop
+      ? 'Mode struktur: Gopher menelusuri alur loop sebagai contoh 3 putaran. Nilai asli muncul setelah kamu berhenti mengetik sebentar.'
+      : 'Mode struktur: nilai asli muncul setelah kamu berhenti mengetik sebentar.';
+    note.textContent = traceNote ? 'Mode struktur: ' + traceNote : idle;
     note.className = traceNote ? 'note warn' : 'note';
   }
 
-  function renderParts(loop, loops) {
-    const ol = $('parts');
-    $('partsSection').hidden = !loop;
-    if (!loop) { ol.innerHTML = ''; return; }
-    if (!loop.body.length) {
-      ol.innerHTML = `<li><div class="part empty"><span class="ico ico-empty"></span><span class="txt">Isi loop masih kosong. Setiap baris yang kamu tulis di antara { } akan muncul sebagai blok.</span></div></li>`;
-      return;
+  function nodeText(n) {
+    if (n.kind === 'loop') {
+      const child = loops.find(l => l.id === n.ref);
+      return child ? `${child.id}: ${child.header.text}` : n.ref || 'loop';
     }
-    ol.innerHTML = loop.body.map((n, i) => {
-      let text = n.text || '';
-      if (n.kind === 'loop') {
-        const child = loops.find(l => l.id === n.ref);
-        text = child ? `${child.id}: ${child.header.text}` : n.ref || 'loop';
-      } else if (n.kind === 'if') {
-        const parts = (n.then || []).length + (n.else || []).length;
-        if (parts) text += `  (${parts} bagian di dalamnya)`;
-      } else if (n.kind === 'block') {
-        text = '{ … }';
-      }
-      return `<li><button class="part" data-line="${n.line || loop.line}">` +
-        `<span class="num">${i + 1}</span><span class="ico ico-${n.kind}"></span>` +
-        `<span class="txt"><code>${esc(text)}</code><small>${esc(NODE[n.kind] || n.kind)} · baris ${n.line || '?'}</small></span>` +
-        `</button></li>`;
-    }).join('');
+    if (n.kind === 'block') return '{ … }';
+    let text = n.text || '';
+    if (n.kind === 'if') {
+      const parts = (n.then || []).length + (n.else || []).length;
+      if (parts) text += `  (${parts} bagian di dalamnya)`;
+    }
+    return text;
   }
 
-  function renderNav(loops, focus, file) {
-    $('navSection').hidden = loops.length === 0;
-    $('navTitle').textContent = file ? `Loop di ${file}` : 'Loop di file ini';
-    $('nav').innerHTML = loops.map(l => {
-      const depth = l.parent ? '└ ' : '';
-      const cur = focus && l.id === focus.id ? ' aria-current="true"' : '';
-      return `<button class="loop-chip${l.state === 'incomplete' ? ' ghost' : ''}" data-line="${l.line}"${cur}>` +
-        `${depth}<b>${esc(l.id)}</b> ${esc(KIND[l.kind] || l.kind)} · baris ${l.line}</button>`;
+  function partRow(i, ico, text, small, line) {
+    const tag = line ? `button class="part" data-line="${line}"` : 'div class="part empty"';
+    return `<li><${tag}><span class="num">${i}</span><span class="ico ico-${ico}"></span>` +
+      `<span class="txt"><code>${esc(text)}</code><small>${esc(small)}</small></span></${tag.split(' ')[0]}></li>`;
+  }
+
+  function renderParts() {
+    const ol = $('parts'), b = currentBlock;
+    $('partsSection').hidden = !b;
+    if (!b) { ol.innerHTML = ''; return; }
+    if (b.kind === 'if' || b.kind === 'switch') {
+      $('partsTitle').textContent = b.kind === 'if' ? 'Cabang' : 'Case';
+      const brs = b.branches || [];
+      let rows = brs.map((br, i) => {
+        const text = `${BRANCH[br.kind]} ${br.label}`.trim();
+        return partRow(i + 1, br.kind === 'else' || br.kind === 'default' ? 'block' : 'if', text,
+          `${br.body.length ? br.body.length + ' bagian' : 'kosong'} · baris ${br.line}`, br.line);
+      }).join('');
+      if (!brs.some(br => br.kind === 'else' || br.kind === 'default')) {
+        rows += partRow(brs.length + 1, 'bad', b.kind === 'if' ? 'tidak ada else' : 'tidak ada default',
+          'kalau tidak ada yang cocok, blok ini dilewati', 0);
+      }
+      ol.innerHTML = rows;
+      return;
+    }
+    $('partsTitle').textContent = b.kind === 'func' ? 'Isi fungsi' : 'Isi loop';
+    const body = currentLoop ? currentLoop.body : b.body || [];
+    if (!body.length) {
+      ol.innerHTML = partRow('', 'empty', 'Isinya masih kosong. Setiap baris yang kamu tulis di antara { } akan muncul sebagai blok.', '', 0);
+      return;
+    }
+    ol.innerHTML = body.map((n, i) => partRow(i + 1, n.kind, nodeText(n), `${NODE[n.kind] || n.kind} · baris ${n.line || '?'}`, n.line || b.line)).join('');
+  }
+
+  function renderNav(file) {
+    $('navSection').hidden = blocks.length === 0;
+    $('navTitle').textContent = file ? `Blok di ${file}` : 'Blok di file ini';
+    const depth = b => { let d = 0, p = b.parent; while (p) { d++; const x = blocks.find(y => y.id === p); p = x && x.parent; } return d; };
+    $('nav').innerHTML = blocks.map(b => {
+      const cur = currentBlock && b.id === currentBlock.id ? ' aria-current="true"' : '';
+      const indent = '  '.repeat(Math.min(depth(b), 4)) + (b.parent ? '└ ' : '');
+      return `<button class="loop-chip${b.state === 'incomplete' ? ' ghost' : ''}" data-line="${b.line}"${cur}>` +
+        `${indent}<b>${esc(b.id)}</b> ${esc(kindLabel(b))} · baris ${b.line}</button>`;
     }).join('');
   }
 
@@ -202,51 +255,62 @@
 
   const tp = { active: false, trace: null, view: [], r: null, i: 0, el: 0, playing: true, once: false, cues: [], ci: 0, hold: 0 };
 
-  /** Adapter supaya Level (platformer) dan DataStage (barisan elemen) diputar dengan cara yang sama. */
-  const levelR = {
-    prepare: tr => level.prepareTrace(tr),
-    duration: i => level.traceDuration(i),
-    cues: i => level.traceCues(i),
-    render: (i, t) => level.renderTrace(i, t),
-  };
+  /** Adapter supaya semua renderer diputar dengan cara yang sama. */
+  const levelR = { prepare: tr => level.prepareTrace(tr), duration: i => level.traceDuration(i), cues: i => level.traceCues(i), render: (i, t) => level.renderTrace(i, t) };
   const dataR = {
-    prepare: tr => data.prepare(tr, currentLoop, loops),
-    duration: i => data.duration(i),
-    cues: i => data.cues(i),
-    render: (i, t) => data.render(i, t),
+    prepare: tr => data.prepare(tr, currentLoop || { vars: [], children: (currentBlock.children || []).filter(id => loops.some(l => l.id === id)) }, loops),
+    duration: i => data.duration(i), cues: i => data.cues(i), render: (i, t) => data.render(i, t),
   };
+  const branchR = { prepare: tr => branch.prepare(tr), duration: i => branch.duration(i), cues: i => branch.cues(i), render: (i, t) => branch.render(i, t) };
+  const funcR = { prepare: tr => func.prepare(tr), duration: i => func.duration(i), cues: i => func.cues(i), render: (i, t) => func.render(i, t) };
+
+  /** Langkah call/return hanya berarti di mode fungsi; di renderer lain digabung ke langkah berikutnya. */
+  function foldCalls(tr) {
+    const steps = [];
+    let carry = '';
+    for (const s of tr.steps) {
+      if (s.phase === 'call' || s.phase === 'return') { carry += s.output || ''; continue; }
+      steps.push(carry ? Object.assign({}, s, { output: carry + (s.output || '') }) : s);
+      carry = '';
+    }
+    if (carry && steps.length) steps[steps.length - 1] = Object.assign({}, steps[steps.length - 1], { output: (steps[steps.length - 1].output || '') + carry });
+    return Object.assign({}, tr, { steps });
+  }
 
   function applyTrace(m) {
-    if (!currentLoop || m.loopId !== currentLoop.id) return; // trace untuk loop lain
-    const tr = m.trace;
+    if (!currentBlock || m.blockId !== currentBlock.id) return; // trace untuk blok lain
+    let tr = m.trace;
     stopTrace();
     if (tr.mode !== 'simulated' || !tr.steps.length) {
       traceNote = tr.warnings[0] || '';
-      renderNote(currentLoop, (state && state.result && state.result.diagnostics) || []);
+      renderNote((state && state.result && state.result.diagnostics) || []);
       return;
     }
-    // Mode data hanya untuk koleksi berisi nilai sederhana (angka, string pendek); slice bersarang memakai platformer.
+    const kind = currentBlock.kind;
+    if (kind !== 'func') tr = foldCalls(tr);
+    if (!tr.steps.length) return;
+    // Mode data hanya untuk koleksi berisi nilai sederhana (angka, string pendek); slice bersarang memakai renderer lain.
     const scalar = v => v.length <= 12 && !/^(\[|map\[|\{)/.test(v);
-    const dataMode = !!tr.collection && tr.collection.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.length);
+    const dataMode = !!tr.collection && tr.collection.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.some(o => o.op !== 'read'))
+      && (kind === 'loop' || kind === 'func');
     tp.stats = tr.steps.some(s => (s.ops || []).some(o => o.op === 'compare' || o.op === 'swap'));
-    tp.r = dataMode ? dataR : levelR;
-    if (dataMode) level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
+    tp.r = dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
     tp.active = true;
     tp.playing = true;
-    tp.prevVars = null;
     $('tracebar').hidden = false;
     $('stepNote').hidden = false;
     $('varsSection').hidden = false;
     $('tScrub').max = String(tp.view.length - 1);
     goto(0, false);
     syncPlay();
-    renderNote(currentLoop, []);
+    renderNote([]);
   }
 
   function stopTrace() {
-    if (tp.active) level.stopTrace();
+    if (tp.active || level.mode === 'trace') level.stopTrace();
     tp.active = false;
     tp.trace = null;
     traceNote = '';
@@ -272,16 +336,24 @@
     }
   }
 
-  function partOf(line) {
-    let best = -1;
-    if (currentLoop && line) currentLoop.body.forEach((n, k) => { if (line >= n.line && line <= (n.endLine || n.line)) best = k; });
-    return best;
+  /** Baris kode → indeks baris di daftar "Isi"/"Cabang". */
+  function partOf(line, step) {
+    const b = currentBlock;
+    if (!b || !line) return -1;
+    const nodeAt = G.pixel.nodeAt;
+    if (currentLoop) return nodeAt(currentLoop.body, line);
+    if (b.kind === 'func') return step && step.depth ? -1 : nodeAt(b.body, line); // lantai dalam = fungsi lain/rekursi
+    const brs = b.branches || [];
+    if (step && step.phase === 'branch' && step.branch != null) return Math.min(step.branch, brs.length);
+    const k = brs.findIndex(br => br.line === line);
+    return k >= 0 ? k : brs.findIndex(br => nodeAt(br.body, line) >= 0);
   }
 
   function stepUI() {
     const v = tp.view[tp.i], s = v.step;
     const group = v.group && v.group.length > 1 ? `${s.loop} menjalankan ${v.group.length} langkah · ` : '';
-    $('stepNote').textContent = group + (s.note || '');
+    const floor = s.depth ? `lantai ${s.depth} · ` : '';
+    $('stepNote').textContent = floor + group + (s.note || '');
     $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
 
     // variabel: sorot yang berubah dibanding langkah sebelumnya
@@ -302,8 +374,8 @@
     $('out').textContent = out;
     $('out').scrollTop = $('out').scrollHeight;
 
-    highlightPart(partOf(s.line));
-    highlightPhase(s.loop === currentLoop.id ? { init: 'init', cond: 'cond', post: 'post' }[s.phase] || null : null);
+    highlightPart(partOf(s.line, s));
+    highlightPhase(currentLoop && s.loop === currentLoop.id ? { init: 'init', cond: 'cond', post: 'post' }[s.phase] || null : null);
 
     let label = `Langkah ${tp.i + 1}/${tp.view.length}`;
     if (v.cmpCount != null && tp.stats) label += ` · banding ${v.cmpCount} · tukar ${v.swpCount}`;
@@ -354,7 +426,7 @@
 
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-line]');
-    if (t) vscode.postMessage({ type: 'reveal', line: +t.dataset.line });
+    if (t && +t.dataset.line) vscode.postMessage({ type: 'reveal', line: +t.dataset.line });
   });
   document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => {
     applyConfig({ ...config, speed: +b.dataset.speed });
@@ -379,15 +451,19 @@
     last = now;
     level.update(dt);
     data.update(dt);
+    branch.update(dt);
+    func.update(dt);
     if (tp.active) tickTrace(dt);
+    else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
+    else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();
     else level.render();
-    const playing = !!currentLoop && currentLoop.state === 'complete' && document.visibilityState === 'visible' &&
+    const playing = !!currentBlock && currentBlock.state === 'complete' && document.visibilityState === 'visible' &&
       (!tp.active || tp.playing);
     snd.music(config.music && playing);
     requestAnimationFrame(frame);
   }
 
-  G.app = { level, data, tp, tickTrace, goto }; // untuk dev/harness.html
+  G.app = { level, data, branch, func, tp, tickTrace, goto }; // untuk dev/harness.html
   snd.unlock(); // di VS Code suara kadang boleh langsung; kalau tidak, menunggu klik
   applyConfig(config);
   overlay('Menyiapkan…');

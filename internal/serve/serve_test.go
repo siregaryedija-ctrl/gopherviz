@@ -67,7 +67,7 @@ func TestSession(t *testing.T) {
 		Scene    int `json:"scene"`
 	}
 	_ = json.Unmarshal(resps[0].Result, &hello)
-	if hello.Protocol != 1 || hello.Scene != 1 {
+	if hello.Protocol != 2 || hello.Scene != 2 {
 		t.Errorf("hello = %s", resps[0].Result)
 	}
 
@@ -79,23 +79,24 @@ func TestSession(t *testing.T) {
 			} `json:"loops"`
 		} `json:"scene"`
 		FocusLoop   string `json:"focusLoop"`
+		FocusBlock  string `json:"focusBlock"`
 		Diagnostics []any  `json:"diagnostics"`
 	}
 	if err := json.Unmarshal(resps[1].Result, &upd); err != nil {
 		t.Fatal(err)
 	}
-	if len(upd.Scene.Loops) != 2 || upd.FocusLoop != "L2" || upd.Diagnostics == nil {
+	if len(upd.Scene.Loops) != 2 || upd.FocusLoop != "L2" || upd.FocusBlock != "L2" || upd.Diagnostics == nil {
 		t.Errorf("update = %s", resps[1].Result)
 	}
 	if !strings.Contains(string(resps[1].Result), `"cond":"i < 3"`) {
 		t.Errorf("karakter < ter-escape: %s", resps[1].Result)
 	}
 
-	if got := string(resps[2].Result); got != `{"focusLoop":"L1"}` {
+	if got := string(resps[2].Result); got != `{"focusLoop":"L1","focusBlock":"L1"}` {
 		t.Errorf("focus baris 4 = %s", got)
 	}
 	if got := string(resps[3].Result); got != `{}` {
-		t.Errorf("focus di luar loop = %s", got)
+		t.Errorf("focus di luar blok = %s", got)
 	}
 	if resps[5].Error == nil || !strings.Contains(resps[5].Error.Message, "belum pernah dikirim") {
 		t.Errorf("focus setelah close harus error: %+v", resps[5])

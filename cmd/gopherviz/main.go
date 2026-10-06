@@ -23,7 +23,7 @@ import (
 	"gopherviz/internal/trace"
 )
 
-const version = "0.2.0"
+const version = "0.3.0"
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr))
@@ -31,8 +31,8 @@ func main() {
 
 // Perintah yang sudah direncanakan tapi belum dibuat, beserta fasenya.
 var planned = map[string]string{
-	"show": "Fase 5",
-	"on":   "Fase 5",
+	"show": "tampilan terminal, setelah Fase 9",
+	"on":   "tampilan terminal, setelah Fase 9",
 }
 
 func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
@@ -170,9 +170,9 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 1
 	}
 	prog := analyzer.Load(name, src)
-	id, found := prog.Result.Scene.LoopAt(line)
+	id, found := prog.Result.Scene.BlockAt(line)
 	if !found {
-		fmt.Fprintf(stderr, "tidak ada loop di baris %d\n", line)
+		fmt.Fprintf(stderr, "tidak ada blok (fungsi, if, switch, atau loop) di baris %d\n", line)
 		return 1
 	}
 	tr := sim.Trace(prog, id, sim.Options{})
@@ -192,7 +192,13 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 }
 
 func printTrace(w io.Writer, tr trace.Trace) {
-	fmt.Fprintf(w, "%s %s baris %d-%d · mode %s · %d langkah\n", tr.Loop.ID, kindNames[tr.Loop.Kind], tr.Loop.Line, tr.Loop.EndLine, tr.Mode, len(tr.Steps))
+	kind := blockKindNames[tr.Block.Kind]
+	if tr.Block.Kind == scene.BlockLoop {
+		kind = kindNames[tr.Loop.Kind]
+	} else if tr.Block.Name != "" {
+		kind += " " + tr.Block.Name
+	}
+	fmt.Fprintf(w, "%s %s baris %d-%d · mode %s · %d langkah\n", tr.Block.ID, kind, tr.Block.Line, tr.Block.EndLine, tr.Mode, len(tr.Steps))
 	for _, warn := range tr.Warnings {
 		fmt.Fprintf(w, "  ! %s\n", warn)
 	}
@@ -206,7 +212,8 @@ func printTrace(w io.Writer, tr trace.Trace) {
 		if s.Output != "" {
 			out = "  ⇒ " + strings.TrimSuffix(s.Output, "\n")
 		}
-		fmt.Fprintf(tw, "%d\t%s\t%s\tbaris %d\t%s%s\n", s.N, s.Loop, s.Phase, s.Line, s.Note, out)
+		// kedalaman call stack ditampilkan sebagai indentasi catatan
+		fmt.Fprintf(tw, "%d\t%s\t%s\tbaris %d\t%s%s%s\n", s.N, s.Block, s.Phase, s.Line, strings.Repeat("· ", s.Depth), s.Note, out)
 	}
 	tw.Flush()
 	if tr.Truncated {
@@ -226,41 +233,60 @@ var kindNames = map[scene.Kind]string{
 	scene.KindRangeChan:    "range channel",
 	scene.KindRangeFunc:    "range iterator",
 	scene.KindRangeUnknown: "range (tipe tak dikenal)",
+	scene.KindDoWhile:      "do-while",
+	scene.KindRangeKeys:    "range key",
+}
+
+var blockKindNames = map[scene.BlockKind]string{
+	scene.BlockFunc:   "fungsi",
+	scene.BlockIf:     "if",
+	scene.BlockSwitch: "switch",
+	scene.BlockLoop:   "loop",
 }
 
 const maxDiagnostics = 5
 
 func printList(w io.Writer, res analyzer.Result) {
-	loops := res.Scene.Loops
-	if len(loops) == 0 {
-		fmt.Fprintf(w, "%s: tidak ada loop\n", res.Scene.File)
+	blocks := res.Scene.Blocks
+	loops := map[string]scene.Loop{}
+	for _, l := range res.Scene.Loops {
+		loops[l.ID] = l
+	}
+	if len(blocks) == 0 {
+		fmt.Fprintf(w, "%s: tidak ada blok\n", res.Scene.File)
 	} else {
-		fmt.Fprintf(w, "%s: %d loop\n\n", res.Scene.File, len(loops))
+		fmt.Fprintf(w, "%s: %d blok (%s)\n\n", res.Scene.File, len(blocks), res.Scene.Language)
 		depth := map[string]int{}
 		tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 		fmt.Fprintln(tw, "ID\tBARIS\tJENIS\tKEPALA\tISI\tSTATUS")
-		for _, l := range loops {
-			if l.Parent != "" {
-				depth[l.ID] = depth[l.Parent] + 1
+		for _, b := range blocks {
+			if b.Parent != "" {
+				depth[b.ID] = depth[b.Parent] + 1
 			}
-			lines := fmt.Sprint(l.Line)
-			if l.EndLine != l.Line {
-				lines = fmt.Sprintf("%d-%d", l.Line, l.EndLine)
+			lines := fmt.Sprint(b.Line)
+			if b.EndLine != b.Line {
+				lines = fmt.Sprintf("%d-%d", b.Line, b.EndLine)
 			}
-			head := l.Header.Text
-			if l.Label != "" {
-				head = l.Label + ": " + head
-			}
-			body := "kosong"
-			if len(l.Body) > 0 {
-				body = fmt.Sprintf("%d bagian", len(l.Body))
+			kind, head, body := blockKindNames[b.Kind], b.Header, ""
+			switch b.Kind {
+			case scene.BlockLoop:
+				l := loops[b.ID]
+				kind = kindNames[l.Kind]
+				if l.Label != "" {
+					head = l.Label + ": " + head
+				}
+				body = parts(len(l.Body))
+			case scene.BlockFunc:
+				body = parts(len(b.Body))
+			default:
+				body = fmt.Sprintf("%d cabang", len(b.Branches))
 			}
 			state := "lengkap"
-			if l.State == scene.StateIncomplete {
+			if b.State == scene.StateIncomplete {
 				state = "belum lengkap"
 			}
 			fmt.Fprintf(tw, "%s%s\t%s\t%s\t%s\t%s\t%s\n",
-				strings.Repeat("  ", depth[l.ID]), l.ID, lines, kindNames[l.Kind], clip(head, 44), body, state)
+				strings.Repeat("  ", depth[b.ID]), b.ID, lines, kind, clip(head, 44), body, state)
 		}
 		tw.Flush()
 	}
@@ -274,6 +300,13 @@ func printList(w io.Writer, res analyzer.Result) {
 			fmt.Fprintf(w, "  baris %d:%d  %s\n", d.Line, d.Col, d.Message)
 		}
 	}
+}
+
+func parts(n int) string {
+	if n == 0 {
+		return "kosong"
+	}
+	return fmt.Sprintf("%d bagian", n)
 }
 
 func clip(s string, n int) string {

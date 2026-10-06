@@ -17,13 +17,76 @@ var update = flag.Bool("update", false, "perbarui file *.scene.golden.json")
 
 const loopsDir = "../../testdata/loops"
 
+const blocksDir = "../../testdata/blocks"
+
 func examples(t testing.TB) []string {
 	t.Helper()
-	files, err := filepath.Glob(filepath.Join(loopsDir, "*.go"))
-	if err != nil || len(files) == 0 {
-		t.Fatalf("contoh loop tidak ditemukan di %s: %v", loopsDir, err)
+	var files []string
+	for _, dir := range []string{loopsDir, blocksDir} {
+		f, err := filepath.Glob(filepath.Join(dir, "*.go"))
+		if err != nil || len(f) == 0 {
+			t.Fatalf("contoh tidak ditemukan di %s: %v", dir, err)
+		}
+		files = append(files, f...)
 	}
 	return files
+}
+
+func TestBlocks(t *testing.T) {
+	t.Run("rantai if/else if/else menjadi satu blok bercabang", func(t *testing.T) {
+		sc := analyzeFile(t, filepath.Join(blocksDir, "01_if_chain.go")).Scene
+		if sc.Language != "go" || sc.Version != scene.Version {
+			t.Errorf("language %q version %d", sc.Language, sc.Version)
+		}
+		var ids []string
+		for _, b := range sc.Blocks {
+			ids = append(ids, string(b.Kind)+":"+b.ID)
+		}
+		if want := "func:F1 if:I1 func:F2 loop:L1 if:I2"; strings.Join(ids, " ") != want {
+			t.Errorf("blok = %v, mau %s", ids, want)
+		}
+		i1, _ := sc.Block("I1")
+		var kinds []string
+		for _, br := range i1.Branches {
+			kinds = append(kinds, string(br.Kind)+"("+br.Label+")")
+		}
+		if want := "if(score >= 90) else-if(score >= 75) else-if(score >= 60) else()"; strings.Join(kinds, " ") != want {
+			t.Errorf("cabang = %v", kinds)
+		}
+		if i1.Parent != "F1" || i1.Line != 6 || i1.EndLine != 14 {
+			t.Errorf("I1 = %+v", i1)
+		}
+		f1, _ := sc.Block("F1")
+		if f1.Name != "grade" || !reflect.DeepEqual(f1.Params, []string{"score"}) || f1.Body[0].Ref != "I1" {
+			t.Errorf("F1 = %+v", f1)
+		}
+		f2, _ := sc.Block("F2")
+		if !reflect.DeepEqual(f2.Children, []string{"L1", "I2"}) {
+			t.Errorf("anak main = %v", f2.Children)
+		}
+		for line, want := range map[int]string{5: "F1", 7: "I1", 18: "L1", 21: "F2", 23: "I2", 2: ""} {
+			if got, _ := sc.BlockAt(line); got != want {
+				t.Errorf("BlockAt(%d) = %q, mau %q", line, got, want)
+			}
+		}
+	})
+	t.Run("switch dengan dan tanpa tag", func(t *testing.T) {
+		sc := analyzeFile(t, filepath.Join(blocksDir, "02_switch.go")).Scene
+		s1, _ := sc.Block("S1")
+		s2, _ := sc.Block("S2")
+		if len(s1.Branches) != 3 || s1.Branches[0].Label != "1, 7" || s1.Branches[2].Kind != scene.BranchDefault {
+			t.Errorf("S1 = %+v", s1.Branches)
+		}
+		if s2.Header != "switch" || s2.Branches[0].Label != "temp > 30" || s2.Parent != "F2" {
+			t.Errorf("S2 = %+v", s2)
+		}
+	})
+	t.Run("potongan kode tanpa package tidak memunculkan fungsi pembungkus", func(t *testing.T) {
+		sc := analyzeFile(t, filepath.Join(loopsDir, "16_snippet.go")).Scene
+		if len(sc.Blocks) != 1 || sc.Blocks[0].Kind != scene.BlockLoop {
+			t.Errorf("blok = %+v", sc.Blocks)
+		}
+	})
 }
 
 func analyzeFile(t testing.TB, path string) Result {

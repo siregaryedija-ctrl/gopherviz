@@ -41,32 +41,34 @@ func (o Options) withDefaults() Options {
 	return o
 }
 
-// Trace mensimulasikan program p dan merekam loop loopID. Tidak pernah panik.
-func Trace(p *analyzer.Program, loopID string, opt Options) (tr trace.Trace) {
+// Trace mensimulasikan program p dan merekam blok blockID (loop, if, switch, atau
+// fungsi). Fokus pada fungsi main = timeline seluruh program. Tidak pernah panik.
+func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	opt = opt.withDefaults()
 	tr = trace.Trace{
 		Version:  trace.Version,
+		Language: p.Result.Scene.Language,
 		File:     p.Result.Scene.File,
 		Mode:     trace.ModeStructural,
 		Steps:    []trace.Step{},
 		Warnings: []string{},
 	}
-	var loop *scene.Loop
-	for i := range p.Result.Scene.Loops {
-		if p.Result.Scene.Loops[i].ID == loopID {
-			loop = &p.Result.Scene.Loops[i]
-		}
-	}
-	if loop == nil {
-		tr.Warnings = append(tr.Warnings, "loop "+loopID+" tidak ditemukan")
+	blk, ok := p.Result.Scene.Block(blockID)
+	if !ok {
+		tr.Warnings = append(tr.Warnings, "blok "+blockID+" tidak ditemukan")
 		return tr
 	}
-	tr.Loop = trace.LoopInfo{
-		ID: loop.ID, Kind: loop.Kind, Line: loop.Line, EndLine: loop.EndLine,
-		Label: loop.Label, Vars: loop.Vars, Children: loop.Children,
+	tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}
+	for _, loop := range p.Result.Scene.Loops {
+		if loop.ID == blockID {
+			tr.Loop = trace.LoopInfo{
+				ID: loop.ID, Kind: loop.Kind, Line: loop.Line, EndLine: loop.EndLine,
+				Label: loop.Label, Vars: loop.Vars, Children: loop.Children,
+			}
+		}
 	}
-	node := p.LoopNodes[loopID]
-	if node == nil || loop.State == scene.StateIncomplete || len(p.Result.Diagnostics) > 0 {
+	node := p.BlockNodes[blockID]
+	if node == nil || blk.State == scene.StateIncomplete || len(p.Result.Diagnostics) > 0 {
 		tr.Warnings = append(tr.Warnings, "kode belum lengkap atau masih ada error; selesaikan dulu supaya nilainya bisa dihitung")
 		return tr
 	}
@@ -89,7 +91,7 @@ func Trace(p *analyzer.Program, loopID string, opt Options) (tr trace.Trace) {
 		tr.Warnings = append([]string{reason}, tr.Warnings...)
 		return tr
 	case !r.reached:
-		tr.Warnings = append([]string{"loop ini tidak pernah dijalankan (fungsinya tidak dipanggil dari main)"}, tr.Warnings...)
+		tr.Warnings = append([]string{"blok ini tidak pernah dijalankan (fungsinya tidak dipanggil dari main, atau kondisinya tidak pernah tercapai)"}, tr.Warnings...)
 		return tr
 	}
 	tr.Mode = trace.ModeSimulated
@@ -106,9 +108,9 @@ func Trace(p *analyzer.Program, loopID string, opt Options) (tr trace.Trace) {
 	return tr
 }
 
-// run menjalankan main (atau fungsi tempat loop berada) dan mengembalikan alasan
+// run menjalankan main (atau fungsi tempat blok berada) dan mengembalikan alasan
 // bila simulasi harus beralih ke mode struktur.
-func (it *interp) run(node ast.Stmt) (structural string) {
+func (it *interp) run(node ast.Node) (structural string) {
 	defer func() {
 		r := recover()
 		if r == nil {
@@ -131,7 +133,7 @@ func (it *interp) run(node ast.Stmt) (structural string) {
 			}
 		case abortPanic:
 			if !it.rec.reached {
-				structural = "program akan panic sebelum sampai ke loop ini: " + a.msg
+				structural = "program akan panic sebelum sampai ke blok ini: " + a.msg
 			}
 		}
 	}()
@@ -140,6 +142,8 @@ func (it *interp) run(node ast.Stmt) (structural string) {
 		it.callFunc(&funcVal{name: "main", decl: main}, nil, main)
 	}
 	if !it.rec.reached {
+		// Blok tidak tercapai dari main (atau tidak ada main): jalankan fungsi tempatnya
+		// berada dengan parameter yang tidak diketahui.
 		if fd := enclosingFunc(it.p.File, node); fd != nil && fd.Name.Name != "main" {
 			it.callFunc(&funcVal{name: fd.Name.Name, decl: fd}, nil, fd)
 		}

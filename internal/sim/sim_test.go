@@ -60,12 +60,30 @@ func count(tr trace.Trace, op trace.OpKind) int {
 
 func last(tr trace.Trace) trace.Step { return tr.Steps[len(tr.Steps)-1] }
 
+const blocksDir = "../../testdata/blocks"
+
+// TestGolden: setiap loop di testdata/loops dan setiap blok di testdata/blocks.
 func TestGolden(t *testing.T) {
-	files, _ := filepath.Glob(filepath.Join(loopsDir, "*.go"))
-	for _, path := range files {
+	loopFiles, _ := filepath.Glob(filepath.Join(loopsDir, "*.go"))
+	blockFiles, _ := filepath.Glob(filepath.Join(blocksDir, "*.go"))
+	type target struct{ path, id string }
+	var targets []target
+	for _, path := range loopFiles {
+		for _, l := range load(t, path).Result.Scene.Loops {
+			targets = append(targets, target{path, l.ID})
+		}
+	}
+	for _, path := range blockFiles {
+		for _, b := range load(t, path).Result.Scene.Blocks {
+			targets = append(targets, target{path, b.ID})
+		}
+	}
+	for _, tg := range targets {
+		path, id := tg.path, tg.id
 		p := load(t, path)
-		for _, l := range p.Result.Scene.Loops {
-			name := fmt.Sprintf("%s.%s", strings.TrimSuffix(filepath.Base(path), ".go"), l.ID)
+		{
+			name := fmt.Sprintf("%s.%s", strings.TrimSuffix(filepath.Base(path), ".go"), id)
+			l := struct{ ID string }{id}
 			t.Run(name, func(t *testing.T) {
 				var buf bytes.Buffer
 				enc := json.NewEncoder(&buf)
@@ -74,7 +92,7 @@ func TestGolden(t *testing.T) {
 				if err := enc.Encode(Trace(p, l.ID, Options{})); err != nil {
 					t.Fatal(err)
 				}
-				golden := filepath.Join(loopsDir, name+".trace.golden.json")
+				golden := filepath.Join(filepath.Dir(path), name+".trace.golden.json")
 				if *update {
 					if err := os.WriteFile(golden, buf.Bytes(), 0o644); err != nil {
 						t.Fatal(err)
@@ -161,6 +179,86 @@ func TestExamples(t *testing.T) {
 		}
 		if output(tr) != "" || last(tr).Loop != "L1" || last(tr).Reason != trace.ReasonBreak {
 			t.Errorf("output %q, terakhir %+v", output(tr), last(tr))
+		}
+	})
+}
+
+func branches(tr trace.Trace) []int {
+	var out []int
+	for _, s := range tr.Steps {
+		if s.Phase == trace.PhaseBranch && s.Branch != nil {
+			out = append(out, *s.Branch)
+		}
+	}
+	return out
+}
+
+func TestBlocksTrace(t *testing.T) {
+	ifs := load(t, filepath.Join(blocksDir, "01_if_chain.go"))
+	t.Run("rantai if memilih cabang sesuai nilai", func(t *testing.T) {
+		tr := Trace(ifs, "I1", Options{})
+		if got := fmt.Sprint(branches(tr)); got != "[0 1 3]" || tr.Block.Kind != "if" {
+			t.Errorf("cabang = %s, block %+v", got, tr.Block)
+		}
+		if last(tr).Reason != trace.ReasonReturn {
+			t.Errorf("alasan akhir = %q", last(tr).Reason)
+		}
+	})
+	t.Run("if tanpa else yang kondisinya false melewati blok", func(t *testing.T) {
+		tr := Trace(ifs, "I2", Options{})
+		if got := fmt.Sprint(branches(tr)); got != "[1]" || last(tr).Reason != trace.ReasonDone {
+			t.Errorf("cabang = %s, terakhir %+v", got, last(tr))
+		}
+	})
+	sw := load(t, filepath.Join(blocksDir, "02_switch.go"))
+	t.Run("switch dengan tag", func(t *testing.T) {
+		if got := fmt.Sprint(branches(Trace(sw, "S1", Options{}))); got != "[1 0 2]" {
+			t.Errorf("cabang = %s", got)
+		}
+	})
+	t.Run("switch tanpa tag", func(t *testing.T) {
+		tr := Trace(sw, "S2", Options{})
+		if got := fmt.Sprint(branches(tr)); got != "[0]" || output(tr) != "panas\n" {
+			t.Errorf("cabang = %s, output %q", got, output(tr))
+		}
+	})
+	rec := load(t, filepath.Join(blocksDir, "03_recursion.go"))
+	t.Run("rekursi fib: pohon panggilan dan kedalaman", func(t *testing.T) {
+		tr := Trace(rec, "F2", Options{})
+		calls, maxDepth := 0, 0
+		for _, s := range tr.Steps {
+			if s.Phase == trace.PhaseCall {
+				calls++
+			}
+			maxDepth = max(maxDepth, s.Depth)
+		}
+		if calls != 9 || maxDepth != 3 || last(tr).Phase != trace.PhaseReturn || last(tr).Return != "3" || last(tr).Depth != 0 {
+			t.Errorf("calls %d, depth %d, terakhir %+v", calls, maxDepth, last(tr))
+		}
+	})
+	t.Run("rekursi faktorial: nilai kembali dari lantai terdalam ke atas", func(t *testing.T) {
+		tr := Trace(rec, "F1", Options{})
+		var rets []string
+		for _, s := range tr.Steps {
+			if s.Phase == trace.PhaseReturn {
+				rets = append(rets, fmt.Sprintf("%d:%s", s.Depth, s.Return))
+			}
+		}
+		if got := strings.Join(rets, " "); got != "3:1 2:2 1:6 0:24" {
+			t.Errorf("return = %s", got)
+		}
+	})
+	t.Run("timeline main: panggilan fungsi lain jadi satu lantai", func(t *testing.T) {
+		tr := Trace(load(t, filepath.Join(blocksDir, "04_program.go")), "F3", Options{})
+		var calls []string
+		for _, s := range tr.Steps {
+			if s.Phase == trace.PhaseCall || s.Phase == trace.PhaseReturn {
+				calls = append(calls, fmt.Sprintf("%s:%s@%d", s.Phase, s.Func, s.Depth))
+			}
+		}
+		want := "call:main@0 call:sumEven@1 return:sumEven@1 return:main@0"
+		if got := strings.Join(calls, " "); got != want || output(tr) != "besar 6\n" {
+			t.Errorf("panggilan = %s, output %q", got, output(tr))
 		}
 	})
 }

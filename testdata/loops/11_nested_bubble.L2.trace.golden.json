@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "11_nested_bubble.go",
   "mode": "simulated",
+  "block": {
+    "id": "L2",
+    "kind": "loop",
+    "line": 10,
+    "endLine": 15
+  },
   "loop": {
     "id": "L2",
     "kind": "for3",
@@ -15,6 +22,7 @@
     {
       "n": 0,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "init",
       "line": 10,
@@ -39,6 +47,7 @@
     {
       "n": 1,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 10,
@@ -56,6 +65,7 @@
     {
       "n": 2,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 11,
@@ -81,6 +91,7 @@
     {
       "n": 3,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 12,
@@ -112,6 +123,7 @@
     {
       "n": 4,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 13,
@@ -128,6 +140,7 @@
     {
       "n": 5,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "post",
       "line": 10,
@@ -144,6 +157,7 @@
     {
       "n": 6,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 10,
@@ -161,6 +175,7 @@
     {
       "n": 7,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 11,
@@ -186,6 +201,7 @@
     {
       "n": 8,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "post",
       "line": 10,
@@ -202,6 +218,7 @@
     {
       "n": 9,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 10,
@@ -219,6 +236,7 @@
     {
       "n": 10,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 11,
@@ -244,6 +262,7 @@
     {
       "n": 11,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 12,
@@ -275,6 +294,7 @@
     {
       "n": 12,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 13,
@@ -291,6 +311,7 @@
     {
       "n": 13,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "post",
       "line": 10,
@@ -307,6 +328,7 @@
     {
       "n": 14,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 10,
@@ -324,6 +346,7 @@
     {
       "n": 15,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 11,
@@ -349,6 +372,7 @@
     {
       "n": 16,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "post",
       "line": 10,
@@ -365,6 +389,7 @@
     {
       "n": 17,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 10,
@@ -382,6 +407,7 @@
     {
       "n": 18,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 11,
@@ -407,6 +433,7 @@
     {
       "n": 19,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 12,
@@ -438,6 +465,7 @@
     {
       "n": 20,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 13,
@@ -454,6 +482,7 @@
     {
       "n": 21,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "post",
       "line": 10,
@@ -470,6 +499,7 @@
     {
       "n": 22,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 10,
@@ -487,6 +517,7 @@
     {
       "n": 23,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "exit",
       "line": 10,
@@ -504,6 +535,7 @@
     {
       "n": 24,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "init",
       "line": 10,
@@ -528,6 +560,7 @@
     {
       "n": 25,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "cond",
       "line": 10,
@@ -545,6 +578,7 @@
     {
       "n": 26,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 11,
@@ -570,6 +604,7 @@
     {
       "n": 27,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "post",
       "line": 10,
@@ -586,6 +621,7 @@
     {
       "n": 28,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "cond",
       "line": 10,
@@ -603,6 +639,7 @@
     {
       "n": 29,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 11,
@@ -628,6 +665,7 @@
     {
       "n": 30,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 12,
@@ -659,6 +697,7 @@
     {
       "n": 31,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 13,
@@ -675,6 +714,7 @@
     {
       "n": 32,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "post",
       "line": 10,
@@ -691,6 +731,7 @@
     {
       "n": 33,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "cond",
       "line": 10,
@@ -708,6 +749,7 @@
     {
       "n": 34,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 11,
@@ -733,6 +775,7 @@
     {
       "n": 35,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "post",
       "line": 10,
@@ -749,6 +792,7 @@
     {
       "n": 36,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "cond",
       "line": 10,
@@ -766,6 +810,7 @@
     {
       "n": 37,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 11,
@@ -791,6 +836,7 @@
     {
       "n": 38,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 12,
@@ -822,6 +868,7 @@
     {
       "n": 39,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 13,
@@ -838,6 +885,7 @@
     {
       "n": 40,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "post",
       "line": 10,
@@ -854,6 +902,7 @@
     {
       "n": 41,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "cond",
       "line": 10,
@@ -871,6 +920,7 @@
     {
       "n": 42,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "exit",
       "line": 10,
@@ -888,6 +938,7 @@
     {
       "n": 43,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "init",
       "line": 10,
@@ -912,6 +963,7 @@
     {
       "n": 44,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "cond",
       "line": 10,
@@ -929,6 +981,7 @@
     {
       "n": 45,
       "loop": "L2",
+      "block": "I1",
       "run": 3,
       "phase": "body",
       "line": 11,
@@ -954,6 +1007,7 @@
     {
       "n": 46,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "post",
       "line": 10,
@@ -970,6 +1024,7 @@
     {
       "n": 47,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "cond",
       "line": 10,
@@ -987,6 +1042,7 @@
     {
       "n": 48,
       "loop": "L2",
+      "block": "I1",
       "run": 3,
       "phase": "body",
       "line": 11,
@@ -1012,6 +1068,7 @@
     {
       "n": 49,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "post",
       "line": 10,
@@ -1028,6 +1085,7 @@
     {
       "n": 50,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "cond",
       "line": 10,
@@ -1045,6 +1103,7 @@
     {
       "n": 51,
       "loop": "L2",
+      "block": "I1",
       "run": 3,
       "phase": "body",
       "line": 11,
@@ -1070,6 +1129,7 @@
     {
       "n": 52,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "post",
       "line": 10,
@@ -1086,6 +1146,7 @@
     {
       "n": 53,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "cond",
       "line": 10,
@@ -1103,6 +1164,7 @@
     {
       "n": 54,
       "loop": "L2",
+      "block": "L2",
       "run": 3,
       "phase": "exit",
       "line": 10,

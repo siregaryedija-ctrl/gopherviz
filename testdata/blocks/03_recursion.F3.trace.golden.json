@@ -1,0 +1,123 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_recursion.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F3",
+    "kind": "func",
+    "line": 19,
+    "endLine": 22,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "call",
+      "line": 19,
+      "func": "main",
+      "note": "panggil main()"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 20,
+      "func": "factorial",
+      "args": "n = 4",
+      "vars": {
+        "n": "4"
+      },
+      "note": "panggil factorial(n = 4)"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 10,
+      "func": "factorial",
+      "return": "24",
+      "vars": {
+        "n": "4"
+      },
+      "note": "factorial(n = 4) mengembalikan 24"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "note": "fmt.Println(factorial(4)) → cetak \"24\"",
+      "output": "24\n"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 21,
+      "func": "fib",
+      "args": "n = 4",
+      "vars": {
+        "n": "4"
+      },
+      "note": "panggil fib(n = 4)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "fib",
+      "return": "3",
+      "vars": {
+        "n": "4"
+      },
+      "note": "fib(n = 4) mengembalikan 3"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "body",
+      "line": 21,
+      "note": "fmt.Println(fib(4)) → cetak \"3\"",
+      "output": "3\n"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F3",
+      "run": 1,
+      "phase": "return",
+      "line": 22,
+      "func": "main",
+      "note": "main() selesai"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

@@ -81,8 +81,9 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		prog := analyzer.Load(p.File, text)
 		s.progs[p.File] = prog
 		res := prog.Result
-		focus, _ := res.Scene.LoopAt(p.Cursor.Line)
-		return ok(req.ID, protocol.UpdateResult{Scene: res.Scene, FocusLoop: focus, Diagnostics: res.Diagnostics})
+		loop, _ := res.Scene.LoopAt(p.Cursor.Line)
+		block, _ := res.Scene.BlockAt(p.Cursor.Line)
+		return ok(req.ID, protocol.UpdateResult{Scene: res.Scene, FocusLoop: loop, FocusBlock: block, Diagnostics: res.Diagnostics})
 
 	case protocol.MethodFocus:
 		var p protocol.FocusParams
@@ -93,8 +94,9 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		if !found {
 			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
 		}
-		focus, _ := prog.Result.Scene.LoopAt(p.Cursor.Line)
-		return ok(req.ID, protocol.FocusResult{FocusLoop: focus})
+		loop, _ := prog.Result.Scene.LoopAt(p.Cursor.Line)
+		block, _ := prog.Result.Scene.BlockAt(p.Cursor.Line)
+		return ok(req.ID, protocol.FocusResult{FocusLoop: loop, FocusBlock: block})
 
 	case protocol.MethodClose:
 		var p protocol.CloseParams
@@ -113,7 +115,11 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		if !found {
 			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
 		}
-		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, p.LoopID, sim.Options{})})
+		id := p.BlockID
+		if id == "" {
+			id = p.LoopID
+		}
+		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, id, sim.Options{})})
 
 	default:
 		return fail(req.ID, fmt.Sprintf("method tidak dikenal: %q", req.Method))

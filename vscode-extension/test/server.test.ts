@@ -19,7 +19,7 @@ test('hello, update, dan focus', async () => {
   const client = new GophervizClient(bin.path);
   try {
     const hello = await client.start();
-    assert.equal(hello.protocol, 1);
+    assert.equal(hello.protocol, 2);
 
     const src = code('\tfor i := 0; i < 3; i++ {\n\t\tfor j := 0; j < i; j++ {\n\t\t}\n\t}');
     const res = await client.request<UpdateResult>('update', { file: 'a.go', text: src, cursor: { line: 5, col: 1 } });

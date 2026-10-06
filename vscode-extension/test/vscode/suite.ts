@@ -25,14 +25,24 @@ test('ekstensi aktif saat file Go dibuka dan scene terkirim', async api => {
   await vscode.window.showTextDocument(doc);
   const res = await waitFor('hasil update', () => api.result(doc.uri.toString()));
   assert.deepEqual(res.scene.loops.map(l => l.id), ['L1', 'L2']);
+  assert.deepEqual(res.scene.blocks.map(b => b.id), ['F1', 'L1', 'L2', 'I1', 'I2']);
 });
 
 test('kursor di loop dalam: fokus L2 dan panel terbuka otomatis', async api => {
   const ed = vscode.window.activeTextEditor!;
-  const pos = new vscode.Position(10, 4); // baris 11: if a[j] > a[j+1]
+  const pos = new vscode.Position(9, 4); // baris 10: for j := 0; ...
   ed.selection = new vscode.Selection(pos, pos);
   await waitFor('fokus L2', () => api.focus(ed.document.uri.toString()) === 'L2');
   await waitFor('panel terbuka', () => api.panelOpen());
+});
+
+test('kursor di if: fokus ke blok if terdalam', async api => {
+  const ed = vscode.window.activeTextEditor!;
+  const pos = new vscode.Position(11, 6); // baris 12: a[j], a[j+1] = ... di dalam if
+  ed.selection = new vscode.Selection(pos, pos);
+  await waitFor('fokus I1', () => api.focus(ed.document.uri.toString()) === 'I1');
+  ed.selection = new vscode.Selection(new vscode.Position(9, 4), new vscode.Position(9, 4));
+  await waitFor('kembali ke L2', () => api.focus(ed.document.uri.toString()) === 'L2');
 });
 
 test('trace nilai asli dikirim ke panel setelah berhenti mengetik', async api => {
@@ -54,12 +64,14 @@ test('mengetik loop baru tanpa menyimpan langsung terlihat (realtime)', async ap
   assert.equal(ed.document.isDirty, true);
 });
 
-test('CodeLens muncul di atas setiap for', async () => {
+test('CodeLens muncul di atas setiap blok', async () => {
   const ed = vscode.window.activeTextEditor!;
   const lenses = await vscode.commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', ed.document.uri);
   const titles = lenses.map(l => l.command?.title ?? '');
-  assert.ok(titles.includes('▶ Visualisasikan loop L1'), titles.join(', '));
-  assert.equal(titles.filter(t => t.startsWith('▶')).length, 3);
+  for (const want of ['▶ Visualisasikan loop L1', '▶ Visualisasikan fungsi F1', '▶ Visualisasikan if I1']) {
+    assert.ok(titles.includes(want), titles.join(', '));
+  }
+  assert.equal(titles.filter(t => t.startsWith('▶')).length, 6); // main, 3 loop, 2 if
 });
 
 export async function run(): Promise<void> {

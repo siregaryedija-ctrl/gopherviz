@@ -1,7 +1,80 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "05_range_slice.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 16,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "nums := []int{4, 8, 15, 16}"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "sum := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 8,
+            "endLine": 14,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "fmt.Println(sum)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 8,
+        "endLine": 14,
+        "state": "complete",
+        "header": "for i, v := range nums",
+        "parent": "F1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "header": "if v%2 == 1",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "v%2 == 1",
+            "line": 9,
+            "body": [
+              {
+                "kind": "continue",
+                "line": 10,
+                "text": "continue"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",
@@ -26,6 +99,7 @@
             "line": 9,
             "endLine": 11,
             "text": "if v%2 == 1",
+            "ref": "I1",
             "then": [
               {
                 "kind": "continue",

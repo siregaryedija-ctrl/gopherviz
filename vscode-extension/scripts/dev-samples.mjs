@@ -7,25 +7,31 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const exe = path.join(root, 'bin', `${process.platform}-${process.arch}`, process.platform === 'win32' ? 'gopherviz.exe' : 'gopherviz');
-const loops = path.join(root, '..', 'testdata', 'loops');
+const testdata = path.join(root, '..', 'testdata');
 
-// nama sampel → [file, baris loop fokus]
+// nama sampel → [file relatif terhadap testdata, baris di dalam blok fokus]
 const samples = {
-  for3: ['01_for3.go', 6],
-  bubble: ['11_nested_bubble.go', 8],
-  inner: ['11_nested_bubble.go', 10],
-  range: ['05_range_slice.go', 8],
-  labeled: ['12_labeled.go', 8],
-  infinite: ['03_infinite_break.go', 7],
+  for3: ['loops/01_for3.go', 6],
+  bubble: ['loops/11_nested_bubble.go', 8],
+  inner: ['loops/11_nested_bubble.go', 10],
+  range: ['loops/05_range_slice.go', 8],
+  labeled: ['loops/12_labeled.go', 8],
+  infinite: ['loops/03_infinite_break.go', 7],
+  ifchain: ['blocks/01_if_chain.go', 6],
+  ifskip: ['blocks/01_if_chain.go', 22],
+  switch: ['blocks/02_switch.go', 6],
+  fib: ['blocks/03_recursion.go', 12],
+  fact: ['blocks/03_recursion.go', 5],
+  program: ['blocks/04_program.go', 19],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));
 const out = {};
 for (const [name, [file, line]] of Object.entries(samples)) {
-  const f = path.join(loops, file);
+  const f = path.join(testdata, file);
   const scene = run('list', '--json', f);
   const trace = run('trace', '--json', `${f}:${line}`);
-  out[name] = { file, scene, focusLoop: trace.loop.id, trace };
+  out[name] = { file: path.basename(file), scene, focusBlock: trace.block.id, trace };
 }
 writeFileSync(path.join(root, 'dev', 'samples.js'), `// Dibuat oleh scripts/dev-samples.mjs, jangan diedit manual.\nwindow.SAMPLES = ${JSON.stringify(out)};\n`);
 console.log(`dev/samples.js: ${Object.keys(out).join(', ')}`);

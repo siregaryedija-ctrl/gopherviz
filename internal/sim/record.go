@@ -4,19 +4,21 @@ import (
 	"go/ast"
 	"strings"
 
+	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
 
-// recorder mengumpulkan langkah-langkah selama loop fokus (dan loop di dalamnya) berjalan.
+// recorder mengumpulkan langkah-langkah selama blok fokus (dan blok di dalamnya) berjalan.
 type recorder struct {
-	focus    ast.Stmt
+	focus    ast.Node // *ast.ForStmt, *ast.RangeStmt, *ast.IfStmt, *ast.SwitchStmt, *ast.FuncDecl, *ast.FuncLit
 	maxSteps int
 	maxIter  int
 
-	active  int // > 0 selama loop fokus sedang berjalan
+	active  int // > 0 selama blok fokus sedang berjalan (rekursi menambah lebih dari 1)
 	runs    int
 	reached bool
 	frames  []*frame
+	depth   int // kedalaman panggilan fungsi sejak fokus dimulai
 
 	steps    []trace.Step
 	ops      []trace.Op
@@ -26,14 +28,15 @@ type recorder struct {
 
 	truncated bool
 
-	coll       string // nama variabel koleksi untuk mode data ("" bila tidak ada)
-	collKind   string
-	firstItems []string
-	dirty      bool // isi koleksi berubah sejak langkah terakhir
+	coll     string // nama variabel koleksi untuk mode data ("" bila tidak ada)
+	collKind string
+	dirty    bool // isi koleksi berubah sejak langkah terakhir
 }
 
+// frame adalah satu blok yang sedang berjalan selama perekaman.
 type frame struct {
 	id    string
+	kind  scene.BlockKind
 	iter  int
 	focus bool
 }
@@ -57,6 +60,19 @@ func (r *recorder) top() *frame {
 	return r.frames[len(r.frames)-1]
 }
 
+// loopFrame mengembalikan loop terdalam yang sedang berjalan.
+func (r *recorder) loopFrame() *frame {
+	for i := len(r.frames) - 1; i >= 0; i-- {
+		if r.frames[i].kind == scene.BlockLoop {
+			return r.frames[i]
+		}
+		if r.frames[i].kind == scene.BlockFunc {
+			return nil // loop di luar fungsi ini bukan milik langkah ini
+		}
+	}
+	return nil
+}
+
 func (r *recorder) op(o trace.Op) {
 	r.ops = append(r.ops, o)
 	switch o.Op {
@@ -69,7 +85,11 @@ func (r *recorder) op(o trace.Op) {
 func (r *recorder) add(s trace.Step, vars map[string]string, items func() []string) {
 	s.N = len(r.steps)
 	s.Run = r.runs
+	s.Depth = r.depth
 	if f := r.top(); f != nil {
+		s.Block = f.id
+	}
+	if f := r.loopFrame(); f != nil {
 		s.Loop = f.id
 		iter := f.iter
 		s.Iteration = &iter

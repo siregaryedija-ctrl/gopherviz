@@ -1,0 +1,183 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "04_program.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 5,
+    "endLine": 7,
+    "name": "isEven"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 1",
+      "vars": {
+        "n": "1"
+      },
+      "note": "panggil isEven(n = 1)"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "1"
+      },
+      "note": "return n%2 == 0 → keluar dari fungsi"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "false",
+      "vars": {
+        "n": "1"
+      },
+      "note": "isEven(n = 1) mengembalikan false"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 2",
+      "vars": {
+        "n": "2"
+      },
+      "note": "panggil isEven(n = 2)"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "2"
+      },
+      "note": "return n%2 == 0 → keluar dari fungsi"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "true",
+      "vars": {
+        "n": "2"
+      },
+      "note": "isEven(n = 2) mengembalikan true"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 3",
+      "vars": {
+        "n": "3"
+      },
+      "note": "panggil isEven(n = 3)"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "3"
+      },
+      "note": "return n%2 == 0 → keluar dari fungsi"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "false",
+      "vars": {
+        "n": "3"
+      },
+      "note": "isEven(n = 3) mengembalikan false"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 4",
+      "vars": {
+        "n": "4"
+      },
+      "note": "panggil isEven(n = 4)"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "4"
+      },
+      "note": "return n%2 == 0 → keluar dari fungsi"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "true",
+      "vars": {
+        "n": "4"
+      },
+      "note": "isEven(n = 4) mengembalikan true"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

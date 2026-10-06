@@ -1,0 +1,150 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "03_recursion.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 10,
+        "state": "complete",
+        "name": "factorial",
+        "header": "func factorial(n int) int",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 6,
+            "endLine": 8,
+            "text": "if n <= 1",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return 1"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 9,
+            "text": "return n * factorial(n-1)"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": "if n <= 1",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n <= 1",
+            "line": 6,
+            "body": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return 1"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 12,
+        "endLine": 17,
+        "state": "complete",
+        "name": "fib",
+        "header": "func fib(n int) int",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 13,
+            "endLine": 15,
+            "text": "if n < 2",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "return",
+                "line": 14,
+                "text": "return n"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 16,
+            "text": "return fib(n-1) + fib(n-2)"
+          }
+        ],
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 13,
+        "endLine": 15,
+        "state": "complete",
+        "header": "if n < 2",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n < 2",
+            "line": 13,
+            "body": [
+              {
+                "kind": "return",
+                "line": 14,
+                "text": "return n"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 19,
+        "endLine": 22,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "fmt.Println(factorial(4))"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "fmt.Println(fib(4))"
+          }
+        ]
+      }
+    ],
+    "loops": []
+  },
+  "diagnostics": []
+}

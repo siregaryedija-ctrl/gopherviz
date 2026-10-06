@@ -1,0 +1,439 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "04_program.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 9,
+    "endLine": 17,
+    "name": "sumEven"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 21,
+      "func": "sumEven",
+      "args": "nums = [1 2 3 4]",
+      "vars": {
+        "nums": "[1 2 3 4]"
+      },
+      "note": "panggil sumEven(nums = [1 2 3 4])",
+      "items": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "0"
+      },
+      "note": "total := 0 → total = 0"
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 11,
+      "iteration": 0,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "0"
+      },
+      "note": "range nums (4 elemen)"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 11,
+      "iteration": 0,
+      "vars": {
+        "n": "1",
+        "nums": "[1 2 3 4]",
+        "total": "0"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: n = 1",
+      "ops": [
+        {
+          "op": "read",
+          "a": 0
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 1",
+      "vars": {
+        "n": "1"
+      },
+      "note": "panggil isEven(n = 1)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "false",
+      "vars": {
+        "n": "1"
+      },
+      "note": "isEven(n = 1) mengembalikan false"
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 0,
+      "vars": {
+        "n": "1",
+        "nums": "[1 2 3 4]",
+        "total": "0"
+      },
+      "result": false,
+      "note": "if isEven(n) → false"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 11,
+      "iteration": 1,
+      "vars": {
+        "n": "2",
+        "nums": "[1 2 3 4]",
+        "total": "0"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: n = 2",
+      "ops": [
+        {
+          "op": "read",
+          "a": 1
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 2",
+      "vars": {
+        "n": "2"
+      },
+      "note": "panggil isEven(n = 2)"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "true",
+      "vars": {
+        "n": "2"
+      },
+      "note": "isEven(n = 2) mengembalikan true"
+    },
+    {
+      "n": 10,
+      "loop": "L1",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 1,
+      "vars": {
+        "n": "2",
+        "nums": "[1 2 3 4]",
+        "total": "0"
+      },
+      "result": true,
+      "note": "if isEven(n) → true"
+    },
+    {
+      "n": 11,
+      "loop": "L1",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "iteration": 1,
+      "vars": {
+        "n": "2",
+        "nums": "[1 2 3 4]",
+        "total": "2"
+      },
+      "note": "total += n → total = 2"
+    },
+    {
+      "n": 12,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 11,
+      "iteration": 2,
+      "vars": {
+        "n": "3",
+        "nums": "[1 2 3 4]",
+        "total": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: n = 3",
+      "ops": [
+        {
+          "op": "read",
+          "a": 2
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 3",
+      "vars": {
+        "n": "3"
+      },
+      "note": "panggil isEven(n = 3)"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "false",
+      "vars": {
+        "n": "3"
+      },
+      "note": "isEven(n = 3) mengembalikan false"
+    },
+    {
+      "n": 15,
+      "loop": "L1",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 2,
+      "vars": {
+        "n": "3",
+        "nums": "[1 2 3 4]",
+        "total": "2"
+      },
+      "result": false,
+      "note": "if isEven(n) → false"
+    },
+    {
+      "n": 16,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 11,
+      "iteration": 3,
+      "vars": {
+        "n": "4",
+        "nums": "[1 2 3 4]",
+        "total": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-4: n = 4",
+      "ops": [
+        {
+          "op": "read",
+          "a": 3
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 12,
+      "func": "isEven",
+      "args": "n = 4",
+      "vars": {
+        "n": "4"
+      },
+      "note": "panggil isEven(n = 4)"
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 7,
+      "func": "isEven",
+      "return": "true",
+      "vars": {
+        "n": "4"
+      },
+      "note": "isEven(n = 4) mengembalikan true"
+    },
+    {
+      "n": 19,
+      "loop": "L1",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 12,
+      "iteration": 3,
+      "vars": {
+        "n": "4",
+        "nums": "[1 2 3 4]",
+        "total": "2"
+      },
+      "result": true,
+      "note": "if isEven(n) → true"
+    },
+    {
+      "n": 20,
+      "loop": "L1",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "iteration": 3,
+      "vars": {
+        "n": "4",
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "total += n → total = 6"
+    },
+    {
+      "n": 21,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 11,
+      "iteration": 4,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 22,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 11,
+      "iteration": 4,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 16,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "return total → keluar dari fungsi"
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "sumEven",
+      "return": "6",
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "sumEven(nums = [1 2 3 4]) mengembalikan 6"
+    }
+  ],
+  "collection": {
+    "kind": "slice",
+    "items": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

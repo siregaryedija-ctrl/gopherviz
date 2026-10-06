@@ -1,0 +1,170 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "02_switch.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 14,
+        "state": "complete",
+        "name": "dayName",
+        "header": "func dayName(day int) string",
+        "params": [
+          "day"
+        ],
+        "body": [
+          {
+            "kind": "switch",
+            "line": 6,
+            "endLine": 13,
+            "text": "switch day { …",
+            "ref": "S1"
+          }
+        ],
+        "children": [
+          "S1"
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 6,
+        "endLine": 13,
+        "state": "complete",
+        "header": "switch day",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "1, 7",
+            "line": 7,
+            "body": [
+              {
+                "kind": "return",
+                "line": 8,
+                "text": "return \"akhir pekan\""
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "2, 3, 4, 5, 6",
+            "line": 9,
+            "body": [
+              {
+                "kind": "return",
+                "line": 10,
+                "text": "return \"hari kerja\""
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 11,
+            "body": [
+              {
+                "kind": "return",
+                "line": 12,
+                "text": "return \"bukan hari\""
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 16,
+        "endLine": 29,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "fmt.Println(dayName(3))"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "fmt.Println(dayName(7))"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "fmt.Println(dayName(9))"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "temp := 31"
+          },
+          {
+            "kind": "switch",
+            "line": 21,
+            "endLine": 28,
+            "text": "switch { …",
+            "ref": "S2"
+          }
+        ],
+        "children": [
+          "S2"
+        ]
+      },
+      {
+        "id": "S2",
+        "kind": "switch",
+        "line": 21,
+        "endLine": 28,
+        "state": "complete",
+        "header": "switch",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "temp > 30",
+            "line": 22,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"panas\")"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "temp > 20",
+            "line": 24,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 25,
+                "text": "fmt.Println(\"hangat\")"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 26,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 27,
+                "text": "fmt.Println(\"dingin\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      }
+    ],
+    "loops": []
+  },
+  "diagnostics": []
+}

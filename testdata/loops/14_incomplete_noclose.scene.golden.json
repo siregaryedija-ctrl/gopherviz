@@ -1,7 +1,39 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "14_incomplete_noclose.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 3,
+        "endLine": 5,
+        "state": "incomplete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "loop",
+            "line": 4,
+            "endLine": 5,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 4,
+        "endLine": 5,
+        "state": "incomplete",
+        "header": "for i := 0; i < 3; i++",
+        "parent": "F1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",

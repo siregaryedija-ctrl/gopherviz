@@ -1,7 +1,40 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "15_incomplete_header.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 3,
+        "endLine": 7,
+        "state": "incomplete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 4,
+            "text": "total := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 5,
+            "endLine": 7,
+            "ref": "L1"
+          }
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 5,
+        "endLine": 5,
+        "state": "incomplete",
+        "header": "for i := 0; i <"
+      }
+    ],
     "loops": [
       {
         "id": "L1",

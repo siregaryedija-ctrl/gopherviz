@@ -1,0 +1,61 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_if_chain.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I2",
+    "kind": "if",
+    "line": 22,
+    "endLine": 24
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "vars": {
+        "x": "7"
+      },
+      "result": false,
+      "note": "if x%2 == 0 → 1 == 0 → false"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "branch",
+      "line": 22,
+      "branch": 1,
+      "vars": {
+        "x": "7"
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "exit",
+      "line": 24,
+      "vars": {
+        "x": "7"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

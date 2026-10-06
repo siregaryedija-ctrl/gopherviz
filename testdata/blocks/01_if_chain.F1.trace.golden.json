@@ -1,0 +1,221 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_if_chain.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 5,
+    "endLine": 15,
+    "name": "grade"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 19,
+      "func": "grade",
+      "args": "score = 95",
+      "vars": {
+        "score": "95"
+      },
+      "note": "panggil grade(score = 95)"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "score": "95"
+      },
+      "result": true,
+      "note": "if score >= 90 → 95 >= 90 → true"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 7,
+      "vars": {
+        "score": "95"
+      },
+      "note": "return \"A\" → keluar dari fungsi"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 15,
+      "func": "grade",
+      "return": "\"A\"",
+      "vars": {
+        "score": "95"
+      },
+      "note": "grade(score = 95) mengembalikan \"A\""
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 19,
+      "func": "grade",
+      "args": "score = 80",
+      "vars": {
+        "score": "80"
+      },
+      "note": "panggil grade(score = 80)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "score": "80"
+      },
+      "result": false,
+      "note": "if score >= 90 → 80 >= 90 → false"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 8,
+      "vars": {
+        "score": "80"
+      },
+      "result": true,
+      "note": "else if score >= 75 → 80 >= 75 → true"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I1",
+      "run": 2,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "score": "80"
+      },
+      "note": "return \"B\" → keluar dari fungsi"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 15,
+      "func": "grade",
+      "return": "\"B\"",
+      "vars": {
+        "score": "80"
+      },
+      "note": "grade(score = 80) mengembalikan \"B\""
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "call",
+      "line": 19,
+      "func": "grade",
+      "args": "score = 40",
+      "vars": {
+        "score": "40"
+      },
+      "note": "panggil grade(score = 40)"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "score": "40"
+      },
+      "result": false,
+      "note": "if score >= 90 → 40 >= 90 → false"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 8,
+      "vars": {
+        "score": "40"
+      },
+      "result": false,
+      "note": "else if score >= 75 → 40 >= 75 → false"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "score": "40"
+      },
+      "result": false,
+      "note": "else if score >= 60 → 40 >= 60 → false"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "I1",
+      "run": 3,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "score": "40"
+      },
+      "note": "return \"D\" → keluar dari fungsi"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "return",
+      "line": 15,
+      "func": "grade",
+      "return": "\"D\"",
+      "vars": {
+        "score": "40"
+      },
+      "note": "grade(score = 40) mengembalikan \"D\""
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

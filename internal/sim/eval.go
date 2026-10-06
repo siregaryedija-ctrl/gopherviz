@@ -10,6 +10,7 @@ import (
 	"strings"
 	"unicode"
 
+	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
 
@@ -536,13 +537,35 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	if body == nil {
 		return []value{unknown("fungsi tanpa isi")}
 	}
-	// Fungsi yang ditulis di luar loop fokus tetap dijalankan, tetapi langkah di dalamnya
-	// tidak direkam supaya trace hanya berisi kode loop itu sendiri. Output-nya tetap tercatat.
-	if it.rec.on() && !it.insideFocus(body) {
-		it.quiet++
-		defer func() { it.quiet-- }()
+	var node ast.Node
+	if fn.decl != nil {
+		node = fn.decl
+	} else {
+		node = fn.lit
 	}
+
+	// Langkah call/return dicatat bila pemanggilnya sedang direkam, atau bila fungsi ini
+	// adalah fokus yang baru dimulai. Depth = "lantai" call stack relatif terhadap awal fokus.
+	r := it.rec
+	callerRecording := it.recording()
+	fr, leave := it.enterBlock(node, scene.BlockFunc)
+	defer leave()
+	startsFocus := fr != nil && fr.focus && r.active == 1
+	// Pemanggilan fungsi iterator oleh range adalah mekanisme loop, bukan panggilan yang ditulis user.
+	_, viaRange := at.(*ast.RangeStmt)
+	recordCall := (callerRecording || startsFocus) && !viaRange
+	if recordCall {
+		prevDepth := r.depth
+		if startsFocus {
+			r.depth = 0
+		} else {
+			r.depth = prevDepth + 1
+		}
+		defer func() { r.depth = prevDepth }()
+	}
+
 	scope := newEnv(parent, true)
+	var params []string
 	i := 0
 	if ft.Params != nil {
 		for fi, field := range ft.Params.List {
@@ -571,8 +594,16 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 					v = coerce(v, obj.Type())
 				}
 				scope.define(name.Name, v)
+				if name.Name != "_" {
+					params = append(params, name.Name+" = "+show(v))
+				}
 			}
 		}
+	}
+	argText := strings.Join(params, ", ")
+	if recordCall && it.recording() {
+		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: fn.name, Args: argText,
+			Note: fmt.Sprintf("panggil %s(%s)", fn.name, argText)}, scope)
 	}
 	var named []*ast.Ident
 	if ft.Results != nil {
@@ -587,13 +618,34 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 			}
 		}
 	}
-	f := it.execList(body.List, scope)
-	if f.k == fReturn && len(f.ret) > 0 {
-		return f.ret
+	// Fungsi yang ditulis di luar blok fokus tetap dijalankan, tetapi langkah di dalamnya
+	// tidak direkam supaya trace hanya berisi kode blok itu sendiri. Output-nya tetap tercatat.
+	quietBody := it.rec.on() && !it.insideFocus(body)
+	if quietBody {
+		it.quiet++
 	}
-	out := make([]value, len(named))
-	for i, name := range named {
-		out[i] = *scope.lookup(name.Name)
+	f := it.execList(body.List, scope)
+	if quietBody {
+		it.quiet--
+	}
+	out := f.ret
+	if f.k != fReturn || len(f.ret) == 0 {
+		out = make([]value, len(named))
+		for i, name := range named {
+			out[i] = *scope.lookup(name.Name)
+		}
+	}
+	if recordCall && it.recording() {
+		rets := make([]string, len(out))
+		for i, v := range out {
+			rets[i] = show(v)
+		}
+		ret := strings.Join(rets, ", ")
+		note := fmt.Sprintf("%s(%s) selesai", fn.name, argText)
+		if ret != "" {
+			note = fmt.Sprintf("%s(%s) mengembalikan %s", fn.name, argText, ret)
+		}
+		it.add(trace.Step{Phase: trace.PhaseReturn, Line: it.p.Line(body.Rbrace), Func: fn.name, Return: ret, Note: note}, scope)
 	}
 	return out
 }

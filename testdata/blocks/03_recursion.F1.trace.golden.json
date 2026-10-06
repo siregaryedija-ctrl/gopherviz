@@ -1,0 +1,247 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_recursion.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 5,
+    "endLine": 10,
+    "name": "factorial"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 20,
+      "func": "factorial",
+      "args": "n = 4",
+      "vars": {
+        "n": "4"
+      },
+      "note": "panggil factorial(n = 4)"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "4"
+      },
+      "result": false,
+      "note": "if n <= 1 → 4 <= 1 → false"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 9,
+      "func": "factorial",
+      "args": "n = 3",
+      "vars": {
+        "n": "3"
+      },
+      "note": "panggil factorial(n = 3)"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "3"
+      },
+      "result": false,
+      "note": "if n <= 1 → 3 <= 1 → false"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 2,
+      "phase": "call",
+      "line": 9,
+      "func": "factorial",
+      "args": "n = 2",
+      "vars": {
+        "n": "2"
+      },
+      "note": "panggil factorial(n = 2)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "depth": 2,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "2"
+      },
+      "result": false,
+      "note": "if n <= 1 → 2 <= 1 → false"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 3,
+      "phase": "call",
+      "line": 9,
+      "func": "factorial",
+      "args": "n = 1",
+      "vars": {
+        "n": "1"
+      },
+      "note": "panggil factorial(n = 1)"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "depth": 3,
+      "phase": "body",
+      "line": 6,
+      "vars": {
+        "n": "1"
+      },
+      "result": true,
+      "note": "if n <= 1 → 1 <= 1 → true"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I1",
+      "run": 1,
+      "depth": 3,
+      "phase": "body",
+      "line": 7,
+      "vars": {
+        "n": "1"
+      },
+      "note": "return 1 → keluar dari fungsi"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 3,
+      "phase": "return",
+      "line": 10,
+      "func": "factorial",
+      "return": "1",
+      "vars": {
+        "n": "1"
+      },
+      "note": "factorial(n = 1) mengembalikan 1"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 2,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "n": "2"
+      },
+      "note": "return n * factorial(n-1) → keluar dari fungsi"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 2,
+      "phase": "return",
+      "line": 10,
+      "func": "factorial",
+      "return": "2",
+      "vars": {
+        "n": "2"
+      },
+      "note": "factorial(n = 2) mengembalikan 2"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "n": "3"
+      },
+      "note": "return n * factorial(n-1) → keluar dari fungsi"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 10,
+      "func": "factorial",
+      "return": "6",
+      "vars": {
+        "n": "3"
+      },
+      "note": "factorial(n = 3) mengembalikan 6"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "n": "4"
+      },
+      "note": "return n * factorial(n-1) → keluar dari fungsi"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 10,
+      "func": "factorial",
+      "return": "24",
+      "vars": {
+        "n": "4"
+      },
+      "note": "factorial(n = 4) mengembalikan 24"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

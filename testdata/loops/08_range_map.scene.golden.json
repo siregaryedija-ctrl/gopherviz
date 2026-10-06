@@ -1,7 +1,44 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "08_range_map.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 10,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "ages := map[string]int{\"ani\": 20, \"budi\": 25, \"citra\": 22}"
+          },
+          {
+            "kind": "loop",
+            "line": 7,
+            "endLine": 9,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 7,
+        "endLine": 9,
+        "state": "complete",
+        "header": "for name, age := range ages",
+        "parent": "F1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",

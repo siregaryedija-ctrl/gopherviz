@@ -1,0 +1,203 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_switch.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F2",
+    "kind": "func",
+    "line": 16,
+    "endLine": 29,
+    "name": "main"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 16,
+      "func": "main",
+      "note": "panggil main()"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 17,
+      "func": "dayName",
+      "args": "day = 3",
+      "vars": {
+        "day": "3"
+      },
+      "note": "panggil dayName(day = 3)"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 14,
+      "func": "dayName",
+      "return": "\"hari kerja\"",
+      "vars": {
+        "day": "3"
+      },
+      "note": "dayName(day = 3) mengembalikan \"hari kerja\""
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "note": "fmt.Println(dayName(3)) → cetak \"hari kerja\"",
+      "output": "hari kerja\n"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 18,
+      "func": "dayName",
+      "args": "day = 7",
+      "vars": {
+        "day": "7"
+      },
+      "note": "panggil dayName(day = 7)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 14,
+      "func": "dayName",
+      "return": "\"akhir pekan\"",
+      "vars": {
+        "day": "7"
+      },
+      "note": "dayName(day = 7) mengembalikan \"akhir pekan\""
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 18,
+      "note": "fmt.Println(dayName(7)) → cetak \"akhir pekan\"",
+      "output": "akhir pekan\n"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 19,
+      "func": "dayName",
+      "args": "day = 9",
+      "vars": {
+        "day": "9"
+      },
+      "note": "panggil dayName(day = 9)"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 14,
+      "func": "dayName",
+      "return": "\"bukan hari\"",
+      "vars": {
+        "day": "9"
+      },
+      "note": "dayName(day = 9) mengembalikan \"bukan hari\""
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "note": "fmt.Println(dayName(9)) → cetak \"bukan hari\"",
+      "output": "bukan hari\n"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 20,
+      "vars": {
+        "temp": "31"
+      },
+      "note": "temp := 31 → temp = 31"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "S2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "vars": {
+        "temp": "31"
+      },
+      "note": "case temp > 30"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "S2",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "temp": "31"
+      },
+      "note": "fmt.Println(\"panas\") → cetak \"panas\"",
+      "output": "panas\n"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 29,
+      "func": "main",
+      "vars": {
+        "temp": "31"
+      },
+      "note": "main() selesai"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

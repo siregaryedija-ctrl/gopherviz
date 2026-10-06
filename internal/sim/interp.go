@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
 
@@ -384,23 +385,78 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 	return flow{}
 }
 
+// execIf menjalankan satu rantai if / else if / else. Setiap kondisi yang dicek direkam;
+// bila if ini adalah blok fokus, cabang yang dipilih dan akhir blok juga direkam.
 func (it *interp) execIf(n *ast.IfStmt, e *env) flow {
-	scope := newEnv(e, false)
-	if n.Init != nil {
-		it.exec(n.Init, scope)
+	fr, leave := it.enterBlock(n, scene.BlockIf)
+	defer leave()
+	focus := fr != nil && fr.focus
+	branch := 0
+	cur, parent := n, e
+	for {
+		scope := newEnv(parent, false)
+		if cur.Init != nil {
+			it.exec(cur.Init, scope)
+		}
+		c := it.cond(cur.Cond, scope, "if")
+		if it.recording() {
+			r := c
+			prefix := "if "
+			if cur != n {
+				prefix = "else if "
+			}
+			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(cur), Result: &r, Note: it.condNote(cur.Cond, scope, c, prefix)}, scope)
+		}
+		if c {
+			it.branchStep(focus, n, branch, scope, fmt.Sprintf("masuk cabang ke-%d (%s)", branch+1, strings.TrimSpace(prefixOf(cur == n)+it.text(cur.Cond))))
+			return it.blockExit(focus, n, it.exec(cur.Body, scope), scope)
+		}
+		branch++
+		switch el := cur.Else.(type) {
+		case *ast.IfStmt:
+			cur, parent = el, scope
+			continue
+		case *ast.BlockStmt:
+			it.branchStep(focus, n, branch, scope, "semua kondisi false → masuk cabang else")
+			return it.blockExit(focus, n, it.exec(el, scope), scope)
+		}
+		it.branchStep(focus, n, branch, scope, "semua kondisi false dan tidak ada else → lewati")
+		return it.blockExit(focus, n, flow{}, scope)
 	}
-	c := it.cond(n.Cond, scope, "if")
-	if it.recording() {
-		r := c
-		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Result: &r, Note: it.condNote(n.Cond, scope, c, "if ")}, scope)
+}
+
+func prefixOf(first bool) string {
+	if first {
+		return "if "
 	}
-	if c {
-		return it.exec(n.Body, scope)
+	return "else if "
+}
+
+// branchStep merekam cabang yang dipilih, hanya bila if/switch ini blok fokus.
+func (it *interp) branchStep(focus bool, n ast.Node, idx int, e *env, note string) {
+	if !focus || !it.recording() {
+		return
 	}
-	if n.Else != nil {
-		return it.exec(n.Else, scope)
+	b := idx
+	it.add(trace.Step{Phase: trace.PhaseBranch, Line: it.line(n), Branch: &b, Note: note}, e)
+}
+
+// blockExit merekam akhir if/switch fokus beserta alasannya, lalu meneruskan flow.
+func (it *interp) blockExit(focus bool, n ast.Node, f flow, e *env) flow {
+	if !focus || !it.recording() {
+		return f
 	}
-	return flow{}
+	reason, note := trace.ReasonDone, "selesai, lanjut ke baris berikutnya"
+	switch f.k {
+	case fBreak:
+		reason, note = trace.ReasonBreak, "keluar karena break"
+	case fContinue:
+		reason, note = trace.ReasonContinue, "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya"
+	case fReturn:
+		reason, note = trace.ReasonReturn, "keluar karena return"
+	}
+	it.add(trace.Step{Phase: trace.PhaseExit, Line: it.p.Line(n.End() - 1), Reason: reason, Note: note}, e)
+	return f
 }
 
 // cond mengevaluasi kondisi; nilai yang tidak diketahui membuat simulasi beralih ke mode struktur.
@@ -417,6 +473,9 @@ func (it *interp) cond(x ast.Expr, e *env, what string) bool {
 }
 
 func (it *interp) execSwitch(n *ast.SwitchStmt, e *env) flow {
+	fr, leave := it.enterBlock(n, scene.BlockSwitch)
+	defer leave()
+	focus := fr != nil && fr.focus
 	scope := newEnv(e, false)
 	if n.Init != nil {
 		it.exec(n.Init, scope)
@@ -424,12 +483,15 @@ func (it *interp) execSwitch(n *ast.SwitchStmt, e *env) flow {
 	tag := boolV(true)
 	if n.Tag != nil {
 		tag = it.eval(n.Tag, scope)
+		if focus && it.recording() {
+			it.add(trace.Step{Phase: trace.PhaseInit, Line: it.line(n), Note: fmt.Sprintf("switch %s → %s", it.text(n.Tag), show(tag))}, scope)
+		}
 	}
-	var def *ast.CaseClause
-	for _, s := range n.Body.List {
+	def := -1
+	for i, s := range n.Body.List {
 		cc := s.(*ast.CaseClause)
 		if cc.List == nil {
-			def = cc
+			def = i
 			continue
 		}
 		for _, x := range cc.List {
@@ -438,24 +500,37 @@ func (it *interp) execSwitch(n *ast.SwitchStmt, e *env) flow {
 			if eq.k != kBool {
 				it.structural(fmt.Sprintf("case di baris %d tidak bisa dihitung", it.line(x)))
 			}
+			if focus && it.recording() {
+				r := eq.b
+				note := fmt.Sprintf("case %s → %s == %s → %v", it.text(x), show(tag), show(v), eq.b)
+				if n.Tag == nil {
+					note = it.condNote(x, scope, eq.b, "case ")
+				}
+				it.add(trace.Step{Phase: trace.PhaseCond, Line: it.line(cc), Result: &r, Note: note}, scope)
+			}
 			if eq.b {
-				return it.caseBody(cc, scope)
+				return it.caseBody(focus, n, cc, i, scope)
 			}
 		}
 	}
-	if def != nil {
-		return it.caseBody(def, scope)
+	if def >= 0 {
+		return it.caseBody(focus, n, n.Body.List[def].(*ast.CaseClause), def, scope)
 	}
-	return flow{}
+	it.branchStep(focus, n, len(n.Body.List), scope, "tidak ada case yang cocok → lewati")
+	return it.blockExit(focus, n, flow{}, scope)
 }
 
-func (it *interp) caseBody(cc *ast.CaseClause, e *env) flow {
-	it.step(cc, e, "case "+it.textList(cc.List))
+func (it *interp) caseBody(focus bool, n *ast.SwitchStmt, cc *ast.CaseClause, idx int, e *env) flow {
+	if focus {
+		it.branchStep(focus, n, idx, e, "masuk "+map[bool]string{true: "default", false: "case " + it.textList(cc.List)}[cc.List == nil])
+	} else {
+		it.step(cc, e, "case "+it.textList(cc.List))
+	}
 	f := it.execList(cc.Body, newEnv(e, false))
 	if f.k == fBreak && f.label == "" {
-		return flow{} // break di dalam switch hanya keluar dari switch
+		f = flow{} // break di dalam switch hanya keluar dari switch
 	}
-	return f
+	return it.blockExit(focus, n, f, e)
 }
 
 func (it *interp) textList(xs []ast.Expr) string {
@@ -506,19 +581,23 @@ func (it *interp) decl(d ast.Decl, e *env) {
 
 // ---------- loop ----------
 
-// enterLoop menyiapkan perekaman untuk loop n; kembalian dipanggil saat loop selesai.
-func (it *interp) enterLoop(n ast.Stmt) (*frame, func()) {
+// enterBlock menyiapkan perekaman untuk blok n (loop, if, switch, fungsi); kembalian
+// dipanggil saat blok selesai. Blok fokus menyalakan perekaman; rekursi ke blok fokus
+// tidak menambah Run, tetapi tetap tercatat lewat Depth.
+func (it *interp) enterBlock(n ast.Node, kind scene.BlockKind) (*frame, func()) {
 	r := it.rec
 	isFocus := n == r.focus
 	if isFocus {
+		if r.active == 0 {
+			r.runs++
+			r.reached = true
+			r.dirty = true
+		}
 		r.active++
-		r.runs++
-		r.reached = true
-		r.dirty = true
 	}
 	var f *frame
 	if it.recording() {
-		f = &frame{id: it.p.LoopIDs[n], focus: isFocus}
+		f = &frame{id: it.p.BlockIDs[n], kind: kind, focus: isFocus}
 		r.frames = append(r.frames, f)
 	}
 	return f, func() {
@@ -574,7 +653,7 @@ func (it *interp) loopFlow(f flow, label string, n ast.Node, e *env) (done bool,
 }
 
 func (it *interp) execFor(n *ast.ForStmt, label string, e *env) flow {
-	fr, leave := it.enterLoop(n)
+	fr, leave := it.enterBlock(n, scene.BlockLoop)
 	defer leave()
 	scope := newEnv(e, false)
 	if n.Init != nil {
@@ -628,9 +707,10 @@ func initLHS(s ast.Stmt) []ast.Expr {
 
 func (it *interp) execRange(n *ast.RangeStmt, label string, e *env) flow {
 	x := it.eval(n.X, e) // dievaluasi sekali, sebelum loop dimulai (seperti di Go)
-	fr, leave := it.enterLoop(n)
+	fr, leave := it.enterBlock(n, scene.BlockLoop)
 	defer leave()
 	quietAtStart := it.quiet
+	framesAtStart := len(it.rec.frames)
 	if x.k == kUnknown {
 		it.structural(fmt.Sprintf("range %q di baris %d tidak bisa dihitung: %s", it.text(n.X), it.line(n), x.why))
 	}
@@ -743,11 +823,15 @@ func (it *interp) execRange(n *ast.RangeStmt, label string, e *env) flow {
 			if len(args) > 1 {
 				v = args[1]
 			}
-			// Fungsi iterator dijalankan quiet, tapi body loop yang dipanggil lewat yield harus terekam lagi.
-			prev := it.quiet
+			// Fungsi iterator dijalankan quiet, tapi body loop yang dipanggil lewat yield harus terekam
+			// lagi, dengan tumpukan blok seperti saat range dimulai (bukan di dalam fungsi iterator).
+			prev, prevFrames := it.quiet, it.rec.frames
 			it.quiet = quietAtStart
+			if framesAtStart <= len(prevFrames) {
+				it.rec.frames = prevFrames[:framesAtStart:framesAtStart]
+			}
 			ok := iterate(k, v, i)
-			it.quiet = prev
+			it.quiet, it.rec.frames = prev, prevFrames
 			i++
 			return []value{boolV(ok)}
 		}}

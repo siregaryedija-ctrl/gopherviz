@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "08_range_map.go",
   "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 7,
+    "endLine": 9
+  },
   "loop": {
     "id": "L1",
     "kind": "range-map",
@@ -16,6 +23,7 @@
     {
       "n": 0,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "init",
       "line": 7,
@@ -28,6 +36,7 @@
     {
       "n": 1,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -43,6 +52,7 @@
     {
       "n": 2,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "body",
       "line": 8,
@@ -58,6 +68,7 @@
     {
       "n": 3,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -73,6 +84,7 @@
     {
       "n": 4,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "body",
       "line": 8,
@@ -88,6 +100,7 @@
     {
       "n": 5,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -103,6 +116,7 @@
     {
       "n": 6,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "body",
       "line": 8,
@@ -118,6 +132,7 @@
     {
       "n": 7,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -131,6 +146,7 @@
     {
       "n": 8,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "exit",
       "line": 7,

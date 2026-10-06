@@ -14,7 +14,7 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
 
   /** Refresh hanya bila letak loop berubah, supaya CodeLens tidak berkedip setiap ketikan. */
   sceneChanged(uri: string, scene: Scene): void {
-    const sig = scene.loops.map(l => `${l.id}:${l.line}`).join(',');
+    const sig = scene.blocks.map(b => `${b.id}:${b.line}`).join(',');
     if (this.signatures.get(uri) !== sig) {
       this.signatures.set(uri, sig);
       this.emitter.fire();
@@ -37,14 +37,17 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
     if (!scene) {
       return [];
     }
-    return scene.loops
-      .filter(l => l.line - 1 < doc.lineCount)
-      .map(l => {
-        const range = new vscode.Range(l.line - 1, 0, l.line - 1, 0);
+    const what = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop' } as const;
+    // Satu tombol per baris: blok terluar yang mulai di baris itu (mis. fungsi satu baris berisi loop).
+    const seen = new Set<number>();
+    return scene.blocks
+      .filter(b => b.line - 1 < doc.lineCount && !seen.has(b.line) && seen.add(b.line))
+      .map(b => {
+        const range = new vscode.Range(b.line - 1, 0, b.line - 1, 0);
         return new vscode.CodeLens(range, {
-          title: `▶ Visualisasikan loop ${l.id}`,
+          title: `▶ Visualisasikan ${what[b.kind]} ${b.id}`,
           command: 'gopherviz.visualizeAtCursor',
-          arguments: [doc.uri, l.line],
+          arguments: [doc.uri, b.line],
         });
       });
   }

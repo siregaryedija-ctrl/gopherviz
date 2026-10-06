@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "12_labeled.go",
   "mode": "simulated",
+  "block": {
+    "id": "L2",
+    "kind": "loop",
+    "line": 9,
+    "endLine": 17
+  },
   "loop": {
     "id": "L2",
     "kind": "range-slice",
@@ -15,6 +22,7 @@
     {
       "n": 0,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "init",
       "line": 9,
@@ -32,6 +40,7 @@
     {
       "n": 1,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "cond",
       "line": 9,
@@ -53,6 +62,7 @@
     {
       "n": 2,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 10,
@@ -68,6 +78,7 @@
     {
       "n": 3,
       "loop": "L2",
+      "block": "I1",
       "run": 1,
       "phase": "continue",
       "line": 11,
@@ -82,6 +93,7 @@
     {
       "n": 4,
       "loop": "L2",
+      "block": "L2",
       "run": 1,
       "phase": "exit",
       "line": 9,
@@ -97,6 +109,7 @@
     {
       "n": 5,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "init",
       "line": 9,
@@ -114,6 +127,7 @@
     {
       "n": 6,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "cond",
       "line": 9,
@@ -135,6 +149,7 @@
     {
       "n": 7,
       "loop": "L2",
+      "block": "I1",
       "run": 2,
       "phase": "body",
       "line": 10,
@@ -150,6 +165,7 @@
     {
       "n": 8,
       "loop": "L2",
+      "block": "I2",
       "run": 2,
       "phase": "body",
       "line": 13,
@@ -165,6 +181,7 @@
     {
       "n": 9,
       "loop": "L2",
+      "block": "I2",
       "run": 2,
       "phase": "break",
       "line": 14,
@@ -179,6 +196,7 @@
     {
       "n": 10,
       "loop": "L2",
+      "block": "L2",
       "run": 2,
       "phase": "exit",
       "line": 9,

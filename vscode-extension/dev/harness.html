@@ -48,10 +48,10 @@
   </div>
   <p id="stepNote" class="step-note" hidden></p>
   <p id="note" class="note"></p>
-  <section id="partsSection"><h2>Isi loop</h2><ol id="parts" class="parts"></ol></section>
+  <section id="partsSection"><h2 id="partsTitle">Isi loop</h2><ol id="parts" class="parts"></ol></section>
   <section id="varsSection" hidden><h2>Variabel</h2><div id="vars" class="vars"></div></section>
   <section id="outSection" hidden><h2>Output</h2><pre id="out" class="out"></pre></section>
-  <section id="navSection"><h2 id="navTitle">Loop di file ini</h2><div id="nav" class="nav"></div></section>
+  <section id="navSection"><h2 id="navTitle">Blok di file ini</h2><div id="nav" class="nav"></div></section>
   <footer class="controls">
     <div class="speed" role="group"><button data-speed="0.5">0.5×</button><button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button></div>
     <button id="btnFx" class="btn tog" aria-pressed="true">Efek</button>
@@ -72,6 +72,8 @@
 <script src="../media/sound.js"></script>
 <script src="../media/level.js"></script>
 <script src="../media/datastage.js"></script>
+<script src="../media/branchstage.js"></script>
+<script src="../media/funcstage.js"></script>
 <script src="../media/main.js"></script>
 <script>
   const q = new URLSearchParams(location.search);
@@ -79,8 +81,8 @@
 
   if (q.get('sample')) {
     const s = window.SAMPLES[q.get('sample')];
-    post({ type: 'state', file: s.file, focusLoop: s.focusLoop, server: { ok: true }, result: { scene: s.scene.scene, diagnostics: [] } });
-    post({ type: 'trace', loopId: s.focusLoop, trace: s.trace });
+    post({ type: 'state', file: s.file, focusBlock: s.focusBlock, server: { ok: true }, result: { scene: s.scene.scene, diagnostics: [] } });
+    if (q.get('struct') === null) post({ type: 'trace', blockId: s.focusBlock, trace: s.trace });
     if (q.get('at') !== null) setTimeout(() => {
       const app = GV.app, tp = app.tp;
       tp.playing = false;
@@ -107,8 +109,8 @@
         header: { text: 'for _, v := range nums', key: '_', value: 'v', define: true, range: 'nums' }, vars: ['v'], body: [] }] },
     ];
     const send = k => post({
-      type: 'state', file: 'main.go', focusLoop: 'L1', server: { ok: true },
-      result: { scene: { version: 1, loops: steps[k].loops }, diagnostics: steps[k].diagnostics || [] },
+      type: 'state', file: 'main.go', focusBlock: 'L1', server: { ok: true },
+      result: { scene: { version: 2, language: 'go', blocks: steps[k].loops.map(l => ({ id: l.id, kind: 'loop', line: l.line, endLine: l.endLine, state: l.state, header: l.header.text, parent: l.parent })), loops: steps[k].loops }, diagnostics: steps[k].diagnostics || [] },
     });
     const fixed = q.get('step');
     if (fixed !== null) {

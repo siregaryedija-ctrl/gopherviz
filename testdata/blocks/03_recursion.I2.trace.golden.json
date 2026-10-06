@@ -1,0 +1,433 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_recursion.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I2",
+    "kind": "if",
+    "line": 13,
+    "endLine": 15
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "4"
+      },
+      "result": false,
+      "note": "if n < 2 → 4 < 2 → false"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "branch",
+      "line": 13,
+      "branch": 1,
+      "vars": {
+        "n": "4"
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "4"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "3"
+      },
+      "result": false,
+      "note": "if n < 2 → 3 < 2 → false"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "branch",
+      "line": 13,
+      "branch": 1,
+      "vars": {
+        "n": "3"
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "I2",
+      "run": 2,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "3"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "2"
+      },
+      "result": false,
+      "note": "if n < 2 → 2 < 2 → false"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "branch",
+      "line": 13,
+      "branch": 1,
+      "vars": {
+        "n": "2"
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "I2",
+      "run": 3,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "2"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "I2",
+      "run": 4,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "1"
+      },
+      "result": true,
+      "note": "if n < 2 → 1 < 2 → true"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "I2",
+      "run": 4,
+      "phase": "branch",
+      "line": 13,
+      "branch": 0,
+      "vars": {
+        "n": "1"
+      },
+      "note": "masuk cabang ke-1 (if n < 2)"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "I2",
+      "run": 4,
+      "phase": "body",
+      "line": 14,
+      "vars": {
+        "n": "1"
+      },
+      "note": "return n → keluar dari fungsi"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "I2",
+      "run": 4,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "1"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "I2",
+      "run": 5,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "0"
+      },
+      "result": true,
+      "note": "if n < 2 → 0 < 2 → true"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "I2",
+      "run": 5,
+      "phase": "branch",
+      "line": 13,
+      "branch": 0,
+      "vars": {
+        "n": "0"
+      },
+      "note": "masuk cabang ke-1 (if n < 2)"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "I2",
+      "run": 5,
+      "phase": "body",
+      "line": 14,
+      "vars": {
+        "n": "0"
+      },
+      "note": "return n → keluar dari fungsi"
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "I2",
+      "run": 5,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "0"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "I2",
+      "run": 6,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "1"
+      },
+      "result": true,
+      "note": "if n < 2 → 1 < 2 → true"
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "I2",
+      "run": 6,
+      "phase": "branch",
+      "line": 13,
+      "branch": 0,
+      "vars": {
+        "n": "1"
+      },
+      "note": "masuk cabang ke-1 (if n < 2)"
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "I2",
+      "run": 6,
+      "phase": "body",
+      "line": 14,
+      "vars": {
+        "n": "1"
+      },
+      "note": "return n → keluar dari fungsi"
+    },
+    {
+      "n": 20,
+      "loop": "",
+      "block": "I2",
+      "run": 6,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "1"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 21,
+      "loop": "",
+      "block": "I2",
+      "run": 7,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "2"
+      },
+      "result": false,
+      "note": "if n < 2 → 2 < 2 → false"
+    },
+    {
+      "n": 22,
+      "loop": "",
+      "block": "I2",
+      "run": 7,
+      "phase": "branch",
+      "line": 13,
+      "branch": 1,
+      "vars": {
+        "n": "2"
+      },
+      "note": "semua kondisi false dan tidak ada else → lewati"
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "I2",
+      "run": 7,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "2"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "I2",
+      "run": 8,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "1"
+      },
+      "result": true,
+      "note": "if n < 2 → 1 < 2 → true"
+    },
+    {
+      "n": 25,
+      "loop": "",
+      "block": "I2",
+      "run": 8,
+      "phase": "branch",
+      "line": 13,
+      "branch": 0,
+      "vars": {
+        "n": "1"
+      },
+      "note": "masuk cabang ke-1 (if n < 2)"
+    },
+    {
+      "n": 26,
+      "loop": "",
+      "block": "I2",
+      "run": 8,
+      "phase": "body",
+      "line": 14,
+      "vars": {
+        "n": "1"
+      },
+      "note": "return n → keluar dari fungsi"
+    },
+    {
+      "n": 27,
+      "loop": "",
+      "block": "I2",
+      "run": 8,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "1"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 28,
+      "loop": "",
+      "block": "I2",
+      "run": 9,
+      "phase": "body",
+      "line": 13,
+      "vars": {
+        "n": "0"
+      },
+      "result": true,
+      "note": "if n < 2 → 0 < 2 → true"
+    },
+    {
+      "n": 29,
+      "loop": "",
+      "block": "I2",
+      "run": 9,
+      "phase": "branch",
+      "line": 13,
+      "branch": 0,
+      "vars": {
+        "n": "0"
+      },
+      "note": "masuk cabang ke-1 (if n < 2)"
+    },
+    {
+      "n": 30,
+      "loop": "",
+      "block": "I2",
+      "run": 9,
+      "phase": "body",
+      "line": 14,
+      "vars": {
+        "n": "0"
+      },
+      "note": "return n → keluar dari fungsi"
+    },
+    {
+      "n": 31,
+      "loop": "",
+      "block": "I2",
+      "run": 9,
+      "phase": "exit",
+      "line": 15,
+      "vars": {
+        "n": "0"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

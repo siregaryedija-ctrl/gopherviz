@@ -1,8 +1,8 @@
 {
   "name": "gopherviz",
   "displayName": "GopherViz",
-  "description": "Visual pixel-art dan animasi cara kerja loop di Go, realtime saat kamu mengetik.",
-  "version": "0.2.0",
+  "description": "Visual pixel-art dan animasi cara kerja kode (loop, if, switch, fungsi, rekursi), realtime saat kamu mengetik.",
+  "version": "0.3.0",
   "publisher": "gopherviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",

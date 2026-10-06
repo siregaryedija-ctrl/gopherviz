@@ -1,4 +1,4 @@
-// Package protocol mendefinisikan pesan JSON lines v1 antara editor dan
+// Package protocol mendefinisikan pesan JSON lines v2 antara editor dan
 // `gopherviz serve` (satu objek JSON per baris, lewat stdin/stdout).
 //
 // Ini KONTRAK. Field baru boleh ditambah; mengubah atau menghapus field berarti
@@ -12,8 +12,8 @@ import (
 	"gopherviz/internal/trace"
 )
 
-// Version adalah versi protokol.
-const Version = 1
+// Version adalah versi protokol (v2: focusBlock, trace per blok, Scene/Trace v2).
+const Version = 2
 
 // Nama method.
 const (
@@ -47,7 +47,8 @@ type FocusParams struct {
 
 // FocusResult adalah hasil MethodFocus.
 type FocusResult struct {
-	FocusLoop string `json:"focusLoop,omitempty"`
+	FocusLoop  string `json:"focusLoop,omitempty"`  // loop terdalam di kursor
+	FocusBlock string `json:"focusBlock,omitempty"` // blok terdalam (jenis apa pun) di kursor
 }
 
 // CloseParams adalah parameter MethodClose.
@@ -91,13 +92,16 @@ type UpdateParams struct {
 type UpdateResult struct {
 	Scene       scene.Scene        `json:"scene"`
 	FocusLoop   string             `json:"focusLoop,omitempty"`
+	FocusBlock  string             `json:"focusBlock,omitempty"`
 	Diagnostics []scene.Diagnostic `json:"diagnostics"`
 }
 
-// TraceParams adalah parameter MethodTrace.
+// TraceParams adalah parameter MethodTrace. BlockID boleh ID blok apa pun;
+// LoopID dipertahankan untuk klien v1.
 type TraceParams struct {
-	File   string `json:"file"`
-	LoopID string `json:"loopId"`
+	File    string `json:"file"`
+	BlockID string `json:"blockId,omitempty"`
+	LoopID  string `json:"loopId,omitempty"`
 }
 
 // TraceResult adalah hasil MethodTrace.

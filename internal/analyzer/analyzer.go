@@ -40,13 +40,15 @@ func (r Result) JSON() ([]byte, error) {
 // Program adalah hasil parse + cek tipe satu file beserta Scene-nya. Dipakai
 // bersama oleh analyzer dan simulator supaya keduanya melihat AST yang sama.
 type Program struct {
-	Fset      *token.FileSet
-	File      *ast.File
-	Info      *types.Info
-	Result    Result
-	LoopNodes map[string]ast.Stmt // ID loop → *ast.ForStmt / *ast.RangeStmt
-	LoopIDs   map[ast.Node]string
-	src       source
+	Fset       *token.FileSet
+	File       *ast.File
+	Info       *types.Info
+	Result     Result
+	LoopNodes  map[string]ast.Stmt // ID loop → *ast.ForStmt / *ast.RangeStmt
+	LoopIDs    map[ast.Node]string
+	BlockNodes map[string]ast.Node // ID blok apa pun → node (FuncDecl, FuncLit, IfStmt, SwitchStmt, loop)
+	BlockIDs   map[ast.Node]string
+	src        source
 }
 
 // Line mengembalikan nomor baris di teks asli (sudah dikoreksi bila potongan kode dibungkus).
@@ -73,8 +75,10 @@ func Load(filename string, src []byte) (p *Program) {
 			p = &Program{
 				Fset: token.NewFileSet(), File: &ast.File{Name: ast.NewIdent("")}, Info: &types.Info{},
 				LoopNodes: map[string]ast.Stmt{}, LoopIDs: map[ast.Node]string{},
+				BlockNodes: map[string]ast.Node{}, BlockIDs: map[ast.Node]string{},
 				Result: Result{
-					Scene:       scene.Scene{Version: scene.Version, File: filename, Loops: []scene.Loop{}},
+					Scene: scene.Scene{Version: scene.Version, Language: "go", File: filename,
+						Blocks: []scene.Block{}, Loops: []scene.Loop{}},
 					Diagnostics: []scene.Diagnostic{{Message: fmt.Sprintf("kesalahan internal analyzer: %v", r)}},
 				},
 			}
@@ -98,6 +102,7 @@ func load(filename string, src []byte) *Program {
 			b.ids[c.node] = c.id
 		}
 	}
+	blockCands := b.collectBlocks() // ID if/switch harus ada sebelum node() dibangun
 
 	loops := make([]scene.Loop, 0, len(cands))
 	for _, c := range cands {
@@ -113,15 +118,26 @@ func load(filename string, src []byte) *Program {
 		loops = append(loops, l)
 	}
 
-	nodes := map[string]ast.Stmt{}
+	blocks := b.blocks(blockCands, cands, loops)
+
+	loopNodes := map[string]ast.Stmt{}
+	loopIDs := map[ast.Node]string{}
+	blockNodes := map[string]ast.Node{}
 	for n, id := range b.ids {
-		nodes[id] = n.(ast.Stmt)
+		blockNodes[id] = n
+		if isLoop(n) {
+			loopNodes[id] = n.(ast.Stmt)
+			loopIDs[n] = id
+		}
 	}
 	return &Program{
 		Fset: s.fset, File: s.file, Info: info, src: s,
-		LoopNodes: nodes, LoopIDs: b.ids,
+		LoopNodes: loopNodes, LoopIDs: loopIDs, BlockNodes: blockNodes, BlockIDs: b.ids,
 		Result: Result{
-			Scene:       scene.Scene{Version: scene.Version, File: filename, Loops: loops},
+			Scene: scene.Scene{
+				Version: scene.Version, Language: "go", File: filename,
+				Blocks: blocks, Loops: loops,
+			},
 			Diagnostics: s.diagnostics(src),
 		},
 	}
@@ -500,7 +516,7 @@ func (b *builder) node(st ast.Stmt) (scene.Node, bool) {
 	case *ast.ReturnStmt:
 		return scene.Node{Kind: scene.NodeReturn, Line: line, Text: short(b.text(s))}, true
 	case *ast.IfStmt:
-		n := scene.Node{Kind: scene.NodeIf, Line: line}
+		n := scene.Node{Kind: scene.NodeIf, Line: line, Ref: b.ids[s]} // else-if tidak punya ID sendiri
 		headEnd := b.src.lineEnd(b.src.offset(s.Pos()))
 		if s.Body != nil && b.isChar(s.Body.Lbrace, '{') {
 			headEnd = b.src.offset(s.Body.Lbrace)
@@ -518,6 +534,8 @@ func (b *builder) node(st ast.Stmt) (scene.Node, bool) {
 		return n, true
 	case *ast.BlockStmt:
 		return scene.Node{Kind: scene.NodeBlock, Line: line, Body: b.nodes(s.List)}, true
+	case *ast.SwitchStmt, *ast.TypeSwitchStmt:
+		return scene.Node{Kind: scene.NodeSwitch, Line: line, Ref: b.ids[s], Text: short(oneLine(firstLine(b.raw(s))))}, true
 	case *ast.BadStmt:
 		return scene.Node{Kind: scene.NodeBad, Line: line, Text: short(b.text(s))}, true
 	default:

@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "10_range_func.go",
   "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 7,
+    "endLine": 11
+  },
   "loop": {
     "id": "L1",
     "kind": "for3",
@@ -15,6 +22,7 @@
     {
       "n": 0,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "init",
       "line": 7,
@@ -27,6 +35,7 @@
     {
       "n": 1,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -39,11 +48,10 @@
     },
     {
       "n": 2,
-      "loop": "L1",
+      "loop": "",
       "run": 1,
       "phase": "cond",
       "line": 16,
-      "iteration": 0,
       "vars": {
         "v": "3"
       },
@@ -52,11 +60,10 @@
     },
     {
       "n": 3,
-      "loop": "L1",
+      "loop": "",
       "run": 1,
       "phase": "body",
       "line": 17,
-      "iteration": 0,
       "vars": {
         "v": "3"
       },
@@ -66,6 +73,7 @@
     {
       "n": 4,
       "loop": "L1",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 8,
@@ -79,6 +87,7 @@
     {
       "n": 5,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "post",
       "line": 7,
@@ -91,6 +100,7 @@
     {
       "n": 6,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -103,11 +113,10 @@
     },
     {
       "n": 7,
-      "loop": "L1",
+      "loop": "",
       "run": 1,
       "phase": "cond",
       "line": 16,
-      "iteration": 1,
       "vars": {
         "v": "2"
       },
@@ -116,11 +125,10 @@
     },
     {
       "n": 8,
-      "loop": "L1",
+      "loop": "",
       "run": 1,
       "phase": "body",
       "line": 17,
-      "iteration": 1,
       "vars": {
         "v": "2"
       },
@@ -130,6 +138,7 @@
     {
       "n": 9,
       "loop": "L1",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 8,
@@ -143,6 +152,7 @@
     {
       "n": 10,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "post",
       "line": 7,
@@ -155,6 +165,7 @@
     {
       "n": 11,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -167,11 +178,10 @@
     },
     {
       "n": 12,
-      "loop": "L1",
+      "loop": "",
       "run": 1,
       "phase": "cond",
       "line": 16,
-      "iteration": 2,
       "vars": {
         "v": "1"
       },
@@ -180,11 +190,10 @@
     },
     {
       "n": 13,
-      "loop": "L1",
+      "loop": "",
       "run": 1,
       "phase": "body",
       "line": 17,
-      "iteration": 2,
       "vars": {
         "v": "1"
       },
@@ -194,6 +203,7 @@
     {
       "n": 14,
       "loop": "L1",
+      "block": "I1",
       "run": 1,
       "phase": "body",
       "line": 8,
@@ -207,6 +217,7 @@
     {
       "n": 15,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "post",
       "line": 7,
@@ -219,6 +230,7 @@
     {
       "n": 16,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 7,
@@ -232,6 +244,7 @@
     {
       "n": 17,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "exit",
       "line": 7,

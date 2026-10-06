@@ -91,6 +91,9 @@
     '=': '...|###|...|###|...', '+': '...|.#.|###|.#.|...', '-': '...|...|###|...|...', '.': '...|...|...|...|.#.',
     ':': '...|.#.|...|.#.|...', '/': '..#|..#|.#.|#..|#..', '(': '.#.|#..|#..|#..|.#.', ')': '.#.|..#|..#|..#|.#.',
     '[': '##.|#..|#..|#..|##.', ']': '.##|..#|..#|..#|.##', ' ': '...|...|...|...|...',
+    '✓': '...|..#|#.#|.#.|...', '✗': '#.#|.#.|#.#|...|...', ',': '...|...|...|.#.|#..',
+    '"': '#.#|#.#|...|...|...', "'": '.#.|.#.|...|...|...', '%': '#.#|..#|.#.|#..|#.#', '*': '...|#.#|.#.|#.#|...',
+    '_': '...|...|...|...|###', '#': '#.#|###|#.#|###|#.#', '&': '.#.|#.#|.#.|#.#|.##',
   };
   const FONT = {};
   for (const k in GLYPHS) FONT[k] = GLYPHS[k].split('|');
@@ -189,8 +192,92 @@
     for (let x = 3; x < W; x += 8) ell(c, x, H - 4, 2, 1, '#f5b3c7');
   }
 
+  /** Posisi pada jalur berbelok (daftar titik) di t = 0..1, menurut panjang lintasan. */
+  function along(points, t) {
+    if (points.length === 1) return { x: points[0].x, y: points[0].y };
+    const segs = [];
+    let total = 0;
+    for (let i = 1; i < points.length; i++) {
+      const d = Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+      segs.push(d);
+      total += d;
+    }
+    let dist = clamp(t, 0, 1) * total;
+    for (let i = 0; i < segs.length; i++) {
+      if (dist <= segs[i] || i === segs.length - 1) {
+        const u = segs[i] ? Math.min(1, dist / segs[i]) : 1;
+        return { x: lerp(points[i].x, points[i + 1].x, u), y: lerp(points[i].y, points[i + 1].y, u) };
+      }
+      dist -= segs[i];
+    }
+    return points[points.length - 1];
+  }
+
+  /** Kamera: potong dunia di sekitar (cx, cy) selebar 192x96 piksel dunia lalu perbesar ke canvas. */
+  function present(ctx, canvas, world, worldW, worldH, cx, cy) {
+    const VW = 192, VH = 96, S = canvas.width / VW;
+    const x = Math.round(clamp(cx - VW / 2, 0, Math.max(0, worldW - VW)));
+    const y = Math.round(clamp(cy - VH / 2, 0, Math.max(0, worldH - VH)));
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = '#fde3eb';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const w = Math.min(VW, worldW), h = Math.min(VH, worldH);
+    ctx.drawImage(world, x, y, w, h, 0, 0, w * S, h * S);
+    return { x, y };
+  }
+
+  /** Gopher biru berdiri dengan kaki di groundY. Mengembalikan y kepala. */
+  function drawGopher(c, x, groundY, face, step, alpha) {
+    const spr = gopher(2, face || 'idle', step || 0);
+    c.globalAlpha = clamp(alpha == null ? 1 : alpha, 0, 1);
+    c.drawImage(spr, Math.round(x - 8), Math.round(groundY + 2 - spr.height));
+    c.globalAlpha = 1;
+    return Math.round(groundY + 2 - spr.height);
+  }
+
+  /** Langit + awan saja (dunia yang tingginya bervariasi menggambar lantainya sendiri). */
+  function paintSky(c, W, H) {
+    const bands = ['#fcd3e1', '#fddbe6', '#fde3eb', '#feeaf0', '#fff1f4'];
+    const bh = Math.ceil(H / bands.length);
+    bands.forEach((col, k) => rect(c, 0, k * bh, W, bh + 1, col));
+    for (let k = 1; k < bands.length; k++) {
+      c.fillStyle = bands[k - 1];
+      for (let x = 0; x < W; x += 2) c.fillRect(x, k * bh, 1, 1);
+    }
+    for (let x = 20; x < W; x += 64) {
+      const y = 6 + ((x * 7) % 10);
+      ell(c, x, y, 8, 3, '#fff8fb'); ell(c, x - 6, y + 1, 5, 2, '#fff8fb'); ell(c, x + 7, y + 1, 6, 2, '#fff8fb');
+    }
+  }
+
+  // Warna ubin per jenis bagian body, sama dengan ikon di daftar "Isi" panel.
+  const NODE_COL = {
+    stmt: '#f3c75a', if: '#86d6cb', switch: '#86d6cb', loop: '#b8a2ee', break: '#7cc68b', continue: '#f7b779',
+    return: '#f39a8a', goto: '#c9b3d8', block: '#e9a28d', bad: '#f6eef2',
+  };
+
+  /** Ubin bagian body (12x9) bernomor; bump = 0..1 untuk animasi disundul. */
+  function tile(c, x, groundY, kind, label, bump, dim) {
+    const col = NODE_COL[kind] || NODE_COL.stmt;
+    const y = groundY - 9 - Math.round(Math.sin(Math.PI * clamp(bump || 0, 0, 1)) * 3);
+    c.globalAlpha = dim ? 0.35 : 1;
+    box(c, Math.round(x - 6), y, 12, 9, col, INK);
+    rect(c, Math.round(x - 5), y + 1, 10, 1, mix(col, '#ffffff', 0.5));
+    if (label) textCenter(c, label, x, y + 2, INK);
+    c.globalAlpha = 1;
+  }
+
+  /** Bagian body mana (indeks) yang memuat baris line; -1 bila tidak ada. */
+  function nodeAt(body, line) {
+    let best = -1;
+    (body || []).forEach((n, i) => { if (line >= n.line && line <= (n.endLine || n.line)) best = i; });
+    return best;
+  }
+
   G.pixel = {
     INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
+    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL,
   };
 })(window.GV = window.GV || {});

@@ -1,7 +1,60 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "06_range_array.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 13,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "arr := [3]string{\"a\", \"b\", \"c\"}"
+          },
+          {
+            "kind": "loop",
+            "line": 7,
+            "endLine": 9,
+            "ref": "L1"
+          },
+          {
+            "kind": "loop",
+            "line": 10,
+            "endLine": 12,
+            "ref": "L2"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 7,
+        "endLine": 9,
+        "state": "complete",
+        "header": "for _, s := range arr",
+        "parent": "F1"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "header": "for i := range &arr",
+        "parent": "F1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",

@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "04_program.go",
+  "mode": "simulated",
+  "block": {
+    "id": "I2",
+    "kind": "if",
+    "line": 22,
+    "endLine": 26
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "body",
+      "line": 22,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "result": true,
+      "note": "if total > 5 → 6 > 5 → true"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "branch",
+      "line": 22,
+      "branch": 0,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "masuk cabang ke-1 (if total > 5)"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "fmt.Println(\"besar\", total) → cetak \"besar 6\"",
+      "output": "besar 6\n"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "I2",
+      "run": 1,
+      "phase": "exit",
+      "line": 26,
+      "vars": {
+        "nums": "[1 2 3 4]",
+        "total": "6"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

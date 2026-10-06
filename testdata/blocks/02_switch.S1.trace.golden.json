@@ -1,0 +1,341 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_switch.go",
+  "mode": "simulated",
+  "block": {
+    "id": "S1",
+    "kind": "switch",
+    "line": 6,
+    "endLine": 13
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "init",
+      "line": 6,
+      "vars": {
+        "day": "3"
+      },
+      "note": "switch day → 3"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "vars": {
+        "day": "3"
+      },
+      "result": false,
+      "note": "case 1 → 3 == 1 → false"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "vars": {
+        "day": "3"
+      },
+      "result": false,
+      "note": "case 7 → 3 == 7 → false"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "3"
+      },
+      "result": false,
+      "note": "case 2 → 3 == 2 → false"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "3"
+      },
+      "result": true,
+      "note": "case 3 → 3 == 3 → true"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "branch",
+      "line": 6,
+      "branch": 1,
+      "vars": {
+        "day": "3"
+      },
+      "note": "masuk case 2, 3, 4, 5, 6"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "day": "3"
+      },
+      "note": "return \"hari kerja\" → keluar dari fungsi"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "exit",
+      "line": 13,
+      "vars": {
+        "day": "3"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "init",
+      "line": 6,
+      "vars": {
+        "day": "7"
+      },
+      "note": "switch day → 7"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "cond",
+      "line": 7,
+      "vars": {
+        "day": "7"
+      },
+      "result": false,
+      "note": "case 1 → 7 == 1 → false"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "cond",
+      "line": 7,
+      "vars": {
+        "day": "7"
+      },
+      "result": true,
+      "note": "case 7 → 7 == 7 → true"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "branch",
+      "line": 6,
+      "branch": 0,
+      "vars": {
+        "day": "7"
+      },
+      "note": "masuk case 1, 7"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "body",
+      "line": 8,
+      "vars": {
+        "day": "7"
+      },
+      "note": "return \"akhir pekan\" → keluar dari fungsi"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "exit",
+      "line": 13,
+      "vars": {
+        "day": "7"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "init",
+      "line": 6,
+      "vars": {
+        "day": "9"
+      },
+      "note": "switch day → 9"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 7,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 1 → 9 == 1 → false"
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 7,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 7 → 9 == 7 → false"
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 2 → 9 == 2 → false"
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 3 → 9 == 3 → false"
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 4 → 9 == 4 → false"
+    },
+    {
+      "n": 20,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 5 → 9 == 5 → false"
+    },
+    {
+      "n": 21,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "cond",
+      "line": 9,
+      "vars": {
+        "day": "9"
+      },
+      "result": false,
+      "note": "case 6 → 9 == 6 → false"
+    },
+    {
+      "n": 22,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "branch",
+      "line": 6,
+      "branch": 2,
+      "vars": {
+        "day": "9"
+      },
+      "note": "masuk default"
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "body",
+      "line": 12,
+      "vars": {
+        "day": "9"
+      },
+      "note": "return \"bukan hari\" → keluar dari fungsi"
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "exit",
+      "line": 13,
+      "vars": {
+        "day": "9"
+      },
+      "note": "keluar karena return",
+      "reason": "return"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

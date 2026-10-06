@@ -3,18 +3,21 @@
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import * as readline from 'node:readline';
 
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 // ---------- tipe kontrak (cermin dari internal/scene dan internal/protocol) ----------
 
 export type LoopKind =
-  | 'for3' | 'cond' | 'infinite'
+  | 'for3' | 'cond' | 'do-while' | 'infinite'
   | 'range-int' | 'range-slice' | 'range-array' | 'range-string'
-  | 'range-map' | 'range-chan' | 'range-func' | 'range-unknown';
+  | 'range-map' | 'range-keys' | 'range-chan' | 'range-func' | 'range-unknown';
+
+export type BlockKind = 'func' | 'if' | 'switch' | 'loop';
 
 export interface SceneNode {
-  kind: 'stmt' | 'if' | 'loop' | 'break' | 'continue' | 'return' | 'goto' | 'block' | 'bad';
+  kind: 'stmt' | 'if' | 'switch' | 'loop' | 'break' | 'continue' | 'return' | 'goto' | 'block' | 'bad';
   line?: number;
+  endLine?: number;
   text?: string;
   label?: string;
   ref?: string;
@@ -41,9 +44,33 @@ export interface Loop {
   children?: string[];
 }
 
+export interface Branch {
+  kind: 'if' | 'else-if' | 'else' | 'case' | 'default';
+  label: string;
+  line: number;
+  body: SceneNode[];
+}
+
+export interface Block {
+  id: string;
+  kind: BlockKind;
+  line: number;
+  endLine: number;
+  state: 'complete' | 'incomplete';
+  name?: string;
+  header: string;
+  params?: string[];
+  branches?: Branch[];
+  body?: SceneNode[];
+  parent?: string;
+  children?: string[];
+}
+
 export interface Scene {
   version: number;
+  language: string;
   file?: string;
+  blocks: Block[];
   loops: Loop[];
 }
 
@@ -69,11 +96,13 @@ export interface HelloResult {
 export interface UpdateResult {
   scene: Scene;
   focusLoop?: string;
+  focusBlock?: string;
   diagnostics: Diagnostic[];
 }
 
 export interface FocusResult {
   focusLoop?: string;
+  focusBlock?: string;
 }
 
 // ---------- Trace (cermin dari internal/trace) ----------
@@ -89,23 +118,31 @@ export interface TraceOp {
 export interface TraceStep {
   n: number;
   loop: string;
+  block?: string;
   run?: number;
-  phase: 'init' | 'cond' | 'body' | 'post' | 'continue' | 'break' | 'enter-child' | 'exit';
+  depth?: number;
+  phase: 'init' | 'cond' | 'body' | 'post' | 'continue' | 'break' | 'enter-child' | 'exit' | 'branch' | 'call' | 'return';
   line?: number;
   iteration?: number;
+  branch?: number;
+  func?: string;
+  args?: string;
+  return?: string;
   vars?: Record<string, string>;
   result?: boolean;
   note?: string;
   output?: string;
-  reason?: 'cond-false' | 'range-done' | 'break' | 'return' | 'goto' | 'step-limit' | 'panic';
+  reason?: 'cond-false' | 'range-done' | 'break' | 'continue' | 'return' | 'goto' | 'step-limit' | 'panic' | 'done';
   ops?: TraceOp[];
   items?: string[];
 }
 
 export interface Trace {
   version: number;
+  language: string;
   file?: string;
   mode: 'simulated' | 'structural' | 'instrumented';
+  block: { id: string; kind: BlockKind; line: number; endLine: number; name?: string };
   loop: { id: string; kind: LoopKind; line: number; endLine: number; label?: string; vars?: string[]; children?: string[] };
   steps: TraceStep[];
   collection?: { kind: string; items: string[] };

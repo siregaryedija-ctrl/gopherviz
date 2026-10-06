@@ -1,0 +1,212 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "04_program.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "name": "isEven",
+        "header": "func isEven(n int) bool",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 6,
+            "text": "return n%2 == 0"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 9,
+        "endLine": 17,
+        "state": "complete",
+        "name": "sumEven",
+        "header": "func sumEven(nums []int) int",
+        "params": [
+          "nums"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "total := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 11,
+            "endLine": 15,
+            "ref": "L1"
+          },
+          {
+            "kind": "return",
+            "line": 16,
+            "text": "return total"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 11,
+        "endLine": 15,
+        "state": "complete",
+        "header": "for _, n := range nums",
+        "parent": "F2",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 12,
+        "endLine": 14,
+        "state": "complete",
+        "header": "if isEven(n)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "isEven(n)",
+            "line": 12,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "total += n"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 19,
+        "endLine": 27,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "nums := []int{1, 2, 3, 4}"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "total := sumEven(nums)"
+          },
+          {
+            "kind": "if",
+            "line": 22,
+            "endLine": 26,
+            "text": "if total > 5",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"besar\", total)"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 25,
+                "text": "fmt.Println(\"kecil\", total)"
+              }
+            ]
+          }
+        ],
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 22,
+        "endLine": 26,
+        "state": "complete",
+        "header": "if total > 5",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "total > 5",
+            "line": 22,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"besar\", total)"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 24,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 25,
+                "text": "fmt.Println(\"kecil\", total)"
+              }
+            ]
+          }
+        ],
+        "parent": "F3"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 11,
+        "endLine": 15,
+        "state": "complete",
+        "header": {
+          "text": "for _, n := range nums",
+          "key": "_",
+          "value": "n",
+          "define": true,
+          "range": "nums"
+        },
+        "vars": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 12,
+            "endLine": 14,
+            "text": "if isEven(n)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "total += n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

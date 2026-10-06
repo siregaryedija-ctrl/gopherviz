@@ -1,0 +1,179 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_switch.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 5,
+    "endLine": 14,
+    "name": "dayName"
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 17,
+      "func": "dayName",
+      "args": "day = 3",
+      "vars": {
+        "day": "3"
+      },
+      "note": "panggil dayName(day = 3)"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "vars": {
+        "day": "3"
+      },
+      "note": "case 2, 3, 4, 5, 6"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "vars": {
+        "day": "3"
+      },
+      "note": "return \"hari kerja\" → keluar dari fungsi"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 14,
+      "func": "dayName",
+      "return": "\"hari kerja\"",
+      "vars": {
+        "day": "3"
+      },
+      "note": "dayName(day = 3) mengembalikan \"hari kerja\""
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 18,
+      "func": "dayName",
+      "args": "day = 7",
+      "vars": {
+        "day": "7"
+      },
+      "note": "panggil dayName(day = 7)"
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "body",
+      "line": 7,
+      "vars": {
+        "day": "7"
+      },
+      "note": "case 1, 7"
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "S1",
+      "run": 2,
+      "phase": "body",
+      "line": 8,
+      "vars": {
+        "day": "7"
+      },
+      "note": "return \"akhir pekan\" → keluar dari fungsi"
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 14,
+      "func": "dayName",
+      "return": "\"akhir pekan\"",
+      "vars": {
+        "day": "7"
+      },
+      "note": "dayName(day = 7) mengembalikan \"akhir pekan\""
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "call",
+      "line": 19,
+      "func": "dayName",
+      "args": "day = 9",
+      "vars": {
+        "day": "9"
+      },
+      "note": "panggil dayName(day = 9)"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "body",
+      "line": 11,
+      "vars": {
+        "day": "9"
+      },
+      "note": "case default"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "S1",
+      "run": 3,
+      "phase": "body",
+      "line": 12,
+      "vars": {
+        "day": "9"
+      },
+      "note": "return \"bukan hari\" → keluar dari fungsi"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "return",
+      "line": 14,
+      "func": "dayName",
+      "return": "\"bukan hari\"",
+      "vars": {
+        "day": "9"
+      },
+      "note": "dayName(day = 9) mengembalikan \"bukan hari\""
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

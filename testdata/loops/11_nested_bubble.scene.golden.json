@@ -1,7 +1,121 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "11_nested_bubble.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 21,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "a := []int{3, 1, 5, 2, 6, 4}"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "n := len(a)"
+          },
+          {
+            "kind": "loop",
+            "line": 8,
+            "endLine": 19,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "fmt.Println(a)"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 8,
+        "endLine": 19,
+        "state": "complete",
+        "header": "for i := 0; i < n-1; i++",
+        "parent": "F1",
+        "children": [
+          "L2",
+          "I2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 10,
+        "endLine": 15,
+        "state": "complete",
+        "header": "for j := 0; j < n-1-i; j++",
+        "parent": "L1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 11,
+        "endLine": 14,
+        "state": "complete",
+        "header": "if a[j] > a[j+1]",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "a[j] > a[j+1]",
+            "line": 11,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 12,
+                "text": "a[j], a[j+1] = a[j+1], a[j]"
+              },
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "swapped = true"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": "if !swapped",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "!swapped",
+            "line": 16,
+            "body": [
+              {
+                "kind": "break",
+                "line": 17,
+                "text": "break"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",
@@ -35,6 +149,7 @@
             "line": 16,
             "endLine": 18,
             "text": "if !swapped",
+            "ref": "I2",
             "then": [
               {
                 "kind": "break",
@@ -69,6 +184,7 @@
             "line": 11,
             "endLine": 14,
             "text": "if a[j] > a[j+1]",
+            "ref": "I1",
             "then": [
               {
                 "kind": "stmt",

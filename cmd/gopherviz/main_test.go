@@ -19,7 +19,8 @@ func TestList(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit %d", code)
 	}
-	for _, want := range []string{"2 loop", "L1", "  L2", "8-19", "for klasik", "for i := 0; i < n-1; i++", "lengkap"} {
+	for _, want := range []string{"5 blok (go)", "F1 ", "  L1", "    L2", "8-19", "for klasik", "for i := 0; i < n-1; i++",
+		"fungsi", "func main()", "if a[j] > a[j+1]", "1 cabang", "lengkap"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output tidak memuat %q:\n%s", want, out)
 		}
@@ -73,8 +74,8 @@ func TestTraceCmd(t *testing.T) {
 }
 
 func TestServe(t *testing.T) {
-	code, out, _ := runCmd(t, `{"id":7,"method":"hello","params":{"client":"t","protocol":1}}`+"\n", "serve")
-	if code != 0 || !strings.Contains(out, `"id":7`) || !strings.Contains(out, `"protocol":1`) {
+	code, out, _ := runCmd(t, `{"id":7,"method":"hello","params":{"client":"t","protocol":2}}`+"\n", "serve")
+	if code != 0 || !strings.Contains(out, `"id":7`) || !strings.Contains(out, `"protocol":2`) {
 		t.Errorf("exit %d, output %q", code, out)
 	}
 }
@@ -85,11 +86,12 @@ func TestCommands(t *testing.T) {
 		code int
 		want string
 	}{
-		{[]string{"version"}, 0, "scene v1"},
+		{[]string{"version"}, 0, "scene v2, trace v2, protokol v2"},
 		{[]string{"help"}, 0, "Pemakaian"},
 		{[]string{"trace"}, 2, "pemakaian: gopherviz trace"},
-		{[]string{"trace", "../../testdata/loops/01_for3.go:2"}, 1, "tidak ada loop di baris 2"},
-		{[]string{"show"}, 2, "Fase 5"},
+		{[]string{"trace", "../../testdata/loops/01_for3.go:2"}, 1, "tidak ada blok"},
+		{[]string{"trace", "../../testdata/blocks/03_recursion.go:12"}, 0, "fib(n = 4) mengembalikan 3"},
+		{[]string{"show"}, 2, "setelah Fase 9"},
 		{[]string{"terbang"}, 2, "tidak dikenal"},
 		{[]string{"list"}, 2, "pemakaian"},
 		{[]string{"list", "--warna", "a.go"}, 2, "flag tidak dikenal"},

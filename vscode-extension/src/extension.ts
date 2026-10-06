@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { GophervizClient, type FocusResult, type LoopKind, type TraceResult, type UpdateResult } from './server';
+import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
 import { LoopPanel, type FromPanel } from './panel';
 import { LoopCodeLens } from './codelens';
@@ -13,16 +13,20 @@ const CRASH_LIMIT = 3; // berhenti mencoba bila server mati sebanyak ini dalam s
 const KIND_NAMES: Record<LoopKind, string> = {
   'for3': 'for klasik',
   'cond': 'for kondisi',
+  'do-while': 'do-while',
   'infinite': 'for tanpa batas',
   'range-int': 'range angka',
   'range-slice': 'range slice',
   'range-array': 'range array',
   'range-string': 'range string',
   'range-map': 'range map',
+  'range-keys': 'range key',
   'range-chan': 'range channel',
   'range-func': 'range iterator',
   'range-unknown': 'range',
 };
+
+const BLOCK_NAMES: Record<BlockKind, string> = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop' };
 
 const isGo = (doc: vscode.TextDocument) => doc.languageId === 'go';
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
@@ -222,7 +226,7 @@ class Controller implements vscode.Disposable {
       }
       this.results.set(uri, res);
       this.lens.sceneChanged(uri, res.scene);
-      this.setFocus(uri, res.focusLoop);
+      this.setFocus(uri, res.focusBlock);
     } catch (e) {
       this.output.appendLine(`update gagal: ${errMsg(e)}`);
     }
@@ -243,15 +247,17 @@ class Controller implements vscode.Disposable {
         file: editor.document.fileName,
         cursor: { line: pos.line + 1, col: pos.character + 1 },
       });
-      this.setFocus(uri, res.focusLoop);
+      this.setFocus(uri, res.focusBlock);
     } catch (e) {
       this.output.appendLine(`focus gagal: ${errMsg(e)}`);
     }
   }
 
-  private setFocus(uri: string, loopId: string | undefined): void {
-    this.focus.set(uri, loopId);
-    if (loopId && config().get('autoOpen', true) && !this.panel.isOpen && !this.panel.wasClosedByUser) {
+  private setFocus(uri: string, blockId: string | undefined): void {
+    this.focus.set(uri, blockId);
+    // Buka otomatis hanya saat kursor masuk loop/if/switch; berada di dalam fungsi saja terlalu sering.
+    const kind = this.results.get(uri)?.scene.blocks.find(b => b.id === blockId)?.kind;
+    if (kind && kind !== 'func' && config().get('autoOpen', true) && !this.panel.isOpen && !this.panel.wasClosedByUser) {
       this.panel.show(true);
     }
     this.pushState();
@@ -261,21 +267,21 @@ class Controller implements vscode.Disposable {
 
   private async sendTrace(uri: string): Promise<void> {
     const doc = this.editor?.document;
-    const loopId = this.focus.get(uri);
-    if (!doc || doc.uri.toString() !== uri || !loopId || !this.client?.running) {
+    const blockId = this.focus.get(uri);
+    if (!doc || doc.uri.toString() !== uri || !blockId || !this.client?.running) {
       return;
     }
-    const key = `${uri}|${this.seq.get(uri)}|${loopId}`;
+    const key = `${uri}|${this.seq.get(uri)}|${blockId}`;
     if (key === this.traceKey) {
-      return; // kode dan loop fokus tidak berubah sejak trace terakhir
+      return; // kode dan blok fokus tidak berubah sejak trace terakhir
     }
     try {
-      const res = await this.client.request<TraceResult>('trace', { file: doc.fileName, loopId });
-      if (this.focus.get(uri) !== loopId || key !== `${uri}|${this.seq.get(uri)}|${loopId}`) {
-        return; // user sudah mengetik atau pindah loop lagi
+      const res = await this.client.request<TraceResult>('trace', { file: doc.fileName, blockId });
+      if (this.focus.get(uri) !== blockId || key !== `${uri}|${this.seq.get(uri)}|${blockId}`) {
+        return; // user sudah mengetik atau pindah blok lagi
       }
       this.traceKey = key;
-      this.panel.post({ type: 'trace', loopId, trace: res.trace });
+      this.panel.post({ type: 'trace', blockId, trace: res.trace });
     } catch (e) {
       this.output.appendLine(`trace gagal: ${errMsg(e)}`);
     }
@@ -302,7 +308,7 @@ class Controller implements vscode.Disposable {
       type: 'state',
       file: doc ? path.basename(doc.fileName) : undefined,
       result: uri ? this.results.get(uri) : undefined,
-      focusLoop: uri ? this.focus.get(uri) : undefined,
+      focusBlock: uri ? this.focus.get(uri) : undefined,
       server: { ok: !this.serverError, message: this.serverError },
     });
     this.updateStatus();
@@ -325,16 +331,19 @@ class Controller implements vscode.Disposable {
       return;
     }
     const uri = ed.document.uri.toString();
-    const loop = this.results.get(uri)?.scene.loops.find(l => l.id === this.focus.get(uri));
+    const scene = this.results.get(uri)?.scene;
+    const block = scene?.blocks.find(b => b.id === this.focus.get(uri));
     if (this.serverError) {
       this.status.text = '$(warning) GopherViz';
       this.status.tooltip = this.serverError;
-    } else if (loop) {
-      this.status.text = `$(sync) ${loop.id} · ${KIND_NAMES[loop.kind]}`;
+    } else if (block) {
+      const loop = block.kind === 'loop' ? scene?.loops.find(l => l.id === block.id) : undefined;
+      const name = loop ? KIND_NAMES[loop.kind] : `${BLOCK_NAMES[block.kind]}${block.name && block.kind === 'func' ? ' ' + block.name : ''}`;
+      this.status.text = `$(sync) ${block.id} · ${name}`;
       this.status.tooltip = 'Buka panel GopherViz';
     } else {
       this.status.text = '$(sync) GopherViz';
-      this.status.tooltip = 'Taruh kursor di dalam loop for, lalu klik untuk membuka panel';
+      this.status.tooltip = 'Taruh kursor di dalam fungsi, if, switch, atau loop, lalu klik untuk membuka panel';
     }
     this.status.show();
   }

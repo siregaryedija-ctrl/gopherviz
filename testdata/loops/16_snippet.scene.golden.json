@@ -1,7 +1,18 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "16_snippet.go",
+    "blocks": [
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 2,
+        "endLine": 4,
+        "state": "complete",
+        "header": "for _, v := range nums"
+      }
+    ],
     "loops": [
       {
         "id": "L1",

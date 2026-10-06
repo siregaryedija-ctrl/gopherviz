@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "16_snippet.go",
   "mode": "simulated",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 2,
+    "endLine": 4
+  },
   "loop": {
     "id": "L1",
     "kind": "range-slice",
@@ -15,6 +22,7 @@
     {
       "n": 0,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "init",
       "line": 2,
@@ -32,6 +40,7 @@
     {
       "n": 1,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 2,
@@ -52,6 +61,7 @@
     {
       "n": 2,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "body",
       "line": 3,
@@ -66,6 +76,7 @@
     {
       "n": 3,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 2,
@@ -86,6 +97,7 @@
     {
       "n": 4,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "body",
       "line": 3,
@@ -100,6 +112,7 @@
     {
       "n": 5,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 2,
@@ -120,6 +133,7 @@
     {
       "n": 6,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "body",
       "line": 3,
@@ -134,6 +148,7 @@
     {
       "n": 7,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "cond",
       "line": 2,
@@ -147,6 +162,7 @@
     {
       "n": 8,
       "loop": "L1",
+      "block": "L1",
       "run": 1,
       "phase": "exit",
       "line": 2,

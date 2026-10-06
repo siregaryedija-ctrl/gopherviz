@@ -1,7 +1,109 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "12_labeled.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 19,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "grid := [][]int{{1, 2}, {3, 4}}"
+          },
+          {
+            "kind": "loop",
+            "line": 8,
+            "endLine": 18,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 8,
+        "endLine": 18,
+        "state": "complete",
+        "name": "outer",
+        "header": "for _, row := range grid",
+        "parent": "F1",
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 9,
+        "endLine": 17,
+        "state": "complete",
+        "header": "for _, v := range row",
+        "parent": "L1",
+        "children": [
+          "I1",
+          "I2"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 10,
+        "endLine": 12,
+        "state": "complete",
+        "header": "if v == 1",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "v == 1",
+            "line": 10,
+            "body": [
+              {
+                "kind": "continue",
+                "line": 11,
+                "text": "continue outer",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 13,
+        "endLine": 15,
+        "state": "complete",
+        "header": "if v == 3",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "v == 3",
+            "line": 13,
+            "body": [
+              {
+                "kind": "break",
+                "line": 14,
+                "text": "break outer",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      }
+    ],
     "loops": [
       {
         "id": "L1",
@@ -54,6 +156,7 @@
             "line": 10,
             "endLine": 12,
             "text": "if v == 1",
+            "ref": "I1",
             "then": [
               {
                 "kind": "continue",
@@ -68,6 +171,7 @@
             "line": 13,
             "endLine": 15,
             "text": "if v == 3",
+            "ref": "I2",
             "then": [
               {
                 "kind": "break",

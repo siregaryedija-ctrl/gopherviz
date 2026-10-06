@@ -1,0 +1,233 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "01_if_chain.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 15,
+        "state": "complete",
+        "name": "grade",
+        "header": "func grade(score int) string",
+        "params": [
+          "score"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 6,
+            "endLine": 14,
+            "text": "if score >= 90",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return \"A\""
+              }
+            ],
+            "else": [
+              {
+                "kind": "if",
+                "line": 8,
+                "text": "if score >= 75",
+                "then": [
+                  {
+                    "kind": "return",
+                    "line": 9,
+                    "text": "return \"B\""
+                  }
+                ],
+                "else": [
+                  {
+                    "kind": "if",
+                    "line": 10,
+                    "text": "if score >= 60",
+                    "then": [
+                      {
+                        "kind": "return",
+                        "line": 11,
+                        "text": "return \"C\""
+                      }
+                    ],
+                    "else": [
+                      {
+                        "kind": "return",
+                        "line": 13,
+                        "text": "return \"D\""
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 6,
+        "endLine": 14,
+        "state": "complete",
+        "header": "if score >= 90",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "score >= 90",
+            "line": 6,
+            "body": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return \"A\""
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "score >= 75",
+            "line": 8,
+            "body": [
+              {
+                "kind": "return",
+                "line": 9,
+                "text": "return \"B\""
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "score >= 60",
+            "line": 10,
+            "body": [
+              {
+                "kind": "return",
+                "line": 11,
+                "text": "return \"C\""
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 12,
+            "body": [
+              {
+                "kind": "return",
+                "line": 13,
+                "text": "return \"D\""
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 17,
+        "endLine": 25,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "loop",
+            "line": 18,
+            "endLine": 20,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "x := 7"
+          },
+          {
+            "kind": "if",
+            "line": 22,
+            "endLine": 24,
+            "text": "if x%2 == 0",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"genap\")"
+              }
+            ]
+          }
+        ],
+        "children": [
+          "L1",
+          "I2"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 18,
+        "endLine": 20,
+        "state": "complete",
+        "header": "for _, s := range []int{95, 80, 40}",
+        "parent": "F2"
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 22,
+        "endLine": 24,
+        "state": "complete",
+        "header": "if x%2 == 0",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "x%2 == 0",
+            "line": 22,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"genap\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 18,
+        "endLine": 20,
+        "state": "complete",
+        "header": {
+          "text": "for _, s := range []int{95, 80, 40}",
+          "key": "_",
+          "value": "s",
+          "define": true,
+          "range": "[]int{95, 80, 40}"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "fmt.Println(s, grade(s))"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

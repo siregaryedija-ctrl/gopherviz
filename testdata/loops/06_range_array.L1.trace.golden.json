@@ -1,7 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "language": "go",
   "file": "06_range_array.go",
   "mode": "structural",
+  "block": {
+    "id": "L1",
+    "kind": "loop",
+    "line": 7,
+    "endLine": 9
+  },
   "loop": {
     "id": "L1",
     "kind": "range-array",

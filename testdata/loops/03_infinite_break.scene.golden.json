@@ -1,7 +1,70 @@
 {
   "scene": {
-    "version": 1,
+    "version": 2,
+    "language": "go",
     "file": "03_infinite_break.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 14,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "x := 0"
+          },
+          {
+            "kind": "loop",
+            "line": 7,
+            "endLine": 13,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 7,
+        "endLine": 13,
+        "state": "complete",
+        "header": "for",
+        "parent": "F1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "header": "if x > 10",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "x > 10",
+            "line": 9,
+            "body": [
+              {
+                "kind": "break",
+                "line": 10,
+                "text": "break"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ],
     "loops": [
       {
         "id": "L1",
@@ -23,6 +86,7 @@
             "line": 9,
             "endLine": 11,
             "text": "if x > 10",
+            "ref": "I1",
             "then": [
               {
                 "kind": "break",

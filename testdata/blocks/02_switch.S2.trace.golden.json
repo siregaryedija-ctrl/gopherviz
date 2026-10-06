@@ -1,0 +1,74 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_switch.go",
+  "mode": "simulated",
+  "block": {
+    "id": "S2",
+    "kind": "switch",
+    "line": 21,
+    "endLine": 28
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "S2",
+      "run": 1,
+      "phase": "cond",
+      "line": 22,
+      "vars": {
+        "temp": "31"
+      },
+      "result": true,
+      "note": "case temp > 30 → 31 > 30 → true"
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "S2",
+      "run": 1,
+      "phase": "branch",
+      "line": 21,
+      "branch": 0,
+      "vars": {
+        "temp": "31"
+      },
+      "note": "masuk case temp > 30"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "S2",
+      "run": 1,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "temp": "31"
+      },
+      "note": "fmt.Println(\"panas\") → cetak \"panas\"",
+      "output": "panas\n"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "S2",
+      "run": 1,
+      "phase": "exit",
+      "line": 28,
+      "vars": {
+        "temp": "31"
+      },
+      "note": "selesai, lanjut ke baris berikutnya",
+      "reason": "done"
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}
