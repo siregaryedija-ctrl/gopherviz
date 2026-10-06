@@ -23,6 +23,12 @@ const samples = {
   fib: ['blocks/03_recursion.go', 12],
   fact: ['blocks/03_recursion.go', 5],
   program: ['blocks/04_program.go', 19],
+  structs: ['data/01_struct_method.go', 18],
+  pointers: ['data/02_pointer.go', 14],
+  linked: ['data/03_linked_list.go', 22],
+  wordcount: ['data/04_map_count.go', 8],
+  defer: ['data/05_defer_recover.go', 26],
+  errors: ['data/06_errors.go', 34],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

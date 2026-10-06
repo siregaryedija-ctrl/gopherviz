@@ -118,7 +118,7 @@ export class LoopPanel implements vscode.Disposable {
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
@@ -159,6 +159,11 @@ export class LoopPanel implements vscode.Disposable {
   <section id="varsSection" hidden>
     <h2>Variabel</h2>
     <div id="vars" class="vars"></div>
+  </section>
+  <section id="memSection" hidden>
+    <h2>Memori</h2>
+    <div id="mem" class="mem"></div>
+    <p class="mem-legend">Peti cokelat = variabel, peti ungu = data di heap, tali = pointer (menunjuk ke data lain).</p>
   </section>
   <section id="outSection" hidden>
     <h2>Output</h2>

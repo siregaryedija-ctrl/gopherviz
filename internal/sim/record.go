@@ -29,8 +29,12 @@ type recorder struct {
 	truncated bool
 
 	coll     string // nama variabel koleksi untuk mode data ("" bila tidak ada)
-	collKind string
-	dirty    bool // isi koleksi berubah sejak langkah terakhir
+	collKind string // slice | array | map
+	dirty    bool   // isi koleksi berubah sejak langkah terakhir
+
+	mem     bool              // sertakan potret memori di setiap langkah
+	objIDs  map[*value]string // ID objek heap yang stabil antar langkah
+	nextObj int
 }
 
 // frame adalah satu blok yang sedang berjalan selama perekaman.
@@ -81,8 +85,8 @@ func (r *recorder) op(o trace.Op) {
 	}
 }
 
-// add menambahkan satu langkah. vars dan items diambil dari interpreter.
-func (r *recorder) add(s trace.Step, vars map[string]string, items func() []string) {
+// add menambahkan satu langkah. vars, isi koleksi, dan memori diambil dari interpreter.
+func (r *recorder) add(s trace.Step, vars map[string]string, items func() ([]string, []string), mem func() *trace.Memory) {
 	s.N = len(r.steps)
 	s.Run = r.runs
 	s.Depth = r.depth
@@ -99,8 +103,11 @@ func (r *recorder) add(s trace.Step, vars map[string]string, items func() []stri
 	s.Output = r.out.String()
 	r.out.Reset()
 	if r.dirty {
-		s.Items = items()
+		s.Items, s.Keys = items()
 		r.dirty = false
+	}
+	if r.mem {
+		s.Mem = mem()
 	}
 	r.steps = append(r.steps, s)
 	if len(r.steps) >= r.maxSteps {

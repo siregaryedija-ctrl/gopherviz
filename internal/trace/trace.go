@@ -64,6 +64,7 @@ const (
 	OpSet     OpKind = "set"
 	OpAppend  OpKind = "append"
 	OpSettle  OpKind = "settle" // elemen sudah di posisi akhirnya
+	OpDelete  OpKind = "delete" // key dihapus dari map
 )
 
 // Trace adalah hasil eksekusi satu blok.
@@ -122,7 +123,43 @@ type Step struct {
 	Reason    Reason            `json:"reason,omitempty"`
 	Ops       []Op              `json:"ops,omitempty"`
 	Items     []string          `json:"items,omitempty"` // isi koleksi terbaru, hanya bila berubah di langkah ini
+	Keys      []string          `json:"keys,omitempty"`  // key map yang sejajar dengan Items (koleksi map)
+	Mem       *Memory           `json:"mem,omitempty"`   // potret memori (bila program memakai struct/pointer)
 	Child     string            `json:"child,omitempty"` // ID loop anak pada PhaseEnterChild
+}
+
+// Memory adalah potret variabel fungsi yang sedang berjalan dan objek di heap yang
+// dijangkau lewat pointer. Dipakai untuk diagram peti (variabel) dan tali (pointer).
+type Memory struct {
+	Vars []MemVar `json:"vars"`
+	Heap []MemObj `json:"heap,omitempty"`
+}
+
+// MemVar adalah satu variabel. Points diisi untuk pointer: nama variabel ("x"),
+// field ("p.Age"), atau objek heap ("obj1") yang ditunjuk; "nil" untuk pointer nil.
+type MemVar struct {
+	Name   string     `json:"name"`
+	Kind   string     `json:"kind"` // value | struct | pointer | slice | map | error | func
+	Type   string     `json:"type,omitempty"`
+	Value  string     `json:"value,omitempty"`
+	Fields []MemField `json:"fields,omitempty"`
+	Points string     `json:"points,omitempty"`
+}
+
+// MemField adalah satu field struct.
+type MemField struct {
+	Name   string `json:"name"`
+	Value  string `json:"value"`
+	Points string `json:"points,omitempty"`
+}
+
+// MemObj adalah nilai di heap yang hanya bisa dicapai lewat pointer (mis. &Node{...}).
+type MemObj struct {
+	ID     string     `json:"id"`
+	Kind   string     `json:"kind"`
+	Type   string     `json:"type,omitempty"`
+	Value  string     `json:"value,omitempty"`
+	Fields []MemField `json:"fields,omitempty"`
 }
 
 // Op adalah satu operasi pada koleksi. A dan B adalah indeks koleksi.
@@ -132,10 +169,12 @@ type Op struct {
 	B      *int   `json:"b,omitempty"`
 	Result string `json:"result,omitempty"` // ">", "<", "=" untuk compare
 	Value  string `json:"value,omitempty"`  // nilai baru untuk set/append
+	Key    string `json:"key,omitempty"`    // key untuk operasi pada map (A tidak dipakai)
 }
 
-// Collection adalah koleksi yang digambar sebagai barisan elemen.
+// Collection adalah koleksi yang digambar sebagai barisan elemen (slice/array) atau loker (map).
 type Collection struct {
-	Kind  string   `json:"kind"`
+	Kind  string   `json:"kind"` // slice | array | map
 	Items []string `json:"items"`
+	Keys  []string `json:"keys,omitempty"` // untuk map: key yang sejajar dengan Items
 }

@@ -2,7 +2,7 @@
   "version": 2,
   "language": "go",
   "file": "06_range_array.go",
-  "mode": "structural",
+  "mode": "simulated",
   "block": {
     "id": "L1",
     "kind": "loop",
@@ -18,9 +18,170 @@
       "s"
     ]
   },
-  "steps": [],
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "init",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "arr": "[a b c]"
+      },
+      "note": "range arr (3 elemen)",
+      "items": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 0,
+      "vars": {
+        "arr": "[a b c]",
+        "s": "\"a\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: s = \"a\"",
+      "ops": [
+        {
+          "op": "read",
+          "a": 0
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 0,
+      "vars": {
+        "arr": "[a b c]",
+        "s": "\"a\""
+      },
+      "note": "fmt.Println(s) → cetak \"a\"",
+      "output": "a\n"
+    },
+    {
+      "n": 3,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 1,
+      "vars": {
+        "arr": "[a b c]",
+        "s": "\"b\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: s = \"b\"",
+      "ops": [
+        {
+          "op": "read",
+          "a": 1
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 1,
+      "vars": {
+        "arr": "[a b c]",
+        "s": "\"b\""
+      },
+      "note": "fmt.Println(s) → cetak \"b\"",
+      "output": "b\n"
+    },
+    {
+      "n": 5,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 2,
+      "vars": {
+        "arr": "[a b c]",
+        "s": "\"c\""
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: s = \"c\"",
+      "ops": [
+        {
+          "op": "read",
+          "a": 2
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "iteration": 2,
+      "vars": {
+        "arr": "[a b c]",
+        "s": "\"c\""
+      },
+      "note": "fmt.Println(s) → cetak \"c\"",
+      "output": "c\n"
+    },
+    {
+      "n": 7,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "cond",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "arr": "[a b c]"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi"
+    },
+    {
+      "n": 8,
+      "loop": "L1",
+      "block": "L1",
+      "run": 1,
+      "phase": "exit",
+      "line": 7,
+      "iteration": 3,
+      "vars": {
+        "arr": "[a b c]"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done"
+    }
+  ],
+  "collection": {
+    "kind": "array",
+    "items": [
+      "a",
+      "b",
+      "c"
+    ]
+  },
   "truncated": false,
-  "warnings": [
-    "nilai tidak bisa dihitung, jadi yang tampil hanya alurnya: range \"&arr\" di baris 10 tidak bisa dihitung: operator & belum disimulasikan"
-  ]
+  "warnings": []
 }

@@ -290,9 +290,11 @@
     if (kind !== 'func') tr = foldCalls(tr);
     if (!tr.steps.length) return;
     // Mode data hanya untuk koleksi berisi nilai sederhana (angka, string pendek); slice bersarang memakai renderer lain.
-    const scalar = v => v.length <= 12 && !/^(\[|map\[|\{)/.test(v);
-    const dataMode = !!tr.collection && tr.collection.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.some(o => o.op !== 'read'))
-      && (kind === 'loop' || kind === 'func');
+    const scalar = v => v.length <= 12 && !/^(\[|map\[|\{|&)/.test(v);
+    const coll = tr.collection;
+    const dataMode = !!coll && (kind === 'loop' || kind === 'func') && (coll.kind === 'map'
+      ? tr.steps.some(s => s.ops && s.ops.some(o => o.key != null && o.op !== 'read')) // map: loker
+      : coll.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.some(o => o.op !== 'read')));
     tp.stats = tr.steps.some(s => (s.ops || []).some(o => o.op === 'compare' || o.op === 'swap'));
     tp.r = dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
@@ -314,7 +316,7 @@
     tp.active = false;
     tp.trace = null;
     traceNote = '';
-    for (const id of ['tracebar', 'stepNote', 'varsSection', 'outSection']) $(id).hidden = true;
+    for (const id of ['tracebar', 'stepNote', 'varsSection', 'memSection', 'outSection']) $(id).hidden = true;
     highlightPart(null);
     highlightPhase(null);
   }
@@ -356,13 +358,21 @@
     $('stepNote').textContent = floor + group + (s.note || '');
     $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
 
-    // variabel: sorot yang berubah dibanding langkah sebelumnya
-    const prev = tp.i > 0 ? tp.view[tp.i - 1].step.vars || {} : {};
-    const vars = s.vars || {};
-    $('vars').innerHTML = Object.keys(vars).sort().map(k => {
-      const changed = tp.i > 0 && prev[k] !== vars[k];
-      return `<span class="var${changed ? ' changed' : ''}"><b>${esc(k)}</b> = ${esc(vars[k])}</span>`;
-    }).join('') || '<span class="muted">Belum ada variabel.</span>';
+    // variabel: diagram memori bila program memakai struct/pointer, selain itu chip biasa.
+    // Perubahan dibanding langkah sebelumnya disorot.
+    const before = tp.i > 0 ? tp.view[tp.i - 1].step : null;
+    $('memSection').hidden = !s.mem;
+    $('varsSection').hidden = !!s.mem;
+    if (s.mem) {
+      $('mem').innerHTML = G.memory.render(s.mem, before && before.mem);
+    } else {
+      const prev = (before && before.vars) || {};
+      const vars = s.vars || {};
+      $('vars').innerHTML = Object.keys(vars).sort().map(k => {
+        const changed = tp.i > 0 && prev[k] !== vars[k];
+        return `<span class="var${changed ? ' changed' : ''}"><b>${esc(k)}</b> = ${esc(vars[k])}</span>`;
+      }).join('') || '<span class="muted">Belum ada variabel.</span>';
+    }
 
     // output kumulatif sampai langkah ini
     let out = '';

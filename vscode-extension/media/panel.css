@@ -136,6 +136,19 @@ h2 {
   white-space: pre-wrap;
 }
 
+/* Diagram memori: peti (variabel), ransel (field struct), tali (pointer). Warna peti tetap pastel di semua tema. */
+.mem { border: 1px solid var(--border); border-radius: 8px; padding: 6px; background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.08)); }
+.mem svg { display: block; }
+.mem-title { font: 600 11px var(--vscode-editor-font-family); fill: #fff8f0; }
+.mem-field { font: 11px var(--vscode-editor-font-family); fill: #4a3550; }
+.mem-val { font: 600 11px var(--vscode-editor-font-family); fill: #3f2c47; }
+.mem-nil { font: italic 11px var(--vscode-editor-font-family); fill: #9a7a8a; }
+.mem-rope { fill: none; stroke: #b5651d; stroke-width: 2; stroke-dasharray: 5 3; }
+.mem-knot { fill: #b5651d; }
+.mem-arrow { fill: #b5651d; }
+.mem-box.changed rect:first-child { stroke: var(--vscode-editorWarning-foreground, #cca700); stroke-width: 2.5; }
+.mem-legend { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
+
 .parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .part {
   width: 100%;

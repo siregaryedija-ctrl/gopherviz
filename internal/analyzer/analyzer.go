@@ -265,9 +265,10 @@ func (stubImporter) Import(path string) (*types.Package, error) {
 
 func typeCheck(s source) *types.Info {
 	info := &types.Info{
-		Types: map[ast.Expr]types.TypeAndValue{},
-		Defs:  map[*ast.Ident]types.Object{},
-		Uses:  map[*ast.Ident]types.Object{},
+		Types:      map[ast.Expr]types.TypeAndValue{},
+		Defs:       map[*ast.Ident]types.Object{},
+		Uses:       map[*ast.Ident]types.Object{},
+		Selections: map[*ast.SelectorExpr]*types.Selection{},
 	}
 	conf := types.Config{Importer: stubImporter{}, Error: func(error) {}, FakeImportC: true}
 	func() {

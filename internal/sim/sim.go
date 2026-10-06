@@ -80,7 +80,8 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		funcs:   map[string]*ast.FuncDecl{},
 		budget:  opt.Budget,
 		rng:     rand.New(rand.NewSource(opt.Seed)),
-		rec:     &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind},
+		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
+			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}},
 	}
 	reason := it.run(node)
 	r := it.rec
@@ -100,7 +101,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	if coll != "" {
 		for _, s := range r.steps {
 			if s.Items != nil {
-				tr.Collection = &trace.Collection{Kind: collKind, Items: s.Items}
+				tr.Collection = &trace.Collection{Kind: collKind, Items: s.Items, Keys: s.Keys}
 				break
 			}
 		}
@@ -114,6 +115,15 @@ func (it *interp) run(node ast.Node) (structural string) {
 	defer func() {
 		r := recover()
 		if r == nil {
+			return
+		}
+		if gp, ok := r.(goPanic); ok {
+			// panic yang tidak ditangkap recover() sampai ke puncak program
+			if !it.rec.reached {
+				structural = "program akan panic sebelum sampai ke blok ini: " + gp.msg
+			} else {
+				it.rec.warn("program berhenti karena " + gp.msg)
+			}
 			return
 		}
 		a, ok := r.(abort)
@@ -178,6 +188,8 @@ func findCollection(p *analyzer.Program, node ast.Node) (name, kind string) {
 			kinds[id.Name] = "slice"
 		case *types.Array:
 			kinds[id.Name] = "array"
+		case *types.Map:
+			kinds[id.Name] = "map"
 		default:
 			return
 		}
@@ -189,6 +201,20 @@ func findCollection(p *analyzer.Program, node ast.Node) (name, kind string) {
 			consider(x.X, 1)
 		case *ast.RangeStmt:
 			consider(x.X, 2)
+		case *ast.CallExpr: // delete(m, k)
+			if id, ok := x.Fun.(*ast.Ident); ok && id.Name == "delete" && len(x.Args) > 0 {
+				consider(x.Args[0], 3)
+			}
+		case *ast.AssignStmt: // koleksi yang diubah lebih menarik daripada yang hanya dibaca
+			for _, l := range x.Lhs {
+				if ix, ok := l.(*ast.IndexExpr); ok {
+					consider(ix.X, 3)
+				}
+			}
+		case *ast.IncDecStmt:
+			if ix, ok := x.X.(*ast.IndexExpr); ok {
+				consider(ix.X, 3)
+			}
 		}
 		return true
 	})

@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -422,6 +423,116 @@ func TestFallbacks(t *testing.T) {
 			t.Errorf("L1 truncated %v; L2 mode %s %v", tr.Truncated, tr2.Mode, tr2.Warnings)
 		}
 	})
+}
+
+const dataDir = "../../testdata/data"
+
+func TestDataStructures(t *testing.T) {
+	t.Run("map koleksi: operasi set/delete per key", func(t *testing.T) {
+		tr := Trace(load(t, filepath.Join(dataDir, "04_map_count.go")), "L1", Options{})
+		if tr.Collection == nil || tr.Collection.Kind != "map" {
+			t.Fatalf("koleksi = %+v", tr.Collection)
+		}
+		var sets []string
+		for _, s := range tr.Steps {
+			for _, o := range s.Ops {
+				if o.Op == trace.OpSet {
+					sets = append(sets, o.Key+"="+o.Value)
+				}
+			}
+		}
+		if got := strings.Join(sets, " "); got != "apel=1 jeruk=1 apel=2 mangga=1 apel=3 jeruk=2" {
+			t.Errorf("set = %s", got)
+		}
+	})
+	t.Run("memori: linked list di heap dengan tali Next", func(t *testing.T) {
+		p := load(t, filepath.Join(dataDir, "03_linked_list.go"))
+		tr := Trace(p, "L2", Options{})
+		mem := tr.Steps[0].Mem
+		if mem == nil || len(mem.Heap) != 3 {
+			t.Fatalf("mem = %+v", mem)
+		}
+		var head trace.MemVar
+		for _, v := range mem.Vars {
+			if v.Name == "head" {
+				head = v
+			}
+		}
+		if head.Kind != "pointer" || head.Points != "obj1" || mem.Heap[0].Fields[1].Points != "obj2" || mem.Heap[2].Fields[1].Points != "nil" {
+			t.Errorf("head %+v, heap %+v", head, mem.Heap)
+		}
+	})
+	t.Run("memori: pointer ke variabel lain", func(t *testing.T) {
+		tr := Trace(load(t, filepath.Join(dataDir, "02_pointer.go")), "F2", Options{})
+		found := false
+		for _, s := range tr.Steps {
+			if s.Mem == nil {
+				continue
+			}
+			for _, v := range s.Mem.Vars {
+				if v.Name == "p" && v.Points == "x" {
+					found = true
+				}
+			}
+		}
+		if !found {
+			t.Error("tidak ada langkah dengan p menunjuk ke x")
+		}
+	})
+	t.Run("defer dan recover tercatat sebagai langkah", func(t *testing.T) {
+		tr := Trace(load(t, filepath.Join(dataDir, "05_defer_recover.go")), "F2", Options{})
+		var notes []string
+		for _, s := range tr.Steps {
+			if strings.HasPrefix(s.Note, "menjalankan defer") || strings.HasPrefix(s.Note, "recover()") || strings.Contains(s.Note, "mencari recover") {
+				notes = append(notes, s.Note)
+			}
+		}
+		if len(notes) < 4 || !strings.Contains(strings.Join(notes, "|"), "recover() menangkap panic: runtime error: integer divide by zero") {
+			t.Errorf("catatan = %v", notes)
+		}
+	})
+}
+
+// TestAgainstGo membandingkan output seluruh program (fokus pada main) dengan `go run`
+// sungguhan. Ini bukti terkuat bahwa simulator setia pada aturan Go.
+func TestAgainstGo(t *testing.T) {
+	if testing.Short() {
+		t.Skip("butuh toolchain Go")
+	}
+	goBin, err := exec.LookPath("go")
+	if err != nil {
+		t.Skip("go tidak ada di PATH")
+	}
+	var files []string
+	for _, dir := range []string{"../../testdata/data", blocksDir} {
+		f, _ := filepath.Glob(filepath.Join(dir, "*.go"))
+		files = append(files, f...)
+	}
+	for _, path := range files {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			t.Parallel()
+			p := load(t, path)
+			mainID := ""
+			for _, b := range p.Result.Scene.Blocks {
+				if b.Kind == "func" && b.Name == "main" {
+					mainID = b.ID
+				}
+			}
+			tr := Trace(p, mainID, Options{MaxSteps: 5000})
+			if tr.Mode != trace.ModeSimulated || tr.Truncated {
+				t.Fatalf("mode %s, truncated %v: %v", tr.Mode, tr.Truncated, tr.Warnings)
+			}
+			cmd := exec.Command(goBin, "run", filepath.Base(path))
+			cmd.Dir = filepath.Dir(path)
+			want, err := cmd.Output()
+			if err != nil {
+				t.Fatalf("go run gagal: %v", err)
+			}
+			if got := output(tr); got != strings.ReplaceAll(string(want), "\r\n", "\n") {
+				t.Errorf("output simulator berbeda dari go run\nsimulator:\n%s\ngo run:\n%s", got, want)
+			}
+		})
+	}
 }
 
 func FuzzTrace(f *testing.F) {

@@ -24,8 +24,119 @@
       this.snaps = [];
     }
 
+    // ---------- mode loker (map) ----------
+
+    /** Map: setiap key = satu loker berlabel; snapshot key/nilai per langkah. */
+    prepareMap(trace) {
+      this.mapMode = true;
+      let keys = (trace.collection.keys || []).slice();
+      const vals = {};
+      keys.forEach((k, i) => { vals[k] = trace.collection.items[i]; });
+      this.snaps = trace.steps.map(s => {
+        const snap = { step: s, op: null, isNew: false, removed: null };
+        for (const o of s.ops || []) {
+          if (o.key == null) continue;
+          if (o.op === 'set') {
+            if (!keys.includes(o.key)) { keys.push(o.key); snap.isNew = true; }
+            vals[o.key] = o.value;
+            snap.op = o;
+          } else if (o.op === 'delete') {
+            snap.op = o;
+            snap.removed = o.key;
+          } else if (o.op === 'read' && !snap.op) {
+            snap.op = o;
+          }
+        }
+        if (s.keys && s.items) { // isi map dari simulator adalah sumber kebenaran
+          keys = s.keys.slice();
+          s.keys.forEach((k, i) => { vals[k] = s.items[i]; });
+        }
+        snap.keys = keys.slice();
+        if (snap.removed && !snap.keys.includes(snap.removed)) snap.keys.push(snap.removed); // tampil sekali lagi saat dihapus
+        snap.vals = Object.assign({}, vals);
+        if (snap.removed) keys = keys.filter(k => k !== snap.removed);
+        return snap;
+      });
+      const maxN = Math.max(1, ...this.snaps.map(s => s.keys.length));
+      this.n = maxN;
+      this.slot = 28;
+      this.offset = Math.max(10, Math.round((VIEW - this.slot * maxN) / 2));
+      this.resize(Math.max(VIEW, this.offset * 2 + this.slot * maxN));
+      return this.snaps;
+    }
+
+    mapDuration(i) {
+      const s = this.snaps[i];
+      if (!s.op) return s.step.phase === 'exit' && i === this.snaps.length - 1 ? 2000 : 380;
+      return { set: s.isNew ? 950 : 800, read: 650, delete: 900 }[s.op.op] || 500;
+    }
+
+    mapCues(i) {
+      const s = this.snaps[i], out = [];
+      if (s.op) {
+        const k = s.keys.indexOf(s.op.key);
+        const x = this.slotX(Math.max(0, k));
+        if (s.op.op === 'set') out.push({ t: 0.45, sound: s.isNew ? 'land' : 'coin', fx: () => this.burst(x, GY - 34, 8, ['#f3c75a', '#ffffff'], { sp: 50, up: 40, g: 60, life: 500 }) });
+        if (s.op.op === 'read') out.push({ t: 0.4, sound: 'blip' });
+        if (s.op.op === 'delete') out.push({ t: 0.4, sound: 'door' });
+      }
+      if (s.step.output) out.push({ t: 0.6, sound: 'coin' });
+      if (i === this.snaps.length - 1 && s.step.phase === 'exit') out.push({ t: 0, sound: 'jingle', fx: () => this.confetti() });
+      return out;
+    }
+
+    renderMap(i, t) {
+      const s = this.snaps[i];
+      const w = this.wx, now = this.clock;
+      w.drawImage(this.bg, 0, 0);
+      const target = s.op ? s.keys.indexOf(s.op.key) : -1;
+      const prev = this.snaps[i - 1];
+      const fromK = prev && prev.op ? prev.keys.indexOf(prev.op.key) : -1;
+      const fromX = fromK >= 0 ? this.slotX(fromK) : this.offset - 6;
+      const toX = target >= 0 ? this.slotX(target) : fromX;
+      const wf = Math.abs(toX - fromX) > 1 ? 0.4 : 0;
+      const a = wf ? P.clamp((t - wf) / (1 - wf), 0, 1) : t;
+
+      s.keys.forEach((key, k) => {
+        const x = this.slotX(k), active = k === target;
+        let y = GY - 30;
+        if (active && s.isNew) y -= Math.round((1 - P.bounce(P.clamp(t / 0.5, 0, 1))) * 50);
+        const removed = key === s.removed && a > 0.4;
+        w.globalAlpha = removed ? 0.35 : 1;
+        // badan loker
+        P.box(w, x - 10, y, 20, 30, removed ? '#c9c4d0' : '#9fb4d8', P.INK);
+        P.rect(w, x - 9, y + 1, 18, 1, '#cfdaf0');
+        for (let r = 0; r < 3; r++) P.rect(w, x - 6, y + 4 + r * 2, 12, 1, '#6f84a8'); // ventilasi
+        // pelat nilai; berkilau saat ditulis
+        const val = String(s.vals[key] != null ? s.vals[key] : '').slice(0, 4);
+        const flash = active && s.op.op === 'set' && a > 0.4 && Math.floor(now / 100) % 2;
+        P.box(w, x - 8, y + 12, 16, 9, flash ? '#f3c75a' : '#ffffff', P.INK);
+        P.textCenter(w, removed ? 'X' : val, x, y + 14, removed ? '#c2457a' : P.INK);
+        // label key di atas loker
+        P.textCenter(w, String(key).slice(0, 6), x, y - 7, active ? '#c2457a' : '#8a6a98');
+        w.globalAlpha = 1;
+        if (active && s.op.op === 'read' && a > 0.2) { // panah baca
+          const ay = y - 15 + (Math.floor(now / 180) % 2);
+          P.rect(w, x - 2, ay, 5, 1, '#d9467c'); P.rect(w, x - 1, ay + 1, 3, 1, '#d9467c'); P.rect(w, x, ay + 2, 1, 1, '#d9467c');
+        }
+      });
+
+      // gopher berjalan ke loker yang sedang dipakai
+      const gx = t < wf ? P.lerp(fromX, toX, P.ease(t / wf)) : toX;
+      const face = s.op && s.op.op === 'delete' ? 'shock' : s.op && s.op.op === 'set' && a > 0.4 ? 'happy' : 'idle';
+      P.rect(w, 0, GY + 15, this.worldW, 1, '#f2c4d2');
+      P.drawGopher(w, gx, GY + 14, face, t < wf ? Math.floor(now / 140) % 2 : 0);
+      for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s || 1, p.s || 1, p.col);
+
+      this.cam.x += (gx - this.cam.x) * 0.12;
+      const cx = P.clamp(this.cam.x, VIEW / 2, Math.max(VIEW / 2, this.worldW - VIEW / 2));
+      P.present(this.ctx, this.cv, this.world, this.worldW, H, cx, H / 2);
+    }
+
     /** Menyiapkan snapshot per langkah. Mengembalikan daftar langkah untuk pemutar. */
     prepare(trace, loop, loops) {
+      this.mapMode = false;
+      if (trace.collection.kind === 'map') return this.prepareMap(trace);
       let ids = trace.collection.items.map((_, k) => k);
       let next = ids.length;
       const vals = {};
@@ -100,6 +211,7 @@
     slotX(k) { return this.offset + (k + 0.5) * this.slot; }
 
     duration(i) {
+      if (this.mapMode) return this.mapDuration(i);
       const s = this.snaps[i];
       if (s.swap) return 1150;
       if (s.cmp) return 1250;
@@ -112,6 +224,7 @@
 
     /** Suara dan efek pada titik waktu tertentu di dalam langkah i (t = 0..1). */
     cues(i) {
+      if (this.mapMode) return this.mapCues(i);
       const s = this.snaps[i], st = s.step, out = [];
       const last = i === this.snaps.length - 1;
       if (s.cmp) {
@@ -163,6 +276,7 @@
     render(i, t) {
       const s = this.snaps[i];
       if (!s) return;
+      if (this.mapMode) { this.renderMap(i, t); return; }
       const w = this.wx, now = this.clock, st = s.step;
       const last = i === this.snaps.length - 1;
       const done = last && st.phase === 'exit' && st.reason !== 'panic';

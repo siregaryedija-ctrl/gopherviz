@@ -31,7 +31,17 @@
       "vars": {
         "ages": "map[ani:20 budi:25 citra:22]"
       },
-      "note": "range ages (3 pasangan)"
+      "note": "range ages (3 pasangan)",
+      "items": [
+        "20",
+        "25",
+        "22"
+      ],
+      "keys": [
+        "ani",
+        "budi",
+        "citra"
+      ]
     },
     {
       "n": 1,
@@ -47,7 +57,14 @@
         "name": "\"ani\""
       },
       "result": true,
-      "note": "ambil elemen ke-1: name = \"ani\", age = 20"
+      "note": "ambil elemen ke-1: name = \"ani\", age = 20",
+      "ops": [
+        {
+          "op": "read",
+          "a": -1,
+          "key": "ani"
+        }
+      ]
     },
     {
       "n": 2,
@@ -79,7 +96,14 @@
         "name": "\"citra\""
       },
       "result": true,
-      "note": "ambil elemen ke-2: name = \"citra\", age = 22"
+      "note": "ambil elemen ke-2: name = \"citra\", age = 22",
+      "ops": [
+        {
+          "op": "read",
+          "a": -1,
+          "key": "citra"
+        }
+      ]
     },
     {
       "n": 4,
@@ -111,7 +135,14 @@
         "name": "\"budi\""
       },
       "result": true,
-      "note": "ambil elemen ke-3: name = \"budi\", age = 25"
+      "note": "ambil elemen ke-3: name = \"budi\", age = 25",
+      "ops": [
+        {
+          "op": "read",
+          "a": -1,
+          "key": "budi"
+        }
+      ]
     },
     {
       "n": 6,
@@ -158,6 +189,19 @@
       "reason": "range-done"
     }
   ],
+  "collection": {
+    "kind": "map",
+    "items": [
+      "20",
+      "25",
+      "22"
+    ],
+    "keys": [
+      "ani",
+      "budi",
+      "citra"
+    ]
+  },
   "truncated": false,
   "warnings": [
     "urutan range atas map diacak: di Go urutannya tidak dijamin dan bisa berbeda setiap kali dijalankan"

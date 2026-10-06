@@ -2,7 +2,7 @@
   "version": 2,
   "language": "go",
   "file": "06_range_array.go",
-  "mode": "structural",
+  "mode": "simulated",
   "block": {
     "id": "L2",
     "kind": "loop",
@@ -18,9 +18,296 @@
       "i"
     ]
   },
-  "steps": [],
+  "steps": [
+    {
+      "n": 0,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "init",
+      "line": 10,
+      "iteration": 0,
+      "vars": {
+        "arr": "[a b c]"
+      },
+      "note": "range &arr (0xc000010018)",
+      "items": [
+        "a",
+        "b",
+        "c"
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[a b c]"
+          }
+        ]
+      }
+    },
+    {
+      "n": 1,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 10,
+      "iteration": 0,
+      "vars": {
+        "arr": "[a b c]",
+        "i": "0"
+      },
+      "result": true,
+      "note": "ambil elemen ke-1: i = 0",
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[a b c]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "0"
+          }
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 11,
+      "iteration": 0,
+      "vars": {
+        "arr": "[x b c]",
+        "i": "0"
+      },
+      "note": "arr[i] = \"x\" → arr[i] = \"x\"",
+      "ops": [
+        {
+          "op": "set",
+          "a": 0,
+          "value": "x"
+        }
+      ],
+      "items": [
+        "x",
+        "b",
+        "c"
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x b c]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "0"
+          }
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 10,
+      "iteration": 1,
+      "vars": {
+        "arr": "[x b c]",
+        "i": "1"
+      },
+      "result": true,
+      "note": "ambil elemen ke-2: i = 1",
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x b c]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 11,
+      "iteration": 1,
+      "vars": {
+        "arr": "[x x c]",
+        "i": "1"
+      },
+      "note": "arr[i] = \"x\" → arr[i] = \"x\"",
+      "ops": [
+        {
+          "op": "set",
+          "a": 1,
+          "value": "x"
+        }
+      ],
+      "items": [
+        "x",
+        "x",
+        "c"
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x x c]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "1"
+          }
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 10,
+      "iteration": 2,
+      "vars": {
+        "arr": "[x x c]",
+        "i": "2"
+      },
+      "result": true,
+      "note": "ambil elemen ke-3: i = 2",
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x x c]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "body",
+      "line": 11,
+      "iteration": 2,
+      "vars": {
+        "arr": "[x x x]",
+        "i": "2"
+      },
+      "note": "arr[i] = \"x\" → arr[i] = \"x\"",
+      "ops": [
+        {
+          "op": "set",
+          "a": 2,
+          "value": "x"
+        }
+      ],
+      "items": [
+        "x",
+        "x",
+        "x"
+      ],
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x x x]"
+          },
+          {
+            "name": "i",
+            "kind": "value",
+            "value": "2"
+          }
+        ]
+      }
+    },
+    {
+      "n": 7,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "cond",
+      "line": 10,
+      "iteration": 3,
+      "vars": {
+        "arr": "[x x x]"
+      },
+      "result": false,
+      "note": "tidak ada elemen lagi",
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x x x]"
+          }
+        ]
+      }
+    },
+    {
+      "n": 8,
+      "loop": "L2",
+      "block": "L2",
+      "run": 1,
+      "phase": "exit",
+      "line": 10,
+      "iteration": 3,
+      "vars": {
+        "arr": "[x x x]"
+      },
+      "note": "range selesai → keluar dari loop",
+      "reason": "range-done",
+      "mem": {
+        "vars": [
+          {
+            "name": "arr",
+            "kind": "slice",
+            "value": "[x x x]"
+          }
+        ]
+      }
+    }
+  ],
+  "collection": {
+    "kind": "array",
+    "items": [
+      "a",
+      "b",
+      "c"
+    ]
+  },
   "truncated": false,
-  "warnings": [
-    "nilai tidak bisa dihitung, jadi yang tampil hanya alurnya: range \"&arr\" di baris 10 tidak bisa dihitung: operator & belum disimulasikan"
-  ]
+  "warnings": []
 }

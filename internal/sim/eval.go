@@ -6,6 +6,7 @@ import (
 	"go/token"
 	"go/types"
 	"math"
+	"runtime"
 	"strconv"
 	"strings"
 	"unicode"
@@ -41,7 +42,12 @@ func (it *interp) evalMulti(x ast.Expr, e *env, want int) []value {
 			if base.k == kMap {
 				v, ok := base.m.get(it.eval(n.Index, e))
 				if !ok {
-					v = zeroOf(it.p.Info.Types[n].Type)
+					// tipe ekspresi comma-ok tercatat sebagai tuple; zero value diambil dari elemen map
+					var elem types.Type
+					if mt, isMap := it.p.Info.Types[n.X].Type.Underlying().(*types.Map); isMap {
+						elem = mt.Elem()
+					}
+					v = zeroOf(elem)
 				}
 				return []value{v, boolV(ok)}
 			}
@@ -94,7 +100,9 @@ func (it *interp) eval0(x ast.Expr, e *env) value {
 		}
 		return value{k: kTuple, tup: res}
 	case *ast.SelectorExpr:
-		return unknown(fmt.Sprintf("%s belum disimulasikan", it.text(n)))
+		return it.selector(n, e)
+	case *ast.StarExpr:
+		return it.deref(it.eval(n.X, e), n)
 	}
 	return unknown(fmt.Sprintf("ekspresi %q belum disimulasikan", it.text(x)))
 }
@@ -148,6 +156,8 @@ func (it *interp) composite(n *ast.CompositeLit, e *env) value {
 			m.set(coerce(it.eval(kv.Key, e), u.Key()), coerce(copyVal(it.eval(kv.Value, e)), u.Elem()))
 		}
 		return value{k: kMap, m: m}
+	case *types.Struct:
+		return it.structLit(n, u, e)
 	}
 	return unknown(fmt.Sprintf("nilai bertipe %s belum disimulasikan", t))
 }
@@ -241,6 +251,11 @@ func (it *interp) binary(op token.Token, a, b value, at ast.Node) value {
 	}
 	if a.k == kFloat && b.k == kInt {
 		b = floatV(float64(b.i))
+	}
+	if (op == token.EQL || op == token.NEQ) && a.k != kNil && b.k != kNil && (a.k == kStruct || a.k == kPtr || a.k == kError) {
+		if eq, ok := equal(a, b); ok {
+			return boolV(eq == (op == token.EQL))
+		}
 	}
 	switch {
 	case a.k == kInt && b.k == kInt:
@@ -340,7 +355,7 @@ func (it *interp) binary(op token.Token, a, b value, at ast.Node) value {
 			other = b
 		}
 		isNil := other.k == kNil || (other.k == kSlice && other.sl == nil) || (other.k == kMap && other.m == nil) ||
-			(other.k == kFunc && other.fn == nil) || (other.k == kChan && other.ch == nil)
+			(other.k == kFunc && other.fn == nil) || (other.k == kChan && other.ch == nil) || (other.k == kPtr && other.ptr == nil)
 		switch op {
 		case token.EQL:
 			return boolV(isNil)
@@ -355,6 +370,9 @@ func (it *interp) unary(n *ast.UnaryExpr, e *env) value {
 	if n.Op == token.ARROW {
 		v, _ := it.recv(n, e)
 		return v
+	}
+	if n.Op == token.AND {
+		return it.addressOf(n.X, e)
 	}
 	v := it.eval(n.X, e)
 	switch {
@@ -397,6 +415,9 @@ func (it *interp) evalIndex(n *ast.IndexExpr, e *env) value {
 	case kUnknown:
 		return base
 	case kMap:
+		if id, ok := n.X.(*ast.Ident); ok && id.Name == it.rec.coll && it.recording() {
+			it.rec.op(trace.Op{Op: trace.OpRead, A: -1, Key: format(idx)})
+		}
 		if v, ok := base.m.get(idx); ok {
 			return v
 		}
@@ -493,14 +514,19 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 			return it.builtin(f.Name, n, e)
 		}
 	case *ast.SelectorExpr:
-		if pkg, ok := f.X.(*ast.Ident); ok {
-			if pn, ok := it.p.Info.Uses[pkg].(*types.PkgName); ok {
-				return it.pkgCall(pn.Imported().Path(), f.Sel.Name, n, e)
-			}
+		if sel := it.p.Info.Selections[f]; sel != nil && sel.Kind() == types.MethodVal {
+			return it.callMethod(f, n, e)
 		}
-		it.warn(fmt.Sprintf("method %s belum disimulasikan", it.text(n.Fun)))
-		it.args(n, e)
-		return []value{unknown(it.text(n.Fun) + " belum disimulasikan")}
+		if pn, ok := it.p.Info.Uses[identOf(f.X)].(*types.PkgName); ok {
+			return it.pkgCall(pn.Imported().Path(), f.Sel.Name, n, e)
+		}
+		if sel := it.p.Info.Selections[f]; sel == nil {
+			// method dari tipe di package lain (mis. strings.Builder.WriteString)
+			it.warn(fmt.Sprintf("method %s belum disimulasikan", it.text(n.Fun)))
+			it.args(n, e)
+			return []value{unknown(it.text(n.Fun) + " belum disimulasikan")}
+		}
+		// field bertipe fungsi: dipanggil seperti nilai fungsi biasa di bawah
 	}
 	fv := it.eval(n.Fun, e)
 	if fv.k != kFunc || fv.fn == nil {
@@ -566,6 +592,13 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 
 	scope := newEnv(parent, true)
 	var params []string
+	if fn.recv != nil && fn.decl != nil && fn.decl.Recv != nil && len(fn.decl.Recv.List[0].Names) > 0 {
+		name := fn.decl.Recv.List[0].Names[0].Name
+		scope.define(name, *fn.recv)
+		if name != "_" {
+			params = append(params, name+" = "+show(*fn.recv))
+		}
+	}
 	i := 0
 	if ft.Params != nil {
 		for fi, field := range ft.Params.List {
@@ -624,13 +657,20 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	if quietBody {
 		it.quiet++
 	}
-	f := it.execList(body.List, scope)
-	if quietBody {
-		it.quiet--
-	}
+	cf := &callFrame{}
+	it.calls = append(it.calls, cf)
+	f, _ := func() (flow, bool) {
+		defer func() {
+			it.calls = it.calls[:len(it.calls)-1]
+			if quietBody {
+				it.quiet--
+			}
+		}()
+		return it.runBody(body.List, scope, cf, named)
+	}()
 	out := f.ret
-	if f.k != fReturn || len(f.ret) == 0 {
-		out = make([]value, len(named))
+	if len(named) > 0 {
+		out = make([]value, len(named)) // named result dibaca setelah defer (defer boleh mengubahnya)
 		for i, name := range named {
 			out[i] = *scope.lookup(name.Name)
 		}
@@ -650,7 +690,21 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	return out
 }
 
-func (it *interp) builtin(name string, n *ast.CallExpr, e *env) []value {
+// guardRuntime mengubah kesalahan runtime Go di dalam simulator (mis. argumen kurang
+// pada kode yang belum lolos kompilasi) menjadi nilai yang tidak diketahui. Panic program
+// dan abort simulator tetap diteruskan.
+func guardRuntime(res *[]value, what string) {
+	if r := recover(); r != nil {
+		if _, ok := r.(runtime.Error); ok {
+			*res = []value{unknown(what + " dipanggil dengan argumen yang tidak valid")}
+			return
+		}
+		panic(r)
+	}
+}
+
+func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
+	defer guardRuntime(&res, name)
 	one := func(v value) []value { return []value{v} }
 	switch name {
 	case "len", "cap":
@@ -741,7 +795,11 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) []value {
 	case "delete":
 		m := it.eval(n.Args[0], e)
 		if m.k == kMap && m.m != nil {
-			m.m.del(it.eval(n.Args[1], e))
+			k := it.eval(n.Args[1], e)
+			m.m.del(k)
+			if id, ok := n.Args[0].(*ast.Ident); ok && id.Name == it.rec.coll && it.recording() {
+				it.rec.op(trace.Op{Op: trace.OpDelete, A: -1, Key: format(k)})
+			}
 		}
 		return nil
 	case "copy":
@@ -781,7 +839,12 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) []value {
 		return one(best)
 	case "panic":
 		v := it.eval(n.Args[0], e)
-		it.panicf(n, "%s", format(v))
+		it.raise(n, v, "panic: "+format(it.stringer(v, n)))
+	case "recover":
+		return one(it.recoverValue(n))
+	case "new":
+		cell := zeroOf(it.p.Info.Types[n.Args[0]].Type)
+		return one(it.newPtr(&cell))
 	case "print", "println":
 		var parts []string
 		for _, a := range n.Args {
@@ -912,7 +975,42 @@ func (it *interp) output(s string) {
 
 // pkgCall menangani fungsi dari package standar yang aman disimulasikan.
 func (it *interp) pkgCall(pkg, name string, n *ast.CallExpr, e *env) []value {
-	args := it.args(n, e)
+	return it.pkgApply(pkg, name, it.args(n, e), n)
+}
+
+// pkgApply menjalankan fungsi package standar dengan argumen yang sudah dievaluasi
+// (dipakai juga oleh defer, yang mengevaluasi argumen saat defer dicatat).
+func (it *interp) pkgApply(pkg, name string, args []value, n ast.Node) (res []value) {
+	defer guardRuntime(&res, pkg+"."+name)
+	switch pkg + "." + name {
+	case "errors.New":
+		if len(args) == 1 && args[0].k == kString {
+			return []value{it.newErr(args[0].s, nil)}
+		}
+	case "fmt.Errorf":
+		if len(args) > 0 && args[0].k == kString {
+			for i := 1; i < len(args); i++ {
+				args[i] = it.stringer(args[i], n)
+			}
+			msg, wrapped := errorfMessage(args[0].s, args[1:])
+			return []value{it.newErr(msg, wrapped)}
+		}
+	case "errors.Is":
+		if len(args) == 2 {
+			return []value{boolV(errorsIs(args[0], args[1]))}
+		}
+	case "errors.Unwrap":
+		if len(args) == 1 && args[0].k == kError && args[0].wrap != nil {
+			return []value{*args[0].wrap}
+		}
+		return []value{{k: kNil}}
+	}
+	if pkg == "fmt" {
+		// tipe user yang punya String() atau Error() dicetak lewat method itu, seperti di Go
+		for i := range args {
+			args[i] = it.stringer(args[i], n)
+		}
+	}
 	if pkg != "fmt" { // fmt tetap mencetak; nilai yang tidak diketahui tampil sebagai "?"
 		for _, a := range args {
 			if a.k == kUnknown {
@@ -986,7 +1084,7 @@ func (it *interp) pkgCall(pkg, name string, n *ast.CallExpr, e *env) []value {
 	case "strconv.Atoi":
 		v, err := strconv.Atoi(str(0))
 		if err != nil {
-			return []value{intV(0), unknown("error dari strconv.Atoi")}
+			return []value{intV(0), it.newErr(err.Error(), nil)}
 		}
 		return []value{intV(int64(v)), {k: kNil}}
 	case "math.Sqrt":

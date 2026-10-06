@@ -80,11 +80,35 @@ type interp struct {
 	p       *analyzer.Program
 	globals *env
 	funcs   map[string]*ast.FuncDecl
+	methods map[string]map[string]*ast.FuncDecl // nama tipe → nama method → deklarasi
 	budget  int
 	depth   int
 	rec     *recorder
 	rng     *rand.Rand
 	quiet   int
+	pids    int          // penghitung identitas pointer (untuk alamat palsu yang deterministik)
+	eids    int          // penghitung identitas error (untuk == dan errors.Is)
+	calls   []*callFrame // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
+}
+
+// callFrame menyimpan defer satu pemanggilan fungsi dan panic yang sedang terjadi.
+type callFrame struct {
+	defers    []deferred
+	panicking *goPanic
+	inDefers  bool
+}
+
+type deferred struct {
+	run        func()
+	text       string
+	at         ast.Node
+	hasRecover bool // fungsi yang di-defer memanggil recover()
+}
+
+// goPanic adalah panic Go di dalam program yang disimulasikan; bisa ditangkap recover().
+type goPanic struct {
+	val value
+	msg string
 }
 
 const maxDepth = 200
@@ -101,13 +125,34 @@ func (it *interp) text(n ast.Node) string { return it.p.Text(n) }
 
 func (it *interp) structural(msg string) { panic(abort{abortStructural, msg}) }
 
-// panicf mensimulasikan runtime panic Go: dicatat sebagai langkah terakhir bila sedang merekam.
+// panicf mensimulasikan runtime panic Go (indeks di luar batas, bagi nol, dst.).
 func (it *interp) panicf(at ast.Node, format string, args ...any) {
-	msg := "panic: " + fmt.Sprintf(format, args...)
-	if it.rec.on() && it.quiet == 0 {
-		it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg}, nil)
+	msg := fmt.Sprintf(format, args...)
+	it.raise(at, it.newErr(msg, nil), "panic: "+msg)
+}
+
+// raise memulai panic. Bila ada defer yang memanggil recover(), panic-nya mungkin
+// tertangkap; bila tidak, langkah ini adalah akhir program (reason panic).
+func (it *interp) raise(at ast.Node, val value, msg string) {
+	if it.recording() {
+		if it.recoverPending() {
+			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: msg + " → mencari recover() di defer"}, nil)
+		} else {
+			it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg}, nil)
+		}
 	}
-	panic(abort{abortPanic, msg})
+	panic(goPanic{val: val, msg: msg})
+}
+
+func (it *interp) recoverPending() bool {
+	for _, cf := range it.calls {
+		for _, d := range cf.defers {
+			if d.hasRecover {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (it *interp) warn(msg string) { it.rec.warn(msg) }
@@ -128,7 +173,7 @@ func (it *interp) add(s trace.Step, e *env) {
 	if e != nil {
 		vars = it.snapshot(e)
 	}
-	it.rec.add(s, vars, func() []string { return it.collItems(e) })
+	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) }, func() *trace.Memory { return it.memory(e) })
 }
 
 func (it *interp) step(n ast.Node, e *env, note string) {
@@ -163,13 +208,14 @@ func (it *interp) snapshot(e *env) map[string]string {
 	return out
 }
 
-func (it *interp) collItems(e *env) []string {
+// collItems mengembalikan isi koleksi saat ini; untuk map juga key-nya (urutan sisip).
+func (it *interp) collItems(e *env) (items, keys []string) {
 	if it.rec.coll == "" || e == nil {
-		return nil
+		return nil, nil
 	}
 	cell := e.lookup(it.rec.coll)
 	if cell == nil {
-		return nil
+		return nil, nil
 	}
 	var elems []value
 	switch cell.k {
@@ -177,20 +223,52 @@ func (it *interp) collItems(e *env) []string {
 		elems = cell.sl.elems()
 	case kArray:
 		elems = cell.arr
+	case kMap:
+		items, keys = []string{}, []string{}
+		if cell.m != nil {
+			for _, k := range cell.m.keys {
+				v, _ := cell.m.get(k)
+				keys = append(keys, format(k))
+				items = append(items, format(v))
+			}
+		}
+		return items, keys
 	default:
-		return nil
+		return nil, nil
 	}
-	items := make([]string, len(elems))
+	items = make([]string, len(elems))
 	for i, v := range elems {
 		items[i] = format(v)
 	}
-	return items
+	return items, nil
+}
+
+// mapKey mengembalikan key bila x berbentuk koleksiMap[k], atau "" dan false.
+func (it *interp) mapKey(x ast.Expr, e *env) (string, bool) {
+	ix, ok := unparen(x).(*ast.IndexExpr)
+	if !ok || it.rec.coll == "" || it.rec.collKind != "map" {
+		return "", false
+	}
+	if id, ok := ix.X.(*ast.Ident); !ok || id.Name != it.rec.coll {
+		return "", false
+	}
+	return format(it.evalQuiet(ix.Index, e)), true
+}
+
+// mapSetOp mencatat penulisan ke elemen map koleksi (m[k] = v, m[k]++, m[k] += v).
+func (it *interp) mapSetOp(x ast.Expr, e *env) {
+	if !it.recording() {
+		return
+	}
+	if key, ok := it.mapKey(x, e); ok {
+		it.rec.op(trace.Op{Op: trace.OpSet, A: -1, Key: key, Value: format(it.evalQuiet(x, e))})
+	}
 }
 
 // collIndex mengembalikan indeks bila x berbentuk koleksi[i], atau -1.
 func (it *interp) collIndex(x ast.Expr, e *env) int {
 	ix, ok := unparen(x).(*ast.IndexExpr)
-	if !ok || it.rec.coll == "" {
+	if !ok || it.rec.coll == "" || it.rec.collKind == "map" {
 		return -1
 	}
 	id, ok := ix.X.(*ast.Ident)
@@ -309,7 +387,7 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 		}
 		t := it.target(n.X, e, false)
 		t.set(it.binary(op, t.get(), intV(1), n))
-		it.markColl(n.X)
+		it.markColl(n.X, e)
 		it.step(n, e, it.effectNote(n, []ast.Expr{n.X}, e))
 	case *ast.DeclStmt:
 		it.decl(n.Decl, e)
@@ -378,7 +456,8 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 	case *ast.GoStmt:
 		it.warn(fmt.Sprintf("goroutine (baris %d) tidak disimulasikan", it.line(n)))
 	case *ast.DeferStmt:
-		it.warn(fmt.Sprintf("defer (baris %d) tidak disimulasikan", it.line(n)))
+		it.deferCall(n, e)
+		it.step(n, e, "defer dicatat: "+it.text(n.Call)+" (dijalankan saat fungsi selesai)")
 	default:
 		it.structural(fmt.Sprintf("statement di baris %d belum disimulasikan", it.line(n)))
 	}
@@ -731,7 +810,9 @@ func (it *interp) execRange(n *ast.RangeStmt, label string, e *env) flow {
 		iterScope := newEnv(scope, false) // Go 1.22: variabel loop baru setiap putaran
 		it.bindRange(n, iterScope, k, v)
 		if it.recording() {
-			if readsColl {
+			if readsColl && it.rec.collKind == "map" {
+				it.rec.op(trace.Op{Op: trace.OpRead, A: -1, Key: format(k)})
+			} else if readsColl {
 				it.rec.op(trace.Op{Op: trace.OpRead, A: idx})
 			}
 			r := true
@@ -753,13 +834,21 @@ func (it *interp) execRange(n *ast.RangeStmt, label string, e *env) flow {
 				return result
 			}
 		}
-	case kSlice, kArray:
+	case kSlice, kArray, kPtr:
 		var elems func(i int) value
 		count := 0
-		if x.k == kSlice {
+		switch {
+		case x.k == kSlice:
 			count = x.sl.elemsLen()
 			elems = func(i int) value { return *x.sl.at(i) } // dibaca langsung: perubahan saat loop terlihat, seperti di Go
-		} else {
+		case x.k == kPtr:
+			if x.ptr == nil || x.ptr.k != kArray {
+				it.structural(fmt.Sprintf("range atas pointer ini belum disimulasikan (baris %d)", it.line(n)))
+			}
+			arr := x.ptr // range atas *array membaca array aslinya, bukan salinan
+			count = len(arr.arr)
+			elems = func(i int) value { return arr.arr[i] }
+		default:
 			arr := copyVal(x).arr // range atas array memakai salinan
 			count = len(arr)
 			elems = func(i int) value { return arr[i] }
@@ -860,7 +949,7 @@ func (it *interp) bindRange(n *ast.RangeStmt, e *env, k, v value) {
 				if obj := it.p.Info.Defs[id]; obj != nil {
 					val = coerce(val, obj.Type())
 				}
-				e.define(id.Name, val)
+				e.define(id.Name, copyVal(val)) // variabel range adalah salinan elemen, seperti di Go
 			}
 			return
 		}
@@ -906,7 +995,7 @@ func (it *interp) assign(n *ast.AssignStmt, e *env) {
 			v = coerce(v, tv.Type)
 		}
 		t.set(v)
-		it.markColl(n.Lhs[0])
+		it.markColl(n.Lhs[0], e)
 		return
 	}
 
@@ -938,7 +1027,7 @@ func (it *interp) assign(n *ast.AssignStmt, e *env) {
 		t.set(v)
 	}
 	for _, l := range n.Lhs {
-		it.markColl(l)
+		it.markColl(l, e)
 	}
 }
 
@@ -949,8 +1038,9 @@ var assignOp = map[token.Token]token.Token{
 	token.SHR_ASSIGN: token.SHR, token.AND_NOT_ASSIGN: token.AND_NOT,
 }
 
-// markColl menandai isi koleksi berubah bila x adalah koleksi atau elemennya.
-func (it *interp) markColl(x ast.Expr) {
+// markColl menandai isi koleksi berubah bila x adalah koleksi atau elemennya,
+// dan mencatat operasi set untuk elemen map.
+func (it *interp) markColl(x ast.Expr, e *env) {
 	if it.rec.coll == "" || !it.recording() {
 		return
 	}
@@ -962,6 +1052,7 @@ func (it *interp) markColl(x ast.Expr) {
 	case *ast.IndexExpr:
 		if id, ok := t.X.(*ast.Ident); ok && id.Name == it.rec.coll {
 			it.rec.dirty = true
+			it.mapSetOp(x, e)
 		}
 	}
 }
@@ -1035,29 +1126,66 @@ func (it *interp) target(x ast.Expr, e *env, define bool) target {
 		}
 		ref := it.ref(t, e)
 		return target{get: func() value { return *ref }, set: func(v value) { *ref = v }}
+	case *ast.SelectorExpr, *ast.StarExpr:
+		ref := it.ref(t, e)
+		return target{get: func() value { return *ref }, set: func(v value) { *ref = v }}
 	}
 	it.structural(fmt.Sprintf("assignment ke %q belum disimulasikan (baris %d)", it.text(x), it.line(x)))
 	return target{}
 }
 
-// ref mengembalikan alamat elemen slice/array supaya bisa diubah di tempat.
+// addressable melaporkan apakah x punya alamat (variabel, elemen, field, *p).
+func addressable(x ast.Expr) bool {
+	switch unparen(x).(type) {
+	case *ast.Ident, *ast.IndexExpr, *ast.SelectorExpr, *ast.StarExpr:
+		return true
+	}
+	return false
+}
+
+// ref mengembalikan alamat variabel, elemen slice/array, field struct, atau sel yang
+// ditunjuk pointer, supaya bisa diubah di tempat.
 func (it *interp) ref(x ast.Expr, e *env) *value {
 	switch t := unparen(x).(type) {
 	case *ast.Ident:
 		if cell := e.lookup(t.Name); cell != nil {
 			return cell
 		}
-	case *ast.IndexExpr:
+	case *ast.StarExpr:
+		v := it.eval(t.X, e)
+		if v.k != kPtr {
+			break
+		}
+		if v.ptr == nil {
+			it.panicf(t, "runtime error: invalid memory address or nil pointer dereference")
+		}
+		return v.ptr
+	case *ast.SelectorExpr:
+		sel := it.p.Info.Selections[t]
+		if sel == nil || sel.Kind() != types.FieldVal {
+			break
+		}
 		var base *value
-		if _, isIdent := unparen(t.X).(*ast.Ident); isIdent {
-			base = it.ref(t.X, e)
-		} else {
-			v := it.eval(t.X, e)
-			if v.k == kArray {
+		if addressable(t.X) {
+			if _, isPkg := it.p.Info.Uses[identOf(t.X)].(*types.PkgName); !isPkg {
 				base = it.ref(t.X, e)
-			} else {
-				base = &v
 			}
+		}
+		if base == nil {
+			v := it.eval(t.X, e)
+			base = &v
+		}
+		return it.fieldPath(base, sel.Index(), t)
+	case *ast.IndexExpr:
+		v := it.eval(t.X, e)
+		var base *value
+		switch {
+		case v.k == kArray && addressable(t.X):
+			base = it.ref(t.X, e) // array adalah nilai: ubah langsung di variabelnya
+		case v.k == kPtr && v.ptr != nil && v.ptr.k == kArray:
+			base = v.ptr
+		default:
+			base = &v // slice berbagi data, jadi salinan header cukup
 		}
 		idx := it.index(t, it.eval(t.Index, e), it.lenOf(*base))
 		switch base.k {
@@ -1099,18 +1227,167 @@ func (it *interp) index(at ast.Node, i value, length int) int {
 // ---------- program ----------
 
 func (it *interp) initGlobals() {
+	it.methods = map[string]map[string]*ast.FuncDecl{}
+	// Fungsi dan method dulu, supaya variabel global boleh memanggil fungsi yang ditulis di bawahnya.
 	for _, d := range it.p.File.Decls {
-		switch n := d.(type) {
-		case *ast.FuncDecl:
-			if n.Recv == nil && n.Name != nil {
-				it.funcs[n.Name.Name] = n
+		n, ok := d.(*ast.FuncDecl)
+		if !ok || n.Name == nil {
+			continue
+		}
+		if n.Recv == nil {
+			it.funcs[n.Name.Name] = n
+			continue
+		}
+		if t := recvTypeName(n); t != "" {
+			if it.methods[t] == nil {
+				it.methods[t] = map[string]*ast.FuncDecl{}
 			}
-		case *ast.GenDecl:
-			if n.Tok == token.VAR {
-				it.decl(n, it.globals)
+			it.methods[t][n.Name.Name] = n
+		}
+	}
+	for _, d := range it.p.File.Decls {
+		if n, ok := d.(*ast.GenDecl); ok && n.Tok == token.VAR {
+			it.decl(n, it.globals)
+		}
+	}
+}
+
+// deferCall mengevaluasi fungsi dan argumen sekarang (aturan Go) lalu menyimpan
+// pemanggilannya untuk dijalankan saat fungsi yang sedang berjalan selesai.
+func (it *interp) deferCall(n *ast.DeferStmt, e *env) {
+	if len(it.calls) == 0 {
+		return
+	}
+	call := n.Call
+	d := deferred{text: it.text(call), at: n}
+	switch f := unparen(call.Fun).(type) {
+	case *ast.Ident:
+		if it.isBuiltin(f) {
+			d.run = func() { it.builtin(f.Name, call, e) }
+			break
+		}
+		fv := it.eval(f, e)
+		args := it.args(call, e)
+		d.run = func() { it.callValue(fv, args, call) }
+		d.hasRecover = fv.k == kFunc && fv.fn != nil && fv.fn.decl != nil && callsRecover(fv.fn.decl.Body)
+	case *ast.SelectorExpr:
+		if pn, ok := it.p.Info.Uses[identOf(f.X)].(*types.PkgName); ok {
+			args := it.args(call, e)
+			path, name := pn.Imported().Path(), f.Sel.Name
+			d.run = func() { it.pkgApply(path, name, args, call) }
+			break
+		}
+		recv, decl := it.receiver(f, e)
+		args := it.args(call, e)
+		if decl != nil {
+			d.run = func() {
+				it.callFunc(&funcVal{name: recvTypeName(decl) + "." + decl.Name.Name, decl: decl, recv: &recv}, args, call)
+			}
+			d.hasRecover = callsRecover(decl.Body)
+		}
+	default:
+		fv := it.eval(call.Fun, e)
+		args := it.args(call, e)
+		d.run = func() { it.callValue(fv, args, call) }
+		d.hasRecover = fv.k == kFunc && fv.fn != nil && fv.fn.lit != nil && callsRecover(fv.fn.lit.Body)
+	}
+	if d.run == nil {
+		it.warn(fmt.Sprintf("defer %s belum disimulasikan", d.text))
+		return
+	}
+	cf := it.calls[len(it.calls)-1]
+	cf.defers = append(cf.defers, d)
+}
+
+func identOf(x ast.Expr) *ast.Ident {
+	id, _ := x.(*ast.Ident)
+	return id
+}
+
+func callsRecover(body *ast.BlockStmt) bool {
+	found := false
+	if body == nil {
+		return false
+	}
+	ast.Inspect(body, func(n ast.Node) bool {
+		if c, ok := n.(*ast.CallExpr); ok {
+			if id, ok := c.Fun.(*ast.Ident); ok && id.Name == "recover" {
+				found = true
+			}
+		}
+		return !found
+	})
+	return found
+}
+
+func (it *interp) callValue(fv value, args []value, at ast.Node) []value {
+	if fv.k != kFunc || fv.fn == nil {
+		it.panicf(at, "runtime error: invalid memory address or nil pointer dereference")
+	}
+	return it.callFunc(fv.fn, args, at)
+}
+
+// runBody menjalankan isi fungsi, lalu semua defer-nya (terbalik, seperti Go), juga saat
+// panic. Bila sebuah defer memanggil recover(), panic berhenti dan fungsi kembali normal.
+func (it *interp) runBody(list []ast.Stmt, scope *env, cf *callFrame, named []*ast.Ident) (f flow, recovered bool) {
+	defer func() {
+		r := recover()
+		if r != nil {
+			gp, ok := r.(goPanic)
+			if !ok {
+				panic(r) // abort simulator: tidak menjalankan defer
+			}
+			cf.panicking = &gp
+		}
+		it.runDefers(cf)
+		if cf.panicking != nil {
+			p := *cf.panicking
+			panic(p) // tidak di-recover: lanjut ke pemanggil
+		}
+		if r != nil {
+			f, recovered = flow{}, true
+		}
+	}()
+	f = it.execList(list, scope)
+	// "return x" mengisi named result dulu, baru defer berjalan (defer boleh mengubahnya)
+	if f.k == fReturn && len(named) > 0 && len(f.ret) == len(named) {
+		for i, n := range named {
+			if cell := scope.lookup(n.Name); cell != nil {
+				*cell = f.ret[i]
 			}
 		}
 	}
+	return f, false
+}
+
+func (it *interp) runDefers(cf *callFrame) {
+	cf.inDefers = true
+	for len(cf.defers) > 0 {
+		d := cf.defers[len(cf.defers)-1]
+		cf.defers = cf.defers[:len(cf.defers)-1]
+		if it.recording() {
+			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(d.at), Note: "menjalankan defer: " + d.text}, nil)
+		}
+		d.run()
+	}
+	cf.inDefers = false
+}
+
+// recoverValue menjalankan recover(): menghentikan panic yang sedang berjalan bila
+// dipanggil dari fungsi yang di-defer.
+func (it *interp) recoverValue(at ast.Node) value {
+	for i := len(it.calls) - 1; i >= 0; i-- {
+		cf := it.calls[i]
+		if cf.inDefers && cf.panicking != nil {
+			p := cf.panicking
+			cf.panicking = nil
+			if it.recording() {
+				it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: "recover() menangkap " + p.msg + " → program lanjut"}, nil)
+			}
+			return p.val
+		}
+	}
+	return value{k: kNil}
 }
 
 func (it *interp) isBuiltin(id *ast.Ident) bool {
