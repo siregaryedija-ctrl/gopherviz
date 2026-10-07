@@ -1,0 +1,120 @@
+2: directive [] 
+4: interface Bentuk []
+  5: func Bentuk.luas()
+8: class BentukDasar [Bentuk]
+  9: var(static field) $jumlah = 0
+  10: var(const) SATUAN = "cm"
+  12: func BentukDasar.__construct($nama)
+    12: block
+      13: expr (static::$jumlah++)
+  16: func BentukDasar.luas()
+  18: func BentukDasar.__toString()
+    18: block
+      19: return sprintf("%s: %.2f %s²", this->nama, this->luas(), self::SATUAN)
+  22: func BentukDasar.jumlah()
+    22: block
+      23: return self::$jumlah
+27: class Lingkaran [BentukDasar]
+  28: func Lingkaran.__construct($r)
+    28: block
+      29: expr parent::__construct("lingkaran")
+  31: func Lingkaran.luas()
+    31: block
+      32: return (M_PI * (this->r ** 2))
+36: class Persegi [BentukDasar]
+  37: func Persegi.__construct($sisi)
+    37: block
+      38: expr parent::__construct("persegi")
+  40: func Persegi.luas()
+    40: block
+      41: return (this->sisi * this->sisi)
+45: expr ($bentuk = array[new Lingkaran(2), new Persegi(3), new Lingkaran(1)])
+46: expr usort($bentuk, fn =>($a, $b) ($a->luas() <=> $b->luas()))
+47: foreach(foreach ) $b in $bentuk
+  47: block
+    48: expr echo($b, PHP_EOL)
+50: expr echo((("total bentuk: " . BentukDasar::jumlah()) . "\n"))
+52: class SaldoTidakCukup [Exception]
+  53: func SaldoTidakCukup.__construct($kurang)
+    53: block
+      54: expr parent::__construct(("kurang Rp" . number_format($kurang, 0, ",", ".")))
+  56: func SaldoTidakCukup.getKurang()
+    56: block
+      57: return this->kurang
+61: func tarik($saldo, $jumlah)
+  61: block
+    62: if ($jumlah > $saldo)
+      62: block
+        63: throw new SaldoTidakCukup(($jumlah - $saldo))
+    65: return ($saldo - $jumlah)
+68: try
+  68: block
+    69: expr echo(tarik(50000, 20000), "\n")
+    70: expr echo(tarik(10000, 125000), "\n")
+  catch [SaldoTidakCukup] $e
+  71: block
+    72: expr echo("Gagal: ", $e->getMessage(), " (", $e->getKurang(), ")\n")
+  finally
+  73: block
+    74: expr echo("transaksi selesai\n")
+77: expr ($nilai = array{"Ani": 85, "Budi": 72, "Cici": 91, "Dodi": 64})
+78: expr arsort($nilai)
+79: expr print_r($nilai)
+80: expr ($lulus = array_filter($nilai, fn =>($n) ($n >= 70)))
+81: expr echo(implode(", ", array_keys($lulus)), " | rata-rata: ", round((array_sum($nilai) / count($nilai)), 1), "\n")
+82: expr ($huruf = array_map(fn =>($n) (($n >= 90) ? "A" : (($n >= 80) ? "B" : (($n >= 70) ? "C" : "D"))), $nilai))
+88: expr var_dump($huruf)
+89: expr echo(json_encode(array{"nama": "Ani", "nilai": array[85, 90], "lulus": true, "url": "a/b"}), "\n")
+90: expr echo(json_encode(array{"x": 1.5, "y": null}, JSON_PRETTY_PRINT), "\n")
+92: func tambahSatu($arr)
+  92: block
+    93: foreach(foreach &) $v in $arr
+      93: block
+        94: expr ($v++)
+97: expr ($angka = array[1, 2, 3])
+98: expr tambahSatu($angka)
+99: expr echo(implode(",", $angka), "\n")
+101: func hitung()
+  101: block
+    102: var(static) $n = 0
+    103: return (++ $n)
+105: expr hitung()
+106: expr hitung()
+107: expr echo("dipanggil ", hitung(), " kali\n")
+109: expr ($pengali = 3)
+110: expr ($kali = fn ($x) {...})
+113: expr ($tambah = fn =>($x) ($x + $pengali))
+114: expr echo($kali(5), " ", $tambah(5), "\n")
+116: expr (array[$a, array[$b, $c]] = array[1, array[2, 3]])
+117: expr (array{"x": $x, "y": $y} = array{"x": 10, "y": 20})
+118: expr echo(`${$a} ${$b} ${$c} ${$x} ${$y}
+`)
+119: expr ($config = array{"debug": false})
+120: expr ($config["level"] ??= "info")
+121: expr echo($config["level"], " ", ($config["missing"] ?? "default"), " ", (isset($config["debug"]) ? "ada" : "tidak"), "\n")
+123: expr ($matriks = array[])
+124: for [expr ($i = 1)] [($i <= 3)] [($i++)]
+  124: block
+    125: for [expr ($j = 1)] [($j <= 3)] [($j++)]
+      125: block
+        126: expr ($matriks[$i][$j] = ($i * $j))
+129: expr echo($matriks[2][3], " ", count($matriks), " ", count($matriks, COUNT_RECURSIVE), "\n")
+130: expr ($kata = "Belajar PHP itu Seru")
+131: expr printf("%-10s|%5d|%05.2f|%x|%s\n", strtoupper(substr($kata, 0, 7)), strlen($kata), 3.14159, 255, ucwords(strtolower($kata)))
+132: expr echo(str_pad("7", 3, "0", STR_PAD_LEFT), " ", str_repeat("=", 5), " ", strrev("abc"), " ", ucfirst("halo"), " ", wordCount($kata), "\n")
+134: func wordCount($s)
+  134: block
+    135: return count(explode(" ", $s))
+138: enum Status [string]
+  139: var(enum) Aktif = "aktif"
+  140: var(enum) Nonaktif = "nonaktif"
+  142: func Status.label()
+    142: block
+      143: return ((this === Status::Aktif) ? "Sedang aktif" : ((this === Status::Nonaktif) ? "Tidak aktif" : (throw new UnhandledMatchError())))
+149: expr echo(Status::Aktif->value, " ", Status::Nonaktif->label(), " ", count(Status::cases()), "\n")
+151: expr ($nama = "Dunia")
+152: expr ($teks = `Halo, ${$nama}!
+Jumlah: ${$nilai["Ani"]}`)
+156: expr echo($teks, "\n")
+157: expr echo(intdiv(17, 5), " ", (17 % 5), " ", (2 ** 10), " ", (7 / 2), " ", ("10" + 5), " ", (((0.1 + 0.2) == 0.3) ? "sama" : "beda"), "\n")
+158: expr var_dump((1 <=> 2), ("abc" == 0), (null ?? "kosong"), (int)"42abc", (string)3.0)

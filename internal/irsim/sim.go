@@ -437,6 +437,8 @@ func semFor(language string) (semantics, bool) {
 		return &jsSem{}, true
 	case "python":
 		return &pySem{}, true
+	case "php":
+		return &phpSem{}, true
 	}
 	return nil, false
 }

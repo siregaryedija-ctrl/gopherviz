@@ -1,0 +1,461 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "php",
+    "file": "02_lanjut.php",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 12,
+        "endLine": 14,
+        "state": "complete",
+        "name": "BentukDasar.__construct",
+        "header": "public function __construct(protected string $nama)",
+        "params": [
+          "$nama"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "static::$jumlah++;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 18,
+        "endLine": 20,
+        "state": "complete",
+        "name": "BentukDasar.__toString",
+        "header": "public function __toString(): string",
+        "body": [
+          {
+            "kind": "return",
+            "line": 19,
+            "text": "return sprintf(\"%s: %.2f %s²\", $this->nama, $this->luas(), …"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 22,
+        "endLine": 24,
+        "state": "complete",
+        "name": "BentukDasar.jumlah",
+        "header": "public static function jumlah(): int",
+        "body": [
+          {
+            "kind": "return",
+            "line": 23,
+            "text": "return self::$jumlah;"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 28,
+        "endLine": 30,
+        "state": "complete",
+        "name": "Lingkaran.__construct",
+        "header": "public function __construct(private float $r)",
+        "params": [
+          "$r"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 29,
+            "text": "parent::__construct(\"lingkaran\");"
+          }
+        ]
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "name": "Lingkaran.luas",
+        "header": "public function luas(): float",
+        "body": [
+          {
+            "kind": "return",
+            "line": 32,
+            "text": "return M_PI * $this->r ** 2;"
+          }
+        ]
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 37,
+        "endLine": 39,
+        "state": "complete",
+        "name": "Persegi.__construct",
+        "header": "public function __construct(private float $sisi)",
+        "params": [
+          "$sisi"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 38,
+            "text": "parent::__construct(\"persegi\");"
+          }
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 40,
+        "endLine": 42,
+        "state": "complete",
+        "name": "Persegi.luas",
+        "header": "public function luas(): float",
+        "body": [
+          {
+            "kind": "return",
+            "line": 41,
+            "text": "return $this->sisi * $this->sisi;"
+          }
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 47,
+        "endLine": 49,
+        "state": "complete",
+        "header": "foreach ($bentuk as $b)"
+      },
+      {
+        "id": "F8",
+        "kind": "func",
+        "line": 53,
+        "endLine": 55,
+        "state": "complete",
+        "name": "SaldoTidakCukup.__construct",
+        "header": "public function __construct(private int $kurang)",
+        "params": [
+          "$kurang"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 54,
+            "text": "parent::__construct(\"kurang Rp\" . number_format($kurang, 0,…"
+          }
+        ]
+      },
+      {
+        "id": "F9",
+        "kind": "func",
+        "line": 56,
+        "endLine": 58,
+        "state": "complete",
+        "name": "SaldoTidakCukup.getKurang",
+        "header": "public function getKurang(): int",
+        "body": [
+          {
+            "kind": "return",
+            "line": 57,
+            "text": "return $this->kurang;"
+          }
+        ]
+      },
+      {
+        "id": "F10",
+        "kind": "func",
+        "line": 61,
+        "endLine": 66,
+        "state": "complete",
+        "name": "tarik",
+        "header": "function tarik(int $saldo, int $jumlah): int",
+        "params": [
+          "$saldo",
+          "$jumlah"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 62,
+            "endLine": 64,
+            "text": "if ($jumlah > $saldo)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 63,
+                "text": "throw new SaldoTidakCukup($jumlah - $saldo);"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 65,
+            "text": "return $saldo - $jumlah;"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 62,
+        "endLine": 64,
+        "state": "complete",
+        "header": "if ($jumlah > $saldo)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "$jumlah > $saldo",
+            "line": 62,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 63,
+                "text": "throw new SaldoTidakCukup($jumlah - $saldo);"
+              }
+            ]
+          }
+        ],
+        "parent": "F10"
+      },
+      {
+        "id": "F11",
+        "kind": "func",
+        "line": 92,
+        "endLine": 96,
+        "state": "complete",
+        "name": "tambahSatu",
+        "header": "function tambahSatu(array &$arr): void",
+        "params": [
+          "$arr"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 93,
+            "endLine": 95,
+            "ref": "L2"
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 93,
+        "endLine": 95,
+        "state": "complete",
+        "header": "foreach ($arr as &$v)",
+        "parent": "F11"
+      },
+      {
+        "id": "F12",
+        "kind": "func",
+        "line": 101,
+        "endLine": 104,
+        "state": "complete",
+        "name": "hitung",
+        "header": "function hitung(): int",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 102,
+            "text": "static $n = 0;"
+          },
+          {
+            "kind": "return",
+            "line": 103,
+            "text": "return ++$n;"
+          }
+        ]
+      },
+      {
+        "id": "F13",
+        "kind": "func",
+        "line": 110,
+        "endLine": 112,
+        "state": "complete",
+        "name": "(anonim)",
+        "header": "function ($x) use ($pengali)",
+        "params": [
+          "$x"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 111,
+            "text": "return $x * $pengali;"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 124,
+        "endLine": 128,
+        "state": "complete",
+        "header": "for ($i = 1; $i <= 3; $i++)",
+        "children": [
+          "L4"
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 125,
+        "endLine": 127,
+        "state": "complete",
+        "header": "for ($j = 1; $j <= 3; $j++)",
+        "parent": "L3"
+      },
+      {
+        "id": "F14",
+        "kind": "func",
+        "line": 134,
+        "endLine": 136,
+        "state": "complete",
+        "name": "wordCount",
+        "header": "function wordCount(string $s): int",
+        "params": [
+          "$s"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 135,
+            "text": "return count(explode(\" \", $s));"
+          }
+        ]
+      },
+      {
+        "id": "F15",
+        "kind": "func",
+        "line": 142,
+        "endLine": 147,
+        "state": "complete",
+        "name": "Status.label",
+        "header": "public function label(): string",
+        "body": [
+          {
+            "kind": "return",
+            "line": 143,
+            "endLine": 146,
+            "text": "return match ($this) { …"
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 47,
+        "endLine": 49,
+        "state": "complete",
+        "header": {
+          "text": "foreach ($bentuk as $b)",
+          "value": "$b",
+          "define": true,
+          "range": "$bentuk"
+        },
+        "vars": [
+          "$b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 48,
+            "text": "echo $b, PHP_EOL;"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 93,
+        "endLine": 95,
+        "state": "complete",
+        "header": {
+          "text": "foreach ($arr as &$v)",
+          "value": "$v",
+          "define": true,
+          "range": "$arr"
+        },
+        "vars": [
+          "$v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 94,
+            "text": "$v++;"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 124,
+        "endLine": 128,
+        "state": "complete",
+        "header": {
+          "text": "for ($i = 1; $i <= 3; $i++)",
+          "init": "$i = 1",
+          "cond": "$i <= 3",
+          "post": "$i++"
+        },
+        "vars": [
+          "$i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 125,
+            "endLine": 127,
+            "ref": "L4"
+          }
+        ],
+        "children": [
+          "L4"
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "for3",
+        "line": 125,
+        "endLine": 127,
+        "state": "complete",
+        "header": {
+          "text": "for ($j = 1; $j <= 3; $j++)",
+          "init": "$j = 1",
+          "cond": "$j <= 3",
+          "post": "$j++"
+        },
+        "vars": [
+          "$j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 126,
+            "text": "$matriks[$i][$j] = $i * $j;"
+          }
+        ],
+        "parent": "L3"
+      }
+    ]
+  },
+  "diagnostics": null
+}

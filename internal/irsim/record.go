@@ -46,6 +46,9 @@ func (p *Ptr) load() Value {
 	case p.obj != nil:
 		v, _ := p.obj.fields.get(strV(p.field))
 		return v
+	case p.dict != nil:
+		v, _ := p.dict.get(p.key)
+		return v
 	}
 	return unknown("pointer menunjuk ke luar array")
 }
@@ -58,6 +61,8 @@ func (p *Ptr) store(v Value) {
 		p.list.elems[p.idx] = v
 	case p.obj != nil:
 		p.obj.fields.set(strV(p.field), v)
+	case p.dict != nil:
+		p.dict.set(p.key, v)
 	}
 }
 
@@ -71,6 +76,7 @@ type Env struct {
 	class  *Class // kelas pemilik method (untuk super, self::, static)
 	global bool
 	uses   map[string]*Cell // PHP: variabel global/closure yang dibawa masuk
+	arrow  bool             // PHP fn(): cakupan induk tetap terlihat
 }
 
 func newEnv(parent *Env, fn bool) *Env {
@@ -92,7 +98,7 @@ func (e *Env) local(name string) *Cell {
 		if c, ok := s.vars[name]; ok {
 			return c
 		}
-		if s.fn {
+		if s.fn && !s.arrow {
 			return nil
 		}
 	}

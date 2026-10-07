@@ -112,9 +112,15 @@ func (p *parser) typeText(arr bool) (string, bool) {
 				p.next()
 				p.next()
 			}
-			if !p.accept("|") && !p.accept("&") {
-				break
+			// A|B atau A&B (interseksi); "&" sebelum $variabel adalah referensi, bukan tipe
+			if p.accept("|") {
+				continue
 			}
+			if p.is("&") && p.peekTok(1).k == tIdent && !strings.HasPrefix(p.peekTok(1).text, "$") {
+				p.next()
+				continue
+			}
+			break
 		}
 		return strings.TrimSpace(p.text(p.span(start))), consumed
 	}

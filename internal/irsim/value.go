@@ -84,6 +84,8 @@ type Ptr struct {
 	idx   int
 	obj   *Object // pointer ke field objek/struct (&p.x)
 	field string
+	dict  *Dict // referensi ke entri array PHP (foreach dengan &)
+	key   Value
 	name  string // nama variabel yang ditunjuk (untuk tampilan)
 }
 
@@ -96,7 +98,8 @@ type Func struct {
 	class    *Class // kelas pemilik (untuk super)
 	builtin  func(it *interp, this Value, args []Value, at nodeRef) Value
 	static   bool
-	defaults map[int]Value // Python: nilai default dievaluasi sekali saat def
+	defaults map[int]Value    // Python: nilai default dievaluasi sekali saat def
+	captured map[string]Value // PHP: variabel dari use (...) disalin saat closure dibuat
 }
 
 // Class adalah kelas user atau bawaan.

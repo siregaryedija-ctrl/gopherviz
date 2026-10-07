@@ -789,13 +789,16 @@ func (p *parser) foreachStmt() ir.Stmt {
 	if p.expect("(", "setelah foreach") {
 		fe.X = p.expr()
 		if p.expect("as", "di foreach") {
-			p.accept("&")
+			ref := p.accept("&")
 			first := p.expr()
 			if p.accept("=>") {
-				p.accept("&")
+				ref = p.accept("&")
 				fe.Key, fe.Value = first, p.expr()
 			} else {
 				fe.Value = first
+			}
+			if ref {
+				fe.Decl = "&" // foreach dengan referensi: mengubah elemen array asli
 			}
 		}
 		p.expect(")", "untuk menutup kepala foreach")

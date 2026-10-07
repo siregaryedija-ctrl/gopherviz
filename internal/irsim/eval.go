@@ -108,6 +108,11 @@ func (it *interp) lookupName(id *ir.Ident, e *Env) Value {
 			return Value{k: kFunc, fn: &Func{name: name, decl: fs[0], env: it.globals}}
 		}
 	}
+	if it.lang == "php" && !strings.HasPrefix(name, "$") {
+		if fs := it.funcs[strings.ToLower(name)]; len(fs) > 0 { // nama fungsi PHP tidak peka huruf besar
+			return Value{k: kFunc, fn: &Func{name: fs[0].Name, decl: fs[0], env: it.globals}}
+		}
+	}
 	if c := it.classes[name]; c != nil {
 		return Value{k: kClass, c: c}
 	}
@@ -432,7 +437,15 @@ func (it *interp) bindTarget(t ir.Expr, e *Env, v Value, declare bool) {
 			}
 			key := it.propKey(p, e)
 			used[keyID(key)] = true
-			pv := it.getProp(v, it.sem.str(it, key), x)
+			var pv Value
+			if it.lang == "php" && v.k == kDict { // ['x' => $x] = $arr
+				pv, _ = v.d.get(it.dictKey(key))
+				if pv.k == kUnknown && pv.why == "" {
+					pv = null()
+				}
+			} else {
+				pv = it.getProp(v, it.sem.str(it, key), x)
+			}
 			it.bindTarget(p.Value, e, pv, declare)
 		}
 	case *ir.Assign: // nilai bawaan pola: {a = 1} / [a = 1]

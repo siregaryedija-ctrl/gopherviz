@@ -835,6 +835,9 @@ func (it *interp) execWhile(n *ir.While, label string, e *Env) flow {
 
 func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 	x := it.eval(n.X, e)
+	if it.lang == "php" && x.k == kDict && !strings.Contains(n.Decl, "&") {
+		x = copyFor(it, x) // foreach PHP berjalan atas salinan array
+	}
 	fr, leave := it.enterBlock(n, scene.BlockLoop)
 	defer leave()
 	if x.k == kUnknown {
@@ -933,10 +936,24 @@ func (it *interp) bindEach(n *ir.ForEach, e *Env, p kv, coll Value, i int) {
 	if n.Kind == "in" && (it.lang == "javascript" || it.lang == "typescript") {
 		v = p.k // for...in: key
 	}
-	if strings.Contains(n.Decl, "&") && coll.k == kList { // C++: for (auto& x : v)
+	if strings.Contains(n.Decl, "&") && (coll.k == kList || coll.k == kDict) { // C++ auto& / PHP &$v
 		if id, ok := n.Value.(*ir.Ident); ok {
-			c := e.define(id.Name, Value{})
-			c.alias = &Ptr{list: coll.l, idx: i}
+			var c *Cell
+			if it.lang == "php" {
+				c = &Cell{}
+				fe := e.fnEnv()
+				if fe.vars[id.Name] == nil {
+					fe.order = append(fe.order, id.Name)
+				}
+				fe.vars[id.Name] = c
+			} else {
+				c = e.define(id.Name, Value{})
+			}
+			if coll.k == kDict {
+				c.alias = &Ptr{dict: coll.d, key: p.k}
+			} else {
+				c.alias = &Ptr{list: coll.l, idx: i}
+			}
 			return
 		}
 	}

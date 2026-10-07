@@ -25,6 +25,16 @@ func (it *interp) closure(f *ir.Func, e *Env) *Func {
 			fn.name = "<lambda>"
 		}
 	}
+	if it.lang == "php" && len(f.Uses) > 0 {
+		fn.captured = map[string]Value{}
+		for _, u := range f.Uses {
+			if c := e.local(u); c != nil {
+				fn.captured[u] = copyFor(it, c.get())
+			} else {
+				fn.captured[u] = null()
+			}
+		}
+	}
 	if it.lang == "python" { // default dievaluasi sekali, di lingkungan tempat def ditulis
 		for i, p := range f.Params {
 			if p.Default != nil {
@@ -84,6 +94,24 @@ func (it *interp) evalArgs(args []ir.Expr, e *Env) argList {
 // ---------- panggilan ----------
 
 func (it *interp) evalCall(c *ir.Call, e *Env) Value {
+	if it.lang == "php" {
+		if id, ok := c.Fun.(*ir.Ident); ok {
+			switch strings.ToLower(id.Name) {
+			case "isset":
+				for _, a := range c.Args {
+					if v, ok := it.phpPeek(a, e); !ok || v.k == kNull || v.k == kUndef {
+						return boolV(false)
+					}
+				}
+				return boolV(true)
+			case "empty":
+				if len(c.Args) == 1 {
+					v, ok := it.phpPeek(c.Args[0], e)
+					return boolV(!ok || !it.sem.truthy(v))
+				}
+			}
+		}
+	}
 	var fv Value
 	this := undef()
 	collCall := ""
@@ -155,7 +183,7 @@ func (it *interp) evalCall(c *ir.Call, e *Env) Value {
 			obj = obj.p.load()
 		}
 		this = obj
-		fv = it.getProp(obj, f.Name, f)
+		fv = it.methodOrProp(obj, f.Name, f)
 		if id, ok := f.X.(*ir.Ident); ok && id.Name == it.rec.coll && it.recording() {
 			collCall = f.Name
 		}
@@ -321,6 +349,12 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	}
 
 	scope := newEnv(fn.env, true)
+	if it.lang == "php" {
+		scope.arrow = decl.Arrow
+		for k, v := range fn.captured {
+			scope.define(k, v)
+		}
+	}
 	owner := fn.class
 	if owner == nil {
 		owner = it.classOf[decl]
@@ -1807,4 +1841,68 @@ func (it *interp) listToPHP(vals []Value) Value {
 		d.set(intV(d.next), v)
 	}
 	return Value{k: kDict, d: d}
+}
+
+// phpPeek membaca variabel/indeks/properti tanpa peringatan (untuk isset/empty).
+func (it *interp) phpPeek(x ir.Expr, e *Env) (Value, bool) {
+	switch t := x.(type) {
+	case *ir.Ident:
+		if c := it.varCell(e, t.Name); c != nil {
+			return c.get(), true
+		}
+		return Value{}, false
+	case *ir.Index:
+		base, ok := it.phpPeek(t.X, e)
+		if !ok || t.I == nil {
+			return Value{}, false
+		}
+		k := it.dictKey(it.eval(t.I, e))
+		switch base.k {
+		case kDict:
+			return base.d.get(k)
+		case kStr:
+			i, ok := it.intIndex(k)
+			if ok && i >= 0 && i < len(base.s) {
+				return strV(base.s[i : i+1]), true
+			}
+		}
+		return Value{}, false
+	case *ir.Member:
+		base, ok := it.phpPeek(t.X, e)
+		if !ok {
+			return Value{}, false
+		}
+		name := strings.TrimPrefix(t.Name, "$")
+		switch base.k {
+		case kObj:
+			return base.o.fields.get(strV(name))
+		case kClass:
+			return base.c.statics.get(strV(name))
+		}
+		return Value{}, false
+	case *ir.This:
+		return it.thisValue(t, e), true
+	}
+	return it.eval(x, e), true
+}
+
+// methodOrProp: di PHP/Java/C++ method dan properti punya ruang nama sendiri, jadi
+// obj.nama() mencari method lebih dulu.
+func (it *interp) methodOrProp(obj Value, name string, at ir.Node) Value {
+	if obj.k == kObj && (it.lang == "php" || it.lang == "java" || it.lang == "cpp" || it.lang == "c") {
+		for c := obj.o.class; c != nil; c = c.super {
+			if m := c.methods[name]; m != nil {
+				t := obj
+				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, this: &t, class: c}}
+			}
+		}
+	}
+	if obj.k == kClass && (it.lang == "php" || it.lang == "java" || it.lang == "cpp") {
+		for c := obj.c; c != nil; c = c.super {
+			if m := c.methods[name]; m != nil {
+				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, class: c, static: true}}
+			}
+		}
+	}
+	return it.getProp(obj, name, at)
 }
