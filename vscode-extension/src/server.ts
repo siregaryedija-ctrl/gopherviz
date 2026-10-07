@@ -188,6 +188,8 @@ export interface Trace {
   loop: { id: string; kind: LoopKind; line: number; endLine: number; label?: string; vars?: string[]; children?: string[] };
   steps: TraceStep[];
   collection?: { kind: string; items: string[]; keys?: string[] };
+  /** Graf yang ditelusuri DFS/BFS (panggung graf). */
+  graph?: { var: string; kind?: 'bfs' | 'dfs' | ''; nodes: string[]; edges: [string, string][]; directed?: boolean; frontier?: string; visited?: string };
   truncated: boolean;
   warnings: string[];
   /** Program membaca input user: panel menampilkan kotak Input. */

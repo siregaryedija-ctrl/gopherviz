@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"strings"
 
+	"gopherviz/internal/graphs"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
@@ -32,6 +33,10 @@ type recorder struct {
 	collKind string                // slice | array | map
 	dirty    bool                  // isi koleksi berubah sejak langkah terakhir
 	elems    map[string]trace.Elem // variabel range yang memegang elemen koleksi (for _, v := range arr)
+
+	graphSpec *graphs.Spec // analisis DFS/BFS blok fokus (nil = bukan penelusuran graf)
+	graph     *trace.Graph // graf yang sudah terbaca dari nilai program
+	graphCur  string       // variabel simpul yang sedang diproses
 
 	mem     bool              // sertakan potret memori di setiap langkah
 	objIDs  map[*value]string // ID objek heap yang stabil antar langkah

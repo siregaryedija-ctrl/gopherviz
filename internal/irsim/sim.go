@@ -82,10 +82,11 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	}
 	tr.Block.Names = blockNames(node)
 	coll := findCollection(node)
+	gspec := findGraph(node)
 	it := &interp{
 		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
 		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
-		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll},
+		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec},
 		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
 		statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
@@ -109,6 +110,12 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	tr.Mode = trace.ModeSimulated
 	tr.Steps = r.steps
 	tr.Truncated = r.truncated
+	tr.Graph = r.graph
+	if r.graph == nil {
+		for i := range tr.Steps {
+			tr.Steps[i].Graph = nil
+		}
+	}
 	if coll != "" && r.collKind != "" {
 		for _, s := range r.steps {
 			if s.Items != nil {

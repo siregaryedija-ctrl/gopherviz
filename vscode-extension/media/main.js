@@ -71,6 +71,7 @@
   const branch = new G.BranchStage($('stage'), {});
   const func = new G.FuncStage($('stage'), {});
   const lanes = new G.LaneStage($('stage'), {});
+  const graph = new G.GraphStage($('stage'), {});
 
   // ---------- state dari ekstensi ----------
 
@@ -309,6 +310,7 @@
   };
   const branchR = { prepare: tr => branch.prepare(tr), duration: i => branch.duration(i), cues: i => branch.cues(i), render: (i, t) => branch.render(i, t) };
   const funcR = { prepare: tr => func.prepare(tr), duration: i => func.duration(i), cues: i => func.cues(i), render: (i, t) => func.render(i, t) };
+  const graphR = { prepare: tr => graph.prepare(tr), duration: i => graph.duration(i), cues: i => graph.cues(i), render: (i, t) => graph.render(i, t) };
   const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
 
   /** Langkah call/return hanya berarti di mode fungsi; di renderer lain digabung ke langkah berikutnya. */
@@ -356,7 +358,8 @@
     // Program dengan goroutine: jalur per goroutine + pipa channel, apa pun jenis blok fokusnya.
     const laneMode = tr.steps.some(s => s.gs) || (kind === 'func' && tr.steps.some(s => s.chans));
     if (laneMode) $('explain').textContent = BLOCK_EXPLAIN.lanes;
-    tp.r = laneMode ? laneR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    // DFS/BFS: simulator mengenali graf (daftar ketetanggaan) yang ditelusuri → panggung graf
+    tp.r = laneMode ? laneR : tr.graph ? graphR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
@@ -543,6 +546,7 @@
     branch.update(dt);
     func.update(dt);
     lanes.update(dt);
+    graph.update(dt);
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();

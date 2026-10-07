@@ -177,6 +177,7 @@ func (it *interp) add(s trace.Step, e *env) {
 	var vars map[string]string
 	if e != nil {
 		vars = it.snapshot(e)
+		s.Graph = it.graphStep(e)
 	}
 	if sch := it.sch; sch != nil && (sch.used || len(sch.chans) > 0) {
 		s.G, s.Gs, s.Chans = it.curG(), it.gStates(), it.chanStates(e)

@@ -3,6 +3,7 @@ package irsim
 import (
 	"strings"
 
+	"gopherviz/internal/graphs"
 	"gopherviz/internal/ir"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
@@ -190,6 +191,10 @@ type recorder struct {
 	dirty    bool
 	elems    map[string]trace.Elem // variabel for-each yang memegang elemen koleksi
 	cb       *cbAlias              // callback pencarian bawaan yang sedang berjalan (find, some, find_if)
+
+	graphSpec *graphs.Spec // analisis DFS/BFS blok fokus (nil = bukan penelusuran graf)
+	graph     *trace.Graph // graf yang sudah terbaca dari nilai program
+	graphCur  string       // variabel simpul yang sedang diproses
 }
 
 // bindElem mencatat bahwa variabel name sekarang memegang elemen koleksi ke-idx; fungsi

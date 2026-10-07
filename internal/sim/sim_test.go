@@ -468,6 +468,26 @@ func TestFallbacks(t *testing.T) {
 			t.Errorf("output %q", out)
 		}
 	})
+	t.Run("DFS rekursif pada map: graf, simpul aktif, visited", func(t *testing.T) {
+		src := "package main\n\nvar graph = map[string][]string{\"A\": {\"B\", \"C\"}, \"B\": {\"D\"}, \"C\": {\"D\"}, \"D\": {}}\n\n" +
+			"func dfs(node string, visited map[string]bool) {\n\tvisited[node] = true\n\tfor _, nb := range graph[node] {\n\t\tif !visited[nb] {\n\t\t\tdfs(nb, visited)\n\t\t}\n\t}\n}\n\n" +
+			"func main() {\n\tdfs(\"A\", map[string]bool{})\n}\n"
+		p := analyzer.Load("t.go", []byte(src))
+		tr := Trace(p, "F1", Options{})
+		g := tr.Graph
+		if g == nil || g.Kind != "dfs" || len(g.Nodes) != 4 || g.Visited != "visited" || !g.Directed {
+			t.Fatalf("graf = %+v (%v)", g, tr.Warnings)
+		}
+		var order []string
+		for _, s := range tr.Steps {
+			if s.Graph != nil && s.Graph.Cur != "" && !slices.Contains(order, s.Graph.Cur) {
+				order = append(order, s.Graph.Cur)
+			}
+		}
+		if last := tr.Steps[len(tr.Steps)-1].Graph; !slices.Equal(order, []string{"A", "B", "D", "C"}) || last == nil || len(last.Visited) != 4 {
+			t.Errorf("urutan %v, langkah terakhir %+v", order, last)
+		}
+	})
 	t.Run("loop belum lengkap: mode struktur dengan pesan", func(t *testing.T) {
 		tr := Trace(load(t, filepath.Join(loopsDir, "14_incomplete_noclose.go")), "L1", Options{})
 		if tr.Mode != trace.ModeStructural || !strings.Contains(tr.Warnings[0], "belum lengkap") {

@@ -79,6 +79,7 @@ type Trace struct {
 	Loop       LoopInfo    `json:"loop"` // diisi bila Block.Kind == "loop" (kompatibel dengan v1)
 	Steps      []Step      `json:"steps"`
 	Collection *Collection `json:"collection,omitempty"`
+	Graph      *Graph      `json:"graph,omitempty"` // graf yang ditelusuri DFS/BFS di blok fokus
 	Truncated  bool        `json:"truncated"`
 	Warnings   []string    `json:"warnings"`
 	ReadsInput bool        `json:"readsInput,omitempty"` // program membaca input user (panel menampilkan kotak Input)
@@ -133,6 +134,25 @@ type Step struct {
 	G         int               `json:"g,omitempty"`     // goroutine yang menjalankan langkah ini (1 = main); 0 bila tanpa goroutine
 	Gs        []GState          `json:"gs,omitempty"`    // potret semua goroutine (bila program memakai go)
 	Chans     []ChanState       `json:"chans,omitempty"` // potret semua channel
+	Graph     *GraphState       `json:"graph,omitempty"` // keadaan penelusuran graf (bila Trace.Graph ada)
+}
+
+// Graph adalah graf (daftar ketetanggaan atau matriks) yang ditelusuri di blok fokus.
+type Graph struct {
+	Var      string      `json:"var"`                // nama variabel graf
+	Kind     string      `json:"kind,omitempty"`     // "bfs" (antrian) | "dfs" (tumpukan/rekursi) | "" (tidak diketahui)
+	Nodes    []string    `json:"nodes"`              // simpul, urut seperti di program
+	Edges    [][2]string `json:"edges"`              // sisi from → to
+	Directed bool        `json:"directed,omitempty"` // false bila setiap sisi punya pasangan balik
+	Frontier string      `json:"frontier,omitempty"` // nama variabel antrian/tumpukan
+	Visited  string      `json:"visited,omitempty"`  // nama variabel penanda simpul yang sudah dikunjungi
+}
+
+// GraphState adalah keadaan penelusuran graf pada satu langkah.
+type GraphState struct {
+	Cur      string   `json:"cur,omitempty"`      // simpul yang sedang diproses
+	Visited  []string `json:"visited,omitempty"`  // simpul yang sudah ditandai dikunjungi
+	Frontier []string `json:"frontier,omitempty"` // isi antrian/tumpukan (depan/bawah dulu)
 }
 
 // GState adalah keadaan satu goroutine: jalan, siap, menunggu, tidur, atau selesai.

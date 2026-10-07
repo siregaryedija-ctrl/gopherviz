@@ -92,7 +92,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		rng:     rand.New(rand.NewSource(opt.Seed)),
 		input:   userinput.New(opt.Input, opt.InputSeed),
 		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
-			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}},
+			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: findGraph(node)},
 	}
 	reason := it.run(node)
 	r := it.rec
@@ -113,6 +113,12 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	tr.Mode = trace.ModeSimulated
 	tr.Steps = r.steps
 	tr.Truncated = r.truncated
+	tr.Graph = r.graph
+	if r.graph == nil {
+		for i := range tr.Steps {
+			tr.Steps[i].Graph = nil
+		}
+	}
 	if coll != "" {
 		for _, s := range r.steps {
 			if s.Items != nil {

@@ -59,6 +59,10 @@ const samples = {
   py_index: ['@/builtin.py', 8],
   py_bisect: ['@/builtin.py', 13],
   js_find: ['@/builtin.js', 3],
+  py_bfs: ['@/graph.py', 14],
+  py_dfs: ['@/graph.py', 28],
+  py_dfs_stack: ['@/graph.py', 37],
+  go_bfs: ['@/graph.go', 6],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

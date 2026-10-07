@@ -138,7 +138,7 @@ export class LoopPanel implements vscode.Disposable {
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'memory.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>

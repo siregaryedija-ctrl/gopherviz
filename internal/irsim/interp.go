@@ -117,6 +117,7 @@ func (it *interp) add(s trace.Step, e *Env) {
 	if e != nil {
 		vars = it.snapshot(e)
 		it.detectCollKind(e)
+		s.Graph = it.graphStep(e)
 	}
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) })
 }
@@ -369,7 +370,10 @@ func (it *interp) effectNote(n ir.Node, targets []ir.Expr, e *Env) string {
 				parts = append(parts, x.Name+" = "+it.sem.show(it, v))
 			}
 		case *ir.Index, *ir.Member:
-			v := it.evalQuiet(x, e)
+			if ix, ok := x.(*ir.Index); ok && ix.I == nil { // PHP $a[] = x: tampilkan isi array-nya
+				t = ix.X
+			}
+			v := it.evalQuiet(t, e)
 			if v.k != kUnknown {
 				parts = append(parts, it.text(x)+" = "+it.sem.show(it, v))
 			}
