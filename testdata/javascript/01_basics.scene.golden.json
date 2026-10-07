@@ -1,0 +1,352 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "javascript",
+    "file": "01_basics.js",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 2,
+        "endLine": 7,
+        "state": "complete",
+        "name": "fib",
+        "header": "function fib(n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 3,
+            "endLine": 5,
+            "text": "if (n < 2)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 4,
+                "text": "return n;"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 6,
+            "text": "return fib(n - 1) + fib(n - 2);"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 3,
+        "endLine": 5,
+        "state": "complete",
+        "header": "if (n < 2)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n < 2",
+            "line": 3,
+            "body": [
+              {
+                "kind": "return",
+                "line": 4,
+                "text": "return n;"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "header": "for (let i = 0; i < nums.length; i++)"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 24,
+        "state": "complete",
+        "header": "for (const x of nums)",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 17,
+        "endLine": 23,
+        "state": "complete",
+        "header": "if (x > 4)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "x > 4",
+            "line": 17,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "console.log(x, \"besar\");"
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "x > 2",
+            "line": 19,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 20,
+                "text": "console.log(x, \"sedang\");"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 21,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 22,
+                "text": "console.log(x, \"kecil\");"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": "while (k > 0)"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "header": "do … while (k < 2)"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 35,
+        "endLine": 44,
+        "state": "complete",
+        "header": "switch (k)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "1",
+            "line": 36,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 37,
+                "text": "console.log(\"satu\");"
+              },
+              {
+                "kind": "break",
+                "line": 38,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "2",
+            "line": 39,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 40,
+                "text": "console.log(\"dua\");"
+              },
+              {
+                "kind": "break",
+                "line": 41,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 42,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 43,
+                "text": "console.log(\"lain\");"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "kind": "loop",
+        "line": 47,
+        "endLine": 49,
+        "state": "complete",
+        "header": "for (const key in person)"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "header": {
+          "text": "for (let i = 0; i < nums.length; i++)",
+          "init": "let i = 0",
+          "cond": "i < nums.length",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "total += nums[i];"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 16,
+        "endLine": 24,
+        "state": "complete",
+        "header": {
+          "text": "for (const x of nums)",
+          "value": "x",
+          "define": true,
+          "range": "nums"
+        },
+        "vars": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 17,
+            "endLine": 23,
+            "text": "if (x > 4)",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "console.log(x, \"besar\");"
+              }
+            ],
+            "else": [
+              {
+                "kind": "if",
+                "line": 19,
+                "text": "if (x > 2)",
+                "then": [
+                  {
+                    "kind": "stmt",
+                    "line": 20,
+                    "text": "console.log(x, \"sedang\");"
+                  }
+                ],
+                "else": [
+                  {
+                    "kind": "stmt",
+                    "line": 22,
+                    "text": "console.log(x, \"kecil\");"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "cond",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "while (k > 0)",
+          "cond": "k > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "k--;"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "do-while",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "header": {
+          "text": "do … while (k < 2)",
+          "cond": "k < 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 32,
+            "text": "k++;"
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "kind": "range-keys",
+        "line": 47,
+        "endLine": 49,
+        "state": "complete",
+        "header": {
+          "text": "for (const key in person)",
+          "value": "key",
+          "define": true,
+          "range": "person"
+        },
+        "vars": [
+          "key"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 48,
+            "text": "console.log(`${key} = ${person[key]}`);"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

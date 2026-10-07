@@ -13,6 +13,23 @@
     'range-string': 'range string', 'range-map': 'range map', 'range-keys': 'range key', 'range-chan': 'range channel',
     'range-func': 'range iterator', 'range-unknown': 'range',
   };
+  // Bahasa selain Go: nama jenis loop mengikuti istilah umum (while, for-each, for...in).
+  const KIND_OTHER = {
+    'cond': 'while', 'infinite': 'loop tanpa batas', 'range-int': 'for range()', 'range-slice': 'for-each',
+    'range-array': 'for-each', 'range-string': 'per karakter', 'range-map': 'for-each key-value',
+    'range-keys': 'for...in (key)', 'range-unknown': 'for-each',
+  };
+  const EXPLAIN_OTHER = {
+    'cond': 'Isi diulang selama kondisinya true; kondisi dicek sebelum setiap putaran.',
+    'range-int': 'Diulang untuk setiap angka dari range(); kalau tidak ditentukan, mulai dari 0.',
+    'range-slice': 'Mengunjungi setiap elemen secara berurutan.',
+    'range-array': 'Mengunjungi setiap elemen secara berurutan.',
+    'range-string': 'Mengunjungi setiap karakter string secara berurutan.',
+    'range-map': 'Mengunjungi setiap pasangan key dan value.',
+    'range-unknown': 'Mengunjungi setiap elemen dari koleksi itu.',
+  };
+  const LANG_NAME = { go: 'Go', javascript: 'JavaScript', typescript: 'TypeScript', python: 'Python', php: 'PHP', cpp: 'C++', c: 'C', java: 'Java' };
+  const sceneLang = () => (state && state.result && state.result.scene && state.result.scene.language) || 'go';
   const EXPLAIN = {
     'for3': 'Init jalan sekali. Lalu berulang: cek kondisi, jalankan isi, jalankan post.',
     'cond': 'Isi diulang selama kondisinya true, seperti while di bahasa lain.',
@@ -117,10 +134,27 @@
 
   const span = (p, text) => `<span class="hp" data-p="${p}">${esc(text)}</span>`;
 
+  /** Menyorot bagian-bagian (init/cond/post/range) di dalam teks kepala apa adanya. */
+  function markParts(text, parts) {
+    let out = '', pos = 0;
+    for (const [p, sub] of parts) {
+      if (!sub) continue;
+      const i = text.indexOf(sub, pos);
+      if (i < 0) continue;
+      out += esc(text.slice(pos, i)) + span(p, sub);
+      pos = i + sub.length;
+    }
+    return out + esc(text.slice(pos));
+  }
+
   function loopHead(loop) {
     const h = loop.header;
     const label = loop.label ? esc(loop.label) + ': ' : '';
     if (loop.state === 'incomplete') return label + esc(h.text);
+    if (sceneLang() !== 'go') {
+      const lhs = [h.key, h.value].filter(Boolean);
+      return label + markParts(h.text, [['init', h.init], ['cond', h.cond], ['post', h.post], ...lhs.map(x => ['init', x]), ['cond', h.range]]);
+    }
     switch (loop.kind) {
       case 'for3':
         return `${label}for ${span('init', h.init || '')}; ${span('cond', h.cond || '')}; ${span('post', h.post || '')}`;
@@ -140,7 +174,8 @@
     if (!b) return '';
     if (b.kind === 'loop') {
       const l = loops.find(x => x.id === b.id);
-      return l ? KIND[l.kind] || l.kind : 'loop';
+      if (!l) return 'loop';
+      return (sceneLang() !== 'go' && KIND_OTHER[l.kind]) || KIND[l.kind] || l.kind;
     }
     if (b.kind === 'func') return `fungsi ${b.name || ''}`.trim();
     const n = (b.branches || []).length;
@@ -150,11 +185,13 @@
   function renderHeader() {
     const b = currentBlock;
     $('loopId').textContent = b ? b.id : 'GopherViz';
-    $('kind').textContent = b ? kindLabel(b) : (state && state.file) || '';
-    $('head').innerHTML = !b ? '' : currentLoop ? loopHead(currentLoop) + ' {' : esc(b.header) + ' {';
+    const lg = sceneLang();
+    $('kind').textContent = b ? kindLabel(b) + (lg !== 'go' ? ` · ${LANG_NAME[lg] || lg}` : '') : (state && state.file) || '';
+    const open = lg === 'python' ? ':' : ' {';
+    $('head').innerHTML = !b ? '' : currentLoop ? loopHead(currentLoop) + open : esc(b.header) + open;
     $('head').hidden = !b;
     let explain = '';
-    if (currentLoop) explain = EXPLAIN[currentLoop.kind] || '';
+    if (currentLoop) explain = (sceneLang() !== 'go' && EXPLAIN_OTHER[currentLoop.kind]) || EXPLAIN[currentLoop.kind] || '';
     else if (b) explain = b.kind === 'func' && b.name === 'main' ? BLOCK_EXPLAIN.main : BLOCK_EXPLAIN[b.kind] || '';
     $('explain').textContent = explain;
     const chip = $('stateChip');
@@ -212,7 +249,10 @@
       $('partsTitle').textContent = b.kind === 'if' ? 'Cabang' : 'Case';
       const brs = b.branches || [];
       let rows = brs.map((br, i) => {
-        const text = `${BRANCH[br.kind]} ${br.label}`.trim();
+        let kw = BRANCH[br.kind];
+        if (br.kind === 'else-if') kw = { python: 'elif', php: 'elseif' }[sceneLang()] || kw;
+        if (br.kind === 'default' && sceneLang() === 'python') kw = 'case _';
+        const text = `${kw} ${br.label}`.trim();
         return partRow(i + 1, br.kind === 'else' || br.kind === 'default' ? 'block' : 'if', text,
           `${br.body.length ? br.body.length + ' bagian' : 'kosong'} · baris ${br.line}`, br.line);
       }).join('');

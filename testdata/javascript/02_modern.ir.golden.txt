@@ -1,0 +1,46 @@
+1: class Counter []
+  2: var(field) #count = 0
+  3: var(static field) created = 0
+  5: func Counter.constructor(start)
+    5: block
+      6: expr (this.#count = start)
+      7: expr (Counter.created++)
+  10: func Counter.inc(by=1)
+    10: block
+      11: expr (this.#count += by)
+      12: return this
+  15: func Counter.value()
+    15: block
+      16: return this.#count
+20: var(const) square = fn =>(x) (x * x)
+21: var(const) add = fn =>(a, b) {...}
+24: var(const) doubled = array[1, 2, 3].map(fn =>(n) (n * 2))
+25: var(const) array[first, ...rest] = doubled
+26: var(const) object{a: a, b: (renamed = 5)} = object{a: 1}
+27: var(const) re = /ab+c/i
+28: var(const) c = new Counter(1).inc().inc(3)
+29: expr console.log(c.value, square(4), add(1, 2), first, rest, a, renamed, re.test("abbc"))
+30: var(const) msg = ((c.value > 3) ? "besar" : "kecil")
+31: expr console.log((msg ?? "kosong"), c?.value)
+33: label outer
+  33: for [var(let) i = 0] [(i < 3)] [(i++)]
+    33: block
+      34: for [var(let) j = 0] [(j < 3)] [(j++)]
+        34: block
+          35: if (j === 1)
+            35: continue outer
+          36: if (i === 2)
+            36: break outer
+40: func load()
+  40: block
+    41: try
+      41: block
+        42: var(const) r = (await Promise.resolve(42))
+        43: return r
+      catch [] e
+      44: block
+        45: expr console.error(e.message)
+      finally
+      46: block
+        47: expr console.log("selesai")
+50: expr load().then(fn =>(v) console.log(v))

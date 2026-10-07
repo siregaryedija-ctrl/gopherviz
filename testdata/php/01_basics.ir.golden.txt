@@ -1,0 +1,56 @@
+3: func faktorial($n)
+  3: block
+    4: if ($n <= 1)
+      4: block
+        5: return 1
+    7: return ($n * faktorial(($n - 1)))
+10: expr ($buah = array["apel", "jeruk", "mangga"])
+11: foreach(foreach ) $i => $nama in $buah
+  11: block
+    12: expr echo(`${$i}: ${$nama}
+`)
+15: expr ($stok = array{"apel": 3, "jeruk": 0})
+16: foreach(foreach ) $nama => $jumlah in $stok
+  16: block
+    17: if ($jumlah > 0)
+      17: block
+        18: expr echo(`${$nama} tersedia (${$jumlah})
+`)
+      else
+      19: if ($jumlah == 0)
+        19: block
+          20: expr echo(($nama . " habis\n"))
+        else
+        21: block
+          22: expr echo("aneh\n")
+26: for [expr ($i = 0)] [($i < 3)] [($i++)]
+  26: block
+    27: expr echo($i)
+30: expr ($n = 5)
+31: while ($n > 0)
+  31: block
+    32: expr ($n -= 2)
+35: switch $n
+  36: case (- 1)
+    37: expr echo("minus satu")
+    38: break 
+  39: default
+    40: expr echo("lain")
+43: class Akun []
+  44: var(field) $saldo = 0
+  45: var(static field) $jumlah = 0
+  47: func Akun.__construct($nama)
+    47: block
+      48: expr (self::$jumlah++)
+  51: func Akun.setor($x)
+    51: block
+      52: expr (this->saldo += $x)
+  55: func Akun.saldo()
+    55: block
+      56: return this->saldo
+60: expr ($a = new Akun("Budi"))
+61: expr $a->setor(100)
+62: expr ($label = (($a->saldo() > 50) ? "kaya" : "biasa"))
+66: expr echo(faktorial(5), " ", $label, " ", Akun::$jumlah, PHP_EOL)
+67: empty [] 
+68: expr echo("<p>HTML di luar PHP</p>\n")

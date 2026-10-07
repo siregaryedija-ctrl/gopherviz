@@ -1,0 +1,53 @@
+1: directive [#include <iostream>] 
+2: directive [#include <vector>] 
+3: directive [#include <string>] 
+4: import [] 
+6: struct Point []
+  7: var(int) x
+  8: var(int) y
+11: class Rect []
+  13: func Rect.Rect(w, h)
+    13: block
+  14: func Rect.area()
+    14: block
+      14: return (w * h)
+  16: var(int) w, h
+19: func fib(n)
+  19: block
+    20: if (n < 2)
+      20: return n
+    21: return (fib((n - 1)) + fib((n - 2)))
+24: func main()
+  24: block
+    25: var(vector<int>) v = init[5, 3, 8, 1]
+    26: var(int) total = 0
+    27: for [var(int) i = 0] [(i < (int)v.size())] [(i++)]
+      27: block
+        28: expr (total += v[i])
+    30: foreach(colon int) x in v
+      30: block
+        31: if (x > 4)
+          31: block
+            32: expr (((cout << x) << " besar") << endl)
+          else
+          33: block
+            34: expr (((cout << x) << " kecil") << endl)
+    37: var(int) arr[1 dim] = init[1, 2, 3]
+    38: var(Point) p = init[1, 2]
+    39: var(Rect) r(3, 4)
+    40: var(int) k = 0
+    41: while (k < 3)
+      41: expr (k++)
+    42: do-while (k > 0)
+      42: block
+        43: expr (k--)
+    45: switch k
+      46: case 0
+        47: expr ((cout << "nol") << endl)
+        48: break 
+      49: default
+        50: expr ((cout << "lain") << endl)
+    52: var(string) s = "halo"
+    53: var(auto) sq = fn =>(a) {...}
+    54: expr ((((((((((((cout << total) << " ") << fib(6)) << " ") << r.area()) << " ") << (p.x + arr[2])) << " ") << s) << " ") << sq(3)) << endl)
+    55: return 0

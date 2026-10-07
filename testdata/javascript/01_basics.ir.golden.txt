@@ -1,0 +1,45 @@
+2: func fib(n)
+  2: block
+    3: if (n < 2)
+      3: block
+        4: return n
+    6: return (fib((n - 1)) + fib((n - 2)))
+9: var(const) nums = array[5, 3, 8, 1]
+10: var(let) total = 0
+11: for [var(let) i = 0] [(i < nums.length)] [(i++)]
+  11: block
+    12: expr (total += nums[i])
+14: expr console.log("total", total)
+16: foreach(of const) x in nums
+  16: block
+    17: if (x > 4)
+      17: block
+        18: expr console.log(x, "besar")
+      else
+      19: if (x > 2)
+        19: block
+          20: expr console.log(x, "sedang")
+        else
+        21: block
+          22: expr console.log(x, "kecil")
+26: var(let) k = 3
+27: while (k > 0)
+  27: block
+    28: expr (k--)
+31: do-while (k < 2)
+  31: block
+    32: expr (k++)
+35: switch k
+  36: case 1
+    37: expr console.log("satu")
+    38: break 
+  39: case 2
+    40: expr console.log("dua")
+    41: break 
+  42: default
+    43: expr console.log("lain")
+46: var(const) person = object{name: "Ani", age: 20}
+47: foreach(in const) key in person
+  47: block
+    48: expr console.log(`${key} = ${person[key]}`)
+50: expr console.log(fib(6))

@@ -36,6 +36,12 @@ const samples = {
   select: ['conc/05_select.go', 9],
   pingpong: ['conc/06_pingpong.go', 20],
   deadlock: ['conc/07_deadlock.go', 6],
+  js_for: ['javascript/01_basics.js', 12],
+  js_if: ['javascript/01_basics.js', 18],
+  py_for: ['python/01_basics.py', 16],
+  php_foreach: ['php/01_basics.php', 12],
+  java_switch: ['java/01_basics.java', 37],
+  cpp_while: ['cpp/01_basics.cpp', 43],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

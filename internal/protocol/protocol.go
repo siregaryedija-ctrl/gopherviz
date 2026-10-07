@@ -86,6 +86,9 @@ type UpdateParams struct {
 	File   string `json:"file"`
 	Text   string `json:"text"`
 	Cursor Cursor `json:"cursor"`
+	// Language adalah languageId editor (mis. "javascript", "typescriptreact", "python").
+	// Opsional: bila kosong, bahasa ditebak dari ekstensi file.
+	Language string `json:"language,omitempty"`
 }
 
 // UpdateResult adalah hasil MethodUpdate.

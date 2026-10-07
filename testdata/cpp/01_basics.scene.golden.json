@@ -1,0 +1,430 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "cpp",
+    "file": "01_basics.cpp",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 13,
+        "endLine": 13,
+        "state": "complete",
+        "name": "Rect.Rect",
+        "header": "Rect(int w, int h) : w(w), h(h)",
+        "params": [
+          "w",
+          "h"
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 14,
+        "endLine": 14,
+        "state": "complete",
+        "name": "Rect.area",
+        "header": "int area() const",
+        "body": [
+          {
+            "kind": "return",
+            "line": 14,
+            "text": "return w * h;"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 19,
+        "endLine": 22,
+        "state": "complete",
+        "name": "fib",
+        "header": "int fib(int n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 20,
+            "text": "if (n < 2)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 20,
+                "text": "return n;"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 21,
+            "text": "return fib(n - 1) + fib(n - 2);"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 20,
+        "endLine": 20,
+        "state": "complete",
+        "header": "if (n < 2)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n < 2",
+            "line": 20,
+            "body": [
+              {
+                "kind": "return",
+                "line": 20,
+                "text": "return n;"
+              }
+            ]
+          }
+        ],
+        "parent": "F3"
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 24,
+        "endLine": 56,
+        "state": "complete",
+        "name": "main",
+        "header": "int main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "vector<int> v = {5, 3, 8, 1};"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 27,
+            "endLine": 29,
+            "ref": "L1"
+          },
+          {
+            "kind": "loop",
+            "line": 30,
+            "endLine": 36,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 37,
+            "text": "int arr[3] = {1, 2, 3};"
+          },
+          {
+            "kind": "stmt",
+            "line": 38,
+            "text": "Point p = {1, 2};"
+          },
+          {
+            "kind": "stmt",
+            "line": 39,
+            "text": "Rect r(3, 4);"
+          },
+          {
+            "kind": "stmt",
+            "line": 40,
+            "text": "int k = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 41,
+            "ref": "L3"
+          },
+          {
+            "kind": "loop",
+            "line": 42,
+            "endLine": 44,
+            "ref": "L4"
+          },
+          {
+            "kind": "switch",
+            "line": 45,
+            "endLine": 51,
+            "text": "switch (k)",
+            "ref": "S1"
+          },
+          {
+            "kind": "stmt",
+            "line": 52,
+            "text": "string s = \"halo\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 53,
+            "text": "auto sq = [](int a) { return a * a; };"
+          },
+          {
+            "kind": "stmt",
+            "line": 54,
+            "text": "cout << total << \" \" << fib(6) << \" \" << r.area() << \" \" <<…"
+          },
+          {
+            "kind": "return",
+            "line": 55,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "S1",
+          "F5"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": "for (int i = 0; i < (int)v.size(); i++)",
+        "parent": "F4"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 30,
+        "endLine": 36,
+        "state": "complete",
+        "header": "for (int x : v)",
+        "parent": "F4",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 31,
+        "endLine": 35,
+        "state": "complete",
+        "header": "if (x > 4)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "x > 4",
+            "line": 31,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 32,
+                "text": "cout << x << \" besar\" << endl;"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 33,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 34,
+                "text": "cout << x << \" kecil\" << endl;"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 41,
+        "endLine": 41,
+        "state": "complete",
+        "header": "while (k < 3)",
+        "parent": "F4"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 42,
+        "endLine": 44,
+        "state": "complete",
+        "header": "do … while (k > 0)",
+        "parent": "F4"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 45,
+        "endLine": 51,
+        "state": "complete",
+        "header": "switch (k)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "0",
+            "line": 46,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 47,
+                "text": "cout << \"nol\" << endl;"
+              },
+              {
+                "kind": "break",
+                "line": 48,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 49,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 50,
+                "text": "cout << \"lain\" << endl;"
+              }
+            ]
+          }
+        ],
+        "parent": "F4"
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 53,
+        "endLine": 53,
+        "state": "complete",
+        "name": "(anonim)",
+        "header": "[](int a)",
+        "params": [
+          "a"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 53,
+            "text": "return a * a;"
+          }
+        ],
+        "parent": "F4"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < (int)v.size(); i++)",
+          "init": "int i = 0",
+          "cond": "i < (int)v.size()",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "total += v[i];"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 30,
+        "endLine": 36,
+        "state": "complete",
+        "header": {
+          "text": "for (int x : v)",
+          "value": "x",
+          "define": true,
+          "range": "v"
+        },
+        "vars": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 31,
+            "endLine": 35,
+            "text": "if (x > 4)",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 32,
+                "text": "cout << x << \" besar\" << endl;"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 34,
+                "text": "cout << x << \" kecil\" << endl;"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "cond",
+        "line": 41,
+        "endLine": 41,
+        "state": "complete",
+        "header": {
+          "text": "while (k < 3)",
+          "cond": "k < 3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 41,
+            "text": "k++;"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "do-while",
+        "line": 42,
+        "endLine": 44,
+        "state": "complete",
+        "header": {
+          "text": "do … while (k > 0)",
+          "cond": "k > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 43,
+            "text": "k--;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

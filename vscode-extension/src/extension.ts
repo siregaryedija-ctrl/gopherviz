@@ -28,7 +28,9 @@ const KIND_NAMES: Record<LoopKind, string> = {
 
 const BLOCK_NAMES: Record<BlockKind, string> = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop' };
 
-const isGo = (doc: vscode.TextDocument) => doc.languageId === 'go';
+/** languageId editor yang didukung GopherViz (Go disimulasikan; bahasa lain mode struktur dulu). */
+export const LANGUAGES = ['go', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'python', 'php', 'cpp', 'c', 'java'];
+const isSupported = (doc: vscode.TextDocument) => LANGUAGES.includes(doc.languageId) && doc.uri.scheme !== 'output';
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const config = () => vscode.workspace.getConfiguration('gopherviz');
 
@@ -68,31 +70,31 @@ class Controller implements vscode.Disposable {
       this.panel,
       this.lens,
       this.status,
-      vscode.languages.registerCodeLensProvider({ language: 'go' }, this.lens),
+      vscode.languages.registerCodeLensProvider(LANGUAGES.map(language => ({ language })), this.lens),
       vscode.commands.registerCommand('gopherviz.showPanel', () => this.panel.show(true)),
       vscode.commands.registerCommand('gopherviz.visualizeAtCursor', (uri?: vscode.Uri, line?: number) =>
         this.visualize(uri, line),
       ),
       vscode.commands.registerCommand('gopherviz.restartServer', () => this.restart()),
       vscode.window.onDidChangeActiveTextEditor(e => {
-        if (e && isGo(e.document)) {
+        if (e && isSupported(e.document)) {
           this.editor = e;
           this.schedule(e.document, 0);
         }
         this.updateStatus();
       }),
       vscode.workspace.onDidChangeTextDocument(e => {
-        if (isGo(e.document) && e.contentChanges.length > 0 && config().get('realtime', true)) {
+        if (isSupported(e.document) && e.contentChanges.length > 0 && config().get('realtime', true)) {
           this.schedule(e.document, UPDATE_DELAY_MS);
         }
       }),
       vscode.workspace.onDidSaveTextDocument(doc => {
-        if (isGo(doc) && !config().get('realtime', true)) {
+        if (isSupported(doc) && !config().get('realtime', true)) {
           this.schedule(doc, 0);
         }
       }),
       vscode.window.onDidChangeTextEditorSelection(e => {
-        if (isGo(e.textEditor.document)) {
+        if (isSupported(e.textEditor.document)) {
           this.editor = e.textEditor;
           clearTimeout(this.focusTimer);
           this.focusTimer = setTimeout(() => void this.sendFocus(e.textEditor), FOCUS_DELAY_MS);
@@ -113,7 +115,7 @@ class Controller implements vscode.Disposable {
 
     this.postConfig();
     const active = vscode.window.activeTextEditor;
-    if (active && isGo(active.document)) {
+    if (active && isSupported(active.document)) {
       this.editor = active;
       this.schedule(active.document, 0);
     }
@@ -221,6 +223,7 @@ class Controller implements vscode.Disposable {
         file: doc.fileName,
         text: doc.getText(),
         cursor: this.cursorFor(doc),
+        language: doc.languageId,
       });
       if (this.seq.get(uri) !== n) {
         return; // sudah ada update yang lebih baru
@@ -328,7 +331,7 @@ class Controller implements vscode.Disposable {
 
   private updateStatus(): void {
     const ed = vscode.window.activeTextEditor;
-    if (!ed || !isGo(ed.document)) {
+    if (!ed || !isSupported(ed.document)) {
       this.status.hide();
       return;
     }

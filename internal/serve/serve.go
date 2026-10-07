@@ -10,6 +10,7 @@ import (
 	"io"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/lang"
 	"gopherviz/internal/protocol"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/sim"
@@ -78,7 +79,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 			return fail(req.ID, err.Error())
 		}
 		text := bytes.ReplaceAll([]byte(p.Text), []byte("\r\n"), []byte("\n"))
-		prog := analyzer.Load(p.File, text)
+		prog := analyzer.LoadLang(p.File, text, lang.FromEditor(p.Language))
 		s.progs[p.File] = prog
 		res := prog.Result
 		loop, _ := res.Scene.LoopAt(p.Cursor.Line)

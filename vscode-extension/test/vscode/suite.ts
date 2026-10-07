@@ -19,6 +19,7 @@ const test = (name: string, fn: (api: TestApi) => Promise<void>) => tests.push([
 
 // __dirname = vscode-extension/out/test/vscode
 const file = path.resolve(__dirname, '..', '..', '..', '..', 'testdata', 'loops', '11_nested_bubble.go');
+const file0 = file;
 
 test('ekstensi aktif saat file Go dibuka dan scene terkirim', async api => {
   const doc = await vscode.workspace.openTextDocument(file);
@@ -84,6 +85,19 @@ test('goroutine dan channel: trace membawa jalur goroutine dan isi channel', asy
   assert.equal(tr.mode, 'simulated');
   assert.ok(tr.steps.some(s => s.gs?.length === 3), 'tidak ada potret 3 goroutine');
   assert.ok(tr.steps.some(s => s.ops?.some(o => o.op === 'send' && o.key === 'ch1')), 'tidak ada kirim ke jobs');
+});
+
+test('bahasa lain: JavaScript dan Python dianalisis dengan parsernya sendiri', async api => {
+  for (const [dir, file, lang, loops] of [['javascript', '01_basics.js', 'javascript', 5], ['python', '01_basics.py', 'python', 4]] as const) {
+    const doc = await vscode.workspace.openTextDocument(path.resolve(path.dirname(file0), '..', dir, file));
+    await vscode.window.showTextDocument(doc);
+    const res = await waitFor(`scene ${lang}`, () => api.result(doc.uri.toString()));
+    assert.equal(res.scene.language, lang);
+    assert.equal(res.scene.loops.length, loops);
+    assert.deepEqual(res.diagnostics, []);
+    const lenses = await vscode.commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', doc.uri);
+    assert.ok(lenses.some(l => l.command?.title === '▶ Visualisasikan loop L1'), 'lens L1 tidak ada');
+  }
 });
 
 export async function run(): Promise<void> {

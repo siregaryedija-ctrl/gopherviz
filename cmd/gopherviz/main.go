@@ -16,6 +16,8 @@ import (
 	"unicode/utf8"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/ir"
+	"gopherviz/internal/lang"
 	"gopherviz/internal/protocol"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/serve"
@@ -23,7 +25,7 @@ import (
 	"gopherviz/internal/trace"
 )
 
-const version = "0.5.0"
+const version = "0.6.0"
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr))
@@ -50,6 +52,23 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			fmt.Fprintf(stderr, "gopherviz serve: %v\n", err)
 			return 1
 		}
+		return 0
+	case "ir": // debug: pohon IR untuk bahasa selain Go
+		if len(args) != 2 {
+			fmt.Fprintln(stderr, "pemakaian: gopherviz ir <file>")
+			return 2
+		}
+		src, err := os.ReadFile(args[1])
+		if err != nil {
+			fmt.Fprintf(stderr, "gopherviz: %v\n", err)
+			return 1
+		}
+		language := lang.Detect(args[1])
+		if language == "" || language == "go" {
+			fmt.Fprintln(stderr, "gopherviz ir hanya untuk bahasa selain Go")
+			return 2
+		}
+		fmt.Fprint(stdout, ir.Dump(lang.Parse(language, string(src))))
 		return 0
 	case "version", "--version", "-v":
 		fmt.Fprintf(stdout, "gopherviz %s (scene v%d, trace v%d, protokol v%d)\n",

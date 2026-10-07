@@ -152,3 +152,48 @@ func TestCRLF(t *testing.T) {
 		t.Errorf("CRLF tidak dinormalisasi: %s", resps[0].Result)
 	}
 }
+
+// TestOtherLanguage: file bahasa lain dianalisis dengan parsernya sendiri; languageId
+// editor menang atas ekstensi (mis. dokumen untitled).
+func TestOtherLanguage(t *testing.T) {
+	req := func(id int, file, language, text string, line int) string {
+		b, _ := json.Marshal(map[string]any{
+			"id": id, "method": "update",
+			"params": map[string]any{"file": file, "language": language, "text": text, "cursor": map[string]int{"line": line, "col": 1}},
+		})
+		return string(b)
+	}
+	js := "function f(n) {\n  for (let i = 0; i < n; i++) {\n    console.log(i)\n  }\n}\nf(2)\n"
+	py := "for i in range(3):\n    print(i)\n"
+	resps := session(t,
+		req(1, "a.js", "", js, 3),
+		req(2, "Untitled-1", "python", py, 2),
+		`{"id":3,"method":"trace","params":{"file":"a.js","blockId":"L1"}}`,
+	)
+	var up struct {
+		Scene struct {
+			Language string `json:"language"`
+		} `json:"scene"`
+		FocusBlock string `json:"focusBlock"`
+	}
+	for i, want := range []string{"javascript", "python"} {
+		if err := json.Unmarshal(resps[i].Result, &up); err != nil {
+			t.Fatal(err)
+		}
+		if up.Scene.Language != want || up.FocusBlock != "L1" {
+			t.Errorf("update %d: bahasa %s fokus %s", i+1, up.Scene.Language, up.FocusBlock)
+		}
+	}
+	var tr struct {
+		Trace struct {
+			Mode     string   `json:"mode"`
+			Warnings []string `json:"warnings"`
+		} `json:"trace"`
+	}
+	if err := json.Unmarshal(resps[2].Result, &tr); err != nil {
+		t.Fatal(err)
+	}
+	if tr.Trace.Mode != "structural" || len(tr.Trace.Warnings) == 0 {
+		t.Errorf("trace %+v", tr.Trace)
+	}
+}

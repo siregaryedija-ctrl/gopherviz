@@ -1,0 +1,37 @@
+1: interface Point []
+  2: var(field) x
+  3: var(field) y
+6: type [] 
+8: enum Color []
+  9: var(enum) Red = 0
+  10: var(enum) Green = 5
+  11: var(enum) Blue = 6
+14: func area(shape, size)
+  14: block
+    15: switch shape
+      16: case "circle"
+        17: return ((Math.PI * size) * size)
+      18: case "square"
+        19: return (size * size)
+23: class Stack []
+  24: var(field) items = array[]
+  26: func Stack.push(item)
+    26: block
+      27: expr this.items.push(item)
+  30: func Stack.pop()
+    30: block
+      31: return this.items.pop()
+  34: func Stack.size()
+    34: block
+      35: return this.items.length
+39: var(const) s = new Stack<number>()
+40: for [var(let) i = 0] [(i < 3)] [(i++)]
+  40: block
+    41: expr s.push((i * 10))
+43: while (s.size > 0)
+  43: block
+    44: var(const) v = s.pop()
+    45: expr console.log(v)
+47: var(const) p = object{x: 1, y: 2}
+48: var(const) dist = fn =>(a, b) Math.hypot((a.x - b.x), (a.y - b.y))
+49: expr console.log(area("square", 3), dist(p, object{x: 4, y: 6}), (Color.Blue as type:number))

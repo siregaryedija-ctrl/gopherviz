@@ -1,0 +1,56 @@
+1: import [] 
+2: import [] 
+4: class Main []
+  5: func Main.fib(n)
+    5: block
+      6: if (n < 2)
+        6: block
+          7: return n
+      9: return (fib((n - 1)) + fib((n - 2)))
+  12: func Main.main(args)
+    12: block
+      13: var(int[]) nums = init[5, 3, 8, 1]
+      14: var(int) total = 0
+      15: for [var(int) i = 0] [(i < nums.length)] [(i++)]
+        15: block
+          16: expr (total += nums[i])
+      18: var(List<String>) names = new ArrayList<>()
+      19: expr names.add("Ani")
+      20: expr names.add("Budi")
+      21: foreach(colon String) name in names
+        21: block
+          22: if name.startsWith("A")
+            22: block
+              23: expr System.out.println((name + " diawali A"))
+            else
+            24: block
+              25: expr System.out.println(name)
+      28: var(int) k = 3
+      29: while (k > 0)
+        29: block
+          30: expr (k--)
+      32: do-while (k < 2)
+        32: block
+          33: expr (k++)
+      35: switch k
+        36: case 1
+          37: expr System.out.println("satu")
+          38: break 
+        39: case 2
+          40: expr System.out.println("dua")
+          41: break 
+        42: default
+          43: expr System.out.println("lain")
+      45: var(Point) p = new Point(1, 2)
+      46: var(int[]) grid = new int[][3]()
+      47: var(double) avg = ((double)total / nums.length)
+      48: expr System.out.println(((((((((total + " ") + fib(6)) + " ") + p.sum()) + " ") + grid.length) + " ") + avg))
+52: class Point []
+  53: var(int) x, y
+  55: func Point.Point(x, y)
+    55: block
+      56: expr (this.x = x)
+      57: expr (this.y = y)
+  60: func Point.sum()
+    60: block
+      61: return (x + y)

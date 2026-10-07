@@ -1,0 +1,277 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "c",
+    "file": "01_basics.c",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 9,
+        "endLine": 15,
+        "state": "complete",
+        "name": "sum",
+        "header": "int sum(int arr[], int n)",
+        "params": [
+          "arr",
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 11,
+            "endLine": 13,
+            "ref": "L1"
+          },
+          {
+            "kind": "return",
+            "line": 14,
+            "text": "return total;"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "header": "for (int i = 0; i < n; i++)",
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 17,
+        "endLine": 42,
+        "state": "complete",
+        "name": "main",
+        "header": "int main(void)",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "int data[N] = {4, 2, 9, 1, 5};"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "int i = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 20,
+            "endLine": 27,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "Point p = {3, 4};"
+          },
+          {
+            "kind": "stmt",
+            "line": 29,
+            "text": "Point *pp = &p;"
+          },
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "pp->x = 10;"
+          },
+          {
+            "kind": "stmt",
+            "line": 31,
+            "text": "char c = 'A';"
+          },
+          {
+            "kind": "switch",
+            "line": 32,
+            "endLine": 38,
+            "text": "switch (c)",
+            "ref": "S1"
+          },
+          {
+            "kind": "stmt",
+            "line": 39,
+            "text": "double avg = (double)sum(data, N) / N;"
+          },
+          {
+            "kind": "stmt",
+            "line": 40,
+            "text": "printf(\"rata-rata %.2f, x=%d\\n\", avg, p.x);"
+          },
+          {
+            "kind": "return",
+            "line": 41,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "L2",
+          "S1"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 20,
+        "endLine": 27,
+        "state": "complete",
+        "header": "while (i < N)",
+        "parent": "F2",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 21,
+        "endLine": 25,
+        "state": "complete",
+        "header": "if (data[i] % 2 == 0)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "data[i] % 2 == 0",
+            "line": 21,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 22,
+                "text": "printf(\"%d genap\\n\", data[i]);"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 23,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 24,
+                "text": "printf(\"%d ganjil\\n\", data[i]);"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 32,
+        "endLine": 38,
+        "state": "complete",
+        "header": "switch (c)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "'A'",
+            "line": 33,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 34,
+                "text": "printf(\"huruf A\\n\");"
+              },
+              {
+                "kind": "break",
+                "line": 35,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 36,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 37,
+                "text": "printf(\"lain\\n\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < n; i++)",
+          "init": "int i = 0",
+          "cond": "i < n",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "total += arr[i];"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 20,
+        "endLine": 27,
+        "state": "complete",
+        "header": {
+          "text": "while (i < N)",
+          "cond": "i < N"
+        },
+        "body": [
+          {
+            "kind": "if",
+            "line": 21,
+            "endLine": 25,
+            "text": "if (data[i] % 2 == 0)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 22,
+                "text": "printf(\"%d genap\\n\", data[i]);"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 24,
+                "text": "printf(\"%d ganjil\\n\", data[i]);"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "i++;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

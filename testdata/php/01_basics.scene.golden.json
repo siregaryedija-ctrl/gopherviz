@@ -1,0 +1,367 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "php",
+    "file": "01_basics.php",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 3,
+        "endLine": 8,
+        "state": "complete",
+        "name": "faktorial",
+        "header": "function faktorial(int $n): int",
+        "params": [
+          "$n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 4,
+            "endLine": 6,
+            "text": "if ($n <= 1)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 5,
+                "text": "return 1;"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 7,
+            "text": "return $n * faktorial($n - 1);"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 4,
+        "endLine": 6,
+        "state": "complete",
+        "header": "if ($n <= 1)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "$n <= 1",
+            "line": 4,
+            "body": [
+              {
+                "kind": "return",
+                "line": 5,
+                "text": "return 1;"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "header": "foreach ($buah as $i => $nama)"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 24,
+        "state": "complete",
+        "header": "foreach ($stok as $nama => $jumlah)",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 17,
+        "endLine": 23,
+        "state": "complete",
+        "header": "if ($jumlah > 0)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "$jumlah > 0",
+            "line": 17,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "echo \"{$nama} tersedia ($jumlah)\\n\";"
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "$jumlah == 0",
+            "line": 19,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 20,
+                "text": "echo $nama . \" habis\\n\";"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 21,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 22,
+                "text": "echo \"aneh\\n\";"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 26,
+        "endLine": 28,
+        "state": "complete",
+        "header": "for ($i = 0; $i < 3; $i++)"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "header": "while ($n > 0)"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 35,
+        "endLine": 41,
+        "state": "complete",
+        "header": "switch ($n)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "-1",
+            "line": 36,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 37,
+                "text": "echo \"minus satu\";"
+              },
+              {
+                "kind": "break",
+                "line": 38,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 39,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 40,
+                "text": "echo \"lain\";"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 47,
+        "endLine": 49,
+        "state": "complete",
+        "name": "Akun.__construct",
+        "header": "public function __construct(public string $nama)",
+        "params": [
+          "$nama"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 48,
+            "text": "self::$jumlah++;"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 51,
+        "endLine": 53,
+        "state": "complete",
+        "name": "Akun.setor",
+        "header": "public function setor(float $x): void",
+        "params": [
+          "$x"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 52,
+            "text": "$this->saldo += $x;"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 55,
+        "endLine": 57,
+        "state": "complete",
+        "name": "Akun.saldo",
+        "header": "public function saldo(): float",
+        "body": [
+          {
+            "kind": "return",
+            "line": 56,
+            "text": "return $this->saldo;"
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-map",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "header": {
+          "text": "foreach ($buah as $i => $nama)",
+          "key": "$i",
+          "value": "$nama",
+          "define": true,
+          "range": "$buah"
+        },
+        "vars": [
+          "$i",
+          "$nama"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "echo \"$i: $nama\\n\";"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-map",
+        "line": 16,
+        "endLine": 24,
+        "state": "complete",
+        "header": {
+          "text": "foreach ($stok as $nama => $jumlah)",
+          "key": "$nama",
+          "value": "$jumlah",
+          "define": true,
+          "range": "$stok"
+        },
+        "vars": [
+          "$nama",
+          "$jumlah"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 17,
+            "endLine": 23,
+            "text": "if ($jumlah > 0)",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "echo \"{$nama} tersedia ($jumlah)\\n\";"
+              }
+            ],
+            "else": [
+              {
+                "kind": "if",
+                "line": 19,
+                "text": "elseif ($jumlah == 0)",
+                "then": [
+                  {
+                    "kind": "stmt",
+                    "line": 20,
+                    "text": "echo $nama . \" habis\\n\";"
+                  }
+                ],
+                "else": [
+                  {
+                    "kind": "stmt",
+                    "line": 22,
+                    "text": "echo \"aneh\\n\";"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 26,
+        "endLine": 28,
+        "state": "complete",
+        "header": {
+          "text": "for ($i = 0; $i < 3; $i++)",
+          "init": "$i = 0",
+          "cond": "$i < 3",
+          "post": "$i++"
+        },
+        "vars": [
+          "$i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "echo $i;"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "cond",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "header": {
+          "text": "while ($n > 0)",
+          "cond": "$n > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 32,
+            "text": "$n -= 2;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

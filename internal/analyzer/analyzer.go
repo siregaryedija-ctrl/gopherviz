@@ -15,6 +15,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"gopherviz/internal/lang"
 	"gopherviz/internal/scene"
 )
 
@@ -49,6 +50,11 @@ type Program struct {
 	BlockNodes map[string]ast.Node // ID blok apa pun → node (FuncDecl, FuncLit, IfStmt, SwitchStmt, loop)
 	BlockIDs   map[ast.Node]string
 	src        source
+
+	// Bahasa selain Go: Lang diisi (javascript, python, ...) dan Other berisi IR + indeks
+	// blok. Fset/File/Info tetap terisi kosong supaya kode lama aman.
+	Lang  string
+	Other *lang.Result
 }
 
 // Line mengembalikan nomor baris di teks asli (sudah dikoreksi bila potongan kode dibungkus).
@@ -84,7 +90,37 @@ func Load(filename string, src []byte) (p *Program) {
 			}
 		}
 	}()
+	if l := lang.Detect(filename); l != "" && l != "go" {
+		return loadOther(filename, src, l)
+	}
 	return load(filename, src)
+}
+
+// LoadLang seperti Load, tetapi bahasanya ditentukan pemanggil (mis. languageId editor
+// untuk file tanpa ekstensi). language "" atau "go" = Go.
+func LoadLang(filename string, src []byte, language string) *Program {
+	if language == "" || language == "go" {
+		if l := lang.Detect(filename); l != "" && l != "go" {
+			return Load(filename, src) // ekstensi file menang bila editor tidak tahu
+		}
+		return Load(filename, src)
+	}
+	return loadOther(filename, src, language)
+}
+
+func loadOther(filename string, src []byte, language string) *Program {
+	res := lang.Analyze(language, filename, string(src))
+	diags := res.Diagnostics
+	if diags == nil {
+		diags = []scene.Diagnostic{}
+	}
+	return &Program{
+		Fset: token.NewFileSet(), File: &ast.File{Name: ast.NewIdent("")}, Info: &types.Info{},
+		LoopNodes: map[string]ast.Stmt{}, LoopIDs: map[ast.Node]string{},
+		BlockNodes: map[string]ast.Node{}, BlockIDs: map[ast.Node]string{},
+		Result: Result{Scene: res.Scene, Diagnostics: diags},
+		Lang:   language, Other: res,
+	}
 }
 
 func analyze(filename string, src []byte) Result { return load(filename, src).Result }

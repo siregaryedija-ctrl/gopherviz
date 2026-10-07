@@ -1,0 +1,185 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "typescript",
+    "file": "01_basics.ts",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 14,
+        "endLine": 21,
+        "state": "complete",
+        "name": "area",
+        "header": "function area(shape: Shape, size: number): number",
+        "params": [
+          "shape",
+          "size"
+        ],
+        "body": [
+          {
+            "kind": "switch",
+            "line": 15,
+            "endLine": 20,
+            "text": "switch (shape)",
+            "ref": "S1"
+          }
+        ],
+        "children": [
+          "S1"
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 15,
+        "endLine": 20,
+        "state": "complete",
+        "header": "switch (shape)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "\"circle\"",
+            "line": 16,
+            "body": [
+              {
+                "kind": "return",
+                "line": 17,
+                "text": "return Math.PI * size * size;"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "\"square\"",
+            "line": 18,
+            "body": [
+              {
+                "kind": "return",
+                "line": 19,
+                "text": "return size * size;"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 26,
+        "endLine": 28,
+        "state": "complete",
+        "name": "Stack.push",
+        "header": "push(item: T): void",
+        "params": [
+          "item"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "this.items.push(item);"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 30,
+        "endLine": 32,
+        "state": "complete",
+        "name": "Stack.pop",
+        "header": "pop(): T | undefined",
+        "body": [
+          {
+            "kind": "return",
+            "line": 31,
+            "text": "return this.items.pop();"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 34,
+        "endLine": 36,
+        "state": "complete",
+        "name": "Stack.size",
+        "header": "get size(): number",
+        "body": [
+          {
+            "kind": "return",
+            "line": 35,
+            "text": "return this.items.length;"
+          }
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 40,
+        "endLine": 42,
+        "state": "complete",
+        "header": "for (let i: number = 0; i < 3; i++)"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 43,
+        "endLine": 46,
+        "state": "complete",
+        "header": "while (s.size > 0)"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 40,
+        "endLine": 42,
+        "state": "complete",
+        "header": {
+          "text": "for (let i: number = 0; i < 3; i++)",
+          "init": "let i: number = 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 41,
+            "text": "s.push(i * 10);"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 43,
+        "endLine": 46,
+        "state": "complete",
+        "header": {
+          "text": "while (s.size > 0)",
+          "cond": "s.size > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 44,
+            "text": "const v = s.pop()!"
+          },
+          {
+            "kind": "stmt",
+            "line": 45,
+            "text": "console.log(v);"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

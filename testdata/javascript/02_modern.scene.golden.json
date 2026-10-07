@@ -1,0 +1,261 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "javascript",
+    "file": "02_modern.js",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 8,
+        "state": "complete",
+        "name": "Counter.constructor",
+        "header": "constructor(start)",
+        "params": [
+          "start"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "this.#count = start;"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "Counter.created++;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 10,
+        "endLine": 13,
+        "state": "complete",
+        "name": "Counter.inc",
+        "header": "inc(by = 1)",
+        "params": [
+          "by"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "this.#count += by;"
+          },
+          {
+            "kind": "return",
+            "line": 12,
+            "text": "return this;"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Counter.value",
+        "header": "get value()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 16,
+            "text": "return this.#count;"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 21,
+        "endLine": 23,
+        "state": "complete",
+        "name": "(anonim)",
+        "header": "(a, b)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 22,
+            "text": "return a + b;"
+          }
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 33,
+        "endLine": 38,
+        "state": "complete",
+        "name": "outer",
+        "header": "for (let i = 0; i < 3; i++)",
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 34,
+        "endLine": 37,
+        "state": "complete",
+        "header": "for (let j = 0; j < 3; j++)",
+        "parent": "L1",
+        "children": [
+          "I1",
+          "I2"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 35,
+        "endLine": 35,
+        "state": "complete",
+        "header": "if (j === 1)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "j === 1",
+            "line": 35,
+            "body": [
+              {
+                "kind": "continue",
+                "line": 35,
+                "text": "continue outer;",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 36,
+        "endLine": 36,
+        "state": "complete",
+        "header": "if (i === 2)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "i === 2",
+            "line": 36,
+            "body": [
+              {
+                "kind": "break",
+                "line": 36,
+                "text": "break outer;",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 40,
+        "endLine": 49,
+        "state": "complete",
+        "name": "load",
+        "header": "async function load()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 41,
+            "endLine": 48,
+            "text": "try { …"
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 33,
+        "endLine": 38,
+        "label": "outer",
+        "state": "complete",
+        "header": {
+          "text": "for (let i = 0; i < 3; i++)",
+          "init": "let i = 0",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 34,
+            "endLine": 37,
+            "ref": "L2"
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "for3",
+        "line": 34,
+        "endLine": 37,
+        "state": "complete",
+        "header": {
+          "text": "for (let j = 0; j < 3; j++)",
+          "init": "let j = 0",
+          "cond": "j < 3",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 35,
+            "text": "if (j === 1)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "continue",
+                "line": 35,
+                "text": "continue outer;",
+                "label": "outer"
+              }
+            ]
+          },
+          {
+            "kind": "if",
+            "line": 36,
+            "text": "if (i === 2)",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "break",
+                "line": 36,
+                "text": "break outer;",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      }
+    ]
+  },
+  "diagnostics": null
+}

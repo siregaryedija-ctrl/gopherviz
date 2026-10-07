@@ -1,0 +1,387 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "python",
+    "file": "01_basics.py",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 2,
+        "endLine": 5,
+        "state": "complete",
+        "name": "fib",
+        "header": "def fib(n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 3,
+            "endLine": 4,
+            "text": "if n < 2",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 4,
+                "text": "return n"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 5,
+            "text": "return fib(n - 1) + fib(n - 2)"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 3,
+        "endLine": 4,
+        "state": "complete",
+        "header": "if n < 2",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n < 2",
+            "line": 3,
+            "body": [
+              {
+                "kind": "return",
+                "line": 4,
+                "text": "return n"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 10,
+        "endLine": 11,
+        "state": "complete",
+        "header": "for i in range(len(nums))"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 14,
+        "endLine": 20,
+        "state": "complete",
+        "header": "for x in nums",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 15,
+        "endLine": 20,
+        "state": "complete",
+        "header": "if x > 4",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "x > 4",
+            "line": 15,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 16,
+                "text": "print(x, \"besar\")"
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "x > 2",
+            "line": 17,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 18,
+                "text": "print(x, \"sedang\")"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 19,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 20,
+                "text": "print(x, \"kecil\")"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 23,
+        "endLine": 26,
+        "state": "complete",
+        "header": "while k > 0"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 29,
+        "endLine": 30,
+        "state": "complete",
+        "header": "for nama, jumlah in stok.items()"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 44,
+        "endLine": 47,
+        "state": "complete",
+        "name": "Hewan.__init__",
+        "header": "def __init__(self, nama: str, suara: str = \"...\")",
+        "params": [
+          "self",
+          "nama",
+          "suara"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 45,
+            "text": "self.nama = nama"
+          },
+          {
+            "kind": "stmt",
+            "line": 46,
+            "text": "self.suara = suara"
+          },
+          {
+            "kind": "stmt",
+            "line": 47,
+            "text": "Hewan.jumlah += 1"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 49,
+        "endLine": 50,
+        "state": "complete",
+        "name": "Hewan.bicara",
+        "header": "def bicara(self) -> str",
+        "params": [
+          "self"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 50,
+            "text": "return f\"{self.nama} berkata {self.suara!r}\""
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 54,
+        "endLine": 55,
+        "state": "complete",
+        "name": "Kucing.__init__",
+        "header": "def __init__(self, nama)",
+        "params": [
+          "self",
+          "nama"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 55,
+            "text": "super().__init__(nama, \"meong\")"
+          }
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 67,
+        "endLine": 73,
+        "state": "complete",
+        "header": "match k",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "0",
+            "line": 68,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 69,
+                "text": "print(\"nol\")"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "1 | 2",
+            "line": 70,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 71,
+                "text": "print(\"kecil\")"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 72,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 73,
+                "text": "print(\"lain\")"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-int",
+        "line": 10,
+        "endLine": 11,
+        "state": "complete",
+        "header": {
+          "text": "for i in range(len(nums))",
+          "value": "i",
+          "define": true,
+          "range": "range(len(nums))"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "total += nums[i]"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 14,
+        "endLine": 20,
+        "state": "complete",
+        "header": {
+          "text": "for x in nums",
+          "value": "x",
+          "define": true,
+          "range": "nums"
+        },
+        "vars": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 15,
+            "endLine": 20,
+            "text": "if x > 4",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 16,
+                "text": "print(x, \"besar\")"
+              }
+            ],
+            "else": [
+              {
+                "kind": "if",
+                "line": 17,
+                "text": "elif x > 2",
+                "then": [
+                  {
+                    "kind": "stmt",
+                    "line": 18,
+                    "text": "print(x, \"sedang\")"
+                  }
+                ],
+                "else": [
+                  {
+                    "kind": "stmt",
+                    "line": 20,
+                    "text": "print(x, \"kecil\")"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "cond",
+        "line": 23,
+        "endLine": 26,
+        "state": "complete",
+        "header": {
+          "text": "while k > 0",
+          "cond": "k > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "k -= 1"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "range-map",
+        "line": 29,
+        "endLine": 30,
+        "state": "complete",
+        "header": {
+          "text": "for nama, jumlah in stok.items()",
+          "value": "nama, jumlah",
+          "define": true,
+          "range": "stok.items()"
+        },
+        "vars": [
+          "nama",
+          "jumlah"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "print(f\"{nama}: {jumlah:>3} buah\")"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

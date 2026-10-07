@@ -1,0 +1,38 @@
+1: directive [#include <stdio.h>] 
+2: directive [#define N 5] 
+4: struct Point []
+  5: var(int) x
+  6: var(int) y
+9: func sum(arr, n)
+  9: block
+    10: var(int) total = 0
+    11: for [var(int) i = 0] [(i < n)] [(i++)]
+      11: block
+        12: expr (total += arr[i])
+    14: return total
+17: func main()
+  17: block
+    18: var(int) data[1 dim] = init[4, 2, 9, 1, 5]
+    19: var(int) i = 0
+    20: while (i < N)
+      20: block
+        21: if ((data[i] % 2) == 0)
+          21: block
+            22: expr printf("%d genap\n", data[i])
+          else
+          23: block
+            24: expr printf("%d ganjil\n", data[i])
+        26: expr (i++)
+    28: var(Point) p = init[3, 4]
+    29: var(Point) pp = (& p)
+    30: expr (pp->x = 10)
+    31: var(char) c = 'A'
+    32: switch c
+      33: case 'A'
+        34: expr printf("huruf A\n")
+        35: break 
+      36: default
+        37: expr printf("lain\n")
+    39: var(double) avg = ((double)sum(data, N) / N)
+    40: expr printf("rata-rata %.2f, x=%d\n", avg, p.x)
+    41: return 0

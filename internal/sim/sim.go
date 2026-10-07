@@ -13,6 +13,7 @@ import (
 	"math/rand"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/lang"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
@@ -56,6 +57,11 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	blk, ok := p.Result.Scene.Block(blockID)
 	if !ok {
 		tr.Warnings = append(tr.Warnings, "blok "+blockID+" tidak ditemukan")
+		return tr
+	}
+	if p.Lang != "" && p.Lang != "go" {
+		tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}
+		tr.Warnings = append(tr.Warnings, "simulasi nilai untuk "+lang.Names[p.Lang]+" belum tersedia, jadi yang tampil hanya alurnya")
 		return tr
 	}
 	tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}

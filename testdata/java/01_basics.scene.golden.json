@@ -1,0 +1,443 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "java",
+    "file": "01_basics.java",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 10,
+        "state": "complete",
+        "name": "Main.fib",
+        "header": "static int fib(int n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 6,
+            "endLine": 8,
+            "text": "if (n < 2)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return n;"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 9,
+            "text": "return fib(n - 1) + fib(n - 2);"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 6,
+        "endLine": 8,
+        "state": "complete",
+        "header": "if (n < 2)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n < 2",
+            "line": 6,
+            "body": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return n;"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 12,
+        "endLine": 49,
+        "state": "complete",
+        "name": "Main.main",
+        "header": "public static void main(String[] args)",
+        "params": [
+          "args"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "int[] nums = {5, 3, 8, 1};"
+          },
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 15,
+            "endLine": 17,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "List<String> names = new ArrayList<>();"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "names.add(\"Ani\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "names.add(\"Budi\");"
+          },
+          {
+            "kind": "loop",
+            "line": 21,
+            "endLine": 27,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "int k = 3;"
+          },
+          {
+            "kind": "loop",
+            "line": 29,
+            "endLine": 31,
+            "ref": "L3"
+          },
+          {
+            "kind": "loop",
+            "line": 32,
+            "endLine": 34,
+            "ref": "L4"
+          },
+          {
+            "kind": "switch",
+            "line": 35,
+            "endLine": 44,
+            "text": "switch (k)",
+            "ref": "S1"
+          },
+          {
+            "kind": "stmt",
+            "line": 45,
+            "text": "Point p = new Point(1, 2);"
+          },
+          {
+            "kind": "stmt",
+            "line": 46,
+            "text": "int[] grid = new int[3];"
+          },
+          {
+            "kind": "stmt",
+            "line": 47,
+            "text": "double avg = (double) total / nums.length;"
+          },
+          {
+            "kind": "stmt",
+            "line": 48,
+            "text": "System.out.println(total + \" \" + fib(6) + \" \" + p.sum() + \"…"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "S1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "header": "for (int i = 0; i < nums.length; i++)",
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 21,
+        "endLine": 27,
+        "state": "complete",
+        "header": "for (String name : names)",
+        "parent": "F2",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 22,
+        "endLine": 26,
+        "state": "complete",
+        "header": "if (name.startsWith(\"A\"))",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "name.startsWith(\"A\")",
+            "line": 22,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "System.out.println(name + \" diawali A\");"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 24,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 25,
+                "text": "System.out.println(name);"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 29,
+        "endLine": 31,
+        "state": "complete",
+        "header": "while (k > 0)",
+        "parent": "F2"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 32,
+        "endLine": 34,
+        "state": "complete",
+        "header": "do … while (k < 2)",
+        "parent": "F2"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 35,
+        "endLine": 44,
+        "state": "complete",
+        "header": "switch (k)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "1",
+            "line": 36,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 37,
+                "text": "System.out.println(\"satu\");"
+              },
+              {
+                "kind": "break",
+                "line": 38,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "2",
+            "line": 39,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 40,
+                "text": "System.out.println(\"dua\");"
+              },
+              {
+                "kind": "break",
+                "line": 41,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 42,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 43,
+                "text": "System.out.println(\"lain\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 55,
+        "endLine": 58,
+        "state": "complete",
+        "name": "Point.Point",
+        "header": "Point(int x, int y)",
+        "params": [
+          "x",
+          "y"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 56,
+            "text": "this.x = x;"
+          },
+          {
+            "kind": "stmt",
+            "line": 57,
+            "text": "this.y = y;"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 60,
+        "endLine": 62,
+        "state": "complete",
+        "name": "Point.sum",
+        "header": "int sum()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 61,
+            "text": "return x + y;"
+          }
+        ]
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < nums.length; i++)",
+          "init": "int i = 0",
+          "cond": "i < nums.length",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "total += nums[i];"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 21,
+        "endLine": 27,
+        "state": "complete",
+        "header": {
+          "text": "for (String name : names)",
+          "value": "name",
+          "define": true,
+          "range": "names"
+        },
+        "vars": [
+          "name"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 22,
+            "endLine": 26,
+            "text": "if (name.startsWith(\"A\"))",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "System.out.println(name + \" diawali A\");"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 25,
+                "text": "System.out.println(name);"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "cond",
+        "line": 29,
+        "endLine": 31,
+        "state": "complete",
+        "header": {
+          "text": "while (k > 0)",
+          "cond": "k > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "k--;"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "do-while",
+        "line": 32,
+        "endLine": 34,
+        "state": "complete",
+        "header": {
+          "text": "do … while (k < 2)",
+          "cond": "k < 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 33,
+            "text": "k++;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}
