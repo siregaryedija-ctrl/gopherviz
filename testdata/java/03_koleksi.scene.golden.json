@@ -1,0 +1,851 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "java",
+    "file": "03_koleksi.java",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "name": "SaldoKurang.SaldoKurang",
+        "header": "SaldoKurang(String pesan)",
+        "params": [
+          "pesan"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "super(pesan);"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 14,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Rekening.Rekening",
+        "header": "Rekening(String pemilik, long saldo)",
+        "params": [
+          "pemilik",
+          "saldo"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "this.pemilik = pemilik;"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "this.saldo = saldo;"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 19,
+        "endLine": 24,
+        "state": "complete",
+        "name": "Rekening.tarik",
+        "header": "void tarik(long jumlah) throws SaldoKurang",
+        "params": [
+          "jumlah"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 20,
+            "endLine": 22,
+            "text": "if (jumlah > saldo)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 21,
+                "text": "throw new SaldoKurang(\"saldo \" + pemilik + \" kurang \" + (ju…"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "saldo -= jumlah;"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 20,
+        "endLine": 22,
+        "state": "complete",
+        "header": "if (jumlah > saldo)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "jumlah > saldo",
+            "line": 20,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 21,
+                "text": "throw new SaldoKurang(\"saldo \" + pemilik + \" kurang \" + (ju…"
+              }
+            ]
+          }
+        ],
+        "parent": "F3"
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 26,
+        "endLine": 28,
+        "state": "complete",
+        "name": "Rekening.getSaldo",
+        "header": "long getSaldo()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 27,
+            "text": "return saldo;"
+          }
+        ]
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 34,
+        "endLine": 36,
+        "state": "complete",
+        "name": "Kotak.simpan",
+        "header": "void simpan(T x)",
+        "params": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 35,
+            "text": "isi = x;"
+          }
+        ]
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 38,
+        "endLine": 40,
+        "state": "complete",
+        "name": "Kotak.ambil",
+        "header": "T ambil()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 39,
+            "text": "return isi;"
+          }
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 43,
+        "endLine": 59,
+        "state": "complete",
+        "name": "Main.bubbleSort",
+        "header": "static void bubbleSort(int[] a)",
+        "params": [
+          "a"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 44,
+            "text": "int n = a.length;"
+          },
+          {
+            "kind": "loop",
+            "line": 45,
+            "endLine": 58,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 45,
+        "endLine": 58,
+        "state": "complete",
+        "header": "for (int i = 0; i < n - 1; i++)",
+        "parent": "F7",
+        "children": [
+          "L2",
+          "I3"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 47,
+        "endLine": 54,
+        "state": "complete",
+        "header": "for (int j = 0; j < n - 1 - i; j++)",
+        "parent": "L1",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 48,
+        "endLine": 53,
+        "state": "complete",
+        "header": "if (a[j] > a[j + 1])",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "a[j] > a[j + 1]",
+            "line": 48,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 49,
+                "text": "int tmp = a[j];"
+              },
+              {
+                "kind": "stmt",
+                "line": 50,
+                "text": "a[j] = a[j + 1];"
+              },
+              {
+                "kind": "stmt",
+                "line": 51,
+                "text": "a[j + 1] = tmp;"
+              },
+              {
+                "kind": "stmt",
+                "line": 52,
+                "text": "tukar = true;"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "I3",
+        "kind": "if",
+        "line": 55,
+        "endLine": 57,
+        "state": "complete",
+        "header": "if (!tukar)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "!tukar",
+            "line": 55,
+            "body": [
+              {
+                "kind": "break",
+                "line": 56,
+                "text": "break;"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "F8",
+        "kind": "func",
+        "line": 61,
+        "endLine": 63,
+        "state": "complete",
+        "name": "Main.faktorial",
+        "header": "static int faktorial(int n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 62,
+            "text": "return n <= 1 ? 1 : n * faktorial(n - 1);"
+          }
+        ]
+      },
+      {
+        "id": "F9",
+        "kind": "func",
+        "line": 65,
+        "endLine": 71,
+        "state": "complete",
+        "name": "Main.rata",
+        "header": "static double rata(int... nilai)",
+        "params": [
+          "nilai"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 66,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 67,
+            "endLine": 69,
+            "ref": "L3"
+          },
+          {
+            "kind": "return",
+            "line": 70,
+            "text": "return nilai.length == 0 ? 0 : (double) total / nilai.lengt…"
+          }
+        ],
+        "children": [
+          "L3"
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 67,
+        "endLine": 69,
+        "state": "complete",
+        "header": "for (int v : nilai)",
+        "parent": "F9"
+      },
+      {
+        "id": "F10",
+        "kind": "func",
+        "line": 73,
+        "endLine": 146,
+        "state": "complete",
+        "name": "Main.main",
+        "header": "public static void main(String[] args)",
+        "params": [
+          "args"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 74,
+            "text": "int[] data = {64, 25, 12, 22, 11};"
+          },
+          {
+            "kind": "stmt",
+            "line": 75,
+            "text": "bubbleSort(data);"
+          },
+          {
+            "kind": "stmt",
+            "line": 76,
+            "text": "System.out.println(Arrays.toString(data));"
+          },
+          {
+            "kind": "stmt",
+            "line": 78,
+            "text": "Rekening r = new Rekening(\"Ani\", 100_000);"
+          },
+          {
+            "kind": "stmt",
+            "line": 79,
+            "endLine": 84,
+            "text": "try { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 85,
+            "text": "System.out.println(\"saldo \" + r.getSaldo());"
+          },
+          {
+            "kind": "stmt",
+            "line": 87,
+            "text": "Kotak<String> k = new Kotak<>();"
+          },
+          {
+            "kind": "stmt",
+            "line": 88,
+            "text": "k.simpan(\"rahasia\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 89,
+            "text": "System.out.println(k.ambil().toUpperCase());"
+          },
+          {
+            "kind": "stmt",
+            "line": 91,
+            "text": "Stack<Integer> st = new Stack<>();"
+          },
+          {
+            "kind": "stmt",
+            "line": 92,
+            "text": "st.push(1);"
+          },
+          {
+            "kind": "stmt",
+            "line": 93,
+            "text": "st.push(2);"
+          },
+          {
+            "kind": "stmt",
+            "line": 94,
+            "text": "st.push(3);"
+          },
+          {
+            "kind": "stmt",
+            "line": 95,
+            "text": "System.out.println(st + \" \" + st.pop() + \" \" + st.peek() + …"
+          },
+          {
+            "kind": "stmt",
+            "line": 97,
+            "text": "Queue<String> antre = new LinkedList<>();"
+          },
+          {
+            "kind": "stmt",
+            "line": 98,
+            "text": "antre.offer(\"a\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 99,
+            "text": "antre.offer(\"b\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 100,
+            "text": "antre.offer(\"c\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 101,
+            "text": "System.out.println(antre.poll() + \" \" + antre + \" \" + antre…"
+          },
+          {
+            "kind": "stmt",
+            "line": 103,
+            "text": "PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.…"
+          },
+          {
+            "kind": "loop",
+            "line": 104,
+            "endLine": 106,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 107,
+            "text": "StringBuilder urut = new StringBuilder();"
+          },
+          {
+            "kind": "loop",
+            "line": 108,
+            "endLine": 110,
+            "ref": "L5"
+          },
+          {
+            "kind": "stmt",
+            "line": 111,
+            "text": "System.out.println(urut.toString().trim());"
+          },
+          {
+            "kind": "stmt",
+            "line": 113,
+            "text": "Set<Integer> unik = new HashSet<>();"
+          },
+          {
+            "kind": "loop",
+            "line": 114,
+            "endLine": 116,
+            "ref": "L6"
+          },
+          {
+            "kind": "stmt",
+            "line": 117,
+            "text": "System.out.println(unik + \" \" + unik.contains(40) + \" \" + u…"
+          },
+          {
+            "kind": "stmt",
+            "line": 118,
+            "text": "Set<String> abjad = new TreeSet<>(Arrays.asList(\"kopi\", \"te…"
+          },
+          {
+            "kind": "stmt",
+            "line": 119,
+            "text": "System.out.println(abjad);"
+          },
+          {
+            "kind": "stmt",
+            "line": 121,
+            "text": "List<Integer> angka = new ArrayList<>(List.of(4, 8, 15, 16,…"
+          },
+          {
+            "kind": "stmt",
+            "line": 122,
+            "text": "angka.removeIf(x -> x % 2 == 1);"
+          },
+          {
+            "kind": "stmt",
+            "line": 123,
+            "text": "angka.forEach(System.out::println);"
+          },
+          {
+            "kind": "stmt",
+            "line": 124,
+            "text": "System.out.println(faktorial(10) + \" \" + faktorial(13) + \" …"
+          },
+          {
+            "kind": "stmt",
+            "line": 126,
+            "text": "Map<Character, Integer> huruf = new TreeMap<>();"
+          },
+          {
+            "kind": "loop",
+            "line": 127,
+            "endLine": 129,
+            "ref": "L7"
+          },
+          {
+            "kind": "stmt",
+            "line": 130,
+            "text": "System.out.println(huruf);"
+          },
+          {
+            "kind": "stmt",
+            "line": 132,
+            "text": "Integer a = 127, b = 127;"
+          },
+          {
+            "kind": "stmt",
+            "line": 133,
+            "text": "String s1 = \"jav\", s2 = s1 + \"a\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 134,
+            "text": "System.out.println((a.equals(b)) + \" \" + s2.equals(\"java\") …"
+          },
+          {
+            "kind": "stmt",
+            "line": 135,
+            "text": "long big = Long.MAX_VALUE;"
+          },
+          {
+            "kind": "stmt",
+            "line": 136,
+            "text": "System.out.println(big + 1);"
+          },
+          {
+            "kind": "stmt",
+            "line": 137,
+            "text": "System.out.println(10 / 4 * 4 + 10 % 4 + \" \" + (5 & 3) + \" …"
+          },
+          {
+            "kind": "stmt",
+            "line": 139,
+            "text": "int[] kosong = new int[3];"
+          },
+          {
+            "kind": "stmt",
+            "line": 140,
+            "text": "String[] kosongS = new String[2];"
+          },
+          {
+            "kind": "stmt",
+            "line": 141,
+            "text": "boolean[] bs = new boolean[1];"
+          },
+          {
+            "kind": "stmt",
+            "line": 142,
+            "text": "System.out.println(kosong[1] + \" \" + kosongS[0] + \" \" + bs[…"
+          },
+          {
+            "kind": "stmt",
+            "line": 143,
+            "text": "String teks = null;"
+          },
+          {
+            "kind": "stmt",
+            "line": 144,
+            "text": "System.out.println(\"akan error\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 145,
+            "text": "System.out.println(teks.length());"
+          }
+        ],
+        "children": [
+          "L4",
+          "L5",
+          "L6",
+          "L7"
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 104,
+        "endLine": 106,
+        "state": "complete",
+        "header": "for (int x : new int[]{5, 1, 9, 3})",
+        "parent": "F10"
+      },
+      {
+        "id": "L5",
+        "kind": "loop",
+        "line": 108,
+        "endLine": 110,
+        "state": "complete",
+        "header": "while (!pq.isEmpty())",
+        "parent": "F10"
+      },
+      {
+        "id": "L6",
+        "kind": "loop",
+        "line": 114,
+        "endLine": 116,
+        "state": "complete",
+        "header": "for (int x : new int[]{3, 17, 3, 1, 17, 40})",
+        "parent": "F10"
+      },
+      {
+        "id": "L7",
+        "kind": "loop",
+        "line": 127,
+        "endLine": 129,
+        "state": "complete",
+        "header": "for (char c : \"banana\".toCharArray())",
+        "parent": "F10"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 45,
+        "endLine": 58,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < n - 1; i++)",
+          "init": "int i = 0",
+          "cond": "i < n - 1",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 46,
+            "text": "boolean tukar = false;"
+          },
+          {
+            "kind": "loop",
+            "line": 47,
+            "endLine": 54,
+            "ref": "L2"
+          },
+          {
+            "kind": "if",
+            "line": 55,
+            "endLine": 57,
+            "text": "if (!tukar)",
+            "ref": "I3",
+            "then": [
+              {
+                "kind": "break",
+                "line": 56,
+                "text": "break;"
+              }
+            ]
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "for3",
+        "line": 47,
+        "endLine": 54,
+        "state": "complete",
+        "header": {
+          "text": "for (int j = 0; j < n - 1 - i; j++)",
+          "init": "int j = 0",
+          "cond": "j < n - 1 - i",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 48,
+            "endLine": 53,
+            "text": "if (a[j] > a[j + 1])",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 49,
+                "text": "int tmp = a[j];"
+              },
+              {
+                "kind": "stmt",
+                "line": 50,
+                "text": "a[j] = a[j + 1];"
+              },
+              {
+                "kind": "stmt",
+                "line": 51,
+                "text": "a[j + 1] = tmp;"
+              },
+              {
+                "kind": "stmt",
+                "line": 52,
+                "text": "tukar = true;"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "L3",
+        "kind": "range-slice",
+        "line": 67,
+        "endLine": 69,
+        "state": "complete",
+        "header": {
+          "text": "for (int v : nilai)",
+          "value": "v",
+          "define": true,
+          "range": "nilai"
+        },
+        "vars": [
+          "v"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 68,
+            "text": "total += v;"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "range-slice",
+        "line": 104,
+        "endLine": 106,
+        "state": "complete",
+        "header": {
+          "text": "for (int x : new int[]{5, 1, 9, 3})",
+          "value": "x",
+          "define": true,
+          "range": "new int[]{5, 1, 9, 3}"
+        },
+        "vars": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 105,
+            "text": "pq.add(x);"
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "kind": "cond",
+        "line": 108,
+        "endLine": 110,
+        "state": "complete",
+        "header": {
+          "text": "while (!pq.isEmpty())",
+          "cond": "!pq.isEmpty()"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 109,
+            "text": "urut.append(pq.poll()).append(' ');"
+          }
+        ]
+      },
+      {
+        "id": "L6",
+        "kind": "range-slice",
+        "line": 114,
+        "endLine": 116,
+        "state": "complete",
+        "header": {
+          "text": "for (int x : new int[]{3, 17, 3, 1, 17, 40})",
+          "value": "x",
+          "define": true,
+          "range": "new int[]{3, 17, 3, 1, 17, 40}"
+        },
+        "vars": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 115,
+            "text": "unik.add(x);"
+          }
+        ]
+      },
+      {
+        "id": "L7",
+        "kind": "range-string",
+        "line": 127,
+        "endLine": 129,
+        "state": "complete",
+        "header": {
+          "text": "for (char c : \"banana\".toCharArray())",
+          "value": "c",
+          "define": true,
+          "range": "\"banana\".toCharArray()"
+        },
+        "vars": [
+          "c"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 128,
+            "text": "huruf.merge(c, 1, Integer::sum);"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

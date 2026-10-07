@@ -1,0 +1,122 @@
+1: import [] 
+3: class Main []
+  4: class SaldoKurang [Exception]
+    5: func SaldoKurang.SaldoKurang(pesan)
+      5: block
+        6: expr super(pesan)
+  10: class Rekening []
+    11: var(String) pemilik
+    12: var(long) saldo
+    14: func Rekening.Rekening(pemilik, saldo)
+      14: block
+        15: expr (this.pemilik = pemilik)
+        16: expr (this.saldo = saldo)
+    19: func Rekening.tarik(jumlah)
+      19: block
+        20: if (jumlah > saldo)
+          20: block
+            21: throw new SaldoKurang(((("saldo " + pemilik) + " kurang ") + (jumlah - saldo)))
+        23: expr (saldo -= jumlah)
+    26: func Rekening.getSaldo()
+      26: block
+        27: return saldo
+  31: class Kotak []
+    32: var(T) isi
+    34: func Kotak.simpan(x)
+      34: block
+        35: expr (isi = x)
+    38: func Kotak.ambil()
+      38: block
+        39: return isi
+  43: func Main.bubbleSort(a)
+    43: block
+      44: var(int) n = a.length
+      45: for [var(int) i = 0] [(i < (n - 1))] [(i++)]
+        45: block
+          46: var(boolean) tukar = false
+          47: for [var(int) j = 0] [(j < ((n - 1) - i))] [(j++)]
+            47: block
+              48: if (a[j] > a[(j + 1)])
+                48: block
+                  49: var(int) tmp = a[j]
+                  50: expr (a[j] = a[(j + 1)])
+                  51: expr (a[(j + 1)] = tmp)
+                  52: expr (tukar = true)
+          55: if (! tukar)
+            55: block
+              56: break 
+  61: func Main.faktorial(n)
+    61: block
+      62: return ((n <= 1) ? 1 : (n * faktorial((n - 1))))
+  65: func Main.rata(...nilai)
+    65: block
+      66: var(int) total = 0
+      67: foreach(colon int) v in nilai
+        67: block
+          68: expr (total += v)
+      70: return ((nilai.length == 0) ? 0 : ((double)total / nilai.length))
+  73: func Main.main(args)
+    73: block
+      74: var(int[]) data = init[64, 25, 12, 22, 11]
+      75: expr bubbleSort(data)
+      76: expr System.out.println(Arrays.toString(data))
+      78: var(Rekening) r = new Rekening("Ani", 100000)
+      79: try
+        79: block
+          80: expr r.tarik(30000)
+          81: expr r.tarik(80000)
+        catch [SaldoKurang] e
+        82: block
+          83: expr System.out.println(("gagal: " + e.getMessage()))
+      85: expr System.out.println(("saldo " + r.getSaldo()))
+      87: var(Kotak<String>) k = new Kotak<>()
+      88: expr k.simpan("rahasia")
+      89: expr System.out.println(k.ambil().toUpperCase())
+      91: var(Stack<Integer>) st = new Stack<>()
+      92: expr st.push(1)
+      93: expr st.push(2)
+      94: expr st.push(3)
+      95: expr System.out.println(((((((st + " ") + st.pop()) + " ") + st.peek()) + " ") + st.size()))
+      97: var(Queue<String>) antre = new LinkedList<>()
+      98: expr antre.offer("a")
+      99: expr antre.offer("b")
+      100: expr antre.offer("c")
+      101: expr System.out.println(((((antre.poll() + " ") + antre) + " ") + antre.peek()))
+      103: var(PriorityQueue<Integer>) pq = new PriorityQueue<>(Comparator.reverseOrder())
+      104: foreach(colon int) x in new int[][]init[5, 1, 9, 3]()
+        104: block
+          105: expr pq.add(x)
+      107: var(StringBuilder) urut = new StringBuilder()
+      108: while (! pq.isEmpty())
+        108: block
+          109: expr urut.append(pq.poll()).append(' ')
+      111: expr System.out.println(urut.toString().trim())
+      113: var(Set<Integer>) unik = new HashSet<>()
+      114: foreach(colon int) x in new int[][]init[3, 17, 3, 1, 17, 40]()
+        114: block
+          115: expr unik.add(x)
+      117: expr System.out.println(((((unik + " ") + unik.contains(40)) + " ") + unik.size()))
+      118: var(Set<String>) abjad = new TreeSet<>(Arrays.asList("kopi", "teh", "air", "susu"))
+      119: expr System.out.println(abjad)
+      121: var(List<Integer>) angka = new ArrayList<>(List.of(4, 8, 15, 16, 23, 42))
+      122: expr angka.removeIf(fn =>(x) ((x % 2) == 1))
+      123: expr angka.forEach(System.out::println)
+      124: expr System.out.println(((((((faktorial(10) + " ") + faktorial(13)) + " ") + rata(1, 2, 4)) + " ") + rata()))
+      126: var(Map<Character, Integer>) huruf = new TreeMap<>()
+      127: foreach(colon char) c in "banana".toCharArray()
+        127: block
+          128: expr huruf.merge(c, 1, Integer::sum)
+      130: expr System.out.println(huruf)
+      132: var(Integer) a = 127, b = 127
+      133: var(String) s1 = "jav", s2 = (s1 + "a")
+      134: expr System.out.println(((((a.equals(b) + " ") + s2.equals("java")) + " ") + "java".compareTo("jawa")))
+      135: var(long) big = Long.MAX_VALUE
+      136: expr System.out.println((big + 1))
+      137: expr System.out.println((((((((((((((10 / 4) * 4) + (10 % 4)) + " ") + (5 & 3)) + " ") + (5 | 3)) + " ") + (5 ^ 3)) + " ") + ((- 16) >> 2)) + " ") + ((- 16) >>> 28)))
+      139: var(int[]) kosong = new int[][3]()
+      140: var(String[]) kosongS = new String[][2]()
+      141: var(boolean[]) bs = new boolean[][1]()
+      142: expr System.out.println(((((kosong[1] + " ") + kosongS[0]) + " ") + bs[0]))
+      143: var(String) teks = null
+      144: expr System.out.println("akan error")
+      145: expr System.out.println(teks.length())

@@ -705,6 +705,13 @@ func (s *cSem) newError(it *interp, class, msg string) Value {
 	if c == nil {
 		c = it.findClass("runtime_error", nil)
 	}
+	if c == nil { // C tidak punya exception: kesalahan berarti program crash
+		c = &Class{name: "__crash__", native: "crash", statics: it.newDict("statics")}
+		it.ids++
+		o := &Object{class: c, fields: it.newDict("fields"), id: it.ids}
+		o.fields.set(strV("message"), strV(msg))
+		return Value{k: kObj, o: o}
+	}
 	return it.construct(c, []Value{strV(msg)}, nil)
 }
 

@@ -109,6 +109,7 @@ type Func struct {
 type Class struct {
 	name    string
 	super   *Class
+	ifaces  []*Class // Java: interface yang diimplementasikan (method default)
 	methods map[string]*Fn
 	getters map[string]*Fn
 	setters map[string]*Fn

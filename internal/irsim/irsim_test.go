@@ -23,6 +23,7 @@ var oracles = []oracle{
 	{"php", ".php", func(p, dir string) ([]string, bool) { return []string{"php", p}, true }},
 	{"cpp", ".cpp", func(p, dir string) ([]string, bool) { return compileRun("g++", "-std=c++17", p, dir) }},
 	{"c", ".c", func(p, dir string) ([]string, bool) { return compileRun("gcc", "-std=c11", p, dir) }},
+	{"java", ".java", func(p, dir string) ([]string, bool) { return []string{"java", p}, true }},
 	{"typescript", ".ts", func(p, dir string) ([]string, bool) {
 		return []string{"node", "--experimental-transform-types", "--no-warnings", p}, true
 	}},
@@ -35,6 +36,10 @@ func runOracle(t *testing.T, o oracle, path string) (string, bool) {
 		return "", false
 	}
 	if _, err := exec.LookPath(argv[0]); err != nil {
+		// tanpa interpreter asli: pakai output yang sudah dicatat (<nama>.expected.txt), bila ada
+		if want, err := os.ReadFile(strings.TrimSuffix(path, o.ext) + ".expected.txt"); err == nil {
+			return strings.ReplaceAll(string(want), "\r\n", "\n"), true
+		}
 		t.Skipf("%s tidak tersedia", argv[0])
 	}
 	cmd := exec.Command(argv[0], argv[1:]...)
@@ -84,7 +89,7 @@ func TestAgainstReal(t *testing.T) {
 
 // FuzzTrace: simulator tidak boleh mengalami kesalahan internal untuk program apa pun.
 func FuzzTrace(f *testing.F) {
-	for _, l := range []string{"javascript", "typescript", "python", "php", "cpp", "c"} {
+	for _, l := range []string{"javascript", "typescript", "python", "php", "cpp", "c", "java"} {
 		files, _ := filepath.Glob(filepath.Join("../../testdata", l, "*.*"))
 		for _, p := range files {
 			if lang.Detect(p) != l {

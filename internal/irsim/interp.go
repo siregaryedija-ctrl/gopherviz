@@ -1003,7 +1003,12 @@ func (it *interp) execSwitch(n *ir.Switch, e *Env) flow {
 			continue
 		}
 		for _, x := range c.Exprs {
-			v := it.eval(x, scope)
+			var v Value
+			if id, ok := x.(*ir.Ident); ok && it.lang == "java" && tag.k == kObj && tag.o.class.kind == "enum" {
+				v, _ = tag.o.class.statics.get(strV(id.Name)) // case MERAH: konstanta enum tanpa nama kelas
+			} else {
+				v = it.eval(x, scope)
+			}
 			eq := it.sem.caseEqual(it, tag, v)
 			if focus && it.recording() {
 				r := eq
@@ -1172,6 +1177,11 @@ func instanceOf(c *Class, name string) bool {
 	for ; c != nil; c = c.super {
 		if c.name == name {
 			return true
+		}
+		for _, i := range c.ifaces {
+			if instanceOf(i, name) {
+				return true
+			}
 		}
 	}
 	return false

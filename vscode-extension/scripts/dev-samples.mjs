@@ -44,6 +44,7 @@ const samples = {
   py_for: ['python/01_basics.py', 16],
   php_foreach: ['php/01_basics.php', 12],
   java_switch: ['java/01_basics.java', 37],
+  java_bubble: ['java/03_koleksi.java', 45],
   cpp_while: ['cpp/01_basics.cpp', 43],
 };
 

@@ -1,0 +1,34 @@
+MERAH 0
+hijau
+lainnya: BIRU
+6 RENDAH
+Titik[x=3, y=-4] 3 7 true
+Tom bilang meong
+Rex bilang guk
+Persegi luas 6.25
+Lingkaran luas 3.14
+error: / by zero
+counter 1
+Index 5 out of bounds for length 2
+java.lang.NumberFormatException: For input string: "12a"
+{jeruk=2, apel=3, pisang=1, mangga=1}
+jeruk=2
+apel=3
+{apel=3, jeruk=2, mangga=1, pisang=1}
+edcba 5
+C 68 D
+vokal 5
+-2147483648 1099511627776 3 -3 -1 3.5
+0.30000000000000004
+33.333333333333336 1.1 1.0E10 1.0E-5 1.23456789E8
+[Budi, Citra, ani, dodi]
+[ani, Budi, dodi, Citra]
+aBdC
+ab    |   42|0003.142|ff
+Ani punya 3 item, total 1,234,567
+[Belajar Java] Java true a-b-c
+4 [a, b, , c]
+libur
+grade B
+[[0, 0, 0], [0, 0, 5]]
+2,3

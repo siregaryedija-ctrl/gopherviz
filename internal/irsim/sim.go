@@ -215,6 +215,9 @@ func (it *interp) runProgram() {
 			if !ok {
 				continue
 			}
+			if it.classes[c.Name] == nil {
+				continue
+			}
 			if m := it.classes[c.Name].methods["main"]; m != nil && m.Static {
 				args := it.newList("array", nil)
 				args.l.elem = "String"
@@ -472,6 +475,8 @@ func semFor(language string) (semantics, bool) {
 		return &cSem{cpp: true}, true
 	case "c":
 		return &cSem{}, true
+	case "java":
+		return &javaSem{}, true
 	}
 	return nil, false
 }

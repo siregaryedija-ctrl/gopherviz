@@ -1,0 +1,1156 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "java",
+    "file": "02_lanjut.java",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "name": "Level.Level",
+        "header": "Level(int bobot)",
+        "params": [
+          "bobot"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "this.bobot = bobot;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 21,
+        "endLine": 23,
+        "state": "complete",
+        "name": "Bentuk.info",
+        "header": "default String info()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 22,
+            "text": "return nama() + \" luas \" + String.format(\"%.2f\", luas());"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "name": "Titik.jarak",
+        "header": "int jarak()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 28,
+            "text": "return Math.abs(x) + Math.abs(y);"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 35,
+        "endLine": 37,
+        "state": "complete",
+        "name": "Hewan.Hewan",
+        "header": "Hewan(String nama)",
+        "params": [
+          "nama"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 36,
+            "text": "this.nama = nama;"
+          }
+        ]
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 41,
+        "endLine": 43,
+        "state": "complete",
+        "name": "Hewan.toString",
+        "header": "public String toString()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 42,
+            "text": "return nama + \" bilang \" + suara();"
+          }
+        ]
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 47,
+        "endLine": 49,
+        "state": "complete",
+        "name": "Kucing.Kucing",
+        "header": "Kucing(String n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 48,
+            "text": "super(n);"
+          }
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 51,
+        "endLine": 53,
+        "state": "complete",
+        "name": "Kucing.suara",
+        "header": "String suara()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 52,
+            "text": "return \"meong\";"
+          }
+        ]
+      },
+      {
+        "id": "F8",
+        "kind": "func",
+        "line": 57,
+        "endLine": 59,
+        "state": "complete",
+        "name": "Anjing.Anjing",
+        "header": "Anjing(String n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 58,
+            "text": "super(n);"
+          }
+        ]
+      },
+      {
+        "id": "F9",
+        "kind": "func",
+        "line": 61,
+        "endLine": 63,
+        "state": "complete",
+        "name": "Anjing.suara",
+        "header": "String suara()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 62,
+            "text": "return \"guk\";"
+          }
+        ]
+      },
+      {
+        "id": "F10",
+        "kind": "func",
+        "line": 69,
+        "endLine": 71,
+        "state": "complete",
+        "name": "Persegi.Persegi",
+        "header": "Persegi(double s)",
+        "params": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 70,
+            "text": "sisi = s;"
+          }
+        ]
+      },
+      {
+        "id": "F11",
+        "kind": "func",
+        "line": 73,
+        "endLine": 75,
+        "state": "complete",
+        "name": "Persegi.luas",
+        "header": "public double luas()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 74,
+            "text": "return sisi * sisi;"
+          }
+        ]
+      },
+      {
+        "id": "F12",
+        "kind": "func",
+        "line": 77,
+        "endLine": 79,
+        "state": "complete",
+        "name": "Persegi.nama",
+        "header": "public String nama()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 78,
+            "text": "return \"Persegi\";"
+          }
+        ]
+      },
+      {
+        "id": "F13",
+        "kind": "func",
+        "line": 85,
+        "endLine": 87,
+        "state": "complete",
+        "name": "Lingkaran.Lingkaran",
+        "header": "Lingkaran(double r)",
+        "params": [
+          "r"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 86,
+            "text": "this.r = r;"
+          }
+        ]
+      },
+      {
+        "id": "F14",
+        "kind": "func",
+        "line": 89,
+        "endLine": 91,
+        "state": "complete",
+        "name": "Lingkaran.luas",
+        "header": "public double luas()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 90,
+            "text": "return Math.PI * r * r;"
+          }
+        ]
+      },
+      {
+        "id": "F15",
+        "kind": "func",
+        "line": 93,
+        "endLine": 95,
+        "state": "complete",
+        "name": "Lingkaran.nama",
+        "header": "public String nama()",
+        "body": [
+          {
+            "kind": "return",
+            "line": 94,
+            "text": "return \"Lingkaran\";"
+          }
+        ]
+      },
+      {
+        "id": "F16",
+        "kind": "func",
+        "line": 100,
+        "endLine": 103,
+        "state": "complete",
+        "name": "Main.bagi",
+        "header": "static int bagi(int a, int b)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 101,
+            "text": "counter++;"
+          },
+          {
+            "kind": "return",
+            "line": 102,
+            "text": "return a / b;"
+          }
+        ]
+      },
+      {
+        "id": "F17",
+        "kind": "func",
+        "line": 105,
+        "endLine": 234,
+        "state": "complete",
+        "name": "Main.main",
+        "header": "public static void main(String[] args)",
+        "params": [
+          "args"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 106,
+            "endLine": 117,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 118,
+            "text": "System.out.println(Level.TINGGI.bobot * 2 + \" \" + Level.val…"
+          },
+          {
+            "kind": "stmt",
+            "line": 120,
+            "text": "Titik t = new Titik(3, -4);"
+          },
+          {
+            "kind": "stmt",
+            "line": 121,
+            "text": "Titik u = new Titik(3, -4);"
+          },
+          {
+            "kind": "stmt",
+            "line": 122,
+            "text": "System.out.println(t + \" \" + t.x() + \" \" + t.jarak() + \" \" …"
+          },
+          {
+            "kind": "stmt",
+            "line": 124,
+            "text": "List<Hewan> hewan = new ArrayList<>();"
+          },
+          {
+            "kind": "stmt",
+            "line": 125,
+            "text": "hewan.add(new Kucing(\"Tom\"));"
+          },
+          {
+            "kind": "stmt",
+            "line": 126,
+            "text": "hewan.add(new Anjing(\"Rex\"));"
+          },
+          {
+            "kind": "loop",
+            "line": 127,
+            "endLine": 129,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 131,
+            "text": "Bentuk[] bentuk = {new Persegi(2.5), new Lingkaran(1)};"
+          },
+          {
+            "kind": "loop",
+            "line": 132,
+            "endLine": 134,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 136,
+            "endLine": 142,
+            "text": "try { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 143,
+            "endLine": 148,
+            "text": "try { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 149,
+            "endLine": 153,
+            "text": "try { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 155,
+            "text": "Map<String, Integer> stok = new HashMap<>();"
+          },
+          {
+            "kind": "stmt",
+            "line": 156,
+            "text": "String[] buah = {\"apel\", \"jeruk\", \"mangga\", \"apel\", \"pisang…"
+          },
+          {
+            "kind": "loop",
+            "line": 157,
+            "endLine": 159,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 160,
+            "text": "System.out.println(stok);"
+          },
+          {
+            "kind": "loop",
+            "line": 161,
+            "endLine": 165,
+            "ref": "L5"
+          },
+          {
+            "kind": "stmt",
+            "line": 166,
+            "text": "TreeMap<String, Integer> urut = new TreeMap<>(stok);"
+          },
+          {
+            "kind": "stmt",
+            "line": 167,
+            "text": "System.out.println(urut);"
+          },
+          {
+            "kind": "stmt",
+            "line": 169,
+            "text": "StringBuilder sb = new StringBuilder();"
+          },
+          {
+            "kind": "loop",
+            "line": 170,
+            "endLine": 172,
+            "ref": "L6"
+          },
+          {
+            "kind": "stmt",
+            "line": 173,
+            "text": "sb.reverse();"
+          },
+          {
+            "kind": "stmt",
+            "line": 174,
+            "text": "System.out.println(sb.toString() + \" \" + sb.length());"
+          },
+          {
+            "kind": "stmt",
+            "line": 175,
+            "text": "char c = 'A';"
+          },
+          {
+            "kind": "stmt",
+            "line": 176,
+            "text": "c += 2;"
+          },
+          {
+            "kind": "stmt",
+            "line": 177,
+            "text": "System.out.println(c + \" \" + (c + 1) + \" \" + (char) (c + 1)…"
+          },
+          {
+            "kind": "stmt",
+            "line": 178,
+            "text": "String kata = \"Halo Dunia\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 179,
+            "text": "int vokal = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 180,
+            "endLine": 184,
+            "ref": "L7"
+          },
+          {
+            "kind": "stmt",
+            "line": 185,
+            "text": "System.out.println(\"vokal \" + vokal);"
+          },
+          {
+            "kind": "stmt",
+            "line": 187,
+            "text": "int besar = Integer.MAX_VALUE;"
+          },
+          {
+            "kind": "stmt",
+            "line": 188,
+            "text": "besar++;"
+          },
+          {
+            "kind": "stmt",
+            "line": 189,
+            "text": "long l = 1L << 40;"
+          },
+          {
+            "kind": "stmt",
+            "line": 190,
+            "text": "System.out.println(besar + \" \" + l + \" \" + (7 / 2) + \" \" + …"
+          },
+          {
+            "kind": "stmt",
+            "line": 191,
+            "text": "System.out.println(0.1 + 0.2);"
+          },
+          {
+            "kind": "stmt",
+            "line": 192,
+            "text": "System.out.println(100.0 / 3 + \" \" + (float) 1.1 + \" \" + 1e…"
+          },
+          {
+            "kind": "stmt",
+            "line": 194,
+            "text": "List<String> nama = new ArrayList<>(Arrays.asList(\"Citra\", …"
+          },
+          {
+            "kind": "stmt",
+            "line": 195,
+            "text": "Collections.sort(nama);"
+          },
+          {
+            "kind": "stmt",
+            "line": 196,
+            "text": "System.out.println(nama);"
+          },
+          {
+            "kind": "stmt",
+            "line": 197,
+            "text": "nama.sort((a, b) -> a.length() - b.length());"
+          },
+          {
+            "kind": "stmt",
+            "line": 198,
+            "text": "System.out.println(nama);"
+          },
+          {
+            "kind": "stmt",
+            "line": 199,
+            "text": "nama.forEach(n -> System.out.print(n.charAt(0)));"
+          },
+          {
+            "kind": "stmt",
+            "line": 200,
+            "text": "System.out.println();"
+          },
+          {
+            "kind": "stmt",
+            "line": 202,
+            "text": "System.out.println(String.format(\"%-6s|%5d|%08.3f|%x\", \"ab\"…"
+          },
+          {
+            "kind": "stmt",
+            "line": 203,
+            "text": "System.out.printf(\"%s punya %d item, total %,d%n\", \"Ani\", 3…"
+          },
+          {
+            "kind": "stmt",
+            "line": 204,
+            "text": "String s = \" Belajar Java \";"
+          },
+          {
+            "kind": "stmt",
+            "line": 205,
+            "text": "System.out.println(\"[\" + s.trim() + \"] \" + s.trim().substri…"
+          },
+          {
+            "kind": "stmt",
+            "line": 206,
+            "text": "String[] parts = \"a,b,,c,,\".split(\",\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 207,
+            "text": "System.out.println(parts.length + \" \" + Arrays.toString(par…"
+          },
+          {
+            "kind": "stmt",
+            "line": 209,
+            "text": "String hari = \"Sabtu\";"
+          },
+          {
+            "kind": "switch",
+            "line": 210,
+            "endLine": 217,
+            "text": "switch (hari)",
+            "ref": "S2"
+          },
+          {
+            "kind": "stmt",
+            "line": 218,
+            "text": "int nilai = 75;"
+          },
+          {
+            "kind": "stmt",
+            "line": 219,
+            "text": "String grade = nilai >= 80 ? \"A\" : nilai >= 70 ? \"B\" : \"C\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 220,
+            "text": "System.out.println(\"grade \" + grade);"
+          },
+          {
+            "kind": "stmt",
+            "line": 222,
+            "text": "int[][] m = new int[2][3];"
+          },
+          {
+            "kind": "stmt",
+            "line": 223,
+            "text": "m[1][2] = 5;"
+          },
+          {
+            "kind": "stmt",
+            "line": 224,
+            "text": "System.out.println(Arrays.deepToString(m));"
+          },
+          {
+            "kind": "loop",
+            "line": 226,
+            "endLine": 233,
+            "ref": "L8"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5",
+          "L6",
+          "L7",
+          "S2",
+          "L8"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 106,
+        "endLine": 117,
+        "state": "complete",
+        "header": "for (Warna w : Warna.values())",
+        "parent": "F17",
+        "children": [
+          "S1"
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 107,
+        "endLine": 116,
+        "state": "complete",
+        "header": "switch (w)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "MERAH",
+            "line": 108,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 109,
+                "text": "System.out.println(w + \" \" + w.ordinal());"
+              },
+              {
+                "kind": "break",
+                "line": 110,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "HIJAU",
+            "line": 111,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 112,
+                "text": "System.out.println(w.name().toLowerCase());"
+              },
+              {
+                "kind": "break",
+                "line": 113,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 114,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 115,
+                "text": "System.out.println(\"lainnya: \" + w);"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 127,
+        "endLine": 129,
+        "state": "complete",
+        "header": "for (Hewan h : hewan)",
+        "parent": "F17"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 132,
+        "endLine": 134,
+        "state": "complete",
+        "header": "for (Bentuk b : bentuk)",
+        "parent": "F17"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 157,
+        "endLine": 159,
+        "state": "complete",
+        "header": "for (String b : buah)",
+        "parent": "F17"
+      },
+      {
+        "id": "L5",
+        "kind": "loop",
+        "line": 161,
+        "endLine": 165,
+        "state": "complete",
+        "header": "for (Map.Entry<String, Integer> e : stok.entrySet())",
+        "parent": "F17",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 162,
+        "endLine": 164,
+        "state": "complete",
+        "header": "if (e.getValue() > 1)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "e.getValue() > 1",
+            "line": 162,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 163,
+                "text": "System.out.println(e.getKey() + \"=\" + e.getValue());"
+              }
+            ]
+          }
+        ],
+        "parent": "L5"
+      },
+      {
+        "id": "L6",
+        "kind": "loop",
+        "line": 170,
+        "endLine": 172,
+        "state": "complete",
+        "header": "for (char c = 'a'; c <= 'e'; c++)",
+        "parent": "F17"
+      },
+      {
+        "id": "L7",
+        "kind": "loop",
+        "line": 180,
+        "endLine": 184,
+        "state": "complete",
+        "header": "for (char ch : kata.toLowerCase().toCharArray())",
+        "parent": "F17",
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 181,
+        "endLine": 183,
+        "state": "complete",
+        "header": "if (\"aiueo\".indexOf(ch) >= 0)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "\"aiueo\".indexOf(ch) >= 0",
+            "line": 181,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 182,
+                "text": "vokal++;"
+              }
+            ]
+          }
+        ],
+        "parent": "L7"
+      },
+      {
+        "id": "S2",
+        "kind": "switch",
+        "line": 210,
+        "endLine": 217,
+        "state": "complete",
+        "header": "switch (hari)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "\"Sabtu\"",
+            "line": 211,
+            "body": []
+          },
+          {
+            "kind": "case",
+            "label": "\"Minggu\"",
+            "line": 212,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 213,
+                "text": "System.out.println(\"libur\");"
+              },
+              {
+                "kind": "break",
+                "line": 214,
+                "text": "break;"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 215,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 216,
+                "text": "System.out.println(\"kerja\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F17"
+      },
+      {
+        "id": "L8",
+        "kind": "loop",
+        "line": 226,
+        "endLine": 233,
+        "state": "complete",
+        "name": "outer",
+        "header": "for (int i = 1; i <= 4; i++)",
+        "parent": "F17",
+        "children": [
+          "L9"
+        ]
+      },
+      {
+        "id": "L9",
+        "kind": "loop",
+        "line": 227,
+        "endLine": 232,
+        "state": "complete",
+        "header": "for (int j = 1; j <= 4; j++)",
+        "parent": "L8",
+        "children": [
+          "I3"
+        ]
+      },
+      {
+        "id": "I3",
+        "kind": "if",
+        "line": 228,
+        "endLine": 231,
+        "state": "complete",
+        "header": "if (i * j == 6)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "i * j == 6",
+            "line": 228,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 229,
+                "text": "System.out.println(i + \",\" + j);"
+              },
+              {
+                "kind": "break",
+                "line": 230,
+                "text": "break outer;",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L9"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 106,
+        "endLine": 117,
+        "state": "complete",
+        "header": {
+          "text": "for (Warna w : Warna.values())",
+          "value": "w",
+          "define": true,
+          "range": "Warna.values()"
+        },
+        "vars": [
+          "w"
+        ],
+        "body": [
+          {
+            "kind": "switch",
+            "line": 107,
+            "endLine": 116,
+            "text": "switch (w)",
+            "ref": "S1"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 127,
+        "endLine": 129,
+        "state": "complete",
+        "header": {
+          "text": "for (Hewan h : hewan)",
+          "value": "h",
+          "define": true,
+          "range": "hewan"
+        },
+        "vars": [
+          "h"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 128,
+            "text": "System.out.println(h);"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "range-slice",
+        "line": 132,
+        "endLine": 134,
+        "state": "complete",
+        "header": {
+          "text": "for (Bentuk b : bentuk)",
+          "value": "b",
+          "define": true,
+          "range": "bentuk"
+        },
+        "vars": [
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 133,
+            "text": "System.out.println(b.info());"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "range-slice",
+        "line": 157,
+        "endLine": 159,
+        "state": "complete",
+        "header": {
+          "text": "for (String b : buah)",
+          "value": "b",
+          "define": true,
+          "range": "buah"
+        },
+        "vars": [
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 158,
+            "text": "stok.put(b, stok.getOrDefault(b, 0) + 1);"
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "kind": "range-map",
+        "line": 161,
+        "endLine": 165,
+        "state": "complete",
+        "header": {
+          "text": "for (Map.Entry<String, Integer> e : stok.entrySet())",
+          "value": "e",
+          "define": true,
+          "range": "stok.entrySet()"
+        },
+        "vars": [
+          "e"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 162,
+            "endLine": 164,
+            "text": "if (e.getValue() > 1)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 163,
+                "text": "System.out.println(e.getKey() + \"=\" + e.getValue());"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L6",
+        "kind": "for3",
+        "line": 170,
+        "endLine": 172,
+        "state": "complete",
+        "header": {
+          "text": "for (char c = 'a'; c <= 'e'; c++)",
+          "init": "char c = 'a'",
+          "cond": "c <= 'e'",
+          "post": "c++"
+        },
+        "vars": [
+          "c"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 171,
+            "text": "sb.append(c);"
+          }
+        ]
+      },
+      {
+        "id": "L7",
+        "kind": "range-string",
+        "line": 180,
+        "endLine": 184,
+        "state": "complete",
+        "header": {
+          "text": "for (char ch : kata.toLowerCase().toCharArray())",
+          "value": "ch",
+          "define": true,
+          "range": "kata.toLowerCase().toCharArray()"
+        },
+        "vars": [
+          "ch"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 181,
+            "endLine": 183,
+            "text": "if (\"aiueo\".indexOf(ch) >= 0)",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 182,
+                "text": "vokal++;"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L8",
+        "kind": "for3",
+        "line": 226,
+        "endLine": 233,
+        "label": "outer",
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 1; i <= 4; i++)",
+          "init": "int i = 1",
+          "cond": "i <= 4",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 227,
+            "endLine": 232,
+            "ref": "L9"
+          }
+        ],
+        "children": [
+          "L9"
+        ]
+      },
+      {
+        "id": "L9",
+        "kind": "for3",
+        "line": 227,
+        "endLine": 232,
+        "state": "complete",
+        "header": {
+          "text": "for (int j = 1; j <= 4; j++)",
+          "init": "int j = 1",
+          "cond": "j <= 4",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 228,
+            "endLine": 231,
+            "text": "if (i * j == 6)",
+            "ref": "I3",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 229,
+                "text": "System.out.println(i + \",\" + j);"
+              },
+              {
+                "kind": "break",
+                "line": 230,
+                "text": "break outer;",
+                "label": "outer"
+              }
+            ]
+          }
+        ],
+        "parent": "L8"
+      }
+    ]
+  },
+  "diagnostics": null
+}

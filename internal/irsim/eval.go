@@ -169,9 +169,16 @@ func (it *interp) implicitField(e *Env, name string) (Value, bool) {
 }
 
 func findMethod(c *Class, name string) *Fn {
-	for ; c != nil; c = c.super {
-		if m := c.methods[name]; m != nil {
+	for k := c; k != nil; k = k.super {
+		if m := k.methods[name]; m != nil && (m.Body != nil || m.ExprBody != nil || k.kind != "interface") {
 			return m
+		}
+	}
+	for k := c; k != nil; k = k.super { // Java: method default dari interface
+		for _, i := range k.ifaces {
+			if m := findMethod(i, name); m != nil && (m.Body != nil || m.ExprBody != nil) {
+				return m
+			}
 		}
 	}
 	return nil

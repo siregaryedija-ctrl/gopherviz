@@ -1260,6 +1260,13 @@ func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 		c.name = "(anonim)"
 	}
 	for _, ext := range n.Extends {
+		if sc := it.findClass(ext, e); sc != nil && sc.kind == "interface" && it.lang == "java" {
+			c.ifaces = append(c.ifaces, sc)
+			continue
+		}
+		if c.super != nil {
+			continue
+		}
 		if sc := it.findClass(ext, e); sc != nil && (sc.kind != "interface" || it.lang != "java") {
 			if sc.kind == "interface" && it.lang != "python" {
 				continue
@@ -1274,6 +1281,12 @@ func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 		it.classes[n.Name] = c // tersedia untuk method yang merujuk kelasnya sendiri
 	}
 	ordinal := 0
+	var javaEnums []func() // Java: konstanta enum dibuat setelah konstruktor dan field terdaftar
+	defer func() {
+		for _, f := range javaEnums {
+			f()
+		}
+	}()
 	for _, m := range n.Members {
 		switch x := m.(type) {
 		case *ir.Func:
@@ -1302,6 +1315,13 @@ func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 					typ = strings.TrimPrefix(strings.TrimPrefix(x.Kind, "static "), "final ")
 				}
 				typ = strings.TrimSpace(strings.TrimPrefix(typ, "final "))
+				if x.Kind == "enum" && it.lang == "java" {
+					s, ord := s, ordinal
+					c.statics.set(strV(name), null()) // urutan values() mengikuti deklarasi
+					javaEnums = append(javaEnums, func() { c.statics.set(strV(name), it.enumValue(c, s, ord, scope)) })
+					ordinal++
+					continue
+				}
 				if x.Kind == "enum" {
 					ev := it.enumValue(c, s, ordinal, scope)
 					c.statics.set(strV(name), ev)
@@ -1436,6 +1456,9 @@ func (it *interp) enumValue(c *Class, s *ir.VarSpec, ordinal int, scope *Env) Va
 		if s.Init != nil && it.lang == "php" {
 			o.fields.set(strV("value"), it.eval(s.Init, scope))
 		}
+		if it.lang == "java" {
+			it.initFields(c, Value{k: kObj, o: o})
+		}
 		if s.Ctor != nil {
 			if ctor := it.findCtor(c, len(s.Ctor)); ctor != nil {
 				it.callFunc(&Func{name: c.name, decl: ctor, env: c.env, class: c}, Value{k: kObj, o: o}, it.evalArgs(s.Ctor, scope), s.Ctor[0])
@@ -1526,6 +1549,12 @@ func (it *interp) constructArgs(c *Class, args argList, at ir.Node) Value {
 		it.callFunc(f, obj, args, at)
 	case it.nativeBase(c) != nil:
 		it.nativeInit(it.nativeBase(c), obj, args.pos, at)
+	case it.lang == "java" && c.kind == "record": // konstruktor kanonik record
+		for i, f := range c.fields {
+			if i < len(args.pos) {
+				o.fields.set(strV(f.name), it.sem.convert(it, args.pos[i], f.typ))
+			}
+		}
 	case (it.lang == "c" || it.lang == "cpp") && len(args.pos) > 0: // aggregate: Point{1, 2}
 		for i, f := range it.allFields(c) {
 			if i < len(args.pos) {
@@ -1959,6 +1988,20 @@ func (it *interp) methodOrProp(obj Value, name string, at ir.Node) Value {
 			if m := c.methods[name]; m != nil {
 				t := obj
 				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, this: &t, class: c, overloads: c.overloads[name]}}
+			}
+		}
+		if it.lang == "java" {
+			if m := findMethod(obj.o.class, name); m != nil { // method default interface
+				c := it.classOf[m]
+				t := obj
+				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, this: &t, class: c, overloads: c.overloads[name]}}
+			}
+			if obj.o.class.kind == "record" && obj.o.fields.has(strV(name)) { // accessor record: p.x()
+				v, _ := obj.o.fields.get(strV(name))
+				return bf(name, func(it *interp, this Value, args []Value, at ir.Node) Value { return v })
+			}
+			if v, ok := it.sem.member(it, obj, name, at); ok { // name(), ordinal(), getMessage(), ...
+				return v
 			}
 		}
 	}

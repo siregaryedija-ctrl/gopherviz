@@ -1,0 +1,196 @@
+1: import [] 
+3: class Main []
+  4: enum Warna []
+    4: var(enum) MERAH = 0
+    4: var(enum) HIJAU = 1
+    4: var(enum) BIRU = 2
+  6: enum Level []
+    7: var(enum) RENDAH(1)
+    7: var(enum) TINGGI(3)
+    9: var(int) bobot
+    11: func Level.Level(bobot)
+      11: block
+        12: expr (this.bobot = bobot)
+  16: interface Bentuk []
+    17: func Bentuk.luas()
+    19: func Bentuk.nama()
+    21: func Bentuk.info()
+      21: block
+        22: return ((nama() + " luas ") + String.format("%.2f", luas()))
+  26: record Titik []
+    0: var(int) x
+    0: var(int) y
+    27: func Titik.jarak()
+      27: block
+        28: return (Math.abs(x) + Math.abs(y))
+  32: class Hewan []
+    33: var(String) nama
+    35: func Hewan.Hewan(nama)
+      35: block
+        36: expr (this.nama = nama)
+    39: func Hewan.suara()
+    41: func Hewan.toString()
+      41: block
+        42: return ((nama + " bilang ") + suara())
+  46: class Kucing [Hewan]
+    47: func Kucing.Kucing(n)
+      47: block
+        48: expr super(n)
+    51: func Kucing.suara()
+      51: block
+        52: return "meong"
+  56: class Anjing [Hewan]
+    57: func Anjing.Anjing(n)
+      57: block
+        58: expr super(n)
+    61: func Anjing.suara()
+      61: block
+        62: return "guk"
+  66: class Persegi [Bentuk]
+    67: var(double) sisi
+    69: func Persegi.Persegi(s)
+      69: block
+        70: expr (sisi = s)
+    73: func Persegi.luas()
+      73: block
+        74: return (sisi * sisi)
+    77: func Persegi.nama()
+      77: block
+        78: return "Persegi"
+  82: class Lingkaran [Bentuk]
+    83: var(double) r
+    85: func Lingkaran.Lingkaran(r)
+      85: block
+        86: expr (this.r = r)
+    89: func Lingkaran.luas()
+      89: block
+        90: return ((Math.PI * r) * r)
+    93: func Lingkaran.nama()
+      93: block
+        94: return "Lingkaran"
+  98: var(static int) counter = 0
+  100: func Main.bagi(a, b)
+    100: block
+      101: expr (counter++)
+      102: return (a / b)
+  105: func Main.main(args)
+    105: block
+      106: foreach(colon Warna) w in Warna.values()
+        106: block
+          107: switch w
+            108: case MERAH
+              109: expr System.out.println(((w + " ") + w.ordinal()))
+              110: break 
+            111: case HIJAU
+              112: expr System.out.println(w.name().toLowerCase())
+              113: break 
+            114: default
+              115: expr System.out.println(("lainnya: " + w))
+      118: expr System.out.println((((Level.TINGGI.bobot * 2) + " ") + Level.valueOf("RENDAH")))
+      120: var(Titik) t = new Titik(3, (- 4))
+      121: var(Titik) u = new Titik(3, (- 4))
+      122: expr System.out.println(((((((t + " ") + t.x()) + " ") + t.jarak()) + " ") + t.equals(u)))
+      124: var(List<Hewan>) hewan = new ArrayList<>()
+      125: expr hewan.add(new Kucing("Tom"))
+      126: expr hewan.add(new Anjing("Rex"))
+      127: foreach(colon Hewan) h in hewan
+        127: block
+          128: expr System.out.println(h)
+      131: var(Bentuk[]) bentuk = init[new Persegi(2.5), new Lingkaran(1)]
+      132: foreach(colon Bentuk) b in bentuk
+        132: block
+          133: expr System.out.println(b.info())
+      136: try
+        136: block
+          137: expr bagi(10, 0)
+        catch [ArithmeticException] e
+        138: block
+          139: expr System.out.println(("error: " + e.getMessage()))
+        finally
+        140: block
+          141: expr System.out.println(("counter " + counter))
+      143: try
+        143: block
+          144: var(int[]) arr = new int[][2]()
+          145: expr (arr[5] = 1)
+        catch [ArrayIndexOutOfBoundsException] e
+        146: block
+          147: expr System.out.println(e.getMessage())
+      149: try
+        149: block
+          150: expr Integer.parseInt("12a")
+        catch [NumberFormatException] e
+        151: block
+          152: expr System.out.println(e)
+      155: var(Map<String, Integer>) stok = new HashMap<>()
+      156: var(String[]) buah = init["apel", "jeruk", "mangga", "apel", "pisang", "jeruk", "apel"]
+      157: foreach(colon String) b in buah
+        157: block
+          158: expr stok.put(b, (stok.getOrDefault(b, 0) + 1))
+      160: expr System.out.println(stok)
+      161: foreach(colon Map.Entry<String, Integer>) e in stok.entrySet()
+        161: block
+          162: if (e.getValue() > 1)
+            162: block
+              163: expr System.out.println(((e.getKey() + "=") + e.getValue()))
+      166: var(TreeMap<String, Integer>) urut = new TreeMap<>(stok)
+      167: expr System.out.println(urut)
+      169: var(StringBuilder) sb = new StringBuilder()
+      170: for [var(char) c = 'a'] [(c <= 'e')] [(c++)]
+        170: block
+          171: expr sb.append(c)
+      173: expr sb.reverse()
+      174: expr System.out.println(((sb.toString() + " ") + sb.length()))
+      175: var(char) c = 'A'
+      176: expr (c += 2)
+      177: expr System.out.println(((((c + " ") + (c + 1)) + " ") + (char)(c + 1)))
+      178: var(String) kata = "Halo Dunia"
+      179: var(int) vokal = 0
+      180: foreach(colon char) ch in kata.toLowerCase().toCharArray()
+        180: block
+          181: if ("aiueo".indexOf(ch) >= 0)
+            181: block
+              182: expr (vokal++)
+      185: expr System.out.println(("vokal " + vokal))
+      187: var(int) besar = Integer.MAX_VALUE
+      188: expr (besar++)
+      189: var(long) l = (1 << 40)
+      190: expr System.out.println(((((((((((besar + " ") + l) + " ") + (7 / 2)) + " ") + ((- 7) / 2)) + " ") + ((- 7) % 3)) + " ") + (7.0 / 2)))
+      191: expr System.out.println((0.1 + 0.2))
+      192: expr System.out.println((((((((((100.0 / 3) + " ") + (float)1.1) + " ") + 1e10) + " ") + 1.0E-5) + " ") + 123456789.0))
+      194: var(List<String>) nama = new ArrayList<>(Arrays.asList("Citra", "ani", "Budi", "dodi"))
+      195: expr Collections.sort(nama)
+      196: expr System.out.println(nama)
+      197: expr nama.sort(fn =>(a, b) (a.length() - b.length()))
+      198: expr System.out.println(nama)
+      199: expr nama.forEach(fn =>(n) System.out.print(n.charAt(0)))
+      200: expr System.out.println()
+      202: expr System.out.println(String.format("%-6s|%5d|%08.3f|%x", "ab", 42, 3.14159, 255))
+      203: expr System.out.printf("%s punya %d item, total %,d%n", "Ani", 3, 1234567)
+      204: var(String) s = "  Belajar Java  "
+      205: expr System.out.println(((((((("[" + s.trim()) + "] ") + s.trim().substring(8)) + " ") + s.contains("Java")) + " ") + String.join("-", "a", "b", "c")))
+      206: var(String[]) parts = "a,b,,c,,".split(",")
+      207: expr System.out.println(((parts.length + " ") + Arrays.toString(parts)))
+      209: var(String) hari = "Sabtu"
+      210: switch hari
+        211: case "Sabtu"
+        212: case "Minggu"
+          213: expr System.out.println("libur")
+          214: break 
+        215: default
+          216: expr System.out.println("kerja")
+      218: var(int) nilai = 75
+      219: var(String) grade = ((nilai >= 80) ? "A" : ((nilai >= 70) ? "B" : "C"))
+      220: expr System.out.println(("grade " + grade))
+      222: var(int[][]) m = new int[][][2, 3]()
+      223: expr (m[1][2] = 5)
+      224: expr System.out.println(Arrays.deepToString(m))
+      225: label outer
+        226: for [var(int) i = 1] [(i <= 4)] [(i++)]
+          226: block
+            227: for [var(int) j = 1] [(j <= 4)] [(j++)]
+              227: block
+                228: if ((i * j) == 6)
+                  228: block
+                    229: expr System.out.println(((i + ",") + j))
+                    230: break outer
