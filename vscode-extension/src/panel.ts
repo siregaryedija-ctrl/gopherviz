@@ -23,7 +23,9 @@ export type FromPanel =
   | { type: 'setConfig'; key: 'speed' | 'sound' | 'music'; value: number | boolean }
   | { type: 'restart' }
   | { type: 'input'; text: string }
-  | { type: 'reroll' };
+  | { type: 'reroll' }
+  /** Baris (1-based) langkah trace yang sedang tampil; 0 = tidak ada (sorotan di editor dihapus). */
+  | { type: 'step'; line: number };
 
 const icon = (d: string) => `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${d}"/></svg>`;
 
@@ -53,10 +55,17 @@ export class LoopPanel implements vscode.Disposable {
   private closedByUser = false;
   private readonly extensionUri: vscode.Uri;
   private readonly onMessage: (m: FromPanel) => void;
+  private readonly onView: (visible: boolean) => void;
 
-  constructor(extensionUri: vscode.Uri, onMessage: (m: FromPanel) => void) {
+  constructor(extensionUri: vscode.Uri, onMessage: (m: FromPanel) => void, onView: (visible: boolean) => void = () => {}) {
     this.extensionUri = extensionUri;
     this.onMessage = onMessage;
+    this.onView = onView;
+  }
+
+  /** true bila panel terbuka dan terlihat (animasi berjalan). */
+  get isVisible(): boolean {
+    return this.panel?.visible ?? false;
   }
 
   get isOpen(): boolean {
@@ -93,10 +102,12 @@ export class LoopPanel implements vscode.Disposable {
       }
       this.onMessage(m);
     });
+    panel.onDidChangeViewState(e => this.onView(e.webviewPanel.visible));
     panel.onDidDispose(() => {
       this.panel = undefined;
       this.ready = false;
       this.closedByUser = true;
+      this.onView(false);
     });
     this.panel = panel;
   }

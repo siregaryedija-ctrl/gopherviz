@@ -52,6 +52,9 @@ class Controller implements vscode.Disposable {
   private editor?: vscode.TextEditor; // editor Go terakhir yang aktif
   /** Kotak Input per file: nilai dari user + seed angka acak (disimpan di workspaceState). */
   private inputs: Record<string, { text: string; seed: number }> = {};
+  /** Baris langkah trace yang sedang tampil di panel (0 = tidak ada); disorot di editor. */
+  private stepLine = 0;
+  private readonly stepDeco: vscode.TextEditorDecorationType;
 
   private readonly panel: LoopPanel;
   private readonly lens: LoopCodeLens;
@@ -64,7 +67,19 @@ class Controller implements vscode.Disposable {
     this.ctx = ctx;
     this.inputs = ctx.workspaceState.get(INPUTS_KEY, {});
     this.output = vscode.window.createOutputChannel('GopherViz');
-    this.panel = new LoopPanel(ctx.extensionUri, m => this.onPanelMessage(m));
+    this.panel = new LoopPanel(ctx.extensionUri, m => this.onPanelMessage(m), () => this.paintStep());
+    // Sorotan baris yang sedang dijalankan Gopher (seperti penanda baris di debugger), ikon gopher di gutter.
+    this.stepDeco = vscode.window.createTextEditorDecorationType({
+      isWholeLine: true,
+      backgroundColor: new vscode.ThemeColor('gopherviz.stepLineBackground'),
+      borderColor: new vscode.ThemeColor('gopherviz.stepLineBorder'),
+      borderStyle: 'solid',
+      borderWidth: '0 0 0 3px',
+      gutterIconPath: vscode.Uri.joinPath(ctx.extensionUri, 'media', 'icon.svg'),
+      gutterIconSize: '80%',
+      overviewRulerColor: new vscode.ThemeColor('gopherviz.stepLineBorder'),
+      overviewRulerLane: vscode.OverviewRulerLane.Left,
+    });
     this.lens = new LoopCodeLens(uri => this.results.get(uri)?.scene);
     this.status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     this.status.command = 'gopherviz.showPanel';
@@ -72,6 +87,7 @@ class Controller implements vscode.Disposable {
     this.disposables.push(
       this.output,
       this.panel,
+      this.stepDeco,
       this.lens,
       this.status,
       vscode.languages.registerCodeLensProvider(LANGUAGES.map(language => ({ language })), this.lens),
@@ -87,6 +103,7 @@ class Controller implements vscode.Disposable {
         }
         this.updateStatus();
       }),
+      vscode.window.onDidChangeVisibleTextEditors(() => this.paintStep()),
       vscode.workspace.onDidChangeTextDocument(e => {
         if (isSupported(e.document) && e.contentChanges.length > 0 && config().get('realtime', true)) {
           this.schedule(e.document, UPDATE_DELAY_MS);
@@ -114,6 +131,7 @@ class Controller implements vscode.Disposable {
         }
         this.postConfig();
         this.lens.refresh();
+        this.paintStep();
       }),
     );
 
@@ -373,6 +391,10 @@ class Controller implements vscode.Disposable {
       case 'reveal':
         void this.reveal(m.line);
         break;
+      case 'step':
+        this.stepLine = m.line;
+        this.paintStep();
+        break;
       case 'setConfig':
         void config().update(m.key, m.value, vscode.ConfigurationTarget.Global);
         break;
@@ -395,6 +417,22 @@ class Controller implements vscode.Disposable {
         void this.ctx.workspaceState.update(INPUTS_KEY, this.inputs);
         void this.sendTrace(uri);
         break;
+      }
+    }
+  }
+
+  /**
+   * Sorot baris langkah trace di editor file yang divisualisasikan, selama panel terlihat.
+   * Editor lain (file lain) dibersihkan supaya sorotan lama tidak tertinggal.
+   */
+  private paintStep(): void {
+    const doc = this.editor?.document;
+    const on = this.stepLine > 0 && this.panel.isVisible && config().get('highlightLine', true);
+    for (const ed of vscode.window.visibleTextEditors) {
+      if (on && doc && ed.document === doc && this.stepLine <= doc.lineCount) {
+        ed.setDecorations(this.stepDeco, [new vscode.Range(this.stepLine - 1, 0, this.stepLine - 1, 0)]);
+      } else {
+        ed.setDecorations(this.stepDeco, []);
       }
     }
   }
@@ -432,6 +470,7 @@ class Controller implements vscode.Disposable {
       lastTrace: () => this.lastTrace,
       panelOpen: () => this.panel.isOpen,
       panelMessage: (m: FromPanel) => this.onPanelMessage(m),
+      stepLine: () => this.stepLine,
     };
   }
 

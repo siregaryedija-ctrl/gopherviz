@@ -2,7 +2,7 @@
   "name": "gopherviz",
   "displayName": "GopherViz",
   "description": "Visual pixel-art dan animasi cara kerja kode, realtime saat kamu mengetik. Go: nilai asli (loop, if, switch, fungsi, struct, pointer, map, goroutine, channel). JavaScript, TypeScript, Python, PHP, C++, C, Java: alur struktur.",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "publisher": "gopherviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",
@@ -66,6 +66,18 @@
         "when": "editorLangId =~ /^(go|javascript|javascriptreact|typescript|typescriptreact|python|php|cpp|c|java)$/"
       }
     ],
+    "colors": [
+      {
+        "id": "gopherviz.stepLineBackground",
+        "description": "Latar baris yang sedang dijalankan Gopher di editor.",
+        "defaults": { "dark": "#264f7880", "light": "#add6ff80", "highContrast": "#264f7880" }
+      },
+      {
+        "id": "gopherviz.stepLineBorder",
+        "description": "Garis kiri baris yang sedang dijalankan Gopher di editor.",
+        "defaults": { "dark": "#4fc1ff", "light": "#0078d4", "highContrast": "#4fc1ff" }
+      }
+    ],
     "configuration": {
       "title": "GopherViz",
       "properties": {
@@ -83,6 +95,11 @@
           "type": "boolean",
           "default": false,
           "description": "Tampilkan teks penjelasan di panel (kode blok, penjelasan, isi/cabang, variabel, output, daftar blok). Bawaan: panel hanya berisi gambar."
+        },
+        "gopherviz.highlightLine": {
+          "type": "boolean",
+          "default": true,
+          "description": "Sorot baris yang sedang dijalankan Gopher langsung di editor, mengikuti animasi di panel."
         },
         "gopherviz.codeLens": {
           "type": "boolean",

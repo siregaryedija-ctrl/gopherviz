@@ -9,7 +9,7 @@
 [hidden] { display: none !important; }
 /* Mode gambar saja (bawaan): hanya panggung pixel + tombol putar/kecepatan, tanpa teks penjelasan. */
 body.pic .top, body.pic #note, body.pic #stepNote, body.pic #tLabel, body.pic #partsSection, body.pic #varsSection,
-body.pic #memSection, body.pic #outSection, body.pic #navSection { display: none !important; }
+body.pic #memSection, body.pic #navSection { display: none !important; }
 body {
   margin: 0;
   padding: 0 14px 18px;
@@ -152,18 +152,36 @@ h2 {
 .var.changed { animation: flash 0.8s ease-out; border-color: var(--vscode-editorWarning-foreground, #cca700); }
 @keyframes flash { from { background: var(--vscode-editor-findMatchHighlightBackground, rgba(234, 92, 0, 0.33)); } }
 .muted { color: var(--muted); font-size: 12px; }
+/* Kotak output (seperti terminal kecil). Garis hijau di atas memanjang setiap kali output bertambah. */
+#outSection {
+  position: relative;
+  overflow: hidden;
+  padding: 8px 10px 10px;
+  border-radius: 6px;
+  background: var(--vscode-terminal-background, var(--vscode-textCodeBlock-background, #1e1e1e));
+}
+#outSection h2 { margin-bottom: 4px; font-size: 10px; }
+#outSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--vscode-terminal-ansiGreen, #89d185);
+}
+#outSection.fresh::before { animation: outbar 1.2s ease-out forwards; }
+@keyframes outbar { from { width: 0; opacity: 1; } 60% { width: 100%; opacity: 1; } to { width: 100%; opacity: 0.35; } }
 .out {
   margin: 0;
   max-height: 9em;
   overflow: auto;
-  padding: 6px 10px;
-  border-radius: 6px;
   font-family: var(--vscode-editor-font-family);
-  font-size: 12px;
-  background: var(--vscode-terminal-background, var(--vscode-textCodeBlock-background, #1e1e1e));
-  color: var(--vscode-terminal-foreground, inherit);
+  font-size: 13px;
+  color: var(--vscode-terminal-ansiGreen, #89d185);
   white-space: pre-wrap;
 }
+.out.empty { color: var(--muted); }
 
 /* Diagram memori: peti (variabel), ransel (field struct), tali (pointer). Warna peti tetap pastel di semua tema. */
 .mem { border: 1px solid var(--border); border-radius: 8px; padding: 6px; background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.08)); }
@@ -262,4 +280,4 @@ h2 {
 .hint { font-size: 12px; color: var(--muted); }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
-@media (prefers-reduced-motion: reduce) { .hp { transition: none; } .var.changed { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .hp { transition: none; } .var.changed, #outSection.fresh::before { animation: none; } }

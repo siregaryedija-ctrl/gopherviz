@@ -52,6 +52,12 @@ test('trace nilai asli dikirim ke panel setelah berhenti mengetik', async api =>
   await waitFor('trace L2', () => api.traceKey().startsWith(uri) && api.traceKey().split('|')[2] === 'L2');
 });
 
+test('panel mengirim baris yang sedang jalan untuk disorot di editor', async api => {
+  const ed = vscode.window.activeTextEditor!;
+  const l2 = api.result(ed.document.uri.toString())!.scene.blocks.find(b => b.id === 'L2')!;
+  await waitFor('baris langkah di dalam L2', () => api.stepLine() >= l2.line && api.stepLine() <= l2.endLine);
+});
+
 test('mengetik loop baru tanpa menyimpan langsung terlihat (realtime)', async api => {
   const ed = vscode.window.activeTextEditor!;
   await ed.edit(e => e.insert(new vscode.Position(6, 0), '\tfor k := range 3 {\n\t}\n'));

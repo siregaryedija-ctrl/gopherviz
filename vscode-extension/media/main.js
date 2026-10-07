@@ -375,6 +375,8 @@
     tp.trace = null;
     traceNote = '';
     for (const id of ['tracebar', 'stepNote', 'varsSection', 'memSection', 'outSection']) $(id).hidden = true;
+    tp.outLen = 0;
+    vscode.postMessage({ type: 'step', line: 0 }); // hapus sorotan baris di editor
     highlightPart(null);
     highlightPhase(null);
   }
@@ -432,15 +434,26 @@
       }).join('') || '<span class="muted">Belum ada variabel.</span>';
     }
 
-    // output kumulatif sampai langkah ini
+    // output kumulatif sampai langkah ini; kotak selalu tampil selama trace, garis hijau saat output bertambah
     let out = '';
     for (let k = 0; k <= tp.i; k++) {
       const vk = tp.view[k];
       for (const st of vk.group || [vk.step]) out += st.output || '';
     }
-    $('outSection').hidden = !out;
-    $('out').textContent = out;
+    $('outSection').hidden = false;
+    $('out').textContent = out || '—';
+    $('out').classList.toggle('empty', !out);
     $('out').scrollTop = $('out').scrollHeight;
+    if (out.length > (tp.outLen || 0)) {
+      const sec = $('outSection');
+      sec.classList.remove('fresh');
+      void sec.offsetWidth; // mulai ulang animasi
+      sec.classList.add('fresh');
+    }
+    tp.outLen = out.length;
+
+    // baris yang sedang dijalankan → disorot di editor VS Code
+    if (s.line) vscode.postMessage({ type: 'step', line: s.line });
 
     highlightPart(partOf(s.line, s));
     highlightPhase(currentLoop && s.loop === currentLoop.id ? { init: 'init', cond: 'cond', post: 'post' }[s.phase] || null : null);
