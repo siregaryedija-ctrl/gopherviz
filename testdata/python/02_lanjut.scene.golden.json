@@ -1,0 +1,684 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "python",
+    "file": "02_lanjut.py",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 8,
+        "endLine": 11,
+        "state": "complete",
+        "name": "Vector.__init__",
+        "header": "def __init__(self, x, y)",
+        "params": [
+          "self",
+          "x",
+          "y"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "self.x = x"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "self.y = y"
+          },
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "Vector.count += 1"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 13,
+        "endLine": 14,
+        "state": "complete",
+        "name": "Vector.__add__",
+        "header": "def __add__(self, other)",
+        "params": [
+          "self",
+          "other"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 14,
+            "text": "return Vector(self.x + other.x, self.y + other.y)"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 16,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Vector.__eq__",
+        "header": "def __eq__(self, other)",
+        "params": [
+          "self",
+          "other"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 17,
+            "text": "return self.x == other.x and self.y == other.y"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 19,
+        "endLine": 20,
+        "state": "complete",
+        "name": "Vector.__lt__",
+        "header": "def __lt__(self, other)",
+        "params": [
+          "self",
+          "other"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 20,
+            "text": "return self.length < other.length"
+          }
+        ]
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 22,
+        "endLine": 23,
+        "state": "complete",
+        "name": "Vector.__repr__",
+        "header": "def __repr__(self)",
+        "params": [
+          "self"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 23,
+            "text": "return f\"Vector({self.x}, {self.y})\""
+          }
+        ]
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 26,
+        "endLine": 27,
+        "state": "complete",
+        "name": "Vector.length",
+        "header": "def length(self)",
+        "params": [
+          "self"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 27,
+            "text": "return math.hypot(self.x, self.y)"
+          }
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 30,
+        "endLine": 31,
+        "state": "complete",
+        "name": "Vector.zero",
+        "header": "def zero(cls)",
+        "params": [
+          "cls"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 31,
+            "text": "return cls(0, 0)"
+          }
+        ]
+      },
+      {
+        "id": "F8",
+        "kind": "func",
+        "line": 34,
+        "endLine": 35,
+        "state": "complete",
+        "name": "Vector.dot",
+        "header": "def dot(a, b)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 35,
+            "text": "return a.x * b.x + a.y * b.y"
+          }
+        ]
+      },
+      {
+        "id": "F9",
+        "kind": "func",
+        "line": 44,
+        "endLine": 46,
+        "state": "complete",
+        "name": "Rekening.__init__",
+        "header": "def __init__(self, pemilik, saldo=0)",
+        "params": [
+          "self",
+          "pemilik",
+          "saldo"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 45,
+            "text": "self.pemilik = pemilik"
+          },
+          {
+            "kind": "stmt",
+            "line": 46,
+            "text": "self._saldo = saldo"
+          }
+        ]
+      },
+      {
+        "id": "F10",
+        "kind": "func",
+        "line": 49,
+        "endLine": 50,
+        "state": "complete",
+        "name": "Rekening.saldo",
+        "header": "def saldo(self)",
+        "params": [
+          "self"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 50,
+            "text": "return self._saldo"
+          }
+        ]
+      },
+      {
+        "id": "F11",
+        "kind": "func",
+        "line": 53,
+        "endLine": 56,
+        "state": "complete",
+        "name": "Rekening.saldo",
+        "header": "def saldo(self, nilai)",
+        "params": [
+          "self",
+          "nilai"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 54,
+            "endLine": 55,
+            "text": "if nilai < 0",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 55,
+                "text": "raise ValueError(\"saldo tidak boleh negatif\")"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 56,
+            "text": "self._saldo = nilai"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 54,
+        "endLine": 55,
+        "state": "complete",
+        "header": "if nilai < 0",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "nilai < 0",
+            "line": 54,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 55,
+                "text": "raise ValueError(\"saldo tidak boleh negatif\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F11"
+      },
+      {
+        "id": "F12",
+        "kind": "func",
+        "line": 58,
+        "endLine": 59,
+        "state": "complete",
+        "name": "Rekening.__str__",
+        "header": "def __str__(self)",
+        "params": [
+          "self"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 59,
+            "text": "return f\"{self.pemilik}: Rp{self._saldo:,}\""
+          }
+        ]
+      },
+      {
+        "id": "F13",
+        "kind": "func",
+        "line": 83,
+        "endLine": 90,
+        "state": "complete",
+        "name": "counter",
+        "header": "def counter()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 84,
+            "text": "n = 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 86,
+            "endLine": 89,
+            "text": "def inc(step=1): …"
+          },
+          {
+            "kind": "return",
+            "line": 90,
+            "text": "return inc"
+          }
+        ],
+        "children": [
+          "F14"
+        ]
+      },
+      {
+        "id": "F14",
+        "kind": "func",
+        "line": 86,
+        "endLine": 89,
+        "state": "complete",
+        "name": "inc",
+        "header": "def inc(step=1)",
+        "params": [
+          "step"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 87,
+            "text": "nonlocal n"
+          },
+          {
+            "kind": "stmt",
+            "line": 88,
+            "text": "n += step"
+          },
+          {
+            "kind": "return",
+            "line": 89,
+            "text": "return n"
+          }
+        ],
+        "parent": "F13"
+      },
+      {
+        "id": "F15",
+        "kind": "func",
+        "line": 99,
+        "endLine": 101,
+        "state": "complete",
+        "name": "tambah",
+        "header": "def tambah(item, daftar=[])",
+        "params": [
+          "item",
+          "daftar"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 100,
+            "text": "daftar.append(item)"
+          },
+          {
+            "kind": "return",
+            "line": 101,
+            "text": "return daftar"
+          }
+        ]
+      },
+      {
+        "id": "F16",
+        "kind": "func",
+        "line": 107,
+        "endLine": 108,
+        "state": "complete",
+        "name": "info",
+        "header": "def info(*args, sep=\"-\", **kwargs)",
+        "params": [
+          "args",
+          "sep",
+          "kwargs"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 108,
+            "text": "return sep.join(str(a) for a in args) + \" \" + str(sorted(kw…"
+          }
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 118,
+        "endLine": 119,
+        "state": "complete",
+        "header": "if (n := len(nums)) > 5",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "(n := len(nums)) > 5",
+            "line": 118,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 119,
+                "text": "print(\"panjang\", n)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 126,
+        "endLine": 127,
+        "state": "complete",
+        "header": "for w in words"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 138,
+        "endLine": 143,
+        "state": "complete",
+        "header": "for i in range(2, 10)",
+        "children": [
+          "L3"
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 139,
+        "endLine": 143,
+        "state": "complete",
+        "header": "for j in range(2, i)",
+        "parent": "L2",
+        "children": [
+          "I3"
+        ]
+      },
+      {
+        "id": "I3",
+        "kind": "if",
+        "line": 140,
+        "endLine": 141,
+        "state": "complete",
+        "header": "if i % j == 0",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "i % j == 0",
+            "line": 140,
+            "body": [
+              {
+                "kind": "break",
+                "line": 141,
+                "text": "break"
+              }
+            ]
+          }
+        ],
+        "parent": "L3"
+      },
+      {
+        "id": "F17",
+        "kind": "func",
+        "line": 146,
+        "endLine": 155,
+        "state": "complete",
+        "name": "area",
+        "header": "def area(shape)",
+        "params": [
+          "shape"
+        ],
+        "body": [
+          {
+            "kind": "switch",
+            "line": 147,
+            "endLine": 155,
+            "text": "match shape",
+            "ref": "S1"
+          }
+        ],
+        "children": [
+          "S1"
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 147,
+        "endLine": 155,
+        "state": "complete",
+        "header": "match shape",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "(\"circle\", r)",
+            "line": 148,
+            "body": [
+              {
+                "kind": "return",
+                "line": 149,
+                "text": "return round(math.pi * r * r, 2)"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "(\"rect\", w, h) if w == h",
+            "line": 150,
+            "body": [
+              {
+                "kind": "return",
+                "line": 151,
+                "text": "return f\"persegi {w * h}\""
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "(\"rect\", w, h)",
+            "line": 152,
+            "body": [
+              {
+                "kind": "return",
+                "line": 153,
+                "text": "return w * h"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 154,
+            "body": [
+              {
+                "kind": "return",
+                "line": 155,
+                "text": "return None"
+              }
+            ]
+          }
+        ],
+        "parent": "F17"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 161,
+        "endLine": 162,
+        "state": "complete",
+        "header": "for k, val in sorted(data.items())"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 126,
+        "endLine": 127,
+        "state": "complete",
+        "header": {
+          "text": "for w in words",
+          "value": "w",
+          "define": true,
+          "range": "words"
+        },
+        "vars": [
+          "w"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 127,
+            "text": "groups[len(w)].append(w)"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-int",
+        "line": 138,
+        "endLine": 143,
+        "state": "complete",
+        "header": {
+          "text": "for i in range(2, 10)",
+          "value": "i",
+          "define": true,
+          "range": "range(2, 10)"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 139,
+            "endLine": 143,
+            "ref": "L3"
+          }
+        ],
+        "children": [
+          "L3"
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "range-int",
+        "line": 139,
+        "endLine": 143,
+        "state": "complete",
+        "header": {
+          "text": "for j in range(2, i)",
+          "value": "j",
+          "define": true,
+          "range": "range(2, i)"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 140,
+            "endLine": 141,
+            "text": "if i % j == 0",
+            "ref": "I3",
+            "then": [
+              {
+                "kind": "break",
+                "line": 141,
+                "text": "break"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "L4",
+        "kind": "range-unknown",
+        "line": 161,
+        "endLine": 162,
+        "state": "complete",
+        "header": {
+          "text": "for k, val in sorted(data.items())",
+          "value": "k, val",
+          "define": true,
+          "range": "sorted(data.items())"
+        },
+        "vars": [
+          "k",
+          "val"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 162,
+            "text": "print(k, val, end=\"; \")"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

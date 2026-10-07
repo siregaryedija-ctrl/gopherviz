@@ -1,0 +1,148 @@
+1: import [collections Counter defaultdict deque] 
+2: import [math] 
+5: class Vector []
+  6: expr (count = 0)
+  8: func Vector.__init__(self, x, y)
+    8: block
+      9: expr (self.x = x)
+      10: expr (self.y = y)
+      11: expr (Vector.count += 1)
+  13: func Vector.__add__(self, other)
+    13: block
+      14: return Vector((self.x + other.x), (self.y + other.y))
+  16: func Vector.__eq__(self, other)
+    16: block
+      17: return ((self.x == other.x) and (self.y == other.y))
+  19: func Vector.__lt__(self, other)
+    19: block
+      20: return (self.length < other.length)
+  22: func Vector.__repr__(self)
+    22: block
+      23: return `Vector(${self.x}, ${self.y})`
+  26: func Vector.length(self)
+    26: block
+      27: return math.hypot(self.x, self.y)
+  30: func Vector.zero(cls)
+    30: block
+      31: return cls(0, 0)
+  34: func Vector.dot(a, b)
+    34: block
+      35: return ((a.x * b.x) + (a.y * b.y))
+38: expr (v = (Vector(3, 4) + Vector(1, 1)))
+39: expr print(v, v.length, Vector.zero(), Vector.dot(v, Vector(1, 0)), Vector.count)
+40: expr print(sorted(list[Vector(5, 5), Vector(1, 0), Vector(2, 2)]), (Vector(1, 2) == Vector(1, 2)))
+43: class Rekening []
+  44: func Rekening.__init__(self, pemilik, saldo=0)
+    44: block
+      45: expr (self.pemilik = pemilik)
+      46: expr (self._saldo = saldo)
+  49: func Rekening.saldo(self)
+    49: block
+      50: return self._saldo
+  53: func Rekening.saldo(self, nilai)
+    53: block
+      54: if (nilai < 0)
+        54: block
+          55: throw ValueError("saldo tidak boleh negatif")
+      56: expr (self._saldo = nilai)
+  58: func Rekening.__str__(self)
+    58: block
+      59: return `${self.pemilik}: Rp${self._saldo}`
+62: class SaldoKurang [Exception]
+  63: pass [] 
+66: expr (r = Rekening("Ani", 50000))
+67: expr (r.saldo = 125000)
+68: expr print(r)
+69: try
+  69: block
+    70: expr (r.saldo = (- 1))
+  catch [ValueError] e
+  71: block
+    72: expr print("gagal:", e)
+73: try
+  73: block
+    74: throw SaldoKurang("butuh 1000 lagi")
+  catch [SaldoKurang] e
+  75: block
+    76: expr print(type(e).__name__, e.args, str(e))
+  finally
+  79: block
+    80: expr print("cek selesai")
+83: func counter()
+  83: block
+    84: expr (n = 0)
+    86: func inc(step=1)
+      86: block
+        87: nonlocal [n] 
+        88: expr (n += step)
+        89: return n
+    90: return inc
+93: expr (c = counter())
+94: expr c()
+95: expr c(5)
+96: expr print(c())
+99: func tambah(item, daftar=list[])
+  99: block
+    100: expr daftar.append(item)
+    101: return daftar
+104: expr print(tambah(1), tambah(2))
+107: func info(...args, sep="-", kwargs)
+  107: block
+    108: return ((sep.join(gencomp[str(a) for a in args]) + " ") + str(sorted(kwargs.items())))
+111: expr print(info(1, 2, 3, sep="+", b=2, a=1))
+113: expr (nums = list[5, 3, 8, 1, 9, 2])
+114: expr print(nums[::2], nums[(- 2)::], nums[::(- 1)][:3:], listcomp[(x ** 2) for x in nums if (x % 2)])
+115: expr print(dictcomp[x: (x * x) for x in range(4)], setcomp[(n % 3) for n in nums], sum(gencomp[x for x in nums]))
+116: expr (tuple[first, ...middle, last] = nums)
+117: expr print(first, middle, last)
+118: if ((n := len(nums)) > 5)
+  118: block
+    119: expr print("panjang", n)
+120: expr print(((1 < 2) and (2 < 3)), ((3 > 2) and (2 > 2)), (7 // (- 2)), ((- 7) % 3), divmod(17, 5), round(2.5), round(3.5), round(2.675, 2))
+121: expr print((2 ** 100), math.factorial(25), (10 / 4), (10 // 4), abs((- 7.5)), int("1010", 2), hex(255))
+122: expr (words = "the quick brown fox jumps over the lazy dog the end".split())
+123: expr (cnt = Counter(words))
+124: expr print(cnt.most_common(2), cnt["the"], cnt["zebra"])
+125: expr (groups = defaultdict(list))
+126: foreach(py ) w in words
+  126: block
+    127: expr groups[len(w)].append(w)
+128: expr print(dict(groups))
+129: expr (q = deque(list[1, 2, 3]))
+130: expr q.append(4)
+131: expr q.appendleft(0)
+132: expr print(q.popleft(), q.pop(), q)
+133: expr print(`${math.pi} ${12345.6789} ${"kiri"}|${"kanan"}|${"tengah"}| ${0.875} ${42}`)
+134: expr print(("%s punya %d apel seharga %.2f" % tuple["Budi", 3, 4500.5]), "{:>5}|{:<5}|".format("a", "b"))
+135: expr print(" Halo Dunia ".strip().lower().replace("dunia", "python").title(), "abc".upper().center(9, "*"))
+136: expr print(list(zip("abc", range(3))), list(enumerate("xy", start=1)), list(map(str.upper, list["a", "b"])))
+137: expr print(any(gencomp[(x > 8) for x in nums]), all(gencomp[(x > 0) for x in nums]), min(nums), max(nums, key=fn =>(x) (- x)))
+138: foreach(py ) i in range(2, 10)
+  138: block
+    139: foreach(py ) j in range(2, i)
+      139: block
+        140: if ((i % j) == 0)
+          140: block
+            141: break 
+      else
+      142: block
+        143: expr print(i, "prima")
+146: func area(shape)
+  146: block
+    147: match shape
+      148: case tuple["circle", r]
+        149: return round(((math.pi * r) * r), 2)
+      150: case tuple["rect", w, h] if (w == h)
+        151: return `persegi ${(w * h)}`
+      152: case tuple["rect", w, h]
+        153: return (w * h)
+      154: default
+        155: return None
+158: expr print(area(tuple["circle", 1]), area(tuple["rect", 2, 2]), area(tuple["rect", 2, 3]), area("x"))
+159: expr (data = dict{"b": 2, "a": 1})
+160: expr data.update(c=3)
+161: foreach(py ) tuple[k, val] in sorted(data.items())
+  161: block
+    162: expr print(k, val, end="; ")
+163: expr print()
+164: expr print(set[3, 1, 2], set(range(10, 0, (- 2))), set[100, 5, 33, 8], len(set[1, 1, 2]))

@@ -21,6 +21,19 @@ func (it *interp) closure(f *ir.Func, e *Env) *Func {
 	}
 	if f.Name == "" {
 		fn.name = "(anonim)"
+		if it.lang == "python" {
+			fn.name = "<lambda>"
+		}
+	}
+	if it.lang == "python" { // default dievaluasi sekali, di lingkungan tempat def ditulis
+		for i, p := range f.Params {
+			if p.Default != nil {
+				if fn.defaults == nil {
+					fn.defaults = map[int]Value{}
+				}
+				fn.defaults[i] = it.eval(p.Default, e)
+			}
+		}
 	}
 	return fn
 }
@@ -450,7 +463,11 @@ func (it *interp) bindParams(fn *Func, scope *Env, args argList, at ir.Node) []s
 			v = args.pos[i]
 			i++
 		case p.Default != nil:
-			v = it.eval(p.Default, scope)
+			if d, ok := fn.defaults[pi]; ok {
+				v = d
+			} else {
+				v = it.eval(p.Default, scope)
+			}
 		default:
 			switch it.lang {
 			case "javascript", "typescript":
@@ -603,6 +620,8 @@ func (it *interp) evalMember(n *ir.Member, e *Env) Value {
 func (it *interp) getProp(obj Value, name string, at ir.Node) Value {
 	name = strings.TrimPrefix(name, "$")
 	switch obj.k {
+	case kUnknown:
+		return obj
 	case kObj:
 		o := obj.o
 		if v, ok := o.fields.get(strV(name)); ok {
@@ -633,8 +652,8 @@ func (it *interp) getProp(obj Value, name string, at ir.Node) Value {
 					return v
 				}
 			}
-			if m := c.methods[name]; m != nil {
-				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, class: c, static: m.Static || it.lang != "python"}}
+			if m := c.methods[name]; m != nil { // method lewat kelas: tanpa self otomatis
+				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, class: c, static: true}}
 			}
 		}
 		if v, ok := it.sem.member(it, obj, name, at); ok {
@@ -793,6 +812,14 @@ func (it *interp) index(base, idx Value, at ir.Node) Value {
 		key := it.dictKey(idx)
 		if v, ok := base.d.get(key); ok {
 			return v
+		}
+		switch base.d.kind {
+		case "defaultdict": // nilai bawaan dibuat lalu disimpan
+			z := it.call(*base.d.factory, undef(), nil, at)
+			base.d.set(key, z)
+			return z
+		case "Counter":
+			return pyInt(0)
 		}
 		switch it.lang {
 		case "javascript", "typescript":

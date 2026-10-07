@@ -61,12 +61,13 @@ type List struct {
 
 // Dict adalah map berurutan (urutan sisip, kecuali kind "map"/"TreeMap" yang terurut key).
 type Dict struct {
-	keys []Value
-	vals []Value
-	idx  map[string]int // keyID → posisi
-	kind string         // "object" (JS), "dict" (Python), "array" (PHP), "map" (C++), "HashMap", "Map" (JS), "set"
-	next int64          // PHP: indeks otomatis berikutnya
-	id   int
+	keys    []Value
+	vals    []Value
+	idx     map[string]int // keyID → posisi
+	kind    string         // "object" (JS), "dict" (Python), "array" (PHP), "map" (C++), "HashMap", "Map" (JS), "set"
+	next    int64          // PHP: indeks otomatis berikutnya
+	id      int
+	factory *Value // Python defaultdict: pembuat nilai bawaan
 }
 
 // Object adalah instance kelas.
@@ -88,13 +89,14 @@ type Ptr struct {
 
 // Func adalah fungsi user (decl) atau bawaan (builtin).
 type Func struct {
-	name    string
-	decl    *Fn
-	env     *Env
-	this    *Value // this yang terikat (method terikat / arrow function)
-	class   *Class // kelas pemilik (untuk super)
-	builtin func(it *interp, this Value, args []Value, at nodeRef) Value
-	static  bool
+	name     string
+	decl     *Fn
+	env      *Env
+	this     *Value // this yang terikat (method terikat / arrow function)
+	class    *Class // kelas pemilik (untuk super)
+	builtin  func(it *interp, this Value, args []Value, at nodeRef) Value
+	static   bool
+	defaults map[int]Value // Python: nilai default dievaluasi sekali saat def
 }
 
 // Class adalah kelas user atau bawaan.

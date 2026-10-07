@@ -19,6 +19,7 @@ type oracle struct {
 
 var oracles = []oracle{
 	{"javascript", ".js", func(p, dir string) ([]string, bool) { return []string{"node", p}, true }},
+	{"python", ".py", func(p, dir string) ([]string, bool) { return []string{"python", p}, true }},
 	{"typescript", ".ts", func(p, dir string) ([]string, bool) {
 		return []string{"node", "--experimental-transform-types", "--no-warnings", p}, true
 	}},
@@ -80,7 +81,7 @@ func TestAgainstReal(t *testing.T) {
 
 // FuzzTrace: simulator tidak boleh mengalami kesalahan internal untuk program apa pun.
 func FuzzTrace(f *testing.F) {
-	for _, l := range []string{"javascript", "typescript"} {
+	for _, l := range []string{"javascript", "typescript", "python"} {
 		files, _ := filepath.Glob(filepath.Join("../../testdata", l, "*.*"))
 		for _, p := range files {
 			if lang.Detect(p) != l {

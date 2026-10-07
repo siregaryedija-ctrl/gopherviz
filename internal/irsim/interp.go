@@ -1176,7 +1176,11 @@ func (it *interp) exceptionText(v Value) string {
 // simple menjalankan statement sederhana (import, pass, global, del, ...).
 func (it *interp) simple(n *ir.Simple, e *Env) flow {
 	switch n.Kind {
-	case "empty", "pass", "import", "type", "prototype":
+	case "import":
+		if it.lang == "python" {
+			it.pyImport(n, e)
+		}
+	case "empty", "pass", "type", "prototype":
 		if n.Kind == "pass" {
 			it.step(n, e, "pass (tidak melakukan apa-apa)")
 		}

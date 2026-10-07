@@ -959,7 +959,8 @@ func (p *parser) postfix(x ir.Expr, start ir.Pos) ir.Expr {
 				p.errAt(p.tok().pos, "kurang nama setelah \".\"")
 				return x
 			}
-			x = &ir.Member{S: p.span(start), X: x, Name: p.next().text, Op: "."}
+			name := p.next().text
+			x = &ir.Member{S: p.span(start), X: x, Name: name, Op: "."}
 		default:
 			return x
 		}

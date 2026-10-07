@@ -1,0 +1,272 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "python",
+    "file": "03_sorting.py",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 1,
+        "endLine": 8,
+        "state": "complete",
+        "name": "bubble_sort",
+        "header": "def bubble_sort(data)",
+        "params": [
+          "data"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 2,
+            "text": "a = list(data)"
+          },
+          {
+            "kind": "stmt",
+            "line": 3,
+            "text": "n = len(a)"
+          },
+          {
+            "kind": "loop",
+            "line": 4,
+            "endLine": 7,
+            "ref": "L1"
+          },
+          {
+            "kind": "return",
+            "line": 8,
+            "text": "return a"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 4,
+        "endLine": 7,
+        "state": "complete",
+        "header": "for i in range(n - 1)",
+        "parent": "F1",
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "header": "for j in range(n - 1 - i)",
+        "parent": "L1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 6,
+        "endLine": 7,
+        "state": "complete",
+        "header": "if a[j] > a[j + 1]",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "a[j] > a[j + 1]",
+            "line": 6,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 7,
+                "text": "a[j], a[j + 1] = a[j + 1], a[j]"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 11,
+        "endLine": 19,
+        "state": "complete",
+        "name": "insertion_sort",
+        "header": "def insertion_sort(a)",
+        "params": [
+          "a"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 12,
+            "endLine": 18,
+            "ref": "L3"
+          },
+          {
+            "kind": "return",
+            "line": 19,
+            "text": "return a"
+          }
+        ],
+        "children": [
+          "L3"
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 12,
+        "endLine": 18,
+        "state": "complete",
+        "header": "for i in range(1, len(a))",
+        "parent": "F2",
+        "children": [
+          "L4"
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "header": "while j >= 0 and a[j] > key",
+        "parent": "L3"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-int",
+        "line": 4,
+        "endLine": 7,
+        "state": "complete",
+        "header": {
+          "text": "for i in range(n - 1)",
+          "value": "i",
+          "define": true,
+          "range": "range(n - 1)"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 5,
+            "endLine": 7,
+            "ref": "L2"
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-int",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "header": {
+          "text": "for j in range(n - 1 - i)",
+          "value": "j",
+          "define": true,
+          "range": "range(n - 1 - i)"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 6,
+            "endLine": 7,
+            "text": "if a[j] > a[j + 1]",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 7,
+                "text": "a[j], a[j + 1] = a[j + 1], a[j]"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "L3",
+        "kind": "range-int",
+        "line": 12,
+        "endLine": 18,
+        "state": "complete",
+        "header": {
+          "text": "for i in range(1, len(a))",
+          "value": "i",
+          "define": true,
+          "range": "range(1, len(a))"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "key = a[i]"
+          },
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "j = i - 1"
+          },
+          {
+            "kind": "loop",
+            "line": 15,
+            "endLine": 17,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "a[j + 1] = key"
+          }
+        ],
+        "children": [
+          "L4"
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "cond",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "header": {
+          "text": "while j >= 0 and a[j] > key",
+          "cond": "j >= 0 and a[j] > key"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "a[j + 1] = a[j]"
+          },
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "j -= 1"
+          }
+        ],
+        "parent": "L3"
+      }
+    ]
+  },
+  "diagnostics": null
+}
