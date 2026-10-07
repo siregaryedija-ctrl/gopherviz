@@ -110,7 +110,7 @@ type Class struct {
 	native  string // kelas bawaan: "Error", "Map", "Set", "ArrayList", ...
 	kind    string // "class", "struct", "enum", "interface"
 
-	overloads map[string][]*Fn // C++/Java: method/konstruktor dengan nama sama
+	overloads map[string][]*Fn                                             // C++/Java: method/konstruktor dengan nama sama
 	ctor      func(it *interp, args []Value, at nodeRef) Value             // bawaan: new X(args)
 	ctorT     func(it *interp, typ string, args []Value, at nodeRef) Value // bawaan bertipe: vector<int>(5, 0)
 	init      func(it *interp, this Value, args []Value, at nodeRef)       // bawaan sebagai kelas induk (Error)
@@ -124,14 +124,14 @@ type fieldInit struct {
 
 // ---------- konstruktor ----------
 
-func undef() Value            { return Value{k: kUndef} }
-func null() Value             { return Value{k: kNull} }
-func boolV(b bool) Value      { return Value{k: kBool, b: b} }
-func intV(i int64) Value      { return Value{k: kInt, i: i} }
+func undef() Value                     { return Value{k: kUndef} }
+func null() Value                      { return Value{k: kNull} }
+func boolV(b bool) Value               { return Value{k: kBool, b: b} }
+func intV(i int64) Value               { return Value{k: kInt, i: i} }
 func typedInt(i int64, t string) Value { return Value{k: kInt, i: i, t: t} }
-func floatV(f float64) Value  { return Value{k: kFloat, f: f} }
-func strV(s string) Value     { return Value{k: kStr, s: s} }
-func unknown(why string) Value { return Value{k: kUnknown, why: why} }
+func floatV(f float64) Value           { return Value{k: kFloat, f: f} }
+func strV(s string) Value              { return Value{k: kStr, s: s} }
+func unknown(why string) Value         { return Value{k: kUnknown, why: why} }
 
 func (it *interp) newList(kind string, elems []Value) Value {
 	it.ids++

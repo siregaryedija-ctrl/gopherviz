@@ -1,0 +1,327 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "typescript",
+    "file": "02_classes.ts",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 13,
+        "endLine": 13,
+        "state": "complete",
+        "name": "Base.constructor",
+        "header": "constructor(public name: string, protected readonly id: num…",
+        "params": [
+          "name",
+          "id"
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 15,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Base.describe",
+        "header": "describe(): string",
+        "body": [
+          {
+            "kind": "return",
+            "line": 16,
+            "text": "return `${this.name}#${this.id} luas ${this.area().toFixed(…"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 21,
+        "endLine": 23,
+        "state": "complete",
+        "name": "Circle.constructor",
+        "header": "constructor(private r: number)",
+        "params": [
+          "r"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "super(\"lingkaran\", 1);"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 24,
+        "endLine": 26,
+        "state": "complete",
+        "name": "Circle.area",
+        "header": "area(): number",
+        "body": [
+          {
+            "kind": "return",
+            "line": 25,
+            "text": "return Math.PI * this.r ** 2;"
+          }
+        ]
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 30,
+        "endLine": 32,
+        "state": "complete",
+        "name": "Square.constructor",
+        "header": "constructor(private side: number)",
+        "params": [
+          "side"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 31,
+            "text": "super(\"persegi\", 2);"
+          }
+        ]
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 33,
+        "endLine": 35,
+        "state": "complete",
+        "name": "Square.area",
+        "header": "area(): number",
+        "body": [
+          {
+            "kind": "return",
+            "line": 34,
+            "text": "return this.side * this.side;"
+          }
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 38,
+        "endLine": 46,
+        "state": "complete",
+        "name": "largest",
+        "header": "function largest<T extends Shape>(items: T[]): T | undefined",
+        "params": [
+          "items"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 39,
+            "text": "let best: T | undefined = undefined"
+          },
+          {
+            "kind": "loop",
+            "line": 40,
+            "endLine": 44,
+            "ref": "L1"
+          },
+          {
+            "kind": "return",
+            "line": 45,
+            "text": "return best;"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 40,
+        "endLine": 44,
+        "state": "complete",
+        "header": "for (const item of items)",
+        "parent": "F7",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 41,
+        "endLine": 43,
+        "state": "complete",
+        "header": "if (best === undefined || item.area() > best.area())",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "best === undefined || item.area() > best.area()",
+            "line": 41,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 42,
+                "text": "best = item;"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 49,
+        "endLine": 51,
+        "state": "complete",
+        "header": "for (const s of shapes)"
+      },
+      {
+        "id": "F8",
+        "kind": "func",
+        "line": 63,
+        "endLine": 70,
+        "state": "complete",
+        "name": "describe",
+        "header": "function describe(x: number | string | boolean): string",
+        "params": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 64,
+            "endLine": 68,
+            "text": "if (typeof x === \"number\")",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "return",
+                "line": 65,
+                "text": "return x > 0 ? \"positif\" : \"bukan positif\";"
+              }
+            ],
+            "else": [
+              {
+                "kind": "if",
+                "line": 66,
+                "text": "if (typeof x === \"string\")",
+                "then": [
+                  {
+                    "kind": "return",
+                    "line": 67,
+                    "text": "return x.toUpperCase();"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 69,
+            "text": "return x ? \"ya\" : \"tidak\";"
+          }
+        ],
+        "children": [
+          "I2"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 64,
+        "endLine": 68,
+        "state": "complete",
+        "header": "if (typeof x === \"number\")",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "typeof x === \"number\"",
+            "line": 64,
+            "body": [
+              {
+                "kind": "return",
+                "line": 65,
+                "text": "return x > 0 ? \"positif\" : \"bukan positif\";"
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "typeof x === \"string\"",
+            "line": 66,
+            "body": [
+              {
+                "kind": "return",
+                "line": 67,
+                "text": "return x.toUpperCase();"
+              }
+            ]
+          }
+        ],
+        "parent": "F8"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 40,
+        "endLine": 44,
+        "state": "complete",
+        "header": {
+          "text": "for (const item of items)",
+          "value": "item",
+          "define": true,
+          "range": "items"
+        },
+        "vars": [
+          "item"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 41,
+            "endLine": 43,
+            "text": "if (best === undefined || item.area() > best.area())",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 42,
+                "text": "best = item;"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 49,
+        "endLine": 51,
+        "state": "complete",
+        "header": {
+          "text": "for (const s of shapes)",
+          "value": "s",
+          "define": true,
+          "range": "shapes"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 50,
+            "text": "console.log(s.describe());"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

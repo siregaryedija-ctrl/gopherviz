@@ -193,7 +193,7 @@ func TestOtherLanguage(t *testing.T) {
 	if err := json.Unmarshal(resps[2].Result, &tr); err != nil {
 		t.Fatal(err)
 	}
-	if tr.Trace.Mode != "structural" || len(tr.Trace.Warnings) == 0 {
+	if tr.Trace.Mode != "simulated" { // JavaScript disimulasikan sejak Fase 9a
 		t.Errorf("trace %+v", tr.Trace)
 	}
 }

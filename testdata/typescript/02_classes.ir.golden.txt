@@ -1,0 +1,62 @@
+2: enum Direction []
+  3: var(enum) Up = "UP"
+  4: var(enum) Down = "DOWN"
+7: interface Shape []
+  8: func Shape.area()
+  9: var(field) name
+12: class Base [Shape]
+  13: func Base.constructor(name, id)
+    13: block
+  14: func Base.area()
+  15: func Base.describe()
+    15: block
+      16: return `${this.name}#${this.id} luas ${this.area().toFixed(2)}`
+20: class Circle [Base]
+  21: func Circle.constructor(r)
+    21: block
+      22: expr super("lingkaran", 1)
+  24: func Circle.area()
+    24: block
+      25: return (Math.PI * (this.r ** 2))
+29: class Square [Base]
+  30: func Square.constructor(side)
+    30: block
+      31: expr super("persegi", 2)
+  33: func Square.area()
+    33: block
+      34: return (this.side * this.side)
+38: func largest(items)
+  38: block
+    39: var(let) best = undefined
+    40: foreach(of const) item in items
+      40: block
+        41: if ((best === undefined) || (item.area() > best.area()))
+          41: block
+            42: expr (best = item)
+    45: return best
+48: var(const) shapes = array[new Circle(2), new Square(3), new Circle(1)]
+49: foreach(of const) s in shapes
+  49: block
+    50: expr console.log(s.describe())
+52: expr console.log(largest(shapes)?.name, Direction.Up, Direction["Down"])
+54: type [] 
+55: var(const) pairs = array[object{key: "a", value: 3}, object{key: "b", value: 1}]
+59: var(const) total = pairs.reduce(fn =>(acc, p) (acc + p.value), 0)
+60: var(const) byKey = new Map<string, number>(pairs.map(fn =>(p) array[p.key, p.value]))
+61: expr console.log(total, byKey.get("a"), byKey)
+63: func describe(x)
+  63: block
+    64: if ((typeof x) === "number")
+      64: block
+        65: return ((x > 0) ? "positif" : "bukan positif")
+      else
+      66: if ((typeof x) === "string")
+        66: block
+          67: return x.toUpperCase()
+    69: return (x ? "ya" : "tidak")
+71: expr console.log(describe(5), describe("hai"), describe(false))
+72: var(let) maybe = null
+73: expr console.log((maybe ?? "default"), (maybe as type:string | null)?.length)
+74: var(const) tuple = array["umur", 21]
+75: var(const) array[label, value] = tuple
+76: expr console.log(`${label}: ${value}`)

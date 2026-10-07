@@ -17,8 +17,8 @@ type semantics interface {
 	unary(it *interp, op string, v Value, at ir.Node) Value
 	truthy(v Value) bool
 	caseEqual(it *interp, a, b Value) bool // pencocokan switch/case
-	show(it *interp, v Value) string        // tampilan di panel (variabel, catatan)
-	str(it *interp, v Value) string         // konversi ke string saat dicetak / digabung
+	show(it *interp, v Value) string       // tampilan di panel (variabel, catatan)
+	str(it *interp, v Value) string        // konversi ke string saat dicetak / digabung
 	lit(it *interp, l *ir.Lit) Value
 	global(it *interp, name string) (Value, bool)
 	member(it *interp, x Value, name string, at ir.Node) (Value, bool)
@@ -32,22 +32,22 @@ type semantics interface {
 type kv struct{ k, v Value }
 
 type interp struct {
-	lang    string
-	sem     semantics
-	res     *lang.Result
-	src     string
-	globals *Env
-	rec     *recorder
-	rng     *rand.Rand
-	budget  int
-	depth   int
-	quiet   int
-	ids     int
-	kwargs  map[string]Value // argumen bernama Python untuk builtin yang sedang dipanggil
-	funcs   map[string][]*Fn // fungsi tingkat atas C/C++ (overload per jumlah argumen)
-	classes map[string]*Class
-	macros  map[string]Value // #define C/C++
-	classOf map[*Fn]*Class   // method → kelasnya
+	lang      string
+	sem       semantics
+	res       *lang.Result
+	src       string
+	globals   *Env
+	rec       *recorder
+	rng       *rand.Rand
+	budget    int
+	depth     int
+	quiet     int
+	ids       int
+	kwargs    map[string]Value // argumen bernama Python untuk builtin yang sedang dipanggil
+	funcs     map[string][]*Fn // fungsi tingkat atas C/C++ (overload per jumlah argumen)
+	classes   map[string]*Class
+	macros    map[string]Value // #define C/C++
+	classOf   map[*Fn]*Class   // method → kelasnya
 	pyGlobals map[*Env]map[string]bool
 	pyNonloc  map[*Env]map[string]bool
 	phpGlobal map[*Env]map[string]bool

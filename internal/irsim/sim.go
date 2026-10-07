@@ -79,8 +79,8 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	it := &interp{
 		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
 		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
-		rec:     &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll},
-		funcs:   map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
+		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll},
+		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
 		statics: map[*ir.VarSpec]*Cell{},
 	}
@@ -454,8 +454,8 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 	it := &interp{
 		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
 		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
-		rec:     &recorder{maxSteps: opt.MaxSteps, maxIter: opt.MaxIter},
-		funcs:   map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
+		rec:   &recorder{maxSteps: opt.MaxSteps, maxIter: opt.MaxIter},
+		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
 		statics: map[*ir.VarSpec]*Cell{},
 	}

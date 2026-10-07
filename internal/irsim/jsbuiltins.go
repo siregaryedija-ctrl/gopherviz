@@ -115,8 +115,12 @@ func (it *interp) setupJS(s *jsSem) {
 			}
 			return math.Floor(x + 0.5)
 		}),
-		"pow":   bf("pow", func(it *interp, this Value, args []Value, at ir.Node) Value { return num(math.Pow(n(arg(args, 0)), n(arg(args, 1)))) }),
-		"atan2": bf("atan2", func(it *interp, this Value, args []Value, at ir.Node) Value { return num(math.Atan2(n(arg(args, 0)), n(arg(args, 1)))) }),
+		"pow": bf("pow", func(it *interp, this Value, args []Value, at ir.Node) Value {
+			return num(math.Pow(n(arg(args, 0)), n(arg(args, 1))))
+		}),
+		"atan2": bf("atan2", func(it *interp, this Value, args []Value, at ir.Node) Value {
+			return num(math.Atan2(n(arg(args, 0)), n(arg(args, 1))))
+		}),
 		"hypot": bf("hypot", func(it *interp, this Value, args []Value, at ir.Node) Value {
 			s := 0.0
 			for _, a := range args {
@@ -184,7 +188,9 @@ func (it *interp) setupJS(s *jsSem) {
 	g["parseFloat"] = bf("parseFloat", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		return num(jsParseFloat(it.sem.str(it, arg(args, 0))))
 	})
-	g["isNaN"] = bf("isNaN", func(it *interp, this Value, args []Value, at ir.Node) Value { return boolV(math.IsNaN(n(arg(args, 0)))) })
+	g["isNaN"] = bf("isNaN", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		return boolV(math.IsNaN(n(arg(args, 0))))
+	})
 	g["isFinite"] = bf("isFinite", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		x := n(arg(args, 0))
 		return boolV(!math.IsNaN(x) && !math.IsInf(x, 0))
@@ -911,9 +917,13 @@ func (it *interp) jsStringMember(x Value, name string, at ir.Node) (Value, bool)
 	case "trim":
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return strV(strings.TrimSpace(s)) })
 	case "trimStart":
-		return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return strV(strings.TrimLeft(s, " \t\n\r")) })
+		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
+			return strV(strings.TrimLeft(s, " \t\n\r"))
+		})
 	case "trimEnd":
-		return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return strV(strings.TrimRight(s, " \t\n\r")) })
+		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
+			return strV(strings.TrimRight(s, " \t\n\r"))
+		})
 	case "charAt", "at":
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 			i := idx(arg(args, 0), 0)
