@@ -7,7 +7,16 @@
     "id": "I4",
     "kind": "if",
     "line": 36,
-    "endLine": 39
+    "endLine": 39,
+    "names": [
+      "ErrKosong",
+      "Is",
+      "Println",
+      "err",
+      "errors",
+      "fmt",
+      "nil"
+    ]
   },
   "loop": {
     "id": "",

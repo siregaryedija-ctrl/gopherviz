@@ -11,6 +11,7 @@ import (
 	"go/ast"
 	"go/types"
 	"math/rand"
+	"sort"
 
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/irsim"
@@ -81,6 +82,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		return tr
 	}
 
+	tr.Block.Names = blockNames(node)
 	coll, collKind := findCollection(p, node)
 	it := &interp{
 		p:       p,
@@ -197,6 +199,21 @@ func enclosingFunc(f *ast.File, node ast.Node) *ast.FuncDecl {
 		}
 	}
 	return nil
+}
+
+// blockNames mengembalikan nama (identifier) yang dipakai di dalam blok, terurut dan unik.
+func blockNames(node ast.Node) []string {
+	seen := map[string]bool{}
+	var out []string
+	ast.Inspect(node, func(n ast.Node) bool {
+		if id, ok := n.(*ast.Ident); ok && id.Name != "_" && !seen[id.Name] {
+			seen[id.Name] = true
+			out = append(out, id.Name)
+		}
+		return true
+	})
+	sort.Strings(out)
+	return out
 }
 
 // findCollection memilih slice/array yang paling sering diakses di dalam loop untuk mode data.

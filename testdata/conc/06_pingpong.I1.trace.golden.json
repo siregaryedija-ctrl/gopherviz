@@ -7,7 +7,14 @@
     "id": "I1",
     "kind": "if",
     "line": 8,
-    "endLine": 12
+    "endLine": 12,
+    "names": [
+      "ball",
+      "close",
+      "done",
+      "out",
+      "true"
+    ]
   },
   "loop": {
     "id": "",

@@ -8,7 +8,16 @@
     "kind": "func",
     "line": 15,
     "endLine": 17,
-    "name": "Error"
+    "name": "Error",
+    "names": [
+      "Error",
+      "Itoa",
+      "RangeError",
+      "Value",
+      "e",
+      "strconv",
+      "string"
+    ]
   },
   "loop": {
     "id": "",

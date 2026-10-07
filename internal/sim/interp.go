@@ -290,6 +290,43 @@ func (it *interp) collIndex(x ast.Expr, e *env) int {
 	return int(v.i)
 }
 
+// bindElem mencatat bahwa variabel range name memegang elemen koleksi ke-idx; fungsi
+// kembaliannya memulihkan keadaan sebelumnya.
+func (it *interp) bindElem(name string, idx int, val string) func() {
+	r := it.rec
+	if r.elems == nil {
+		r.elems = map[string]trace.Elem{}
+	}
+	prev, had := r.elems[name]
+	r.elems[name] = trace.Elem{Idx: idx, Val: val}
+	return func() {
+		if had {
+			r.elems[name] = prev
+		} else {
+			delete(r.elems, name)
+		}
+	}
+}
+
+// cmpIndex seperti collIndex, ditambah variabel range yang masih memegang elemen koleksi.
+func (it *interp) cmpIndex(x ast.Expr, e *env) int {
+	if i := it.collIndex(x, e); i >= 0 {
+		return i
+	}
+	id, ok := unparen(x).(*ast.Ident)
+	if !ok || it.rec.collKind == "map" {
+		return -1
+	}
+	el, ok := it.rec.elems[id.Name]
+	if !ok {
+		return -1
+	}
+	if v := e.lookup(id.Name); v == nil || format(*v) != el.Val {
+		return -1
+	}
+	return el.Idx
+}
+
 func unparen(x ast.Expr) ast.Expr {
 	for {
 		p, ok := x.(*ast.ParenExpr)
@@ -814,6 +851,9 @@ func (it *interp) execRange(n *ast.RangeStmt, label string, e *env) flow {
 		it.tick()
 		iterScope := newEnv(scope, false) // Go 1.22: variabel loop baru setiap putaran
 		it.bindRange(n, iterScope, k, v)
+		if id, ok := n.Value.(*ast.Ident); ok && readsColl && it.rec.collKind != "map" && id.Name != "_" {
+			defer it.bindElem(id.Name, idx, format(v))()
+		}
 		if it.recording() {
 			if readsColl && it.rec.collKind == "map" {
 				it.rec.op(trace.Op{Op: trace.OpRead, A: -1, Key: format(k)})

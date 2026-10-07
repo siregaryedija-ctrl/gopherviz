@@ -7,7 +7,12 @@
     "id": "I1",
     "kind": "if",
     "line": 12,
-    "endLine": 14
+    "endLine": 14,
+    "names": [
+      "isEven",
+      "n",
+      "total"
+    ]
   },
   "loop": {
     "id": "",

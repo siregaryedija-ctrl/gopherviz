@@ -8,7 +8,13 @@
     "kind": "func",
     "line": 8,
     "endLine": 13,
-    "name": "order"
+    "name": "order",
+    "names": [
+      "Println",
+      "fmt",
+      "i",
+      "order"
+    ]
   },
   "loop": {
     "id": "",

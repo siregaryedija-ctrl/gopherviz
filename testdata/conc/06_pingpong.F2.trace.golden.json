@@ -8,7 +8,19 @@
     "kind": "func",
     "line": 18,
     "endLine": 28,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Println",
+      "bool",
+      "done",
+      "fmt",
+      "int",
+      "main",
+      "make",
+      "ping",
+      "player",
+      "pong"
+    ]
   },
   "loop": {
     "id": "",

@@ -7,7 +7,17 @@
     "id": "L2",
     "kind": "loop",
     "line": 20,
-    "endLine": 23
+    "endLine": 23,
+    "names": [
+      "Next",
+      "Print",
+      "Val",
+      "fmt",
+      "head",
+      "n",
+      "nil",
+      "total"
+    ]
   },
   "loop": {
     "id": "L2",

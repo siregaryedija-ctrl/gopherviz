@@ -192,21 +192,22 @@ func isCompare(op token.Token) bool {
 
 // compareOp mencatat perbandingan yang melibatkan elemen koleksi.
 func (it *interp) compareOp(n *ast.BinaryExpr, e *env, a, b value) {
-	ia, ib := it.collIndex(n.X, e), it.collIndex(n.Y, e)
+	ia, ib := it.cmpIndex(n.X, e), it.cmpIndex(n.Y, e)
 	if ia < 0 && ib < 0 {
 		return
 	}
-	rel := relation(a, b)
+	rel, cmp := relation(a, b), n.Op.String()
 	if ia < 0 { // elemen koleksi hanya di kanan: balik supaya A selalu elemen koleksi
 		ia, ib = ib, -1
 		rel = map[string]string{">": "<", "<": ">", "=": "="}[rel]
+		cmp = trace.FlipCmp(cmp)
 	}
-	op := trace.Op{Op: trace.OpCompare, A: ia, Result: rel}
+	op := trace.Op{Op: trace.OpCompare, A: ia, Result: rel, Cmp: cmp}
 	if ib >= 0 {
 		op.B = &ib
 	} else {
 		op.Value = format(b)
-		if n.X != nil && it.collIndex(n.X, e) < 0 {
+		if n.X != nil && it.cmpIndex(n.X, e) < 0 {
 			op.Value = format(a)
 		}
 	}

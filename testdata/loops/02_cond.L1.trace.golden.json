@@ -7,7 +7,11 @@
     "id": "L1",
     "kind": "loop",
     "line": 6,
-    "endLine": 13
+    "endLine": 13,
+    "names": [
+      "n",
+      "steps"
+    ]
   },
   "loop": {
     "id": "L1",

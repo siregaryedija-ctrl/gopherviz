@@ -7,7 +7,10 @@
     "id": "I2",
     "kind": "if",
     "line": 13,
-    "endLine": 15
+    "endLine": 15,
+    "names": [
+      "n"
+    ]
   },
   "loop": {
     "id": "",

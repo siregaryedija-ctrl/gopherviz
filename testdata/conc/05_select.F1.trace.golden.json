@@ -8,7 +8,20 @@
     "kind": "func",
     "line": 8,
     "endLine": 23,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "After",
+      "Millisecond",
+      "Println",
+      "Sleep",
+      "done",
+      "fmt",
+      "main",
+      "make",
+      "msg",
+      "string",
+      "time"
+    ]
   },
   "loop": {
     "id": "",

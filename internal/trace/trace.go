@@ -91,6 +91,7 @@ type BlockInfo struct {
 	Line    int             `json:"line"`
 	EndLine int             `json:"endLine"`
 	Name    string          `json:"name,omitempty"`
+	Names   []string        `json:"names,omitempty"` // nama yang dipakai di dalam blok (penunjuk lo/mid/hi hanya diambil dari sini)
 }
 
 // LoopInfo merangkum loop yang di-trace.
@@ -194,8 +195,31 @@ type Op struct {
 	A      int    `json:"a"`
 	B      *int   `json:"b,omitempty"`
 	Result string `json:"result,omitempty"` // ">", "<", "=" untuk compare
+	Cmp    string `json:"cmp,omitempty"`    // operator compare dengan elemen A di kiri: "==", "!=", "<", "<=", ">", ">="
 	Value  string `json:"value,omitempty"`  // nilai baru untuk set/append
 	Key    string `json:"key,omitempty"`    // key untuk operasi pada map (A tidak dipakai)
+}
+
+// Elem adalah variabel for-each yang sedang memegang salinan elemen koleksi ke-Idx
+// (for v in arr / for _, v := range arr): perbandingan v == x dicatat sebagai perbandingan elemen.
+type Elem struct {
+	Idx int
+	Val string // nilai elemen saat diikat; variabel yang sudah diubah tidak dianggap elemen lagi
+}
+
+// FlipCmp membalik operator perbandingan saat kedua sisinya ditukar (a < b menjadi b > a).
+func FlipCmp(op string) string {
+	switch op {
+	case "<":
+		return ">"
+	case ">":
+		return "<"
+	case "<=":
+		return ">="
+	case ">=":
+		return "<="
+	}
+	return op
 }
 
 // Collection adalah koleksi yang digambar sebagai barisan elemen (slice/array) atau loker (map).

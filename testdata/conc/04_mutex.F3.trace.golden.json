@@ -8,7 +8,13 @@
     "kind": "func",
     "line": 24,
     "endLine": 27,
-    "name": "func"
+    "name": "func",
+    "names": [
+      "Done",
+      "Inc",
+      "c",
+      "wg"
+    ]
   },
   "loop": {
     "id": "",

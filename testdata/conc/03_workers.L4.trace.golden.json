@@ -7,7 +7,12 @@
     "id": "L4",
     "kind": "loop",
     "line": 22,
-    "endLine": 24
+    "endLine": 24,
+    "names": [
+      "i",
+      "results",
+      "sum"
+    ]
   },
   "loop": {
     "id": "L4",

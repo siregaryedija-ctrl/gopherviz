@@ -8,7 +8,14 @@
     "kind": "func",
     "line": 19,
     "endLine": 19,
-    "name": "Area"
+    "name": "Area",
+    "names": [
+      "Area",
+      "Circle",
+      "R",
+      "c",
+      "float64"
+    ]
   },
   "loop": {
     "id": "",

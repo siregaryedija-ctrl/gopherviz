@@ -188,6 +188,24 @@ type recorder struct {
 	coll     string // nama variabel koleksi untuk mode data
 	collKind string // slice | array | map (ditentukan dari nilainya saat pertama terlihat)
 	dirty    bool
+	elems    map[string]trace.Elem // variabel for-each yang memegang elemen koleksi
+}
+
+// bindElem mencatat bahwa variabel name sekarang memegang elemen koleksi ke-idx; fungsi
+// kembaliannya memulihkan keadaan sebelumnya (loop bersarang dengan nama yang sama).
+func (r *recorder) bindElem(name string, idx int, val string) func() {
+	if r.elems == nil {
+		r.elems = map[string]trace.Elem{}
+	}
+	prev, had := r.elems[name]
+	r.elems[name] = trace.Elem{Idx: idx, Val: val}
+	return func() {
+		if had {
+			r.elems[name] = prev
+		} else {
+			delete(r.elems, name)
+		}
+	}
 }
 
 type frame struct {

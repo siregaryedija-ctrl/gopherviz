@@ -7,7 +7,15 @@
     "id": "L1",
     "kind": "loop",
     "line": 26,
-    "endLine": 29
+    "endLine": 29,
+    "names": [
+      "Area",
+      "Println",
+      "fmt",
+      "s",
+      "shapes",
+      "total"
+    ]
   },
   "loop": {
     "id": "L1",

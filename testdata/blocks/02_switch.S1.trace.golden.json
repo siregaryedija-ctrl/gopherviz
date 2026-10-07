@@ -7,7 +7,10 @@
     "id": "S1",
     "kind": "switch",
     "line": 6,
-    "endLine": 13
+    "endLine": 13,
+    "names": [
+      "day"
+    ]
   },
   "loop": {
     "id": "",

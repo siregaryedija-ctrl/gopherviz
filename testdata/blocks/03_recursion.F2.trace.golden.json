@@ -8,7 +8,12 @@
     "kind": "func",
     "line": 12,
     "endLine": 17,
-    "name": "fib"
+    "name": "fib",
+    "names": [
+      "fib",
+      "int",
+      "n"
+    ]
   },
   "loop": {
     "id": "",

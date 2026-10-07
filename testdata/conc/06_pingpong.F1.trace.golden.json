@@ -8,7 +8,22 @@
     "kind": "func",
     "line": 5,
     "endLine": 16,
-    "name": "player"
+    "name": "player",
+    "names": [
+      "Println",
+      "ball",
+      "bool",
+      "close",
+      "done",
+      "fmt",
+      "in",
+      "int",
+      "name",
+      "out",
+      "player",
+      "string",
+      "true"
+    ]
   },
   "loop": {
     "id": "",

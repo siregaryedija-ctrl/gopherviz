@@ -7,7 +7,15 @@
     "id": "L1",
     "kind": "loop",
     "line": 22,
-    "endLine": 28
+    "endLine": 28,
+    "names": [
+      "Add",
+      "Done",
+      "Inc",
+      "c",
+      "i",
+      "wg"
+    ]
   },
   "loop": {
     "id": "L1",

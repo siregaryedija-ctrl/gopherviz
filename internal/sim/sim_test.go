@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -421,6 +422,20 @@ func TestFallbacks(t *testing.T) {
 		tr := run(t, "func main() {\n\tvar n int\n\tfmt.Scan(&n)\n\tfor i := 0; i < 2; i++ {\n\t\tfmt.Print(n)\n\t}\n}\n", Options{})
 		if tr.Mode != trace.ModeSimulated || output(tr) != "6464" || !strings.Contains(strings.Join(tr.Warnings, " "), "angka acak") {
 			t.Errorf("mode %s, output %q, warnings %v", tr.Mode, output(tr), tr.Warnings)
+		}
+	})
+	t.Run("pencarian: variabel range dibandingkan sebagai elemen", func(t *testing.T) {
+		tr := run(t, "func main() {\n\tvalues := []int{4, 8, 2, 9, 5}\n\ttarget := 9\n\tfor _, v := range values {\n\t\tif v == target {\n\t\t\tbreak\n\t\t}\n\t}\n}\n", Options{})
+		var cmps []trace.Op
+		for _, s := range tr.Steps {
+			for _, o := range s.Ops {
+				if o.Op == trace.OpCompare {
+					cmps = append(cmps, o)
+				}
+			}
+		}
+		if len(cmps) != 4 || cmps[3].A != 3 || cmps[3].Result != "=" || cmps[3].Cmp != "==" || !slices.Contains(tr.Block.Names, "target") {
+			t.Errorf("perbandingan %+v, names %v", cmps, tr.Block.Names)
 		}
 	})
 	t.Run("loop belum lengkap: mode struktur dengan pesan", func(t *testing.T) {

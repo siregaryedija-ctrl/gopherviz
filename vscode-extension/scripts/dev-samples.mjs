@@ -50,6 +50,11 @@ const samples = {
   // contoh user (tembok putaran): '@/' = relatif terhadap vscode-extension/dev/fixtures
   py_range100: ['@/loops.py', 2],
   py_range12: ['@/loops.py', 5],
+  py_linear: ['@/search.py', 6],
+  py_binary: ['@/search.py', 15],
+  py_jump: ['@/search.py', 30],
+  py_interp: ['@/search.py', 44],
+  py_notfound: ['@/search.py', 55],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

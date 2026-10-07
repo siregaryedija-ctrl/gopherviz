@@ -8,7 +8,16 @@
     "kind": "func",
     "line": 13,
     "endLine": 17,
-    "name": "Inc"
+    "name": "Inc",
+    "names": [
+      "Counter",
+      "Inc",
+      "Lock",
+      "Unlock",
+      "c",
+      "mu",
+      "n"
+    ]
   },
   "loop": {
     "id": "",

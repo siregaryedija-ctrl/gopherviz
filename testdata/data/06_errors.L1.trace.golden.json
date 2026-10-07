@@ -7,7 +7,20 @@
     "id": "L1",
     "kind": "loop",
     "line": 34,
-    "endLine": 41
+    "endLine": 41,
+    "names": [
+      "ErrKosong",
+      "Is",
+      "Println",
+      "err",
+      "errors",
+      "fmt",
+      "n",
+      "nil",
+      "parse",
+      "s",
+      "string"
+    ]
   },
   "loop": {
     "id": "L1",

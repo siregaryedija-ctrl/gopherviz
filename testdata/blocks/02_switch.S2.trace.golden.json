@@ -7,7 +7,12 @@
     "id": "S2",
     "kind": "switch",
     "line": 21,
-    "endLine": 28
+    "endLine": 28,
+    "names": [
+      "Println",
+      "fmt",
+      "temp"
+    ]
   },
   "loop": {
     "id": "",

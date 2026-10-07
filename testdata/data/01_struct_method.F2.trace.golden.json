@@ -8,7 +8,13 @@
     "kind": "func",
     "line": 14,
     "endLine": 16,
-    "name": "Birthday"
+    "name": "Birthday",
+    "names": [
+      "Age",
+      "Birthday",
+      "Person",
+      "p"
+    ]
   },
   "loop": {
     "id": "",

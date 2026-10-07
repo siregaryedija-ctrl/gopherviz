@@ -7,7 +7,13 @@
     "id": "L1",
     "kind": "loop",
     "line": 11,
-    "endLine": 15
+    "endLine": 15,
+    "names": [
+      "isEven",
+      "n",
+      "nums",
+      "total"
+    ]
   },
   "loop": {
     "id": "L1",

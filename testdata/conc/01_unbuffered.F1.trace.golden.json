@@ -8,7 +8,14 @@
     "kind": "func",
     "line": 5,
     "endLine": 10,
-    "name": "produce"
+    "name": "produce",
+    "names": [
+      "ch",
+      "close",
+      "i",
+      "int",
+      "produce"
+    ]
   },
   "loop": {
     "id": "",

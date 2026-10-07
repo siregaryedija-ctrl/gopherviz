@@ -8,7 +8,23 @@
     "kind": "func",
     "line": 19,
     "endLine": 31,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Add",
+      "Counter",
+      "Done",
+      "Inc",
+      "Println",
+      "Wait",
+      "WaitGroup",
+      "c",
+      "fmt",
+      "i",
+      "main",
+      "n",
+      "sync",
+      "wg"
+    ]
   },
   "loop": {
     "id": "",

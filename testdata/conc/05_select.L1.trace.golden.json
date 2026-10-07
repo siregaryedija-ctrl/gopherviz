@@ -7,7 +7,16 @@
     "id": "L1",
     "kind": "loop",
     "line": 14,
-    "endLine": 22
+    "endLine": 22,
+    "names": [
+      "After",
+      "Millisecond",
+      "Println",
+      "done",
+      "fmt",
+      "msg",
+      "time"
+    ]
   },
   "loop": {
     "id": "L1",

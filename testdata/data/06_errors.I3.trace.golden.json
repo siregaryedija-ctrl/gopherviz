@@ -7,7 +7,12 @@
     "id": "I3",
     "kind": "if",
     "line": 27,
-    "endLine": 29
+    "endLine": 29,
+    "names": [
+      "RangeError",
+      "Value",
+      "n"
+    ]
   },
   "loop": {
     "id": "",

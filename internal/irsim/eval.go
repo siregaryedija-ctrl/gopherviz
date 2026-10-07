@@ -912,26 +912,38 @@ func (it *interp) logicResult(v Value, truth bool) Value {
 }
 
 func (it *interp) compareOp(n *ir.Binary, e *Env, a, b Value) {
-	ia, ib := it.collIndex(n.X, e), it.collIndex(n.Y, e)
+	ia, ib := it.cmpIndex(n.X, e), it.cmpIndex(n.Y, e)
 	if ia < 0 && ib < 0 {
 		return
 	}
-	rel := it.relation(a, b)
+	rel, cmp := it.relation(a, b), cmpOp(n.Op)
 	if ia < 0 {
 		ia, ib = ib, -1
 		rel = map[string]string{">": "<", "<": ">", "=": "="}[rel]
+		cmp = trace.FlipCmp(cmp)
 	}
-	op := trace.Op{Op: trace.OpCompare, A: ia, Result: rel}
+	op := trace.Op{Op: trace.OpCompare, A: ia, Result: rel, Cmp: cmp}
 	if ib >= 0 {
 		op.B = &ib
 	} else {
 		other := b
-		if it.collIndex(n.X, e) < 0 {
+		if it.cmpIndex(n.X, e) < 0 {
 			other = a
 		}
 		op.Value = it.format(other)
 	}
 	it.rec.op(op)
+}
+
+// cmpOp menyeragamkan operator perbandingan antarbahasa (=== → ==, is → ==, <> → !=).
+func cmpOp(op string) string {
+	switch op {
+	case "===", "is":
+		return "=="
+	case "!==", "is not", "<>":
+		return "!="
+	}
+	return op
 }
 
 func (it *interp) relation(a, b Value) string {

@@ -8,7 +8,16 @@
     "kind": "func",
     "line": 10,
     "endLine": 12,
-    "name": "push"
+    "name": "push",
+    "names": [
+      "Next",
+      "Node",
+      "Val",
+      "head",
+      "int",
+      "push",
+      "v"
+    ]
   },
   "loop": {
     "id": "",

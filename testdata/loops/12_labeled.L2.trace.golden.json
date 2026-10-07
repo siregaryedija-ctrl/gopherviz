@@ -7,7 +7,14 @@
     "id": "L2",
     "kind": "loop",
     "line": 9,
-    "endLine": 17
+    "endLine": 17,
+    "names": [
+      "Println",
+      "fmt",
+      "outer",
+      "row",
+      "v"
+    ]
   },
   "loop": {
     "id": "L2",
@@ -73,7 +80,16 @@
         "v": "1"
       },
       "result": true,
-      "note": "if v == 1 → 1 == 1 → true"
+      "note": "if v == 1 → 1 == 1 → true",
+      "ops": [
+        {
+          "op": "compare",
+          "a": 0,
+          "result": "=",
+          "cmp": "==",
+          "value": "1"
+        }
+      ]
     },
     {
       "n": 3,
@@ -160,7 +176,16 @@
         "v": "3"
       },
       "result": false,
-      "note": "if v == 1 → 3 == 1 → false"
+      "note": "if v == 1 → 3 == 1 → false",
+      "ops": [
+        {
+          "op": "compare",
+          "a": 0,
+          "result": ">",
+          "cmp": "==",
+          "value": "1"
+        }
+      ]
     },
     {
       "n": 8,
@@ -176,7 +201,16 @@
         "v": "3"
       },
       "result": true,
-      "note": "if v == 3 → 3 == 3 → true"
+      "note": "if v == 3 → 3 == 3 → true",
+      "ops": [
+        {
+          "op": "compare",
+          "a": 0,
+          "result": "=",
+          "cmp": "==",
+          "value": "3"
+        }
+      ]
     },
     {
       "n": 9,

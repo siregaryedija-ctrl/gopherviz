@@ -8,7 +8,25 @@
     "kind": "func",
     "line": 13,
     "endLine": 34,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Counter",
+      "Println",
+      "c",
+      "fmt",
+      "i",
+      "int",
+      "main",
+      "n",
+      "new",
+      "nil",
+      "nothing",
+      "p",
+      "q",
+      "swap",
+      "x",
+      "y"
+    ]
   },
   "loop": {
     "id": "",

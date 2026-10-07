@@ -8,7 +8,19 @@
     "kind": "func",
     "line": 23,
     "endLine": 31,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Area",
+      "Circle",
+      "Println",
+      "Rect",
+      "Shape",
+      "fmt",
+      "main",
+      "s",
+      "shapes",
+      "total"
+    ]
   },
   "loop": {
     "id": "",

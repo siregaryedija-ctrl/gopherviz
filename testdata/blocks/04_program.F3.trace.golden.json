@@ -8,7 +8,16 @@
     "kind": "func",
     "line": 19,
     "endLine": 27,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Println",
+      "fmt",
+      "int",
+      "main",
+      "nums",
+      "sumEven",
+      "total"
+    ]
   },
   "loop": {
     "id": "",

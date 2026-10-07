@@ -7,7 +7,11 @@
     "id": "I1",
     "kind": "if",
     "line": 20,
-    "endLine": 22
+    "endLine": 22,
+    "names": [
+      "ErrKosong",
+      "s"
+    ]
   },
   "loop": {
     "id": "",

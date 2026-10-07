@@ -7,7 +7,12 @@
     "id": "L1",
     "kind": "loop",
     "line": 8,
-    "endLine": 10
+    "endLine": 10,
+    "names": [
+      "counts",
+      "w",
+      "words"
+    ]
   },
   "loop": {
     "id": "L1",

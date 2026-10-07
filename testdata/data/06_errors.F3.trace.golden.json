@@ -8,7 +8,21 @@
     "kind": "func",
     "line": 33,
     "endLine": 42,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "ErrKosong",
+      "Is",
+      "Println",
+      "err",
+      "errors",
+      "fmt",
+      "main",
+      "n",
+      "nil",
+      "parse",
+      "s",
+      "string"
+    ]
   },
   "loop": {
     "id": "",

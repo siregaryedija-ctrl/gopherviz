@@ -7,7 +7,12 @@
     "id": "L1",
     "kind": "loop",
     "line": 2,
-    "endLine": 4
+    "endLine": 4,
+    "names": [
+      "nums",
+      "println",
+      "v"
+    ]
   },
   "loop": {
     "id": "L1",

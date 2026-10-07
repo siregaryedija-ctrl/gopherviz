@@ -8,7 +8,12 @@
     "kind": "func",
     "line": 5,
     "endLine": 10,
-    "name": "factorial"
+    "name": "factorial",
+    "names": [
+      "factorial",
+      "int",
+      "n"
+    ]
   },
   "loop": {
     "id": "",

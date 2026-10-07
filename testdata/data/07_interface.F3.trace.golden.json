@@ -8,7 +8,17 @@
     "kind": "func",
     "line": 21,
     "endLine": 21,
-    "name": "String"
+    "name": "String",
+    "names": [
+      "H",
+      "Rect",
+      "Sprintf",
+      "String",
+      "W",
+      "fmt",
+      "r",
+      "string"
+    ]
   },
   "loop": {
     "id": "",

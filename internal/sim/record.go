@@ -28,9 +28,10 @@ type recorder struct {
 
 	truncated bool
 
-	coll     string // nama variabel koleksi untuk mode data ("" bila tidak ada)
-	collKind string // slice | array | map
-	dirty    bool   // isi koleksi berubah sejak langkah terakhir
+	coll     string                // nama variabel koleksi untuk mode data ("" bila tidak ada)
+	collKind string                // slice | array | map
+	dirty    bool                  // isi koleksi berubah sejak langkah terakhir
+	elems    map[string]trace.Elem // variabel range yang memegang elemen koleksi (for _, v := range arr)
 
 	mem     bool              // sertakan potret memori di setiap langkah
 	objIDs  map[*value]string // ID objek heap yang stabil antar langkah

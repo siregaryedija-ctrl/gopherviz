@@ -7,7 +7,13 @@
     "id": "L2",
     "kind": "loop",
     "line": 15,
-    "endLine": 17
+    "endLine": 17,
+    "names": [
+      "Println",
+      "ch",
+      "fmt",
+      "v"
+    ]
   },
   "loop": {
     "id": "L2",

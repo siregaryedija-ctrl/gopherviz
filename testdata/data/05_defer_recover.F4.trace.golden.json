@@ -8,7 +8,14 @@
     "kind": "func",
     "line": 25,
     "endLine": 29,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Println",
+      "fmt",
+      "main",
+      "order",
+      "safeDivide"
+    ]
   },
   "loop": {
     "id": "",

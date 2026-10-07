@@ -7,7 +7,14 @@
     "id": "I2",
     "kind": "if",
     "line": 24,
-    "endLine": 26
+    "endLine": 26,
+    "names": [
+      "Errorf",
+      "err",
+      "fmt",
+      "nil",
+      "s"
+    ]
   },
   "loop": {
     "id": "",

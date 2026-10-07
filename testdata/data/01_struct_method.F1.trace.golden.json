@@ -8,7 +8,14 @@
     "kind": "func",
     "line": 10,
     "endLine": 12,
-    "name": "Greet"
+    "name": "Greet",
+    "names": [
+      "Greet",
+      "Name",
+      "Person",
+      "p",
+      "string"
+    ]
   },
   "loop": {
     "id": "",

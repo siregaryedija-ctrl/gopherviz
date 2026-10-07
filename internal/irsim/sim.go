@@ -3,6 +3,7 @@ package irsim
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 	"strings"
 
 	"gopherviz/internal/ir"
@@ -79,6 +80,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		tr.Warnings = append(tr.Warnings, "kode belum lengkap atau masih ada error; selesaikan dulu supaya nilainya bisa dihitung")
 		return tr
 	}
+	tr.Block.Names = blockNames(node)
 	coll := findCollection(node)
 	it := &interp{
 		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
@@ -385,6 +387,21 @@ func enclosingFunc(res *lang.Result, node ir.Node) *ir.Func {
 	return best
 }
 
+// blockNames mengembalikan nama (identifier) yang dipakai di dalam blok, terurut dan unik.
+func blockNames(node ir.Node) []string {
+	seen := map[string]bool{}
+	var out []string
+	ir.Walk(node, func(n ir.Node) bool {
+		if id, ok := n.(*ir.Ident); ok && id.Name != "_" && !seen[id.Name] {
+			seen[id.Name] = true
+			out = append(out, id.Name)
+		}
+		return true
+	})
+	sort.Strings(out)
+	return out
+}
+
 // findCollection memilih variabel koleksi yang paling sering diakses di blok fokus.
 func findCollection(node ir.Node) string {
 	score := map[string]int{}
@@ -405,6 +422,13 @@ func findCollection(node ir.Node) string {
 			add(x.X, 1)
 		case *ir.ForEach:
 			add(x.X, 2)
+			if c, ok := x.X.(*ir.Call); ok { // enumerate(arr), arr.entries()
+				if id, ok := c.Fun.(*ir.Ident); ok && id.Name == "enumerate" && len(c.Args) > 0 {
+					add(c.Args[0], 2)
+				} else if m, ok := c.Fun.(*ir.Member); ok && m.Name == "entries" {
+					add(m.X, 2)
+				}
+			}
 		case *ir.Assign:
 			if ix, ok := x.L.(*ir.Index); ok {
 				add(ix.X, 3)

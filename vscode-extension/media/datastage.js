@@ -6,6 +6,11 @@
 
   const VIEW = 192, H = 96, GY = 76;
   const SLOT_MIN = 18, SLOT_MAX = 32;
+  // Mode pencarian: nama variabel penunjuk batas kiri/kanan (binary/interpolation search) dan
+  // penunjuk lain (mid, pos, step, ...). Hanya tampil bila nilainya indeks yang sah.
+  const LO_NAMES = ['lo', 'low', 'left', 'l', 'start', 'begin', 'first', 'kiri', 'awal', 'bawah'];
+  const HI_NAMES = ['hi', 'high', 'right', 'r', 'end', 'last', 'kanan', 'akhir', 'atas'];
+  const PTR_NAMES = [...LO_NAMES, 'mid', 'm', 'middle', 'tengah', 'pos', 'probe', 'step', 'prev', 'jump', 'idx', 'index', ...HI_NAMES];
 
   class DataStage {
     constructor(canvas, hooks) {
@@ -180,6 +185,18 @@
         return snap;
       });
 
+      // Variabel yang memegang ISI elemen (for v in arr) bukan penunjuk indeks: buang dari penunjuk.
+      const elemVars = new Set();
+      for (const s of this.snaps) {
+        if (s.read < 0 || !s.step.vars) continue;
+        for (const name of ptrNames) {
+          const v = s.step.vars[name];
+          if (v != null && v === String(s.vals[s.order[s.read]]) && +v !== s.read) elemVars.add(name);
+        }
+      }
+      if (elemVars.size) for (const s of this.snaps) s.ptr = s.ptr.filter(p => !elemVars.has(p.name));
+      this.prepareSearch(trace);
+
       // Tinggi gopher = peringkat nilai (1..9), supaya angka besar maupun string tetap terbaca.
       const list = [...seen];
       const numeric = list.length > 0 && list.every(v => v !== '' && !isNaN(+v));
@@ -196,6 +213,47 @@
       this.resize(Math.max(VIEW, this.offset * 2 + this.slot * maxN));
       this.lastIdx = -1;
       return this.snaps;
+    }
+
+    /**
+     * Pencarian = koleksi hanya dibaca dan elemennya dibandingkan dengan suatu nilai (target).
+     * Per langkah: target, elemen yang sudah dicek, elemen yang cocok, rentang lo..hi, dan
+     * penunjuk lo/mid/hi. Dihitung ulang setiap kali loop dijalankan lagi (run baru).
+     */
+    prepareSearch(trace) {
+      const snaps = this.snaps;
+      this.search = !snaps.some(s => s.swap || s.set >= 0 || s.appended >= 0) && snaps.some(s => s.cmp && s.cmp.b == null);
+      if (!this.search) return;
+      // "ketemu" hanya bermakna untuk perbandingan kesamaan (==, !=); loop yang hanya memakai < / >
+      // (mis. mencari blok di jump search) cukup ditutup dengan SELESAI.
+      const eq = c => !c.cmp || c.cmp === '==' || c.cmp === '!=';
+      this.eqSearch = snaps.some(s => s.cmp && s.cmp.b == null && eq(s.cmp));
+      // penunjuk lo/mid/hi hanya dari nama yang dipakai di blok ini (variabel lama di luar blok diabaikan)
+      const names = new Set(trace.block.names || []);
+      const used = name => !names.size || names.has(name) || names.has('$' + name);
+      let run = null, target = null, checked = new Set(), found = -1, count = 0;
+      for (const s of snaps) {
+        if (s.step.run !== run) { run = s.step.run; checked = new Set(); found = -1; count = 0; }
+        s.checked = new Set(checked); // dicek SEBELUM langkah ini
+        s.foundBefore = found;
+        if (s.cmp && s.cmp.b == null) {
+          target = s.cmp.value;
+          count++;
+          checked.add(s.cmp.a);
+          if (s.cmp.result === '=' && eq(s.cmp) && found < 0) found = s.cmp.a;
+        }
+        s.target = target;
+        s.checks = count;
+        s.found = found;
+        const n = s.order.length, vars = s.step.vars || {};
+        const idx = name => (used(name) && vars[name] != null && /^-?\d+$/.test(vars[name]) ? +vars[name] : null);
+        const lo = LO_NAMES.map(idx).find(v => v != null), hi = HI_NAMES.map(idx).find(v => v != null);
+        s.range = lo != null && hi != null ? { lo: Math.max(0, lo), hi: Math.min(n - 1, hi) } : null;
+        for (const name of PTR_NAMES) {
+          const k = idx(name);
+          if (k != null && k >= 0 && k < n && !s.ptr.some(p => p.name === name)) s.ptr.push({ name, k });
+        }
+      }
     }
 
     resize(w) {
@@ -229,6 +287,7 @@
         out.push({ t: 0, sound: 'think' });
         const yes = st.result != null ? st.result : s.cmp.result === '>';
         out.push({ t: 0.45, sound: yes ? 'yes' : 'no' });
+        if (this.search && this.eqSearch && s.cmp.result === '=' && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=')) out.push({ t: 0.5, sound: 'sparkle', fx: () => this.burst(this.slotX(s.cmp.a), GY - 40, 12, ['#f3c75a', '#ffffff', '#9fd88f'], { sp: 70, up: 50, g: 60, life: 700 }) });
       }
       if (s.swap) {
         out.push({ t: 0, sound: 'jump' });
@@ -315,11 +374,25 @@
         return { id, slot, x, y, z, face, top: 0, v: s.vals[id] };
       });
 
-      for (const g of L) P.ell(w, Math.round(g.x), GY + 1, Math.min(9, this.slot / 2 - 1), 2, P.mix(P.VCOL[this.levelOf(g.v)], '#ffffff', 0.3));
+      // pencarian: elemen di luar rentang lo..hi (atau yang sudah dicek dan tidak cocok) meredup
+      const matchNow = this.search && s.cmp && s.cmp.result === '=' && s.cmp.b == null && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=') && t >= 0.45 ? s.cmp.a : -1;
+      const foundSlot = matchNow >= 0 ? matchNow : this.search ? s.foundBefore : -1;
+      const dim = g => {
+        if (!this.search || g.slot === foundSlot) return 1;
+        if (s.range) return g.slot < s.range.lo || g.slot > s.range.hi ? 0.3 : 1;
+        return s.checked.has(g.slot) && !(s.cmp && s.cmp.a === g.slot) ? 0.45 : 1;
+      };
+      if (this.search) for (const g of L) {
+        if (g.slot === foundSlot) { g.face = 'happy'; if (!done) g.y = -Math.round(Math.abs(Math.sin(now / 150)) * 3); }
+        else if (done) { g.face = (now + g.id * 1370) % 3400 < 130 ? 'blink' : 'idle'; g.y = 0; }
+      }
+      for (const g of L) { w.globalAlpha = dim(g); P.ell(w, Math.round(g.x), GY + 1, Math.min(9, this.slot / 2 - 1), 2, P.mix(P.VCOL[this.levelOf(g.v)], '#ffffff', 0.3)); }
+      w.globalAlpha = 1;
       for (const g of [...L].sort((a, b) => a.z - b.z)) {
         const lv = this.levelOf(g.v);
         const spr = P.gopher(lv, g.face, 0);
         const dx = Math.round(g.x - 8), dy = Math.round(GY + 2 - spr.height + g.y);
+        w.globalAlpha = dim(g);
         w.drawImage(spr, dx, dy);
         g.top = dy;
         // lencana nilai
@@ -328,6 +401,12 @@
         const flash = g.slot === s.set && t > 0.3 && Math.floor(now / 100) % 2;
         P.box(w, bx, by, bw, 9, flash ? '#f3c75a' : P.mix(P.VCOL[lv], P.INK, 0.4), '#ffffff');
         P.textCenter(w, label, g.x, by + 2, '#ffffff');
+        w.globalAlpha = 1;
+        if (g.slot === foundSlot) this.star(w, g.x, by - 9 - (Math.floor(now / 250) % 2));
+      }
+      if (this.search && s.range) { // kurung siku rentang pencarian lo..hi di bawah barisan
+        const x0 = Math.round(this.slotX(s.range.lo) - this.slot / 2 + 1), x1 = Math.round(this.slotX(s.range.hi) + this.slot / 2 - 2);
+        if (x1 > x0) { P.rect(w, x0, GY + 2, x1 - x0 + 1, 1, '#c2457a'); P.rect(w, x0, GY, 1, 3, '#c2457a'); P.rect(w, x1, GY, 1, 3, '#c2457a'); }
       }
 
       const at = slot => L.find(g => g.slot === slot);
@@ -360,15 +439,29 @@
       }
       let label = null, col = '#d9467c';
       if (st.reason === 'panic') label = 'PANIC!';
+      else if (done && this.search && this.eqSearch) { label = s.found >= 0 ? 'KETEMU!' : 'TIDAK ADA'; col = s.found >= 0 ? '#2f8a5c' : '#d9467c'; }
       else if (done) { label = 'SELESAI!'; col = '#2f8a5c'; }
+      else if (matchNow >= 0 && t > 0.55) { label = 'KETEMU!'; col = '#2f8a5c'; }
       else if (st.phase === 'break' && st.loop === this.snaps[0].step.loop) label = 'BREAK!';
       if (label) {
         const img = P.stamp(label, col), k = t < 0.06 ? 4 : t < 0.12 ? 3 : 2;
         w.drawImage(img, Math.round(this.camX() - (img.width * k) / 2), Math.round(30 - (img.height * k) / 2), img.width * k, img.height * k);
       }
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s, p.s, p.col);
+      if (this.search) { // HUD: nilai yang dicari dan jumlah elemen yang sudah dicek
+        P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
+        P.text(w, s.target != null ? `CARI ${String(s.target).slice(0, 10)}` : 'CARI', 4, 3, P.INK);
+        P.text(w, `CEK ${s.checks}`, 4, 10, '#c2457a');
+      }
 
       this.present(s);
+    }
+
+    /** Bintang kecil 7x7 di atas elemen yang cocok dengan target. */
+    star(w, cx, y) {
+      const rows = ['...#...', '..###..', '#######', '.#####.', '..###..', '.##.##.', '.#...#.'];
+      w.fillStyle = '#f3c75a';
+      rows.forEach((r, j) => { for (let i = 0; i < 7; i++) if (r[i] === '#') w.fillRect(Math.round(cx) - 3 + i, y + j, 1, 1); });
     }
 
     focusSlots(s) {

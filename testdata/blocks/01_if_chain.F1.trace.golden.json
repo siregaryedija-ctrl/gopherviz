@@ -8,7 +8,13 @@
     "kind": "func",
     "line": 5,
     "endLine": 15,
-    "name": "grade"
+    "name": "grade",
+    "names": [
+      "grade",
+      "int",
+      "score",
+      "string"
+    ]
   },
   "loop": {
     "id": "",

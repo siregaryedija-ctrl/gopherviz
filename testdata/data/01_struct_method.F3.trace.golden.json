@@ -8,7 +8,23 @@
     "kind": "func",
     "line": 18,
     "endLine": 36,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Age",
+      "Birthday",
+      "Greet",
+      "Name",
+      "Person",
+      "Printf",
+      "Println",
+      "ani",
+      "copyAni",
+      "fmt",
+      "i",
+      "main",
+      "p",
+      "people"
+    ]
   },
   "loop": {
     "id": "",

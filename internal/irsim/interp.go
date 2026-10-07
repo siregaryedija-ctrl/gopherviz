@@ -200,6 +200,25 @@ func (it *interp) findVar(e *Env, name string) *Cell {
 	return e.lookup(name)
 }
 
+// cmpIndex seperti collIndex, ditambah variabel for-each yang masih memegang elemen koleksi.
+func (it *interp) cmpIndex(x ir.Expr, e *Env) int {
+	if i := it.collIndex(x, e); i >= 0 {
+		return i
+	}
+	id, ok := x.(*ir.Ident)
+	if !ok || it.rec.collKind == "map" {
+		return -1
+	}
+	el, ok := it.rec.elems[id.Name]
+	if !ok {
+		return -1
+	}
+	if c := it.findVar(e, id.Name); c == nil || it.format(c.get()) != el.Val {
+		return -1
+	}
+	return el.Idx
+}
+
 // collIndex mengembalikan indeks bila x berbentuk koleksi[i], atau -1.
 func (it *interp) collIndex(x ir.Expr, e *Env) int {
 	ix, ok := x.(*ir.Index)
@@ -858,10 +877,7 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 	if it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseInit, Line: it.line(n), Note: fmt.Sprintf("%s %s (%s)", it.eachWord(n), it.text(n.X), it.describe(x, len(pairs)))}, scope)
 	}
-	readsColl := false
-	if id, ok := n.X.(*ir.Ident); ok && id.Name == it.rec.coll {
-		readsColl = true
-	}
+	readsColl, elem := it.eachColl(n)
 	for i, p := range pairs {
 		it.tick()
 		iterScope := scope
@@ -869,6 +885,12 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 			iterScope = newEnv(scope, false) // let/const: variabel baru setiap putaran
 		}
 		it.bindEach(n, iterScope, p, x, i)
+		restore := func() {}
+		if elem != "" && it.rec.collKind != "map" {
+			if c := it.findVar(iterScope, elem); c != nil {
+				restore = it.rec.bindElem(elem, i, it.format(c.get()))
+			}
+		}
 		if it.recording() {
 			if readsColl && it.rec.collKind == "map" {
 				it.rec.op(trace.Op{Op: trace.OpRead, A: -1, Key: it.format(p.k)})
@@ -879,6 +901,7 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 			it.add(trace.Step{Phase: trace.PhaseCond, Line: it.line(n), Result: &r, Note: it.eachNote(n, iterScope, i)}, iterScope)
 		}
 		f := it.execBody(n.Body, iterScope)
+		restore()
 		if done, out := it.loopFlow(f, label, n, iterScope); done {
 			return out
 		}
@@ -899,6 +922,42 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 		return it.execBody(n.Else, scope)
 	}
 	return flow{}
+}
+
+// eachColl: apakah for-each ini menelusuri koleksi mode data (langsung, enumerate(arr), atau
+// arr.entries()), dan nama variabel yang memegang elemennya.
+func (it *interp) eachColl(n *ir.ForEach) (reads bool, elem string) {
+	x, tuple := n.X, false
+	if c, ok := n.X.(*ir.Call); ok {
+		switch f := c.Fun.(type) {
+		case *ir.Ident:
+			if f.Name == "enumerate" && len(c.Args) > 0 {
+				x, tuple = c.Args[0], true
+			}
+		case *ir.Member:
+			if f.Name == "entries" && len(c.Args) == 0 {
+				x, tuple = f.X, true
+			}
+		}
+	}
+	if id, ok := x.(*ir.Ident); !ok || id.Name != it.rec.coll || it.rec.coll == "" {
+		return false, ""
+	}
+	if n.Kind == "in" && (it.lang == "javascript" || it.lang == "typescript") {
+		return true, "" // for...in: variabelnya key, bukan elemen
+	}
+	target := n.Value
+	if tuple {
+		ids := patternIdents(n.Value)
+		if len(ids) != 2 {
+			return true, ""
+		}
+		target = ids[1]
+	}
+	if id, ok := target.(*ir.Ident); ok && id.Name != "_" {
+		return true, id.Name
+	}
+	return true, ""
 }
 
 func (it *interp) eachWord(n *ir.ForEach) string {

@@ -7,7 +7,12 @@
     "id": "L1",
     "kind": "loop",
     "line": 24,
-    "endLine": 26
+    "endLine": 26,
+    "names": [
+      "Age",
+      "p",
+      "people"
+    ]
   },
   "loop": {
     "id": "L1",

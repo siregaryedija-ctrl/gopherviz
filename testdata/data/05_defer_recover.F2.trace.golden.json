@@ -8,7 +8,21 @@
     "kind": "func",
     "line": 15,
     "endLine": 23,
-    "name": "safeDivide"
+    "name": "safeDivide",
+    "names": [
+      "New",
+      "a",
+      "b",
+      "err",
+      "error",
+      "errors",
+      "int",
+      "nil",
+      "r",
+      "recover",
+      "result",
+      "safeDivide"
+    ]
   },
   "loop": {
     "id": "",

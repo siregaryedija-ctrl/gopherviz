@@ -7,7 +7,15 @@
     "id": "L2",
     "kind": "loop",
     "line": 10,
-    "endLine": 15
+    "endLine": 15,
+    "names": [
+      "a",
+      "i",
+      "j",
+      "n",
+      "swapped",
+      "true"
+    ]
   },
   "loop": {
     "id": "L2",
@@ -84,7 +92,8 @@
           "op": "compare",
           "a": 0,
           "b": 1,
-          "result": ">"
+          "result": ">",
+          "cmp": ">"
         }
       ]
     },
@@ -194,7 +203,8 @@
           "op": "compare",
           "a": 1,
           "b": 2,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },
@@ -255,7 +265,8 @@
           "op": "compare",
           "a": 2,
           "b": 3,
-          "result": ">"
+          "result": ">",
+          "cmp": ">"
         }
       ]
     },
@@ -365,7 +376,8 @@
           "op": "compare",
           "a": 3,
           "b": 4,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },
@@ -426,7 +438,8 @@
           "op": "compare",
           "a": 4,
           "b": 5,
-          "result": ">"
+          "result": ">",
+          "cmp": ">"
         }
       ]
     },
@@ -597,7 +610,8 @@
           "op": "compare",
           "a": 0,
           "b": 1,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },
@@ -658,7 +672,8 @@
           "op": "compare",
           "a": 1,
           "b": 2,
-          "result": ">"
+          "result": ">",
+          "cmp": ">"
         }
       ]
     },
@@ -768,7 +783,8 @@
           "op": "compare",
           "a": 2,
           "b": 3,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },
@@ -829,7 +845,8 @@
           "op": "compare",
           "a": 3,
           "b": 4,
-          "result": ">"
+          "result": ">",
+          "cmp": ">"
         }
       ]
     },
@@ -1000,7 +1017,8 @@
           "op": "compare",
           "a": 0,
           "b": 1,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },
@@ -1061,7 +1079,8 @@
           "op": "compare",
           "a": 1,
           "b": 2,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },
@@ -1122,7 +1141,8 @@
           "op": "compare",
           "a": 2,
           "b": 3,
-          "result": "<"
+          "result": "<",
+          "cmp": ">"
         }
       ]
     },

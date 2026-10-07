@@ -8,7 +8,17 @@
     "kind": "func",
     "line": 8,
     "endLine": 11,
-    "name": "square"
+    "name": "square",
+    "names": [
+      "Done",
+      "WaitGroup",
+      "id",
+      "int",
+      "results",
+      "square",
+      "sync",
+      "wg"
+    ]
   },
   "loop": {
     "id": "",

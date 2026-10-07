@@ -113,6 +113,8 @@ export interface TraceOp {
   a: number;
   b?: number;
   result?: string;
+  /** Operator compare dengan elemen a di kiri: "==", "!=", "<", "<=", ">", ">=". */
+  cmp?: string;
   value?: string;
   /** Key map (set/read/delete pada map), atau ID channel (send/recv). */
   key?: string;
@@ -182,7 +184,7 @@ export interface Trace {
   language: string;
   file?: string;
   mode: 'simulated' | 'structural' | 'instrumented';
-  block: { id: string; kind: BlockKind; line: number; endLine: number; name?: string };
+  block: { id: string; kind: BlockKind; line: number; endLine: number; name?: string; /** Nama yang dipakai di dalam blok. */ names?: string[] };
   loop: { id: string; kind: LoopKind; line: number; endLine: number; label?: string; vars?: string[]; children?: string[] };
   steps: TraceStep[];
   collection?: { kind: string; items: string[]; keys?: string[] };

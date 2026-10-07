@@ -7,7 +7,14 @@
     "id": "L1",
     "kind": "loop",
     "line": 18,
-    "endLine": 20
+    "endLine": 20,
+    "names": [
+      "Println",
+      "fmt",
+      "grade",
+      "int",
+      "s"
+    ]
   },
   "loop": {
     "id": "L1",

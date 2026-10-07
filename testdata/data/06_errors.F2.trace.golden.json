@@ -8,7 +8,24 @@
     "kind": "func",
     "line": 19,
     "endLine": 31,
-    "name": "parse"
+    "name": "parse",
+    "names": [
+      "Atoi",
+      "ErrKosong",
+      "Errorf",
+      "RangeError",
+      "Value",
+      "err",
+      "error",
+      "fmt",
+      "int",
+      "n",
+      "nil",
+      "parse",
+      "s",
+      "strconv",
+      "string"
+    ]
   },
   "loop": {
     "id": "",

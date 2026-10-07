@@ -7,7 +7,12 @@
     "id": "I2",
     "kind": "if",
     "line": 22,
-    "endLine": 24
+    "endLine": 24,
+    "names": [
+      "Println",
+      "fmt",
+      "x"
+    ]
   },
   "loop": {
     "id": "",

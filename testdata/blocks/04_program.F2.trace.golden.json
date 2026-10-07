@@ -8,7 +8,15 @@
     "kind": "func",
     "line": 9,
     "endLine": 17,
-    "name": "sumEven"
+    "name": "sumEven",
+    "names": [
+      "int",
+      "isEven",
+      "n",
+      "nums",
+      "sumEven",
+      "total"
+    ]
   },
   "loop": {
     "id": "",

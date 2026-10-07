@@ -8,7 +8,13 @@
     "kind": "func",
     "line": 10,
     "endLine": 13,
-    "name": "func"
+    "name": "func",
+    "names": [
+      "Millisecond",
+      "Sleep",
+      "done",
+      "time"
+    ]
   },
   "loop": {
     "id": "",

@@ -8,7 +8,14 @@
     "kind": "func",
     "line": 16,
     "endLine": 29,
-    "name": "main"
+    "name": "main",
+    "names": [
+      "Println",
+      "dayName",
+      "fmt",
+      "main",
+      "temp"
+    ]
   },
   "loop": {
     "id": "",

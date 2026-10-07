@@ -8,7 +8,15 @@
     "kind": "loop",
     "line": 8,
     "endLine": 18,
-    "name": "outer"
+    "name": "outer",
+    "names": [
+      "Println",
+      "fmt",
+      "grid",
+      "outer",
+      "row",
+      "v"
+    ]
   },
   "loop": {
     "id": "L1",

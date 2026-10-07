@@ -7,7 +7,15 @@
     "id": "I1",
     "kind": "if",
     "line": 17,
-    "endLine": 19
+    "endLine": 19,
+    "names": [
+      "New",
+      "err",
+      "errors",
+      "nil",
+      "r",
+      "recover"
+    ]
   },
   "loop": {
     "id": "",
