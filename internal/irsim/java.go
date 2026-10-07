@@ -151,7 +151,11 @@ func (s *javaSem) str(it *interp, v Value) string {
 	case kObj:
 		return it.javaObjString(v)
 	case kFunc:
-		return "Main$$Lambda@" + strconv.FormatInt(int64(0x1b6d3586+v.fn.decl.S.Start.Off), 16)
+		off := 0
+		if v.fn.decl != nil { // fungsi bawaan tidak punya deklarasi
+			off = v.fn.decl.S.Start.Off
+		}
+		return "Main$$Lambda@" + strconv.FormatInt(int64(0x1b6d3586+off), 16)
 	case kClass:
 		return "class " + v.c.name
 	case kUnknown:

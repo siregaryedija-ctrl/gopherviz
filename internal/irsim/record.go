@@ -189,6 +189,7 @@ type recorder struct {
 	collKind string // slice | array | map (ditentukan dari nilainya saat pertama terlihat)
 	dirty    bool
 	elems    map[string]trace.Elem // variabel for-each yang memegang elemen koleksi
+	cb       *cbAlias              // callback pencarian bawaan yang sedang berjalan (find, some, find_if)
 }
 
 // bindElem mencatat bahwa variabel name sekarang memegang elemen koleksi ke-idx; fungsi

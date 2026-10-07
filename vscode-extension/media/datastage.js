@@ -12,6 +12,26 @@
   const HI_NAMES = ['hi', 'high', 'right', 'r', 'end', 'last', 'kanan', 'akhir', 'atas'];
   const PTR_NAMES = [...LO_NAMES, 'mid', 'm', 'middle', 'tengah', 'pos', 'probe', 'step', 'prev', 'jump', 'idx', 'index', ...HI_NAMES];
 
+  /**
+   * Pencarian bawaan (indexOf, in, std::find, bisect, ...) merekam banyak perbandingan dalam satu
+   * langkah. Langkah itu dipecah: satu langkah tampilan per elemen yang dicek; output, isi koleksi,
+   * dan hasil kondisi hanya dibawa langkah terakhir.
+   */
+  function expandProbes(steps) {
+    const out = [];
+    for (const s of steps) {
+      const cmps = (s.ops || []).filter(o => o.op === 'compare' && o.b == null);
+      if (cmps.length < 2) { out.push(s); continue; }
+      const rest = s.ops.filter(o => !cmps.includes(o));
+      cmps.forEach((c, k) => {
+        const last = k === cmps.length - 1;
+        out.push(last ? Object.assign({}, s, { ops: rest.concat([c]) })
+          : Object.assign({}, s, { ops: [c], output: '', items: undefined, keys: undefined, result: undefined, phase: 'body', reason: undefined }));
+      });
+    }
+    return out;
+  }
+
   class DataStage {
     constructor(canvas, hooks) {
       this.cv = canvas;
@@ -155,7 +175,7 @@
       addVars(loop);
 
       let cmp = 0, swp = 0, maxN = ids.length;
-      this.snaps = trace.steps.map(s => {
+      this.snaps = expandProbes(trace.steps).map(s => {
         const snap = { step: s, prevOrder: null, cmp: null, swap: null, read: -1, set: -1, appended: -1 };
         for (const o of s.ops || []) {
           if (o.op === 'compare') { snap.cmp = o; cmp++; }
@@ -285,7 +305,7 @@
       const last = i === this.snaps.length - 1;
       if (s.cmp) {
         out.push({ t: 0, sound: 'think' });
-        const yes = st.result != null ? st.result : s.cmp.result === '>';
+        const yes = this.search ? s.cmp.result === '=' : st.result != null ? st.result : s.cmp.result === '>';
         out.push({ t: 0.45, sound: yes ? 'yes' : 'no' });
         if (this.search && this.eqSearch && s.cmp.result === '=' && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=')) out.push({ t: 0.5, sound: 'sparkle', fx: () => this.burst(this.slotX(s.cmp.a), GY - 40, 12, ['#f3c75a', '#ffffff', '#9fd88f'], { sp: 70, up: 50, g: 60, life: 700 }) });
       }

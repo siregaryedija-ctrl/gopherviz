@@ -247,7 +247,14 @@ func findCollection(p *analyzer.Program, node ast.Node) (name, kind string) {
 			consider(x.X, 1)
 		case *ast.RangeStmt:
 			consider(x.X, 2)
-		case *ast.CallExpr: // delete(m, k)
+		case *ast.CallExpr: // delete(m, k), slices.Contains(s, x), sort.SearchInts(a, x)
+			if sel, ok := x.Fun.(*ast.SelectorExpr); ok && len(x.Args) > 0 {
+				if pkg, ok := sel.X.(*ast.Ident); ok {
+					if _, ok := searchKinds[pkg.Name+"."+sel.Sel.Name]; ok {
+						consider(x.Args[0], 2)
+					}
+				}
+			}
 			if id, ok := x.Fun.(*ast.Ident); ok && id.Name == "delete" && len(x.Args) > 0 {
 				consider(x.Args[0], 3)
 			}

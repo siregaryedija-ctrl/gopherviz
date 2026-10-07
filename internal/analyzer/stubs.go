@@ -61,6 +61,22 @@ func Join(elems []string, sep string) string
 func Repeat(s string, count int) string
 func ReplaceAll(s, old, new string) string
 `,
+	"slices": `package slices
+type ordered interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~float32 | ~float64 | ~string
+}
+func Contains[S ~[]E, E comparable](s S, v E) bool
+func Index[S ~[]E, E comparable](s S, v E) int
+func BinarySearch[S ~[]E, E ordered](x S, target E) (int, bool)
+func Sort[S ~[]E, E ordered](x S)
+`,
+	"sort": `package sort
+func Ints(x []int)
+func Strings(x []string)
+func Float64s(x []float64)
+func SearchInts(a []int, x int) int
+func SearchStrings(a []string, x string) int
+`,
 	"strconv": `package strconv
 func Itoa(i int) string
 func Atoi(s string) (int, error)

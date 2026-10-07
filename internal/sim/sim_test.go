@@ -438,6 +438,36 @@ func TestFallbacks(t *testing.T) {
 			t.Errorf("perbandingan %+v, names %v", cmps, tr.Block.Names)
 		}
 	})
+	t.Run("pencarian bawaan: slices dan sort", func(t *testing.T) {
+		src := "package main\n\nimport (\n\t\"fmt\"\n\t\"slices\"\n\t\"sort\"\n)\n\n" +
+			"func ada(a []int) bool { return slices.Contains(a, 9) }\n\n" +
+			"func cari(a []int) int { return sort.SearchInts(a, 11) }\n\n" +
+			"func main() {\n\tv := []int{4, 8, 2, 9, 5}\n\tfmt.Println(ada(v), slices.Index(v, 2))\n\ts := []int{1, 3, 5, 7, 9, 11, 13}\n\ti, ok := slices.BinarySearch(s, 7)\n\tfmt.Println(cari(s), i, ok)\n\tsort.Ints(v)\n\tfmt.Println(v)\n}\n"
+		p := analyzer.Load("t.go", []byte(src))
+		if len(p.Result.Diagnostics) > 0 {
+			t.Fatalf("diagnostik: %v", p.Result.Diagnostics)
+		}
+		probed := func(id string) []int {
+			var got []int
+			for _, s := range Trace(p, id, Options{}).Steps {
+				for _, o := range s.Ops {
+					if o.Op == trace.OpCompare {
+						got = append(got, o.A)
+					}
+				}
+			}
+			return got
+		}
+		if got := probed("F1"); !slices.Equal(got, []int{0, 1, 2, 3}) {
+			t.Errorf("slices.Contains memeriksa %v", got)
+		}
+		if got := probed("F2"); !slices.Equal(got, []int{3, 5, 4}) {
+			t.Errorf("sort.SearchInts memeriksa %v", got)
+		}
+		if out := output(Trace(p, "F3", Options{})); out != "true 2\n5 3 true\n[2 4 5 8 9]\n" {
+			t.Errorf("output %q", out)
+		}
+	})
 	t.Run("loop belum lengkap: mode struktur dengan pesan", func(t *testing.T) {
 		tr := Trace(load(t, filepath.Join(loopsDir, "14_incomplete_noclose.go")), "L1", Options{})
 		if tr.Mode != trace.ModeStructural || !strings.Contains(tr.Warnings[0], "belum lengkap") {

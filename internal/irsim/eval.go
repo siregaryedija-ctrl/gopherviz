@@ -882,6 +882,9 @@ func (it *interp) evalBinary(n *ir.Binary, e *Env) Value {
 	if isCompareOp(n.Op) && it.recording() && it.rec.coll != "" {
 		it.compareOp(n, e, a, b)
 	}
+	if (n.Op == "in" || n.Op == "not in") && it.lang == "python" {
+		it.inProbe(n, a, b)
+	}
 	return v
 }
 

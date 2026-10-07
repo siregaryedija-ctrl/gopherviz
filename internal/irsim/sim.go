@@ -440,7 +440,16 @@ func findCollection(node ir.Node) string {
 					}
 				}
 			}
+		case *ir.Binary:
+			if x.Op == "in" || x.Op == "not in" {
+				add(x.Y, 2)
+			}
 		case *ir.Call:
+			if sp, ok := searchCall(x); ok {
+				if name := collName(sp.coll); name != "" {
+					add(&ir.Ident{Name: name}, 2)
+				}
+			}
 			if m, ok := x.Fun.(*ir.Member); ok {
 				switch m.Name {
 				case "push", "append", "push_back", "add", "emplace_back", "insert", "pop", "remove", "put", "set":

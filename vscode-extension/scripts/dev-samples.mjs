@@ -55,6 +55,10 @@ const samples = {
   py_jump: ['@/search.py', 30],
   py_interp: ['@/search.py', 44],
   py_notfound: ['@/search.py', 55],
+  py_in: ['@/builtin.py', 4],
+  py_index: ['@/builtin.py', 8],
+  py_bisect: ['@/builtin.py', 13],
+  js_find: ['@/builtin.js', 3],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

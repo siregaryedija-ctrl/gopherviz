@@ -347,7 +347,9 @@
     // Mode data hanya untuk koleksi berisi nilai sederhana (angka, string pendek); slice bersarang memakai renderer lain.
     const scalar = v => v.length <= 12 && !/^(\[|map\[|\{|&)/.test(v);
     const coll = tr.collection;
-    const dataMode = !!coll && (kind === 'loop' || kind === 'func') && (coll.kind === 'map'
+    // if berisi pencarian bawaan (if 9 in arr, in_array, includes): tampilkan barisan yang dicek
+    const probes = kind === 'if' && tr.steps.some(s => (s.ops || []).filter(o => o.op === 'compare' && o.b == null).length > 1);
+    const dataMode = !!coll && (kind === 'loop' || kind === 'func' || probes) && (coll.kind === 'map'
       ? tr.steps.some(s => s.ops && s.ops.some(o => o.key != null && o.op !== 'read')) // map: loker
       : coll.items.every(scalar) && tr.steps.some(s => s.ops && s.ops.some(o => o.op !== 'read')));
     tp.stats = tr.steps.some(s => (s.ops || []).some(o => o.op === 'compare' || o.op === 'swap'));

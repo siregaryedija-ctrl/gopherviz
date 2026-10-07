@@ -549,7 +549,27 @@ func (it *interp) setupJava(s *javaSem) {
 		}
 		return boolV(true)
 	})
+	// binarySearch: pencarian biner klasik java.util (indeks, atau -(titik sisip)-1 bila tidak ada)
+	binSearch := func(it *interp, this Value, args []Value, at ir.Node) Value {
+		elems := arg(args, 0).l.elems
+		key := arg(args, 1)
+		lo, hi := 0, len(elems)-1
+		for lo <= hi {
+			mid := int(uint(lo+hi) >> 1)
+			switch it.relation(elems[mid], key) {
+			case "<":
+				lo = mid + 1
+			case ">":
+				hi = mid - 1
+			default:
+				return typedInt(int64(mid), "int")
+			}
+		}
+		return typedInt(int64(-(lo + 1)), "int")
+	}
+	fn(arrays, "binarySearch", binSearch)
 	coll := cls("Collections")
+	fn(coll, "binarySearch", binSearch)
 	fn(coll, "sort", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		it.javaSort(arg(args, 0).l.elems, arg(args, 1), at)
 		return undef()

@@ -7,10 +7,12 @@ import (
 	"go/types"
 	"math"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"unicode"
 
+	"gopherviz/internal/probe"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
@@ -971,7 +973,46 @@ func (it *interp) output(s string) {
 
 // pkgCall menangani fungsi dari package standar yang aman disimulasikan.
 func (it *interp) pkgCall(pkg, name string, n *ast.CallExpr, e *env) []value {
-	return it.pkgApply(pkg, name, it.args(n, e), n)
+	args := it.args(n, e)
+	it.searchProbe(pkg+"."+name, n, args)
+	return it.pkgApply(pkg, name, args, n)
+}
+
+// searchKinds: fungsi pencarian package standar dan urutan elemen yang diperiksanya.
+var searchKinds = map[string]probe.Kind{
+	"slices.Contains": probe.Linear, "slices.Index": probe.Linear,
+	"slices.BinarySearch": probe.BisectLeft, "sort.SearchInts": probe.BisectLeft, "sort.SearchStrings": probe.BisectLeft,
+}
+
+// searchProbe merekam satu perbandingan per elemen yang diperiksa pencarian bawaan
+// (slices.Contains, sort.SearchInts, ...) pada koleksi mode data.
+func (it *interp) searchProbe(fn string, n *ast.CallExpr, args []value) {
+	kind, ok := searchKinds[fn]
+	if !ok || !it.recording() || it.rec.coll == "" || it.rec.collKind == "map" || len(args) != 2 || args[0].k != kSlice {
+		return
+	}
+	if id, ok := unparen(n.Args[0]).(*ast.Ident); !ok || id.Name != it.rec.coll {
+		return
+	}
+	s, target := args[0].sl, args[1]
+	rel := func(i int) string { return relation(*s.at(i), target) }
+	for _, i := range probe.Indexes(kind, s.len, func(i int) int { return map[string]int{"<": -1, "=": 0, ">": 1}[rel(i)] }) {
+		it.rec.op(trace.Op{Op: trace.OpCompare, A: i, Result: rel(i), Cmp: "==", Value: format(target)})
+	}
+}
+
+// searchSorted: indeks pertama yang elemennya >= x (sort.Search / slices.BinarySearch).
+func searchSorted(s *sliceVal, x value) int {
+	lo, hi := 0, s.len
+	for lo < hi {
+		mid := int(uint(lo+hi) >> 1)
+		if relation(*s.at(mid), x) == "<" {
+			lo = mid + 1
+		} else {
+			hi = mid
+		}
+	}
+	return lo
 }
 
 // pkgApply menjalankan fungsi package standar dengan argumen yang sudah dievaluasi
@@ -1019,6 +1060,37 @@ func (it *interp) pkgApply(pkg, name string, args []value, n ast.Node) (res []va
 		return it.scanCall(name, args)
 	case "bufio.NewReader", "bufio.NewScanner":
 		return []value{newReader()}
+	case "slices.Contains", "slices.Index":
+		if len(args) == 2 && args[0].k == kSlice {
+			idx := -1
+			for i := 0; i < args[0].sl.len; i++ {
+				if relation(*args[0].sl.at(i), args[1]) == "=" {
+					idx = i
+					break
+				}
+			}
+			if name == "Contains" {
+				return []value{boolV(idx >= 0)}
+			}
+			return []value{intV(int64(idx))}
+		}
+	case "slices.BinarySearch":
+		if len(args) == 2 && args[0].k == kSlice {
+			i := searchSorted(args[0].sl, args[1])
+			return []value{intV(int64(i)), boolV(i < args[0].sl.len && relation(*args[0].sl.at(i), args[1]) == "=")}
+		}
+	case "sort.SearchInts", "sort.SearchStrings":
+		if len(args) == 2 && args[0].k == kSlice {
+			return []value{intV(int64(searchSorted(args[0].sl, args[1])))}
+		}
+	case "sort.Ints", "sort.Strings", "sort.Float64s", "slices.Sort":
+		if len(args) == 1 && args[0].k == kSlice {
+			s := args[0].sl
+			part := (*s.data)[s.off : s.off+s.len]
+			sort.SliceStable(part, func(i, j int) bool { return relation(part[i], part[j]) == "<" })
+			it.rec.dirty = true
+			return nil
+		}
 	case "errors.Unwrap":
 		if len(args) == 1 && args[0].k == kError && args[0].wrap != nil {
 			return []value{*args[0].wrap}

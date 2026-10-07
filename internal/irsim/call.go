@@ -259,7 +259,9 @@ func (it *interp) evalCall(c *ir.Call, e *Env) Value {
 			before = len(v.l.elems)
 		}
 	}
+	unbind := it.searchProbe(c, args, e)
 	r := it.callValueArgs(fv, this, args, c)
+	unbind()
 	if collCall != "" {
 		it.collMutation(collCall, e, before)
 	}
@@ -367,6 +369,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		fn = it.pickByArgs(fn, args.pos)
 	}
 	decl := fn.decl
+	defer it.bindCallbackElem(decl, args)()
 	if decl.Generator {
 		it.structural("generator (function* / yield) belum disimulasikan")
 	}

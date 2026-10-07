@@ -56,3 +56,61 @@ func TestSearchCompare(t *testing.T) {
 		})
 	}
 }
+
+// TestSearchBuiltins: fungsi pencarian bawaan direkam sebagai perbandingan per elemen dengan
+// urutan pustaka aslinya, dan hasil (stdout) tetap benar.
+func TestSearchBuiltins(t *testing.T) {
+	lin := []int{0, 1, 2, 3}
+	cases := []struct {
+		lang, file, src, out string
+		want                 []int
+	}{
+		{"python", "in.py", "values = [4, 8, 2, 9, 5]\nif 9 in values:\n    print('ada')\n", "ada\n", lin},
+		{"python", "index.py", "values = [4, 8, 2, 9, 5]\ndef cari():\n    return values.index(9)\nprint(cari())\n", "3\n", lin},
+		{"python", "count.py", "values = [4, 8, 2, 9, 5]\ndef hitung():\n    return values.count(9)\nprint(hitung())\n", "1\n", []int{0, 1, 2, 3, 4}},
+		{"python", "bisect.py", "import bisect\na = [1, 3, 5, 7, 9, 11, 13]\ndef cari():\n    return bisect.bisect_left(a, 11)\nprint(cari())\n", "5\n", []int{3, 5, 4}},
+		{"python", "bisect2.py", "from bisect import bisect_right\na = [1, 3, 5, 7, 9, 11, 13]\ndef cari():\n    return bisect_right(a, 11)\nprint(cari())\n", "6\n", []int{3, 5, 6}},
+		{"javascript", "indexOf.js", "const values = [4, 8, 2, 9, 5];\nfunction cari() { return values.indexOf(9); }\nconsole.log(cari());\n", "3\n", lin},
+		{"javascript", "includes.js", "const values = [4, 8, 2, 9, 5];\nfunction ada() { return values.includes(9); }\nconsole.log(ada());\n", "true\n", lin},
+		{"javascript", "last.js", "const values = [4, 8, 2, 9, 5];\nfunction cari() { return values.lastIndexOf(9); }\nconsole.log(cari());\n", "3\n", []int{4, 3}},
+		{"javascript", "find.js", "const values = [4, 8, 2, 9, 5];\nfunction cari() { return values.find(v => v === 9); }\nconsole.log(cari());\n", "9\n", lin},
+		{"javascript", "findIndex.js", "const values = [4, 8, 2, 9, 5];\nfunction cari() { return values.findIndex((v) => v === 9); }\nconsole.log(cari());\n", "3\n", lin},
+		{"php", "in_array.php", "<?php\n$values = [4, 8, 2, 9, 5];\nif (in_array(9, $values)) {\n  echo \"ada\\n\";\n}\n", "ada\n", lin},
+		{"php", "search.php", "<?php\n$values = [4, 8, 2, 9, 5];\nfunction cari($values) { return array_search(9, $values); }\necho cari($values), \"\\n\";\n", "3\n", lin},
+		{"java", "Main.java", "import java.util.*;\npublic class Main {\n  static int cari(int[] a) { return Arrays.binarySearch(a, 11); }\n  public static void main(String[] args) {\n    int[] a = {1, 3, 5, 7, 9, 11, 13};\n    System.out.println(cari(a));\n  }\n}\n", "5\n", []int{3, 5}},
+		{"java", "Main.java", "import java.util.*;\npublic class Main {\n  static boolean ada(List<Integer> a) { return a.contains(9); }\n  public static void main(String[] args) {\n    List<Integer> a = new ArrayList<>(List.of(4, 8, 2, 9, 5));\n    System.out.println(ada(a));\n  }\n}\n", "true\n", lin},
+		{"cpp", "find.cpp", "#include <iostream>\n#include <vector>\n#include <algorithm>\nint cari(std::vector<int>& v) {\n  auto it = std::find(v.begin(), v.end(), 9);\n  return it - v.begin();\n}\nint main() {\n  std::vector<int> v = {4, 8, 2, 9, 5};\n  std::cout << cari(v) << std::endl;\n}\n", "3\n", lin},
+		{"cpp", "lb.cpp", "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\nint cari(vector<int>& a) {\n  return lower_bound(a.begin(), a.end(), 11) - a.begin();\n}\nint main() {\n  vector<int> a = {1, 3, 5, 7, 9, 11, 13};\n  cout << cari(a) << endl;\n}\n", "5\n", []int{3, 5, 4}},
+		{"cpp", "findif.cpp", "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\nint cari(vector<int>& v) {\n  auto it = find_if(v.begin(), v.end(), [](int x) { return x == 9; });\n  return it - v.begin();\n}\nint main() {\n  vector<int> v = {4, 8, 2, 9, 5};\n  cout << cari(v) << endl;\n}\n", "3\n", lin},
+	}
+	for _, c := range cases {
+		t.Run(c.file, func(t *testing.T) {
+			res := lang.Analyze(c.lang, c.file, c.src)
+			if len(res.Diagnostics) > 0 {
+				t.Fatalf("diagnostik: %+v", res.Diagnostics)
+			}
+			if out, why := Run(res, Options{}); why != "" || out != c.out {
+				t.Fatalf("output %q (%s), ingin %q", out, why, c.out)
+			}
+			blk := ""
+			for _, b := range res.Scene.Blocks {
+				if b.Kind == "func" && b.Name != "main" || b.Kind == "if" {
+					blk = b.ID
+					break
+				}
+			}
+			tr := Trace(res, blk, Options{})
+			var got []int
+			for _, s := range tr.Steps {
+				for _, o := range s.Ops {
+					if o.Op == trace.OpCompare {
+						got = append(got, o.A)
+					}
+				}
+			}
+			if !slices.Equal(got, c.want) {
+				t.Errorf("blok %s: indeks dicek %v, ingin %v (mode %s, %v)", blk, got, c.want, tr.Mode, tr.Warnings)
+			}
+		})
+	}
+}

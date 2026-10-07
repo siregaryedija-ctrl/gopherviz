@@ -763,11 +763,57 @@ func (it *interp) setupPython(s *pySem) {
 			return acc
 		}),
 	})
+	s.modules["bisect"] = it.pyBisectModule()
 	s.modules["sys"] = it.moduleV(map[string]Value{"maxsize": pyInt(math.MaxInt64), "argv": it.newList("list", []Value{strV("main.py")})})
 	for name, m := range s.modules {
 		m.t = name
 		s.modules[name] = m
 	}
+}
+
+// pyBisectModule: bisect_left/bisect_right/bisect dan insort_* seperti modul bisect Python.
+func (it *interp) pyBisectModule() Value {
+	search := func(right bool) func(it *interp, this Value, args []Value, at ir.Node) Value {
+		return func(it *interp, this Value, args []Value, at ir.Node) Value {
+			a := arg(args, 0)
+			if a.k != kList {
+				it.throw(at, "TypeError", "bisect butuh list")
+			}
+			x := arg(args, 1)
+			lo, hi := 0, len(a.l.elems)
+			if len(args) > 2 {
+				lo = int(intOf(args[2]))
+			}
+			if len(args) > 3 {
+				hi = int(intOf(args[3]))
+			}
+			for lo < hi {
+				mid := (lo + hi) / 2
+				r := it.relation(a.l.elems[mid], x)
+				if r == "<" || right && r == "=" {
+					lo = mid + 1
+				} else {
+					hi = mid
+				}
+			}
+			return pyInt(int64(lo))
+		}
+	}
+	insort := func(right bool) func(it *interp, this Value, args []Value, at ir.Node) Value {
+		find := search(right)
+		return func(it *interp, this Value, args []Value, at ir.Node) Value {
+			i := int(intOf(find(it, this, args, at)))
+			l := arg(args, 0).l
+			l.elems = append(l.elems[:i], append([]Value{arg(args, 1)}, l.elems[i:]...)...)
+			it.rec.dirty = true
+			return null()
+		}
+	}
+	return it.moduleV(map[string]Value{
+		"bisect_left": bf("bisect_left", search(false)), "bisect_right": bf("bisect_right", search(true)),
+		"bisect": bf("bisect", search(true)), "insort_left": bf("insort_left", insort(false)),
+		"insort_right": bf("insort_right", insort(true)), "insort": bf("insort", insort(true)),
+	})
 }
 
 func bigFromFloat(f float64) *big.Int {

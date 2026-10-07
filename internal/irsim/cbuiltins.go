@@ -710,14 +710,41 @@ func (it *interp) setupC(s *cSem) {
 		}
 		return undef()
 	})
-	fn("binary_search", func(it *interp, this Value, args []Value, at ir.Node) Value {
+	// lower_bound/upper_bound/binary_search: pencarian biner persis seperti libstdc++ (lihat probe.LowerBound)
+	bound := func(args []Value, at ir.Node, upper bool) (*List, int, int) {
 		l, lo, hi := it.rangeOf(arg(args, 0), arg(args, 1), at)
-		for i := lo; i < hi; i++ {
-			if it.sem.truthy(it.sem.binary(it, "==", l.elems[i], arg(args, 2), at)) {
-				return boolV(true)
+		first, count := lo, hi-lo
+		for count > 0 {
+			step := count / 2
+			i := first + step
+			if it.cLess(l.elems[i], arg(args, 2), arg(args, 3), at) || upper && !it.cLess(arg(args, 2), l.elems[i], arg(args, 3), at) {
+				first, count = i+1, count-step-1
+			} else {
+				count = step
 			}
 		}
-		return boolV(false)
+		return l, first, hi
+	}
+	fn("lower_bound", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		l, i, _ := bound(args, at, false)
+		return Value{k: kPtr, p: &Ptr{list: l, idx: i}}
+	})
+	fn("upper_bound", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		l, i, _ := bound(args, at, true)
+		return Value{k: kPtr, p: &Ptr{list: l, idx: i}}
+	})
+	fn("binary_search", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		l, i, hi := bound(args, at, false)
+		return boolV(i < hi && !it.cLess(arg(args, 2), l.elems[i], arg(args, 3), at))
+	})
+	fn("find_if", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		l, lo, hi := it.rangeOf(arg(args, 0), arg(args, 1), at)
+		for i := lo; i < hi; i++ {
+			if it.sem.truthy(it.call(arg(args, 2), undef(), []Value{l.elems[i]}, at)) {
+				return Value{k: kPtr, p: &Ptr{list: l, idx: i}}
+			}
+		}
+		return Value{k: kPtr, p: &Ptr{list: l, idx: hi}}
 	})
 	fn("distance", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		a, b := arg(args, 0), arg(args, 1)
