@@ -60,7 +60,7 @@
   const BRANCH = { 'if': 'if', 'else-if': 'else if', 'else': 'else', 'case': 'case', 'default': 'default' };
 
   let state = null;
-  let config = { speed: 1, sound: true, music: true };
+  let config = { speed: 1, sound: true, music: true, details: false };
   let blocks = [], loops = [];
   let currentBlock = null, currentLoop = null, blockKey = '';
   let traceNote = ''; // peringatan dari trace mode struktur
@@ -82,7 +82,9 @@
   });
 
   function applyConfig(m) {
-    config = { speed: m.speed, sound: m.sound, music: m.music };
+    config = { speed: m.speed, sound: m.sound, music: m.music, details: !!m.details };
+    // Bawaan: panel hanya gambar (keputusan user 2026-10-07); teks penjelasan lewat setting gopherviz.details.
+    document.body.classList.toggle('pic', !config.details);
     level.speed = config.speed;
     snd.setFx(config.sound);
     snd.setMus(config.music);

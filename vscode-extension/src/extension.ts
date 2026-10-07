@@ -326,6 +326,7 @@ class Controller implements vscode.Disposable {
       speed: c.get('speed', 1),
       sound: c.get('sound', true),
       music: c.get('music', true),
+      details: c.get('details', false),
     });
   }
 

@@ -417,6 +417,12 @@ func TestFallbacks(t *testing.T) {
 			t.Errorf("mode %s", tr.Mode)
 		}
 	})
+	t.Run("input user diisi angka acak", func(t *testing.T) {
+		tr := run(t, "func main() {\n\tvar n int\n\tfmt.Scan(&n)\n\tfor i := 0; i < 2; i++ {\n\t\tfmt.Print(n)\n\t}\n}\n", Options{})
+		if tr.Mode != trace.ModeSimulated || output(tr) != "6464" || !strings.Contains(strings.Join(tr.Warnings, " "), "angka acak") {
+			t.Errorf("mode %s, output %q, warnings %v", tr.Mode, output(tr), tr.Warnings)
+		}
+	})
 	t.Run("loop belum lengkap: mode struktur dengan pesan", func(t *testing.T) {
 		tr := Trace(load(t, filepath.Join(loopsDir, "14_incomplete_noclose.go")), "L1", Options{})
 		if tr.Mode != trace.ModeStructural || !strings.Contains(tr.Warnings[0], "belum lengkap") {

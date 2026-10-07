@@ -1,0 +1,199 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "python",
+    "file": "04_input.noracle.py",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 2,
+        "endLine": 13,
+        "state": "complete",
+        "name": "kategori_usia",
+        "header": "def kategori_usia(usia)",
+        "params": [
+          "usia"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 3,
+            "text": "assert usia >= 0, \"Usia tidak boleh negatif!\""
+          },
+          {
+            "kind": "if",
+            "line": 4,
+            "endLine": 13,
+            "text": "if 0 <= usia <= 5",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "return",
+                "line": 5,
+                "text": "return \"Bayi (Toddler)\""
+              }
+            ],
+            "else": [
+              {
+                "kind": "if",
+                "line": 6,
+                "text": "elif 5 <= usia <= 6",
+                "then": [
+                  {
+                    "kind": "return",
+                    "line": 7,
+                    "text": "return \"Prasekolah\""
+                  }
+                ],
+                "else": [
+                  {
+                    "kind": "if",
+                    "line": 8,
+                    "text": "elif 6 <= usia <= 10",
+                    "then": [
+                      {
+                        "kind": "return",
+                        "line": 9,
+                        "text": "return \"Anak-Anak\""
+                      }
+                    ],
+                    "else": [
+                      {
+                        "kind": "if",
+                        "line": 10,
+                        "text": "elif 10 <= usia <= 19",
+                        "then": [
+                          {
+                            "kind": "return",
+                            "line": 11,
+                            "text": "return \"Transisi ke remaja\""
+                          }
+                        ],
+                        "else": [
+                          {
+                            "kind": "return",
+                            "line": 13,
+                            "text": "return \"Dewasa\""
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 4,
+        "endLine": 13,
+        "state": "complete",
+        "header": "if 0 <= usia <= 5",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "0 <= usia <= 5",
+            "line": 4,
+            "body": [
+              {
+                "kind": "return",
+                "line": 5,
+                "text": "return \"Bayi (Toddler)\""
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "5 <= usia <= 6",
+            "line": 6,
+            "body": [
+              {
+                "kind": "return",
+                "line": 7,
+                "text": "return \"Prasekolah\""
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "6 <= usia <= 10",
+            "line": 8,
+            "body": [
+              {
+                "kind": "return",
+                "line": 9,
+                "text": "return \"Anak-Anak\""
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "10 <= usia <= 19",
+            "line": 10,
+            "body": [
+              {
+                "kind": "return",
+                "line": 11,
+                "text": "return \"Transisi ke remaja\""
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 12,
+            "body": [
+              {
+                "kind": "return",
+                "line": 13,
+                "text": "return \"Dewasa\""
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 26,
+        "endLine": 27,
+        "state": "complete",
+        "header": "for i in range(3)"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-int",
+        "line": 26,
+        "endLine": 27,
+        "state": "complete",
+        "header": {
+          "text": "for i in range(3)",
+          "value": "i",
+          "define": true,
+          "range": "range(3)"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "total += int(input())"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

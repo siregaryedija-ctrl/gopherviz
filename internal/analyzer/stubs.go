@@ -23,6 +23,24 @@ func Sprintf(format string, a ...any) string
 func Sprint(a ...any) string
 func Sprintln(a ...any) string
 func Errorf(format string, a ...any) error
+func Scan(a ...any) (n int, err error)
+func Scanln(a ...any) (n int, err error)
+func Scanf(format string, a ...any) (n int, err error)
+`,
+	"os": `package os
+type File struct{ fd int }
+var Stdin *File
+var Stdout *File
+var Args []string
+`,
+	"bufio": `package bufio
+type Reader struct{ n int }
+func NewReader(rd any) *Reader
+func (b *Reader) ReadString(delim byte) (string, error)
+type Scanner struct{ n int }
+func NewScanner(r any) *Scanner
+func (s *Scanner) Scan() bool
+func (s *Scanner) Text() string
 `,
 	"errors": `package errors
 func New(text string) error

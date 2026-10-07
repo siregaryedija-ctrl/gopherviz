@@ -220,6 +220,11 @@ func (s *cSem) truthy(v Value) bool {
 		return true
 	case kStr:
 		return true // pointer string tidak NULL
+	case kObj:
+		if v.o.class.native == "istream" { // while (cin >> x): false setelah input habis
+			f, _ := v.o.fields.get(strV("fail"))
+			return !(f.k == kBool && f.b)
+		}
 	}
 	return true
 }

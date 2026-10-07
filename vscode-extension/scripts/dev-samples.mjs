@@ -42,6 +42,7 @@ const samples = {
   ts_shapes: ['typescript/02_classes.ts', 50],
   js_if: ['javascript/01_basics.js', 18],
   py_for: ['python/01_basics.py', 16],
+  py_if_input: ['python/04_input.noracle.py', 4],
   php_foreach: ['php/01_basics.php', 12],
   java_switch: ['java/01_basics.java', 37],
   java_bubble: ['java/03_koleksi.java', 45],

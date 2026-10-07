@@ -582,7 +582,22 @@ func (it *interp) setupPHP(s *phpSem) {
 		}
 		return it.call(it.phpCallable(arg(args, 0), at), undef(), a, at)
 	})
-	for _, name := range []string{"readline", "fgets", "fscanf", "date", "time", "microtime", "file_get_contents", "fopen"} {
+	fn("readline", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		if len(args) > 0 {
+			it.out(it.sem.str(it, args[0]))
+		}
+		if s, ok := it.userText(true); ok {
+			return strV(s)
+		}
+		return boolV(false)
+	})
+	fn("fgets", func(it *interp, this Value, args []Value, at ir.Node) Value { // fgets(STDIN): baris + "\n"
+		if s, ok := it.userText(true); ok {
+			return strV(s + "\n")
+		}
+		return boolV(false)
+	})
+	for _, name := range []string{"fscanf", "date", "time", "microtime", "file_get_contents", "fopen"} {
 		nm := name
 		fn(nm, func(it *interp, this Value, args []Value, at ir.Node) Value {
 			return unknown(nm + "() bergantung pada input/waktu/file sehingga tidak bisa disimulasikan")

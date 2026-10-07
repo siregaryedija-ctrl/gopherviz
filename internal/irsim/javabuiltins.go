@@ -394,7 +394,7 @@ func (it *interp) setupJava(s *javaSem) {
 	g["PriorityQueue"].c.ctor = func(it *interp, args []Value, at nodeRef) Value {
 		v := it.newList("PriorityQueue", nil)
 		if c := arg(args, 0); c.k == kFunc || c.k == kObj {
-			cmpStore[v.l.id] = c
+			it.sem.(*javaSem).pqCmp[v.l] = c
 		} else if c.k == kList {
 			v.l.elems = append(v.l.elems, c.l.elems...)
 		}
@@ -606,6 +606,10 @@ func (it *interp) setupJava(s *javaSem) {
 	// --- lain-lain ---
 	sc := cls("Scanner")
 	sc.ctor = func(it *interp, args []Value, at nodeRef) Value { return it.javaObj(sc) }
+	br := cls("BufferedReader")
+	br.ctor = func(it *interp, args []Value, at nodeRef) Value { return it.javaObj(br) }
+	isr := cls("InputStreamReader")
+	isr.ctor = func(it *interp, args []Value, at nodeRef) Value { return it.javaObj(isr) }
 	rnd := cls("Random")
 	rnd.ctor = func(it *interp, args []Value, at nodeRef) Value { return it.javaObj(rnd) }
 	objs := cls("Objects")
@@ -657,16 +661,12 @@ func (it *interp) setupJava(s *javaSem) {
 	for _, n := range []string{"comparing", "comparingInt", "comparingDouble", "comparingLong"} {
 		fn(cmpC, n, comparing)
 	}
-	javaComparing = comparing
+	s.comparing = comparing
 
 	thread := cls("Thread")
 	fn(thread, "sleep", func(it *interp, this Value, args []Value, at ir.Node) Value { return undef() })
 }
 
-var javaComparing builtinFn
-
-// cmpStore menyimpan comparator PriorityQueue (per id list).
-var cmpStore = map[int]Value{}
 
 func (it *interp) javaItems(v Value) []Value {
 	switch v.k {
@@ -826,7 +826,7 @@ func (s *javaSem) member(it *interp, x Value, name string, at ir.Node) (Value, b
 			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 				first, next := this, arg(args, 0)
 				if next.k == kFunc && next.fn.decl != nil && len(next.fn.decl.Params) == 1 || name != "thenComparing" {
-					next = javaComparing(it, undef(), []Value{next}, at) // thenComparing(Orang::getNama)
+					next = it.sem.(*javaSem).comparing(it, undef(), []Value{next}, at) // thenComparing(Orang::getNama)
 				}
 				return bf("thenComparing", func(it *interp, _ Value, a []Value, at ir.Node) Value {
 					if r := intOf(it.call(first, undef(), a, at)); r != 0 {
@@ -989,8 +989,47 @@ func (it *interp) javaObjMember(x Value, name string, at ir.Node) (Value, bool) 
 				return jint(int64(strings.Index(get(this), it.jstr(arg(args, 0)))))
 			})
 		}
-	case c.native == "Scanner":
-		it.structural("membaca input dari user (Scanner." + name + ") belum didukung simulator")
+	case c.native == "Scanner" || c.native == "BufferedReader":
+		// input user: diisi angka acak (package userinput), ditampilkan seperti diketik di terminal
+		read := func(at ir.Node, line bool) string {
+			var s string
+			ok := true
+			if line {
+				s, ok = it.readLine()
+			} else {
+				s, ok = it.readToken()
+			}
+			if !ok {
+				it.throw(at, "NoSuchElementException", "")
+			}
+			return s
+		}
+		num := func(at ir.Node) int64 { n, _ := strconv.ParseInt(read(at, false), 10, 64); return n }
+		switch name {
+		case "nextInt", "nextShort", "nextByte":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return jint(num(at)) })
+		case "nextLong":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return jlong(num(at)) })
+		case "nextDouble", "nextFloat":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return floatV(float64(num(at))) })
+		case "nextBoolean":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return boolV(num(at)%2 == 0) })
+		case "next":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return strV(read(at, false)) })
+		case "nextLine":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return strV(read(at, true)) })
+		case "readLine":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
+				if s, ok := it.readLine(); ok {
+					return strV(s)
+				}
+				return null()
+			})
+		case "hasNext", "hasNextInt", "hasNextLine", "hasNextDouble", "hasNextLong", "ready":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return boolV(it.inputLeft()) })
+		case "close":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return undef() })
+		}
 	case c.native == "Random":
 		it.warn("Random disimulasikan dengan seed tetap; hasilnya berbeda dengan saat program dijalankan")
 		switch name {
@@ -1277,7 +1316,7 @@ func (it *interp) javaListMember(x Value, name string, at ir.Node) (Value, bool)
 	}
 	pqHead := func() int {
 		best := 0
-		cmp := cmpStore[l.id]
+		cmp := it.sem.(*javaSem).pqCmp[l]
 		for i := range l.elems {
 			if it.javaCompare(l.elems[i], l.elems[best], cmp, at) < 0 {
 				best = i

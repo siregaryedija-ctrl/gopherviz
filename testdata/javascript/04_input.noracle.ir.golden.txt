@@ -1,0 +1,11 @@
+2: var(const) nilai = Number(prompt("Masukkan nilai:"))
+3: if (nilai >= 80)
+  3: block
+    4: expr console.log("A")
+  else
+  5: if (nilai >= 60)
+    5: block
+      6: expr console.log("B")
+    else
+    7: block
+      8: expr console.log("C")

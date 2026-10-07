@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import type { Scene } from './server';
 
-/** Tombol "▶ Visualisasikan loop" di atas setiap for. */
+/** Tombol "▶ Visualisasikan" di atas setiap blok (fungsi, loop, if, switch). */
 export class LoopCodeLens implements vscode.CodeLensProvider {
   private readonly emitter = new vscode.EventEmitter<void>();
   readonly onDidChangeCodeLenses = this.emitter.event;

@@ -439,12 +439,4 @@ func (it *interp) syncStep(call *ast.CallExpr, e *env, note string) {
 }
 
 // syncType mengembalikan nama tipe sync (WaitGroup, Mutex, ...) bila sel adalah method-nya.
-func syncType(sel *types.Selection) string {
-	if sel == nil || sel.Kind() != types.MethodVal {
-		return ""
-	}
-	if pkg := sel.Obj().Pkg(); pkg == nil || pkg.Path() != "sync" {
-		return ""
-	}
-	return namedOf(derefType(sel.Recv()))
-}
+func syncType(sel *types.Selection) string { return stubType(sel, "sync") }

@@ -1,0 +1,166 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "cpp",
+    "file": "03_input.noracle.cpp",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 6,
+        "endLine": 25,
+        "state": "complete",
+        "name": "main",
+        "header": "int main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "int umur;"
+          },
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "string nama;"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "cout << \"Umur: \";"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "cin >> umur;"
+          },
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "cin.ignore();"
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "getline(cin, nama);"
+          },
+          {
+            "kind": "if",
+            "line": 13,
+            "endLine": 17,
+            "text": "if (umur >= 17)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 14,
+                "text": "cout << nama << \" boleh punya KTP\" << endl;"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 16,
+                "text": "cout << nama << \" belum boleh\" << endl;"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "int x, total = 0, banyak = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 19,
+            "endLine": 22,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "cout << banyak << \" angka, total \" << total << endl;"
+          },
+          {
+            "kind": "return",
+            "line": 24,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "I1",
+          "L1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 13,
+        "endLine": 17,
+        "state": "complete",
+        "header": "if (umur >= 17)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "umur >= 17",
+            "line": 13,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 14,
+                "text": "cout << nama << \" boleh punya KTP\" << endl;"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 15,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 16,
+                "text": "cout << nama << \" belum boleh\" << endl;"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 19,
+        "endLine": 22,
+        "state": "complete",
+        "header": "while (cin >> x)",
+        "parent": "F1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 19,
+        "endLine": 22,
+        "state": "complete",
+        "header": {
+          "text": "while (cin >> x)",
+          "cond": "cin >> x"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "total += x;"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "banyak++;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

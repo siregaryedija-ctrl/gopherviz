@@ -222,6 +222,17 @@ func (it *interp) evalCall(c *ir.Call, e *Env) Value {
 				return it.sem.convert(it, it.eval(c.Args[0], e), f.Name)
 			}
 		}
+		if (f.Name == "getline" || f.Name == "std::getline") && it.lang == "cpp" && len(c.Args) >= 2 && isCin(c.Args[0]) {
+			in := it.eval(c.Args[0], e)
+			if p := it.addrOf(c.Args[1], e); p != nil {
+				if s, ok := it.readLine(); ok {
+					p.store(strV(s))
+				} else if in.k == kObj {
+					in.o.fields.set(strV("fail"), boolV(true))
+				}
+			}
+			return in
+		}
 		if f.Name == "swap" && it.lang == "cpp" && len(c.Args) == 2 && len(it.funcs["swap"]) == 0 {
 			pa, pb := it.addrOf(c.Args[0], e), it.addrOf(c.Args[1], e)
 			va, vb := pa.load(), pb.load()

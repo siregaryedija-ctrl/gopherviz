@@ -1,0 +1,171 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "c",
+    "file": "03_input.noracle.c",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 4,
+        "endLine": 24,
+        "state": "complete",
+        "name": "main",
+        "header": "int main(void)",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 5,
+            "text": "int a, b;"
+          },
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "double x;"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "char nama[20];"
+          },
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "printf(\"Masukkan dua angka: \");"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "scanf(\"%d %d\", &a, &b);"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "scanf(\"%lf\", &x);"
+          },
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "scanf(\"%19s\", nama);"
+          },
+          {
+            "kind": "if",
+            "line": 12,
+            "endLine": 16,
+            "text": "if (a > b)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "printf(\"%d lebih besar\\n\", a);"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 15,
+                "text": "printf(\"%d lebih besar atau sama\\n\", b);"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "printf(\"%.1f %s\\n\", x / 2, nama);"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "int c, n = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 19,
+            "endLine": 21,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "printf(\"%d karakter\\n\", n);"
+          },
+          {
+            "kind": "return",
+            "line": 23,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "I1",
+          "L1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 12,
+        "endLine": 16,
+        "state": "complete",
+        "header": "if (a > b)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "a > b",
+            "line": 12,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "printf(\"%d lebih besar\\n\", a);"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 14,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 15,
+                "text": "printf(\"%d lebih besar atau sama\\n\", b);"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": "while ((c = getchar()) != EOF)",
+        "parent": "F1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": {
+          "text": "while ((c = getchar()) != EOF)",
+          "cond": "(c = getchar()) != EOF"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "n++;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

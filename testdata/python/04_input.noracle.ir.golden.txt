@@ -1,0 +1,38 @@
+2: func kategori_usia(usia)
+  2: block
+    3: assert [] (usia >= 0), "Usia tidak boleh negatif!"
+    4: if ((0 <= usia) and (usia <= 5))
+      4: block
+        5: return "Bayi (Toddler)"
+      else
+      6: elif ((5 <= usia) and (usia <= 6))
+        6: block
+          7: return "Prasekolah"
+        else
+        8: elif ((6 <= usia) and (usia <= 10))
+          8: block
+            9: return "Anak-Anak"
+          else
+          10: elif ((10 <= usia) and (usia <= 19))
+            10: block
+              11: return "Transisi ke remaja"
+            else
+            12: block
+              13: return "Dewasa"
+16: try
+  16: block
+    17: expr (input_user = int(input("Masukkan umur kamu sekarang: ")))
+    18: expr (kategori = kategori_usia(input_user))
+    19: expr print(`Input Usia (${input_user} tahun), 
+Masuk ke dalam kategori: ${kategori}`)
+  catch [AssertionError] e
+  20: block
+    21: expr print(`Error Assertion: ${e}`)
+  catch [ValueError] 
+  22: block
+    23: expr print("Error Input: Harap masukkan angka yang valid!")
+25: expr (total = 0)
+26: foreach(py ) i in range(3)
+  26: block
+    27: expr (total += int(input()))
+28: expr print("total", total)

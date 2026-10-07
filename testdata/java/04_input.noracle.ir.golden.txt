@@ -1,0 +1,20 @@
+1: import [] 
+4: class Main []
+  5: func Main.main(args)
+    5: block
+      6: var(Scanner) sc = new Scanner(System.in)
+      7: expr System.out.print("Nilai ujian: ")
+      8: var(int) nilai = sc.nextInt()
+      9: var(String) nama = sc.nextLine()
+      10: if (nilai >= 75)
+        10: block
+          11: expr System.out.println((nama + " lulus"))
+        else
+        12: block
+          13: expr System.out.println((nama + " remedial"))
+      15: var(int) jumlah = 0
+      16: while sc.hasNextInt()
+        16: block
+          17: expr (jumlah += sc.nextInt())
+      19: expr System.out.println(("jumlah " + jumlah))
+      20: expr sc.close()

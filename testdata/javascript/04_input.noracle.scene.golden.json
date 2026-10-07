@@ -1,0 +1,57 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "javascript",
+    "file": "04_input.noracle.js",
+    "blocks": [
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 3,
+        "endLine": 9,
+        "state": "complete",
+        "header": "if (nilai >= 80)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "nilai >= 80",
+            "line": 3,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 4,
+                "text": "console.log(\"A\");"
+              }
+            ]
+          },
+          {
+            "kind": "else-if",
+            "label": "nilai >= 60",
+            "line": 5,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 6,
+                "text": "console.log(\"B\");"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 7,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 8,
+                "text": "console.log(\"C\");"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "loops": []
+  },
+  "diagnostics": null
+}

@@ -130,3 +130,36 @@ func compileRun(cc, std, path, dir string) ([]string, bool) {
 	}
 	return []string{exe}, true
 }
+
+// TestUserInput: input user (input(), Scanner, cin, scanf, ...) diisi angka acak dengan seed tetap,
+// jadi output contoh *_input.noracle.* selalu sama dengan <nama>.expected.txt.
+func TestUserInput(t *testing.T) {
+	files, _ := filepath.Glob("../../testdata/*/*_input.noracle.*")
+	if len(files) == 0 {
+		t.Fatal("contoh input tidak ditemukan")
+	}
+	for _, path := range files {
+		if strings.HasSuffix(path, ".txt") || strings.HasSuffix(path, ".json") {
+			continue
+		}
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			src, _ := os.ReadFile(path)
+			res := lang.Analyze(lang.Detect(path), filepath.Base(path), string(src))
+			got, why := Run(res, Options{Budget: 2_000_000})
+			if why != "" {
+				t.Fatalf("simulasi tidak selesai: %s", why)
+			}
+			exp := strings.TrimSuffix(path, filepath.Ext(path)) + ".expected.txt"
+			if os.Getenv("GV_UPDATE_INPUT") != "" {
+				os.WriteFile(exp, []byte(got), 0o644)
+			}
+			want, err := os.ReadFile(exp)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got != strings.ReplaceAll(string(want), "\r\n", "\n") {
+				t.Errorf("output berbeda\nsimulator:\n%s\nharapan:\n%s", got, want)
+			}
+		})
+	}
+}

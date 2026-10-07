@@ -204,6 +204,12 @@ func (it *interp) setupJS(s *jsSem) {
 			if nm == "require" {
 				return unknown("modul")
 			}
+			if nm == "prompt" { // kotak dialog browser: teks yang diketik user (angka acak), null bila habis
+				if s, ok := it.userText(false); ok {
+					return strV(s)
+				}
+				return null()
+			}
 			return unknown("membaca input dari user (" + nm + ") belum didukung")
 		})
 	}

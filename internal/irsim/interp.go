@@ -9,6 +9,7 @@ import (
 	"gopherviz/internal/lang"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
+	"gopherviz/internal/userinput"
 )
 
 // semantics berisi perilaku yang berbeda per bahasa.
@@ -55,6 +56,9 @@ type interp struct {
 	handling  *Value                // exception yang sedang ditangani (raise tanpa argumen)
 	tasks     []func()              // JS: microtask (Promise.then) dan timer, dijalankan setelah skrip utama
 	timers    []timerTask
+	input     *userinput.Source // angka pengganti input user (dibuat saat pertama dipakai)
+	stdinBuf  string            // sisa baris input untuk getchar
+	pendingNL bool              // Enter yang tertinggal setelah membaca angka (cin >>, nextInt)
 }
 
 type timerTask struct {

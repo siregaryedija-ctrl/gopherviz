@@ -12,6 +12,7 @@ import (
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
+	"gopherviz/internal/userinput"
 )
 
 // abort menghentikan simulasi lewat panic yang ditangkap di Trace.
@@ -86,12 +87,13 @@ type interp struct {
 	rec      *recorder
 	rng      *rand.Rand
 	quiet    int
-	pids     int          // penghitung identitas pointer (untuk alamat palsu yang deterministik)
-	eids     int          // penghitung identitas error (untuk == dan errors.Is)
-	calls    []*callFrame // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
-	sch      *sched       // penjadwal goroutine
-	goEntry  bool         // pemanggilan berikutnya adalah fungsi awal sebuah goroutine
-	selfStep ast.Expr     // pemanggilan yang sudah merekam langkahnya sendiri
+	pids     int               // penghitung identitas pointer (untuk alamat palsu yang deterministik)
+	eids     int               // penghitung identitas error (untuk == dan errors.Is)
+	calls    []*callFrame      // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
+	sch      *sched            // penjadwal goroutine
+	goEntry  bool              // pemanggilan berikutnya adalah fungsi awal sebuah goroutine
+	selfStep ast.Expr          // pemanggilan yang sudah merekam langkahnya sendiri
+	input    *userinput.Source // angka pengganti input user (dibuat saat pertama dipakai)
 }
 
 // callFrame menyimpan defer satu pemanggilan fungsi dan panic yang sedang terjadi.

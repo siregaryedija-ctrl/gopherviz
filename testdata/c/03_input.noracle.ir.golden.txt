@@ -1,0 +1,23 @@
+1: directive [#include <stdio.h>] 
+4: func main()
+  4: block
+    5: var(int) a, b
+    6: var(double) x
+    7: var(char) nama[1 dim]
+    8: expr printf("Masukkan dua angka: ")
+    9: expr scanf("%d %d", (& a), (& b))
+    10: expr scanf("%lf", (& x))
+    11: expr scanf("%19s", nama)
+    12: if (a > b)
+      12: block
+        13: expr printf("%d lebih besar\n", a)
+      else
+      14: block
+        15: expr printf("%d lebih besar atau sama\n", b)
+    17: expr printf("%.1f %s\n", (x / 2), nama)
+    18: var(int) c, n = 0
+    19: while ((c = getchar()) != EOF)
+      19: block
+        20: expr (n++)
+    22: expr printf("%d karakter\n", n)
+    23: return 0

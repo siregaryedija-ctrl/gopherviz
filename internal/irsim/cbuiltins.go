@@ -135,6 +135,7 @@ func (it *interp) setupC(s *cSem) {
 	g["EXIT_SUCCESS"], g["EXIT_FAILURE"] = ci(0), ci(1)
 	g["M_PI"], g["M_E"] = floatV(math.Pi), floatV(math.E)
 	g["NULL"] = null()
+	g["EOF"] = ci(-1)
 	g["FLT_MAX"], g["DBL_MAX"] = floatV(math.MaxFloat32), floatV(math.MaxFloat64)
 	g["true"], g["false"] = it.cBool(true), it.cBool(false)
 
@@ -187,7 +188,68 @@ func (it *interp) setupC(s *cSem) {
 		writeBuf(arg(args, 0), w, at)
 		return ci(int64(len(out)))
 	})
-	for _, name := range []string{"scanf", "getchar", "gets", "fgets", "getline", "fscanf", "sscanf_s"} {
+	// Input user: diisi angka acak (package userinput), ditampilkan seperti diketik di terminal.
+	fn("scanf", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		n := 0
+		for i, conv := range scanfConvs(it.sem.str(it, arg(args, 0))) {
+			if i+1 >= len(args) {
+				break
+			}
+			var s string
+			ok := true
+			if conv == 'c' {
+				var c byte
+				c, ok = it.stdinChar()
+				s = string([]byte{c})
+			} else {
+				s, ok = it.readToken()
+			}
+			if !ok {
+				if n == 0 {
+					return ci(-1) // EOF
+				}
+				break
+			}
+			switch dst := args[i+1]; {
+			case conv == 's':
+				writeBuf(dst, s, at)
+			case dst.k == kPtr:
+				it.storeInput(dst.p, s)
+			default:
+				it.structural("argumen scanf harus alamat variabel, misalnya &x")
+			}
+			n++
+		}
+		return ci(int64(n))
+	})
+	fn("getchar", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		c, ok := it.stdinChar()
+		if !ok {
+			return ci(-1) // EOF
+		}
+		return ci(int64(c))
+	})
+	fn("gets", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		s, ok := it.readLine()
+		if !ok {
+			return null()
+		}
+		writeBuf(arg(args, 0), s, at)
+		return arg(args, 0)
+	})
+	fn("fgets", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		s, ok := it.readLine()
+		if !ok {
+			return null()
+		}
+		s += "\n"
+		if max := int(intOf(arg(args, 1))) - 1; max >= 0 && len(s) > max {
+			s = s[:max]
+		}
+		writeBuf(arg(args, 0), s, at)
+		return arg(args, 0)
+	})
+	for _, name := range []string{"getline", "fscanf", "sscanf_s"} {
 		nm := name
 		fn(nm, func(it *interp, this Value, args []Value, at ir.Node) Value {
 			it.structural("membaca input dari user (" + nm + ") belum didukung simulator")
@@ -677,6 +739,37 @@ func (it *interp) setupC(s *cSem) {
 
 func (s *cSem) member(it *interp, x Value, name string, at ir.Node) (Value, bool) {
 	m := func(f builtinFn) (Value, bool) { return bound(x, name, f), true }
+	if x.k == kObj && x.o.class.native == "istream" {
+		failed := func(this Value) bool { f, _ := this.o.fields.get(strV("fail")); return f.k == kBool && f.b }
+		switch name {
+		case "ignore", "clear", "sync":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
+				switch name {
+				case "clear":
+					this.o.fields.set(strV("fail"), boolV(false))
+				case "ignore": // buang Enter yang tertinggal setelah cin >> x
+					if it.pendingNL {
+						it.pendingNL = false
+					} else if it.stdinBuf != "" {
+						it.stdinBuf = ""
+					}
+				}
+				return undef()
+			})
+		case "get":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
+				c, ok := it.stdinChar()
+				if !ok {
+					return typedInt(-1, "int")
+				}
+				return typedInt(int64(c), "char")
+			})
+		case "fail", "eof":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return boolV(failed(this)) })
+		case "good":
+			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return boolV(!failed(this)) })
+		}
+	}
 	size := func(n int) Value { return typedInt(int64(n), "size_t") }
 	switch x.k {
 	case kStr:
@@ -1124,4 +1217,36 @@ func (it *interp) cppSetMember(x Value, name string, at ir.Node) (Value, bool) {
 		})
 	}
 	return Value{}, false
+}
+
+// scanfConvs mengembalikan huruf konversi scanf yang mengisi argumen (%d, %s, %lf → 'f', ...).
+func scanfConvs(format string) []byte {
+	var out []byte
+	for i := 0; i < len(format); i++ {
+		if format[i] != '%' {
+			continue
+		}
+		i++
+		if i < len(format) && format[i] == '%' {
+			continue
+		}
+		skip := i < len(format) && format[i] == '*'
+		for i < len(format) && strings.IndexByte("*0123456789hlLqjzt", format[i]) >= 0 {
+			i++
+		}
+		if i >= len(format) {
+			break
+		}
+		c := format[i]
+		if c == '[' {
+			for i < len(format) && format[i] != ']' {
+				i++
+			}
+			c = 's'
+		}
+		if !skip {
+			out = append(out, c)
+		}
+	}
+	return out
 }

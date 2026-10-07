@@ -382,7 +382,11 @@ func (it *interp) setupPython(s *pySem) {
 		if len(args) > 0 {
 			it.out(it.sem.str(it, args[0]))
 		}
-		return unknown("membaca input dari user (input()) belum didukung")
+		s, ok := it.userText(true)
+		if !ok {
+			it.throw(at, "EOFError", "EOF when reading a line")
+		}
+		return strV(s)
 	})
 	fn("len", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		return pyInt(int64(it.pyLen(arg(args, 0), at)))

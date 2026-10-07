@@ -7,6 +7,9 @@
   --accent: var(--vscode-focusBorder, #d9467c);
 }
 [hidden] { display: none !important; }
+/* Mode gambar saja (bawaan): hanya panggung pixel + tombol putar/kecepatan, tanpa teks penjelasan. */
+body.pic .top, body.pic #note, body.pic #stepNote, body.pic #tLabel, body.pic #partsSection, body.pic #varsSection,
+body.pic #memSection, body.pic #outSection, body.pic #navSection { display: none !important; }
 body {
   margin: 0;
   padding: 0 14px 18px;

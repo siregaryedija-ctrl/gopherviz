@@ -27,7 +27,7 @@
   }
 </style>
 </head>
-<body>
+<body class="pic">
 <main class="app">
   <header class="top">
     <div class="title"><span id="loopId" class="loop-id"></span><span id="kind" class="kind"></span><span id="stateChip" class="chip" hidden></span></div>
@@ -81,6 +81,8 @@
 <script>
   const q = new URLSearchParams(location.search);
   const post = m => window.postMessage(m, '*');
+  // ?details = tampilan lama dengan teks penjelasan (setting gopherviz.details); bawaan hanya gambar.
+  post({ type: 'config', speed: 1, sound: false, music: false, details: q.get('details') !== null });
 
   if (q.get('sample')) {
     const s = window.SAMPLES[q.get('sample')];

@@ -825,6 +825,9 @@ func (it *interp) deleteTarget(x ir.Expr, e *Env) {
 // ---------- biner ----------
 
 func (it *interp) evalBinary(n *ir.Binary, e *Env) Value {
+	if n.Op == ">>" && it.lang == "cpp" && isCin(n.X) {
+		return it.cinRead(n, e)
+	}
 	switch n.Op {
 	case "&&", "and":
 		a := it.eval(n.X, e)

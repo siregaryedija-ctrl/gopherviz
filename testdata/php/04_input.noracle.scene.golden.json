@@ -1,0 +1,43 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "php",
+    "file": "04_input.noracle.php",
+    "blocks": [
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "header": "for ($i = 1; $i <= $n % 4; $i++)"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 5,
+        "endLine": 7,
+        "state": "complete",
+        "header": {
+          "text": "for ($i = 1; $i <= $n % 4; $i++)",
+          "init": "$i = 1",
+          "cond": "$i <= $n % 4",
+          "post": "$i++"
+        },
+        "vars": [
+          "$i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "echo str_repeat(\"*\", $i) . \"\\n\";"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

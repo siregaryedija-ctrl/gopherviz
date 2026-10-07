@@ -511,6 +511,9 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 			if typ := syncType(sel); typ != "" {
 				return it.syncCall(f, n, e, typ, f.Sel.Name)
 			}
+			if typ := stubType(sel, "bufio"); typ != "" {
+				return it.bufioCall(f, n, e, typ, f.Sel.Name)
+			}
 			return it.callMethod(f, n, e)
 		}
 		if pn, ok := it.p.Info.Uses[identOf(f.X)].(*types.PkgName); ok {
@@ -1011,6 +1014,10 @@ func (it *interp) pkgApply(pkg, name string, args []value, n ast.Node) (res []va
 		if len(args) == 2 {
 			return []value{boolV(errorsIs(args[0], args[1]))}
 		}
+	case "fmt.Scan", "fmt.Scanln", "fmt.Scanf":
+		return it.scanCall(name, args)
+	case "bufio.NewReader", "bufio.NewScanner":
+		return []value{newReader()}
 	case "errors.Unwrap":
 		if len(args) == 1 && args[0].k == kError && args[0].wrap != nil {
 			return []value{*args[0].wrap}

@@ -1,0 +1,6 @@
+3: expr ($n = (int)readline("Berapa bintang? "))
+4: expr ($m = (int)trim(fgets(STDIN)))
+5: for [expr ($i = 1)] [($i <= ($n % 4))] [($i++)]
+  5: block
+    6: expr echo((str_repeat("*", $i) . "\n"))
+8: expr echo((($m > 50) ? "besar\n" : "kecil\n"))

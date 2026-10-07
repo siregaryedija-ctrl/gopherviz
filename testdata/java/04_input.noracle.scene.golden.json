@@ -1,0 +1,154 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "java",
+    "file": "04_input.noracle.java",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 5,
+        "endLine": 21,
+        "state": "complete",
+        "name": "Main.main",
+        "header": "public static void main(String[] args)",
+        "params": [
+          "args"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "Scanner sc = new Scanner(System.in);"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "System.out.print(\"Nilai ujian: \");"
+          },
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "int nilai = sc.nextInt();"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "String nama = sc.nextLine();"
+          },
+          {
+            "kind": "if",
+            "line": 10,
+            "endLine": 14,
+            "text": "if (nilai >= 75)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 11,
+                "text": "System.out.println(nama + \" lulus\");"
+              }
+            ],
+            "else": [
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "System.out.println(nama + \" remedial\");"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "int jumlah = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 16,
+            "endLine": 18,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "System.out.println(\"jumlah \" + jumlah);"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "sc.close();"
+          }
+        ],
+        "children": [
+          "I1",
+          "L1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 10,
+        "endLine": 14,
+        "state": "complete",
+        "header": "if (nilai >= 75)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "nilai >= 75",
+            "line": 10,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 11,
+                "text": "System.out.println(nama + \" lulus\");"
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "label": "",
+            "line": 12,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 13,
+                "text": "System.out.println(nama + \" remedial\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F1"
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": "while (sc.hasNextInt())",
+        "parent": "F1"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": {
+          "text": "while (sc.hasNextInt())",
+          "cond": "sc.hasNextInt()"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "jumlah += sc.nextInt();"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

@@ -1,0 +1,7 @@
+Masukkan umur kamu sekarang: 64
+Input Usia (64 tahun), 
+Masuk ke dalam kategori: Dewasa
+76
+86
+49
+total 211

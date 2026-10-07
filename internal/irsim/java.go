@@ -3,7 +3,6 @@ package irsim
 import (
 	"fmt"
 	"math"
-	"math/big"
 	"sort"
 	"strconv"
 	"strings"
@@ -16,11 +15,14 @@ import (
 // tak bertanda), promosi numerik biner Java, bagi nol bilangan bulat = ArithmeticException.
 // String immutable (kStr); objek dan array dipegang lewat referensi.
 type javaSem struct {
-	globals map[string]Value
+	globals   map[string]Value
+	comparing builtinFn       // Comparator.comparing (dipakai thenComparing)
+	pqCmp     map[*List]Value // comparator tiap PriorityQueue
 }
 
 func (s *javaSem) setup(it *interp) {
 	s.globals = map[string]Value{}
+	s.pqCmp = map[*List]Value{}
 	it.setupJava(s)
 }
 
@@ -822,4 +824,3 @@ func javaBoxName(v Value) string {
 
 func javaRound(f float64) int64 { return int64(math.Floor(f + 0.5)) }
 
-var _ = big.NewInt

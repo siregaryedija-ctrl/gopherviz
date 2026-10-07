@@ -12,7 +12,7 @@ export type ToPanel =
       server: { ok: boolean; message?: string };
     }
   | { type: 'trace'; blockId: string; trace: Trace }
-  | { type: 'config'; speed: number; sound: boolean; music: boolean };
+  | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean };
 
 /** Pesan dari webview ke ekstensi. */
 export type FromPanel =
@@ -130,7 +130,7 @@ export class LoopPanel implements vscode.Disposable {
 <link rel="stylesheet" href="${src('panel.css')}">
 <title>GopherViz</title>
 </head>
-<body>
+<body class="pic">
 <main class="app">
   <header class="top">
     <div class="title">
