@@ -2,6 +2,7 @@
 //   MULAI/INIT â†’ gerbang kondisi â†’ satu blok per bagian body â†’ POST â†’ kembali ke gerbang.
 // Body kosong digambar sebagai satu blok bata kosong. Bagian yang bukan statement biasa
 // (break, continue, return, loop dalam) berupa benda di tanah: pipa, pegas, pintu.
+// Mode trace: di bawah tanah ada tembok penghitung, satu balok setiap putaran selesai.
 (function (G) {
   'use strict';
   const P = G.pixel;
@@ -50,6 +51,9 @@
       this.loop = null;
       this.items = [];
       this.worldW = 0;
+      this.worldH = H;
+      this.wall = null; // tata letak tembok putaran (mode trace)
+      this.wallNow = null; // { labels, count, pop, ghost } untuk langkah yang sedang digambar
       this.speed = 1;
       this.camX = 0;
       this.parts = [];
@@ -143,6 +147,15 @@
       this.worldW = w;
       this.world.width = w;
       this.bg.width = w;
+      this.paintBg();
+    }
+
+    /** Tinggi dunia: H, ditambah ruang tembok putaran di mode trace. */
+    setHeight(h) {
+      if (h === this.worldH) return;
+      this.worldH = h;
+      this.world.height = h;
+      this.bg.height = h;
       this.paintBg();
     }
 
@@ -390,7 +403,40 @@
       }
       // "closed" langsung disusul "leap": gabungkan supaya gerbang merah lalu gopher melompat
       this.view = view.filter((v, i) => !(v.act === 'closed' && view[i + 1] && view[i + 1].act === 'leap'));
+      this.buildWall(trace);
       return this.view;
+    }
+
+    /**
+     * Tembok putaran: satu balok untuk setiap putaran yang sudah selesai, dihitung ulang tiap kali loop
+     * ini mulai lagi (loop dalam yang dijalankan loop luar). Label balok = nilai variabel loop pertama
+     * di putaran itu bila semuanya pendek, selain itu nomor putaran.
+     */
+    buildWall(trace) {
+      const focus = this.loop.id, name = (trace.loop.vars || [])[0];
+      const runs = [];
+      let cur = null, done = 0;
+      this.view.forEach((v, i) => {
+        const s = v.step;
+        if (s.loop === focus) {
+          if (!cur || s.run !== cur.run) { cur = { run: s.run, vals: [] }; runs.push(cur); done = 0; }
+          const it = s.iteration || 0;
+          const enters = s.phase === 'cond' ? !!s.result : s.phase !== 'init' && s.phase !== 'post' && s.phase !== 'exit';
+          if (enters && cur.vals.length === it) cur.vals.push(name && s.vars ? s.vars[name] : null);
+          const last = i === this.view.length - 1;
+          done = s.phase === 'exit' || (last && trace.truncated) ? cur.vals.length : Math.max(done, Math.min(cur.vals.length, it));
+        }
+        v.wallRun = cur;
+        v.wallPop = i > 0 && cur && this.view[i - 1].wallRun === cur && done > this.view[i - 1].wallCount;
+        v.wallCount = cur ? done : 0;
+      });
+      const all = runs.flatMap(r => r.vals.map(P.wallLabel));
+      const useVals = all.length > 0 && all.every(l => l != null);
+      for (const r of runs) r.labels = r.vals.map((x, k) => (useVals ? P.wallLabel(x) : String(k + 1)));
+      const n = Math.max(0, ...runs.map(r => r.vals.length));
+      if (!n) { this.wall = null; this.setHeight(H); return; }
+      this.wall = P.wallLayout(n, runs.flatMap(r => r.labels), this.worldW, !!trace.truncated);
+      this.setHeight(H + this.wall.h);
     }
 
     traceDuration(i) {
@@ -424,6 +470,7 @@
       }
       const outs = v.group ? v.group.map(s => s.output || '').join('') : st.output;
       if (outs) out.push({ t: 0.6, sound: 'coin', fx: () => this.burst(this.gx, GY - 26, 6, ['#f3c75a', '#fff3b8'], { sp: 30, up: 60, g: 140, life: 500, s: 2 }) });
+      if (v.wallPop) out.push({ t: 0.75, sound: 'tok' });
       if (last && (v.act === 'leap' || v.act === 'warp-exit')) out.push({ t: 0.7, sound: 'jingle', fx: () => this.confetti(this.find('finish').x) });
       return out;
     }
@@ -476,6 +523,12 @@
       const vars = (this.trace.loop.vars || []).map(n => v.step.vars && v.step.vars[n] != null ? `${n}=${v.step.vars[n]}` : null).filter(Boolean);
       this.hud = { left: v.act === 'panic' ? 'PANIC!' : `PUTARAN ${v.iter + 1}`, vars: vars.join(' ') };
       if (v.act === 'child') this.hud.vars = `${this.hud.vars}  ${v.item.ref || ''} X${v.group.length}`.trim();
+      // balok putaran yang baru selesai jatuh ke tembok saat gopher kembali ke awal putaran
+      const run = v.wallRun;
+      this.wallNow = run && {
+        labels: run.labels, count: v.wallCount, pop: v.wallPop ? P.clamp((t - 0.45) / 0.5, 0, 1) : null,
+        ghost: !!this.trace.truncated && i === this.view.length - 1,
+      };
       this.render();
       if (v.act === 'panic' && a > 0.2) { // stempel di atas layar, ukuran 2x piksel dunia
         const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.__k || 4, k = 2 * S;
@@ -487,6 +540,9 @@
     stopTrace() {
       this.mode = 'struct';
       this.view = null;
+      this.wall = null;
+      this.wallNow = null;
+      this.setHeight(H);
       this.reset();
     }
 
@@ -515,14 +571,14 @@
       const f = dt / 1000;
       this.parts = this.parts.filter(p => {
         p.vy += p.g * f; p.x += p.vx * f; p.y += p.vy * f; p.life -= dt;
-        return p.life > 0 && p.y < H;
+        return p.life > 0 && p.y < this.worldH;
       });
     }
 
     // ---------- gambar ----------
 
     paintBg() {
-      P.paintWorld(this.bg.getContext('2d'), this.worldW, H, GY);
+      P.paintWorld(this.bg.getContext('2d'), this.worldW, this.worldH, GY);
     }
 
     render() {
@@ -539,12 +595,16 @@
           for (const it of this.nodes()) P.dashedBox(w, it.x - 8, it.air ? BLOCK_Y - 1 : GY - 15, 16, it.air ? 16 : 15, '#b07a92');
         }
       }
+      if (this.wall && this.wallNow) {
+        const wn = this.wallNow;
+        P.drawWall(w, this.wall, H - 4, wn.labels, wn.count, wn.pop, wn.ghost);
+      }
       this.drawGopher(w, now);
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s, p.s, p.col);
 
       // seluruh dunia terlihat (tanpa kamera)
       this.drawHud(w, 0);
-      P.present(this.ctx, this.cv, this.world, this.worldW, H);
+      P.present(this.ctx, this.cv, this.world, this.worldW, this.worldH);
     }
 
     drawHud(w, cx) {

@@ -277,6 +277,67 @@
     c.globalAlpha = 1;
   }
 
+  // ---------- tembok penghitung ----------
+
+  /** Label pendek untuk balok tembok (nilai variabel), atau null bila terlalu panjang / tidak bisa digambar. */
+  function wallLabel(v) {
+    if (v == null) return null;
+    const s = String(v).trim().replace(/^(["'`])(.*)\1$/, '$2').toUpperCase();
+    return s && s.length <= 3 && [...s].every(ch => FONT[ch]) ? s : null;
+  }
+
+  /**
+   * Tata letak tembok penghitung: satu balok per putaran loop / per panggilan rekursif, dijejer lalu
+   * pindah baris saat penuh. Supaya semuanya tetap terlihat, balok mengecil bila jumlahnya banyak:
+   * berlabel (nilai variabel) bila sedikit, lalu balok polos 7px, lalu 4px.
+   * n = jumlah balok terbanyak; labels = label terlebar yang mungkin muncul; more = trace terpotong.
+   */
+  function wallLayout(n, labels, W, more) {
+    const slots = n + (more ? 1 : 0), usable = W - 16;
+    const lw = Math.max(7, ...labels.map(textW));
+    const sizes = [
+      { cw: lw + 5, ch: 9, label: true, maxRows: 3 },
+      { cw: 7, ch: 7, label: false, maxRows: 4 },
+      { cw: 4, ch: 4, label: false, maxRows: Infinity },
+    ];
+    for (const s of sizes) {
+      const perRow = Math.max(1, Math.floor((usable + 1) / (s.cw + 1)));
+      const rows = Math.max(1, Math.ceil(slots / perRow));
+      if (rows <= s.maxRows) return Object.assign(s, { perRow, rows, x0: 8, h: rows * (s.ch + 1) + 7 });
+    }
+  }
+
+  /**
+   * Menggambar count balok pertama dari tembok di y0. Balok terakhir jatuh masuk bila pop (0..1) diberikan;
+   * ghost = gambar balok hantu "+" sesudahnya (trace dipotong, putaran berikutnya tidak disimulasikan).
+   */
+  function drawWall(c, L, y0, labels, count, pop, ghost) {
+    const at = k => ({ x: L.x0 + (k % L.perRow) * (L.cw + 1), y: y0 + 4 + Math.floor(k / L.perRow) * (L.ch + 1) });
+    for (let k = 0; k < count; k++) {
+      let { x, y } = at(k);
+      if (k === count - 1 && pop != null && pop < 1) {
+        y -= Math.round((1 - bounce(clamp(pop, 0, 1))) * 10);
+        c.globalAlpha = clamp(pop * 3, 0, 1);
+      }
+      // setiap balok ke-10 berwarna jingga supaya mudah dihitung
+      const tenth = k % 10 === 9, fill = tenth ? '#f7b779' : '#f3c75a', line = tenth ? '#a5622a' : '#a8741f';
+      if (L.ch < 7) {
+        rect(c, x, y, L.cw, L.ch, fill);
+        rect(c, x, y + L.ch - 1, L.cw, 1, line);
+      } else {
+        box(c, x, y, L.cw, L.ch, fill, INK);
+        rect(c, x + 1, y + 1, L.cw - 2, 1, mix(fill, '#ffffff', 0.5));
+        if (L.label) textCenter(c, labels[k] || String(k + 1), x + L.cw / 2, y + 2, INK);
+      }
+      c.globalAlpha = 1;
+    }
+    if (ghost) {
+      const { x, y } = at(count);
+      dashedBox(c, x, y, L.cw, L.ch, '#b07a92');
+      if (L.ch >= 7) textCenter(c, '+', x + L.cw / 2, y + Math.floor((L.ch - 5) / 2), '#b07a92');
+    }
+  }
+
   /** Bagian body mana (indeks) yang memuat baris line; -1 bila tidak ada. */
   function nodeAt(body, line) {
     let best = -1;
@@ -287,6 +348,6 @@
   G.pixel = {
     INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
-    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL,
+    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall,
   };
 })(window.GV = window.GV || {});

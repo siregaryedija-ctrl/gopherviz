@@ -47,12 +47,15 @@ const samples = {
   java_switch: ['java/01_basics.java', 37],
   java_bubble: ['java/03_koleksi.java', 45],
   cpp_while: ['cpp/01_basics.cpp', 43],
+  // contoh user (tembok putaran): '@/' = relatif terhadap vscode-extension/dev/fixtures
+  py_range100: ['@/loops.py', 2],
+  py_range12: ['@/loops.py', 5],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));
 const out = {};
 for (const [name, [file, line]] of Object.entries(samples)) {
-  const f = path.join(testdata, file);
+  const f = file.startsWith('@/') ? path.join(root, 'dev', 'fixtures', file.slice(2)) : path.join(testdata, file);
   const scene = run('list', '--json', f);
   const trace = run('trace', '--json', `${f}:${line}`);
   out[name] = { file: path.basename(file), scene, focusBlock: trace.block.id, trace };

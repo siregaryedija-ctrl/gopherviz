@@ -1,6 +1,7 @@
 // Mode lantai: fungsi, rekursi, dan timeline seluruh program. Setiap pemanggilan fungsi
 // = Gopher masuk pipa dan turun ke lantai baru (call stack tumbuh ke bawah); return =
 // koin berisi nilai kembali melayang naik ke lantai pemanggil dan lantai itu hilang.
+// Fungsi rekursif: di bawah lantai terdalam ada tembok penghitung, satu balok per pemanggilan.
 (function (G) {
   'use strict';
   const P = G.pixel;
@@ -24,6 +25,7 @@
       this.cam = { x: 96, y: 48 };
       this.snaps = [];
       this.blocks = [];
+      this.wall = null;
     }
 
     groundY(d) { return TOP + 30 + d * FLOOR; }
@@ -32,6 +34,7 @@
     setBlock(block, blocks) {
       this.block = block;
       this.blocks = blocks || [];
+      this.wall = null;
       this.layout(1, [block]);
       this.snaps = [];
     }
@@ -41,11 +44,12 @@
       return this.blocks.find(b => b.kind === 'func' && b.name === name) || null;
     }
 
-    layout(floors, funcs) {
+    layout(floors, funcs, wallH) {
       const maxTiles = Math.max(1, ...funcs.map(f => (f && f.body ? f.body.length : 1)));
       this.exitX = X_TILES + maxTiles * TILE + 8;
       this.W = Math.max(192, this.exitX + 24);
-      this.H = Math.max(96, this.groundY(floors - 1) + 12);
+      this.wallY = Math.max(96, this.groundY(floors - 1) + 12);
+      this.H = this.wallY + (wallH || 0);
       this.world.width = this.W; this.world.height = this.H;
       this.bg.width = this.W; this.bg.height = this.H;
       P.paintSky(this.bg.getContext('2d'), this.W, this.H);
@@ -55,6 +59,8 @@
       const views = [];
       const stack = []; // lantai yang sedang ada: { fn, args, block, x }
       let x = X_PIPE, depth = 0, maxDepth = 0;
+      const calls = [];
+      this.truncated = !!trace.truncated;
       const used = new Set([this.block]);
       for (const s of trace.steps) {
         const d = s.depth || 0;
@@ -76,12 +82,24 @@
           v.x = ti >= 0 ? X_TILES + ti * TILE : x;
         }
         v.stack = stack.slice(0, Math.max(d + 1, 1)).map(f => Object.assign({}, f));
+        // tembok panggilan: setiap pemanggilan fungsi fokus menambah satu balok (label = nilai argumen)
+        if (v.act === 'call' && s.func === this.block.name) {
+          const m = /^\s*[\w$]+\s*=\s*(.*)$/.exec(s.args || '');
+          calls.push(m && !String(s.args).includes(',') ? m[1] : s.args);
+          v.wallPop = true;
+        }
+        v.wallCount = calls.length;
         if (v.act === 'return') { x = v.callerX; depth = Math.max(0, d - 1); }
         else { x = v.x; depth = d; }
         maxDepth = Math.max(maxDepth, d);
         views.push(v);
       }
-      this.layout(maxDepth + 1, [...used]);
+      // hanya untuk fungsi yang memanggil dirinya sendiri (lebih dari satu pemanggilan)
+      const labels = calls.map(P.wallLabel);
+      this.wallLabels = labels.every(l => l != null) ? labels : calls.map((_, k) => String(k + 1));
+      this.layout(maxDepth + 1, [...used]); // lebar dunia dulu, lalu tembok mengikuti lebar itu
+      this.wall = calls.length > 1 ? P.wallLayout(calls.length, this.wallLabels, this.W, this.truncated) : null;
+      if (this.wall) this.layout(maxDepth + 1, [...used], this.wall.h);
       this.snaps = views;
       return views;
     }
@@ -95,6 +113,7 @@
       const v = this.snaps[i], out = [];
       const last = i === this.snaps.length - 1;
       if (v.act === 'call') out.push({ t: 0.1, sound: 'pipe' });
+      if (v.wallPop && this.wall) out.push({ t: 0.65, sound: 'tok' });
       if (v.act === 'return') {
         out.push({ t: 0.1, sound: 'coin' });
         out.push({ t: 0.5, sound: 'warp' });
@@ -120,7 +139,7 @@
     }
 
     renderIdle() {
-      const v = { act: 'idle', d: 0, x: X_PIPE + 10, tile: -1, step: {}, stack: [{ fn: this.block.name, args: (this.block.params || []).join(', '), block: this.block }] };
+      const v = { act: 'idle', d: 0, x: X_PIPE + 10, tile: -1, step: {}, wallCount: 0, stack: [{ fn: this.block.name, args: (this.block.params || []).join(', '), block: this.block }] };
       this.draw(v, { x: X_PIPE + 10, y: this.groundY(0) }, 1, false, 1, 'idle');
     }
 
@@ -200,6 +219,11 @@
           P.box(w, Math.round(cx + 6), Math.round(cy - 4), P.textW(r) + 4, 9, '#fff8fb', '#e0a22a');
           P.text(w, r, Math.round(cx + 8), Math.round(cy - 2), P.INK);
         }
+      }
+
+      if (this.wall && v.act !== 'idle') {
+        const i = this.snaps.indexOf(v), last = i === this.snaps.length - 1;
+        P.drawWall(w, this.wall, this.wallY - 4, this.wallLabels, v.wallCount, v.wallPop ? a : null, this.truncated && last);
       }
 
       const jump = v.act === 'hit' && v.tile >= 0 ? Math.round(Math.sin(Math.PI * a) * 8) : 0;
