@@ -10,6 +10,8 @@ export type ToPanel =
       result?: UpdateResult;
       focusBlock?: string;
       server: { ok: boolean; message?: string };
+      /** Isi kotak Input untuk file ini (nilai dipisah koma). */
+      input?: string;
     }
   | { type: 'trace'; blockId: string; trace: Trace }
   | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean };
@@ -19,7 +21,9 @@ export type FromPanel =
   | { type: 'ready' }
   | { type: 'reveal'; line: number }
   | { type: 'setConfig'; key: 'speed' | 'sound' | 'music'; value: number | boolean }
-  | { type: 'restart' };
+  | { type: 'restart' }
+  | { type: 'input'; text: string }
+  | { type: 'reroll' };
 
 const icon = (d: string) => `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${d}"/></svg>`;
 
@@ -31,6 +35,11 @@ export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
     <button id="tRestart" class="icon-btn" title="Ulang dari awal" aria-label="Ulang dari awal">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
     <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Posisi langkah">
     <span id="tLabel" class="tlabel"></span>
+  </div>
+  <div id="inputbar" class="inputbar" hidden>
+    <label for="inputBox">Input</label>
+    <input id="inputBox" type="text" placeholder="isi nilai input, pisahkan dengan koma (contoh: 25, Budi)" spellcheck="false" autocomplete="off">
+    <button id="inReroll" class="icon-btn" title="Angka acak baru untuk input yang belum diisi" aria-label="Angka acak baru">${icon('M2 2h12v12H2zM5 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM8 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-3 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z')}</button>
   </div>
   <p id="stepNote" class="step-note" hidden></p>`;
 

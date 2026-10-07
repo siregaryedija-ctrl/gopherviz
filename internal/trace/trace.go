@@ -81,6 +81,7 @@ type Trace struct {
 	Collection *Collection `json:"collection,omitempty"`
 	Truncated  bool        `json:"truncated"`
 	Warnings   []string    `json:"warnings"`
+	ReadsInput bool        `json:"readsInput,omitempty"` // program membaca input user (panel menampilkan kotak Input)
 }
 
 // BlockInfo merangkum blok yang di-trace.

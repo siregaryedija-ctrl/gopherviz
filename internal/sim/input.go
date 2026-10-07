@@ -13,9 +13,8 @@ import (
 // menampilkannya di output seperti yang diketik di terminal. ok=false bila input sudah habis.
 func (it *interp) userText() (string, bool) {
 	if it.input == nil {
-		it.input = userinput.New()
+		it.input = userinput.New(nil, 0)
 	}
-	it.warn(userinput.Warning)
 	s, ok := it.input.Next()
 	if ok {
 		it.output(s + "\n")

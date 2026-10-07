@@ -127,7 +127,7 @@
     confetti() {
       const cols = ['#f5a3bf', '#f7b779', '#f1d064', '#9fd88f', '#8ec4f0', '#b8a2ee', '#ffffff'];
       for (let k = 0; k < 50; k++) {
-        this.parts.push({ x: this.cam.x + (Math.random() - 0.5) * 180, y: this.cam.y - 50 - Math.random() * 20, vx: (Math.random() - 0.5) * 20, vy: 18 + Math.random() * 25, g: 8, life: 3000, col: cols[k % cols.length] });
+        this.parts.push({ x: this.W / 2 + (Math.random() - 0.5) * this.W, y: -2 - Math.random() * 20, vx: (Math.random() - 0.5) * 20, vy: 18 + Math.random() * 25, g: 8, life: 3000, col: cols[k % cols.length] });
       }
     }
 
@@ -232,18 +232,15 @@
 
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), 1, 1, p.col);
 
-      // kamera mengikuti gopher; HUD digambar di pojok layar
-      this.cam.x += (pos.x + 40 - this.cam.x) * 0.12;
-      this.cam.y += (pos.y - 30 - this.cam.y) * 0.12;
-      const ox = Math.round(P.clamp(this.cam.x - 96, 0, Math.max(0, this.W - 192)));
-      const oy = Math.round(P.clamp(this.cam.y - 48, 0, Math.max(0, this.H - 96)));
+      // seluruh dunia terlihat (tanpa kamera); HUD di pojok kiri atas
+      const ox = 0, oy = 0;
       const s = v.step;
       P.text(w, `${this.block.id} ${this.block.kind === 'switch' ? 'SWITCH' : 'IF'}${s.run > 1 ? ' KE-' + s.run : ''}`, ox + 4, oy + 3, P.INK);
       const vars = this.hudVars.filter(n => s.vars && s.vars[n] != null).slice(0, 3).map(n => `${n}=${s.vars[n]}`).join(' ');
       if (vars) P.text(w, vars, ox + 4, oy + 10, '#c2457a');
-      P.present(this.ctx, this.cv, this.world, this.W, this.H, this.cam.x, this.cam.y);
+      P.present(this.ctx, this.cv, this.world, this.W, this.H);
       if (v.act === 'panic' && a > 0.2) {
-        const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.width / 192;
+        const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.__k || 4;
         this.ctx.drawImage(img, Math.round(this.cv.width / 2 - img.width * S), Math.round(24 * S), img.width * 2 * S, img.height * 2 * S);
       }
     }

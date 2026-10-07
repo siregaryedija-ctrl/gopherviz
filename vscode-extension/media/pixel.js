@@ -213,18 +213,27 @@
     return points[points.length - 1];
   }
 
-  /** Kamera: potong dunia di sekitar (cx, cy) selebar 192x96 piksel dunia lalu perbesar ke canvas. */
-  function present(ctx, canvas, world, worldW, worldH, cx, cy) {
-    const VW = 192, VH = 96, S = canvas.width / VW;
-    const x = Math.round(clamp(cx - VW / 2, 0, Math.max(0, worldW - VW)));
-    const y = Math.round(clamp(cy - VH / 2, 0, Math.max(0, worldH - VH)));
+  /**
+   * Menampilkan SELURUH dunia (worldW x worldH piksel dunia) di canvas, tanpa kamera yang menggeser
+   * (keputusan user 2026-10-07: seluruh struktur harus terlihat). Ukuran canvas mengikuti bentuk
+   * dunia dengan skala bulat k supaya piksel tetap tajam; CSS (.stage canvas) lalu memperkecilnya
+   * agar muat selebar panel dan setinggi layar. canvas.__k = piksel canvas per piksel dunia.
+   */
+  function present(ctx, canvas, world, worldW, worldH) {
+    let k = Math.max(2, Math.ceil(1536 / worldW));
+    k = Math.max(1, Math.min(k, Math.floor(Math.sqrt(8e6 / (worldW * worldH)))));
+    const cw = worldW * k, ch = worldH * k;
+    if (canvas.width !== cw || canvas.height !== ch) {
+      canvas.width = cw;
+      canvas.height = ch;
+    }
+    canvas.__k = k;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = '#fde3eb';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const w = Math.min(VW, worldW), h = Math.min(VH, worldH);
-    ctx.drawImage(world, x, y, w, h, 0, 0, w * S, h * S);
-    return { x, y };
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.drawImage(world, 0, 0, worldW, worldH, 0, 0, cw, ch);
+    return k;
   }
 
   /** Gopher biru berdiri dengan kaki di groundY. Mengembalikan y kepala. */

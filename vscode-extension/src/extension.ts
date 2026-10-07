@@ -33,6 +33,7 @@ export const LANGUAGES = ['go', 'javascript', 'javascriptreact', 'typescript', '
 const isSupported = (doc: vscode.TextDocument) => LANGUAGES.includes(doc.languageId) && doc.uri.scheme !== 'output';
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const config = () => vscode.workspace.getConfiguration('gopherviz');
+const INPUTS_KEY = 'gopherviz.inputs';
 
 class Controller implements vscode.Disposable {
   private client?: GophervizClient;
@@ -46,9 +47,11 @@ class Controller implements vscode.Disposable {
   private readonly timers = new Map<string, NodeJS.Timeout>();
   private focusTimer?: NodeJS.Timeout;
   private traceTimer?: NodeJS.Timeout;
-  private traceKey = ''; // dokumen|versi|loop dari trace terakhir yang dikirim ke panel
+  private traceKey = ''; // dokumen|versi|blok|seed|input dari trace terakhir yang dikirim ke panel
   private lastTrace?: Trace;
   private editor?: vscode.TextEditor; // editor Go terakhir yang aktif
+  /** Kotak Input per file: nilai dari user + seed angka acak (disimpan di workspaceState). */
+  private inputs: Record<string, { text: string; seed: number }> = {};
 
   private readonly panel: LoopPanel;
   private readonly lens: LoopCodeLens;
@@ -59,6 +62,7 @@ class Controller implements vscode.Disposable {
 
   constructor(ctx: vscode.ExtensionContext) {
     this.ctx = ctx;
+    this.inputs = ctx.workspaceState.get(INPUTS_KEY, {});
     this.output = vscode.window.createOutputChannel('GopherViz');
     this.panel = new LoopPanel(ctx.extensionUri, m => this.onPanelMessage(m));
     this.lens = new LoopCodeLens(uri => this.results.get(uri)?.scene);
@@ -275,14 +279,19 @@ class Controller implements vscode.Disposable {
     if (!doc || doc.uri.toString() !== uri || !blockId || !this.client?.running) {
       return;
     }
-    const key = `${uri}|${this.seq.get(uri)}|${blockId}`;
+    const input = this.inputs[uri] ?? { text: '', seed: 0 };
+    const keyOf = () => {
+      const inp = this.inputs[uri] ?? { text: '', seed: 0 };
+      return `${uri}|${this.seq.get(uri)}|${blockId}|${inp.seed}|${inp.text}`;
+    };
+    const key = keyOf();
     if (key === this.traceKey) {
-      return; // kode dan blok fokus tidak berubah sejak trace terakhir
+      return; // kode, blok fokus, dan input tidak berubah sejak trace terakhir
     }
     try {
-      const res = await this.client.request<TraceResult>('trace', { file: doc.fileName, blockId });
-      if (this.focus.get(uri) !== blockId || key !== `${uri}|${this.seq.get(uri)}|${blockId}`) {
-        return; // user sudah mengetik atau pindah blok lagi
+      const res = await this.client.request<TraceResult>('trace', { file: doc.fileName, blockId, input: input.text, seed: input.seed });
+      if (this.focus.get(uri) !== blockId || key !== keyOf()) {
+        return; // user sudah mengetik, pindah blok, atau mengganti input lagi
       }
       this.traceKey = key;
       this.lastTrace = res.trace;
@@ -315,6 +324,7 @@ class Controller implements vscode.Disposable {
       result: uri ? this.results.get(uri) : undefined,
       focusBlock: uri ? this.focus.get(uri) : undefined,
       server: { ok: !this.serverError, message: this.serverError },
+      input: uri ? this.inputs[uri]?.text ?? '' : '',
     });
     this.updateStatus();
   }
@@ -369,6 +379,23 @@ class Controller implements vscode.Disposable {
       case 'restart':
         void this.restart();
         break;
+      case 'input':
+      case 'reroll': {
+        const uri = this.editor?.document.uri.toString();
+        if (!uri) {
+          break;
+        }
+        const cur = this.inputs[uri] ?? { text: '', seed: 0 };
+        this.inputs[uri] = m.type === 'input'
+          ? { ...cur, text: m.text }
+          : { ...cur, seed: 1 + Math.floor(Math.random() * 2_000_000_000) };
+        if (!this.inputs[uri].text && !this.inputs[uri].seed) {
+          delete this.inputs[uri];
+        }
+        void this.ctx.workspaceState.update(INPUTS_KEY, this.inputs);
+        void this.sendTrace(uri);
+        break;
+      }
     }
   }
 
@@ -404,6 +431,7 @@ class Controller implements vscode.Disposable {
       traceKey: () => this.traceKey,
       lastTrace: () => this.lastTrace,
       panelOpen: () => this.panel.isOpen,
+      panelMessage: (m: FromPanel) => this.onPanelMessage(m),
     };
   }
 

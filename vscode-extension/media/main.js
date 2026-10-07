@@ -124,6 +124,8 @@
     renderHeader();
     renderNote(res ? res.diagnostics : []);
     renderNav(m.file);
+    if (document.activeElement !== $('inputBox')) $('inputBox').value = m.input || '';
+    syncInputBar();
   }
 
   function overlay(text, restart) {
@@ -322,9 +324,17 @@
     return Object.assign({}, tr, { steps });
   }
 
+  // Kotak Input muncul hanya bila program membaca input user (atau kotaknya sudah berisi).
+  let readsInput = false;
+  function syncInputBar() {
+    $('inputbar').hidden = !readsInput && !$('inputBox').value;
+  }
+
   function applyTrace(m) {
     if (!currentBlock || m.blockId !== currentBlock.id) return; // trace untuk blok lain
     let tr = m.trace;
+    readsInput = !!tr.readsInput;
+    syncInputBar();
     stopTrace();
     if (tr.mode !== 'simulated' || !tr.steps.length) {
       traceNote = tr.warnings[0] || '';
@@ -499,6 +509,12 @@
     vscode.postMessage({ type: 'setConfig', key: 'music', value: config.music });
   });
   $('btnRestart').addEventListener('click', () => vscode.postMessage({ type: 'restart' }));
+  // Input: dikirim setelah user berhenti mengetik sebentar (atau langsung saat Enter).
+  let inputTimer = 0;
+  const sendInput = () => { clearTimeout(inputTimer); vscode.postMessage({ type: 'input', text: $('inputBox').value }); };
+  $('inputBox').addEventListener('input', () => { clearTimeout(inputTimer); inputTimer = setTimeout(sendInput, 600); });
+  $('inputBox').addEventListener('keydown', e => { if (e.key === 'Enter') sendInput(); });
+  $('inReroll').addEventListener('click', () => vscode.postMessage({ type: 'reroll' }));
   ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, () => snd.unlock()));
 
   // ---------- loop animasi ----------

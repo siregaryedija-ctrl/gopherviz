@@ -9,6 +9,7 @@ import (
 	"gopherviz/internal/lang"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
+	"gopherviz/internal/userinput"
 )
 
 // Options membatasi simulasi (sama dengan sim.Options).
@@ -17,6 +18,9 @@ type Options struct {
 	MaxIter  int
 	Budget   int
 	Seed     int64
+
+	Input     []string // nilai input user dari panel; sisanya angka acak
+	InputSeed int64    // benih angka acak input (0 = bawaan)
 }
 
 func (o Options) withDefaults() Options {
@@ -82,12 +86,16 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll},
 		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
-		statics: map[*ir.VarSpec]*Cell{},
+		statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
 	}
 	it.globals.global = true
 	reason := it.run(node)
 	r := it.rec
 	tr.Warnings = append(tr.Warnings, r.warnings...)
+	tr.ReadsInput = it.input.Reads() > 0
+	if it.input.UsedRandom() {
+		tr.Warnings = append(tr.Warnings, userinput.Warning)
+	}
 	switch {
 	case reason != "":
 		tr.Warnings = append([]string{reason}, tr.Warnings...)
@@ -499,7 +507,7 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 		rec:   &recorder{maxSteps: opt.MaxSteps, maxIter: opt.MaxIter},
 		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
-		statics: map[*ir.VarSpec]*Cell{},
+		statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
 	}
 	it.globals.global = true
 	func() {

@@ -15,6 +15,7 @@ import (
 	"gopherviz/internal/scene"
 	"gopherviz/internal/sim"
 	"gopherviz/internal/trace"
+	"gopherviz/internal/userinput"
 )
 
 // maxLine adalah ukuran maksimum satu request (isi file Go dikirim utuh).
@@ -120,7 +121,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		if id == "" {
 			id = p.LoopID
 		}
-		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, id, sim.Options{})})
+		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, id, sim.Options{Input: userinput.Split(p.Input), InputSeed: p.Seed})})
 
 	default:
 		return fail(req.ID, fmt.Sprintf("method tidak dikenal: %q", req.Method))

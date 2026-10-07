@@ -16,6 +16,7 @@ import (
 	"gopherviz/internal/irsim"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
+	"gopherviz/internal/userinput"
 )
 
 // Options membatasi simulasi supaya selalu cepat dan aman dipanggil di setiap ketikan.
@@ -24,6 +25,9 @@ type Options struct {
 	MaxIter  int   // putaran loop fokus maksimum per eksekusi (bawaan 50)
 	Budget   int   // batas total evaluasi interpreter (bawaan 300.000)
 	Seed     int64 // benih pengacak urutan map
+
+	Input     []string // nilai input user dari panel; sisanya angka acak
+	InputSeed int64    // benih angka acak input (0 = bawaan)
 }
 
 func (o Options) withDefaults() Options {
@@ -60,7 +64,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		return tr
 	}
 	if p.Lang != "" && p.Lang != "go" {
-		return irsim.Trace(p.Other, blockID, irsim.Options{MaxSteps: opt.MaxSteps, MaxIter: opt.MaxIter, Budget: opt.Budget, Seed: opt.Seed})
+		return irsim.Trace(p.Other, blockID, irsim.Options{MaxSteps: opt.MaxSteps, MaxIter: opt.MaxIter, Budget: opt.Budget, Seed: opt.Seed, Input: opt.Input, InputSeed: opt.InputSeed})
 	}
 	tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}
 	for _, loop := range p.Result.Scene.Loops {
@@ -84,6 +88,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		funcs:   map[string]*ast.FuncDecl{},
 		budget:  opt.Budget,
 		rng:     rand.New(rand.NewSource(opt.Seed)),
+		input:   userinput.New(opt.Input, opt.InputSeed),
 		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
 			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}},
 	}
@@ -91,6 +96,10 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	r := it.rec
 
 	tr.Warnings = append(tr.Warnings, r.warnings...)
+	tr.ReadsInput = it.input.Reads() > 0
+	if it.input.UsedRandom() {
+		tr.Warnings = append(tr.Warnings, userinput.Warning)
+	}
 	switch {
 	case reason != "":
 		tr.Warnings = append([]string{reason}, tr.Warnings...)

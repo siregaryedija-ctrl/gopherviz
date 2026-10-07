@@ -12,9 +12,8 @@ import (
 // barisnya ditampilkan di output seperti yang diketik di terminal. ok=false bila input sudah habis.
 func (it *interp) userText(echo bool) (string, bool) {
 	if it.input == nil {
-		it.input = userinput.New()
+		it.input = userinput.New(nil, 0)
 	}
-	it.warn(userinput.Warning)
 	s, ok := it.input.Next()
 	if ok && echo {
 		it.out(s + "\n")
@@ -25,7 +24,7 @@ func (it *interp) userText(echo bool) (string, bool) {
 // inputLeft: masih ada baris input (Scanner.hasNext dan sejenisnya).
 func (it *interp) inputLeft() bool {
 	if it.input == nil {
-		it.input = userinput.New()
+		it.input = userinput.New(nil, 0)
 	}
 	return it.input.Left()
 }

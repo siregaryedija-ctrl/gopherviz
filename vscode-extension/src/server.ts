@@ -188,6 +188,8 @@ export interface Trace {
   collection?: { kind: string; items: string[]; keys?: string[] };
   truncated: boolean;
   warnings: string[];
+  /** Program membaca input user: panel menampilkan kotak Input. */
+  readsInput?: boolean;
 }
 
 export interface TraceResult {

@@ -49,7 +49,7 @@ test('kursor di if: fokus ke blok if terdalam', async api => {
 test('trace nilai asli dikirim ke panel setelah berhenti mengetik', async api => {
   const ed = vscode.window.activeTextEditor!;
   const uri = ed.document.uri.toString();
-  await waitFor('trace L2', () => api.traceKey().startsWith(uri) && api.traceKey().endsWith('|L2'));
+  await waitFor('trace L2', () => api.traceKey().startsWith(uri) && api.traceKey().split('|')[2] === 'L2');
 });
 
 test('mengetik loop baru tanpa menyimpan langsung terlihat (realtime)', async api => {
@@ -80,7 +80,7 @@ test('goroutine dan channel: trace membawa jalur goroutine dan isi channel', asy
   const ed = await vscode.workspace.openTextDocument(conc).then(d => vscode.window.showTextDocument(d));
   ed.selection = new vscode.Selection(12, 1, 12, 1); // baris 13: di dalam main, di luar loop
   const uri = ed.document.uri.toString();
-  await waitFor('trace F2', () => api.traceKey().startsWith(uri) && api.traceKey().endsWith('|F2'));
+  await waitFor('trace F2', () => api.traceKey().startsWith(uri) && api.traceKey().split('|')[2] === 'F2');
   const tr = api.lastTrace()!;
   assert.equal(tr.mode, 'simulated');
   assert.ok(tr.steps.some(s => s.gs?.length === 3), 'tidak ada potret 3 goroutine');
@@ -98,6 +98,25 @@ test('bahasa lain: JavaScript dan Python dianalisis dengan parsernya sendiri', a
     const lenses = await vscode.commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', doc.uri);
     assert.ok(lenses.some(l => l.command?.title === '▶ Visualisasikan loop L1'), 'lens L1 tidak ada');
   }
+});
+
+test('kotak Input: nilai dari user dipakai simulasi', async api => {
+  const doc = await vscode.workspace.openTextDocument(path.resolve(path.dirname(file0), '..', 'python', '04_input.noracle.py'));
+  const ed = await vscode.window.showTextDocument(doc);
+  const pos = new vscode.Position(3, 6); // baris 4: if 0 <= usia <= 5:
+  ed.selection = new vscode.Selection(pos, pos);
+  const tr = await waitFor('trace I1 yang membaca input', () => {
+    const t = api.lastTrace();
+    return t && t.block.id === 'I1' && t.readsInput ? t : undefined;
+  });
+  assert.ok(tr.warnings.some(w => w.includes('angka acak')), tr.warnings.join(' | '));
+  api.panelMessage({ type: 'input', text: '15, 1, 2, 3' }); // program membaca 4 input
+  const t2 = await waitFor('trace dengan usia = 15', () => {
+    const t = api.lastTrace();
+    return t && t.steps.some(s => s.vars && s.vars.usia === '15') ? t : undefined;
+  });
+  assert.ok(!t2.warnings.some(w => w.includes('angka acak')), t2.warnings.join(' | '));
+  api.panelMessage({ type: 'input', text: '' });
 });
 
 export async function run(): Promise<void> {

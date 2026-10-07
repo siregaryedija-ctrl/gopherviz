@@ -163,3 +163,18 @@ func TestUserInput(t *testing.T) {
 		})
 	}
 }
+
+// TestUserInputGiven: nilai dari kotak Input dipakai lebih dulu; sisanya angka acak.
+func TestUserInputGiven(t *testing.T) {
+	src, _ := os.ReadFile("../../testdata/python/04_input.noracle.py")
+	res := lang.Analyze("python", "04_input.noracle.py", string(src))
+	got, why := Run(res, Options{Budget: 2_000_000, Input: []string{"15", "1", "2"}})
+	if why != "" || !strings.Contains(got, "kategori: Transisi ke remaja") || !strings.Contains(got, "\n1\n2\n") {
+		t.Fatalf("why %q, output:\n%s", why, got)
+	}
+	other, _ := Run(res, Options{Budget: 2_000_000, InputSeed: 7})
+	first, _ := Run(res, Options{Budget: 2_000_000})
+	if other == first {
+		t.Errorf("seed lain seharusnya memberi angka acak lain:\n%s", other)
+	}
+}

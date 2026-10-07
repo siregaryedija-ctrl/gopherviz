@@ -128,9 +128,7 @@
       P.drawGopher(w, gx, GY + 14, face, t < wf ? Math.floor(now / 140) % 2 : 0);
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s || 1, p.s || 1, p.col);
 
-      this.cam.x += (gx - this.cam.x) * 0.12;
-      const cx = P.clamp(this.cam.x, VIEW / 2, Math.max(VIEW / 2, this.worldW - VIEW / 2));
-      P.present(this.ctx, this.cv, this.world, this.worldW, H, cx, H / 2);
+      P.present(this.ctx, this.cv, this.world, this.worldW, H);
     }
 
     /** Menyiapkan snapshot per langkah. Mengembalikan daftar langkah untuk pemutar. */
@@ -381,26 +379,11 @@
       return null;
     }
 
-    camX() { return this.cam.x; }
+    camX() { return this.worldW / 2; }
 
-    present(s) {
-      const f = this.focusSlots(s);
-      const zoomable = this.n > 3;
-      const tg = f && zoomable
-        ? { x: f.reduce((a, k) => a + this.slotX(k), 0) / f.length, y: GY - 26, z: 1.6 }
-        : { x: this.worldW / 2, y: H / 2, z: this.worldW > VIEW ? VIEW / this.worldW : 1 };
-      if (!f && this.worldW > VIEW) tg.z = 1; // terlalu lebar: tetap skala 1 dan geser kamera
-      const c = this.cam;
-      c.x += (tg.x - c.x) * 0.1; c.y += (tg.y - c.y) * 0.1; c.z += (tg.z - c.z) * 0.1;
-      const z = c.z, S = this.cv.width / VIEW, sc = S * z;
-      const hw = VIEW / (2 * z), hh = H / (2 * z);
-      const cx = P.clamp(c.x, hw, Math.max(hw, this.worldW - hw)), cy = P.clamp(c.y, hh, H - hh);
-      const ctx = this.ctx;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.imageSmoothingEnabled = false;
-      ctx.fillStyle = '#fde3eb';
-      ctx.fillRect(0, 0, this.cv.width, this.cv.height);
-      ctx.drawImage(this.world, Math.round(this.cv.width / 2 - cx * sc), Math.round(this.cv.height / 2 - cy * sc), Math.round(this.worldW * sc), Math.round(H * sc));
+    /** Seluruh deretan terlihat sekaligus (tanpa zoom/kamera). */
+    present() {
+      P.present(this.ctx, this.cv, this.world, this.worldW, H);
     }
   }
 

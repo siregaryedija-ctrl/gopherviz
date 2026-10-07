@@ -59,12 +59,24 @@ h2 {
 
 .stage {
   position: relative;
+  display: flex;
+  justify-content: center;
   border: 2px solid #4a3550;
   border-radius: var(--radius);
   overflow: hidden;
   background: #fde3eb;
 }
-.stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; image-rendering: pixelated; }
+/* Canvas berukuran sebesar dunia (lihat P.present); diperkecil sampai muat selebar panel dan setinggi
+   layar (sisa ruang untuk tombol di bawahnya), dengan bentuk dunia tetap utuh. */
+.stage canvas {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 150px);
+  min-height: 120px;
+  image-rendering: pixelated;
+}
 .overlay {
   position: absolute;
   inset: 0;
@@ -98,8 +110,22 @@ h2 {
 }
 .icon-btn:hover { background: var(--vscode-button-secondaryHoverBackground); }
 .icon-btn.primary { background: var(--vscode-button-background); color: var(--vscode-button-foreground); }
-.icon-btn svg { width: 12px; height: 12px; fill: currentColor; }
+.icon-btn svg { width: 12px; height: 12px; fill: currentColor; fill-rule: evenodd; }
 .tracebar input[type="range"] { flex: 1; min-width: 60px; accent-color: var(--vscode-button-background); }
+.inputbar { display: flex; align-items: center; gap: 6px; }
+.inputbar label { font-size: 12px; color: var(--muted); flex: none; }
+.inputbar input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--vscode-input-border, var(--border));
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font-family: var(--vscode-editor-font-family);
+  font-size: 12px;
+}
+.inputbar input:focus { outline: 1px solid var(--accent); outline-offset: 0; }
 .tlabel { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .step-note {
   margin: 0;

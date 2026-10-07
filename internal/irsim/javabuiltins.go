@@ -667,7 +667,6 @@ func (it *interp) setupJava(s *javaSem) {
 	fn(thread, "sleep", func(it *interp, this Value, args []Value, at ir.Node) Value { return undef() })
 }
 
-
 func (it *interp) javaItems(v Value) []Value {
 	switch v.k {
 	case kList:

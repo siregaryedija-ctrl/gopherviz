@@ -478,7 +478,7 @@
       if (v.act === 'child') this.hud.vars = `${this.hud.vars}  ${v.item.ref || ''} X${v.group.length}`.trim();
       this.render();
       if (v.act === 'panic' && a > 0.2) { // stempel di atas layar, ukuran 2x piksel dunia
-        const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.width / VIEW, k = 2 * S;
+        const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.__k || 4, k = 2 * S;
         this.ctx.drawImage(img, Math.round(this.cv.width / 2 - (img.width * k) / 2), Math.round(26 * S), img.width * k, img.height * k);
       }
     }
@@ -542,15 +542,9 @@
       this.drawGopher(w, now);
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s, p.s, p.col);
 
-      // kamera mengikuti gopher
-      const target = P.clamp(this.gx - VIEW / 2, 0, this.worldW - VIEW);
-      this.camX += (target - this.camX) * 0.12;
-      const cx = Math.round(P.clamp(this.camX, 0, this.worldW - VIEW));
-      this.drawHud(w, cx);
-
-      const ctx = this.ctx;
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(this.world, cx, 0, VIEW, H, 0, 0, this.cv.width, this.cv.height);
+      // seluruh dunia terlihat (tanpa kamera)
+      this.drawHud(w, 0);
+      P.present(this.ctx, this.cv, this.world, this.worldW, H);
     }
 
     drawHud(w, cx) {
@@ -564,7 +558,7 @@
         const it = this.loop.kind === 'infinite' ? 'PUTARAN ' + this.iter : 'PUTARAN ' + Math.min(this.iter, ITER);
         P.text(w, it, cx + 4, 3, P.INK);
       }
-      P.text(w, this.loop.id, cx + VIEW - 4 - P.textW(this.loop.id), 3, P.INK);
+      P.text(w, this.loop.id, this.worldW - 4 - P.textW(this.loop.id), 3, P.INK);
     }
 
     drawArrow(w, now) {

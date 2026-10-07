@@ -105,6 +105,10 @@ type TraceParams struct {
 	File    string `json:"file"`
 	BlockID string `json:"blockId,omitempty"`
 	LoopID  string `json:"loopId,omitempty"`
+	// Input adalah isi kotak Input di panel (nilai dipisah koma atau baris baru); kosong = angka acak.
+	Input string `json:"input,omitempty"`
+	// Seed menentukan angka acak untuk input yang belum diisi (0 = bawaan).
+	Seed int64 `json:"seed,omitempty"`
 }
 
 // TraceResult adalah hasil MethodTrace.
