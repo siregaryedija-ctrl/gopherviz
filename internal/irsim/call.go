@@ -132,6 +132,35 @@ func (it *interp) evalCall(c *ir.Call, e *Env) Value {
 		}
 		fv = it.eval(f, e)
 	case *ir.Member:
+		if id, ok := f.X.(*ir.Ident); ok && id.Name == "std" && it.lang == "cpp" { // std::sort(...)
+			return it.evalCall(&ir.Call{S: c.S, Fun: &ir.Ident{S: f.S, Name: f.Name}, Args: c.Args}, e)
+		}
+		if it.lang == "cpp" && f.Op == "::" { // Base::metode() di dalam method turunan
+			if id, ok := f.X.(*ir.Ident); ok {
+				if cls := it.classes[id.Name]; cls != nil {
+					if t := e.thisVal(); t != nil {
+						self := *t
+						if self.k == kPtr {
+							self = self.p.load()
+						}
+						if self.k == kObj && instanceOf(self.o.class, cls.name) {
+							if m := findMethod(cls, f.Name); m != nil && !m.Static {
+								return it.callFunc(&Func{name: cls.name + "::" + f.Name, decl: m, env: cls.env, class: it.classOf[m]}, self, it.evalArgs(c.Args, e), c)
+							}
+						}
+					}
+				}
+			}
+		}
+		if it.lang == "cpp" && f.Op != "::" {
+			if obj := it.eval(f.X, e); obj.k == kStr { // method string yang mengubah isi
+				args := it.evalArgs(c.Args, e)
+				if ns, ret, ok := it.cppStringMutate(obj.s, f.Name, args.pos, c); ok {
+					it.bindTarget(f.X, e, strV(ns), false)
+					return ret
+				}
+			}
+		}
 		if call, ok := f.X.(*ir.Call); ok && it.lang == "python" {
 			if id, ok := call.Fun.(*ir.Ident); ok && id.Name == "super" && len(call.Args) == 0 {
 				// super().metode(...)
@@ -188,6 +217,20 @@ func (it *interp) evalCall(c *ir.Call, e *Env) Value {
 			collCall = f.Name
 		}
 	case *ir.Ident:
+		if (it.lang == "cpp" || it.lang == "c") && len(c.Args) == 1 && it.varCell(e, f.Name) == nil {
+			if _, isInt := cIntType(f.Name); isInt || isFloatType(f.Name) {
+				return it.sem.convert(it, it.eval(c.Args[0], e), f.Name)
+			}
+		}
+		if f.Name == "swap" && it.lang == "cpp" && len(c.Args) == 2 && len(it.funcs["swap"]) == 0 {
+			pa, pb := it.addrOf(c.Args[0], e), it.addrOf(c.Args[1], e)
+			va, vb := pa.load(), pb.load()
+			pa.store(vb)
+			pb.store(va)
+			it.recordSwapCall(c.Args, e)
+			it.markColl(c.Args[0], e)
+			return undef()
+		}
 		fv = it.eval(f, e)
 		if fv.k == kFunc && fv.fn.this != nil {
 			this = *fv.fn.this
@@ -309,6 +352,9 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		}
 		return fn.builtin(it, self, args.pos, at)
 	}
+	if len(fn.overloads) > 1 {
+		fn = it.pickByArgs(fn, args.pos)
+	}
 	decl := fn.decl
 	if decl.Generator {
 		it.structural("generator (function* / yield) belum disimulasikan")
@@ -380,6 +426,9 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		pos = append([]Value{first}, pos...)
 	}
 	params := it.bindParams(fn, scope, argList{pos: pos, kw: args.kw, kwOrd: args.kwOrd}, at)
+	if len(decl.Inits) > 0 && scope.this != nil && scope.this.k == kObj {
+		it.ctorInits(decl, scope)
+	}
 	argText := strings.Join(params, ", ")
 	name := fn.name
 	if name == "" {
@@ -622,6 +671,9 @@ func (it *interp) hoist(list []ir.Stmt, scope *Env) {
 // ---------- properti ----------
 
 func (it *interp) evalMember(n *ir.Member, e *Env) Value {
+	if id, ok := n.X.(*ir.Ident); ok && id.Name == "std" && it.lang == "cpp" { // std::cout
+		return it.lookupName(&ir.Ident{S: n.S, Name: n.Name}, e)
+	}
 	if th, ok := n.X.(*ir.This); ok && (th.Name == "super" || th.Name == "parent") {
 		owner := e.owner()
 		if owner != nil && owner.super != nil {
@@ -786,6 +838,12 @@ func (it *interp) setMember(n *ir.Member, e *Env, v Value) {
 			it.throw(n, "NullPointerException", "Cannot assign field \""+name+"\" because value is null")
 		}
 		it.structural("menulis field lewat null di baris " + fmt.Sprint(it.line(n)))
+	case kList:
+		if obj.l.kind == "pair" && (name == "first" || name == "second") {
+			obj.l.elems[map[string]int{"first": 0, "second": 1}[name]] = v
+			return
+		}
+		it.structural("menulis field " + name + " belum disimulasikan")
 	default:
 		if it.lang == "python" {
 			it.throw(n, "AttributeError", fmt.Sprintf("'%s' object has no attribute '%s'", it.pyTypeName(obj), name))
@@ -1247,6 +1305,9 @@ func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 				if x.Kind == "enum" {
 					ev := it.enumValue(c, s, ordinal, scope)
 					c.statics.set(strV(name), ev)
+					if n.Kind == "enum" && (it.lang == "c" || it.lang == "cpp") {
+						e.define(name, ev) // enum C/C++ biasa: konstantanya ada di cakupan luar
+					}
 					if it.lang == "typescript" && ev.k == kFloat { // reverse mapping: Color[0] → "Red"
 						c.statics.set(strV(jsNumber(ev.f)), strV(name))
 					}
@@ -1271,7 +1332,7 @@ func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 				}
 				spec := s
 				dims := s.Dims
-				c.fields = append(c.fields, fieldInit{name: name, typ: typ, init: func(it *interp, this Value) Value {
+				c.fields = append(c.fields, fieldInit{name: name, typ: typ, array: len(dims) > 0, init: func(it *interp, this Value) Value {
 					fs := newEnv(scope, true)
 					fs.this = &this
 					fs.class = c
@@ -1458,13 +1519,17 @@ func (it *interp) constructArgs(c *Class, args argList, at ir.Node) Value {
 	switch {
 	case ctor != nil:
 		owner := it.classOf[ctor]
-		it.callFunc(&Func{name: c.name, decl: ctor, env: owner.env, class: owner}, obj, args, at)
+		f := &Func{name: c.name, decl: ctor, env: owner.env, class: owner}
+		if ovs := owner.overloads[owner.name]; len(ovs) > 1 {
+			f.overloads = ovs
+		}
+		it.callFunc(f, obj, args, at)
 	case it.nativeBase(c) != nil:
 		it.nativeInit(it.nativeBase(c), obj, args.pos, at)
 	case (it.lang == "c" || it.lang == "cpp") && len(args.pos) > 0: // aggregate: Point{1, 2}
 		for i, f := range it.allFields(c) {
 			if i < len(args.pos) {
-				o.fields.set(strV(f.name), it.sem.convert(it, args.pos[i], f.typ))
+				it.setAggField(obj, f, args.pos[i])
 			}
 		}
 	case it.lang == "python" && len(args.pos) > 0:
@@ -1758,7 +1823,7 @@ func (it *interp) initList(typ string, al *ir.ArrayLit, e *Env) Value {
 		it.initFields(c, obj)
 		for i, f := range fields {
 			if i < len(args) {
-				o.fields.set(strV(f.name), it.sem.convert(it, args[i], f.typ))
+				it.setAggField(obj, f, args[i])
 			}
 		}
 		return obj
@@ -1893,16 +1958,158 @@ func (it *interp) methodOrProp(obj Value, name string, at ir.Node) Value {
 		for c := obj.o.class; c != nil; c = c.super {
 			if m := c.methods[name]; m != nil {
 				t := obj
-				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, this: &t, class: c}}
+				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, this: &t, class: c, overloads: c.overloads[name]}}
 			}
 		}
 	}
 	if obj.k == kClass && (it.lang == "php" || it.lang == "java" || it.lang == "cpp") {
 		for c := obj.c; c != nil; c = c.super {
 			if m := c.methods[name]; m != nil {
-				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, class: c, static: true}}
+				return Value{k: kFunc, fn: &Func{name: c.name + "." + name, decl: m, env: c.env, class: c, static: true, overloads: c.overloads[name]}}
 			}
 		}
 	}
 	return it.getProp(obj, name, at)
+}
+
+// pickByArgs memilih overload (C/C++/Java) yang paling cocok dengan jumlah dan tipe argumen.
+func (it *interp) pickByArgs(fn *Func, args []Value) *Func {
+	best, bestScore := fn.overloads[0], -1
+	for _, f := range fn.overloads {
+		req, max := 0, len(f.Params)
+		for _, p := range f.Params {
+			if p.Default == nil && !p.Rest {
+				req++
+			}
+			if p.Rest {
+				max = 1 << 20
+			}
+		}
+		if len(args) < req || len(args) > max {
+			continue
+		}
+		score := 1
+		for i, p := range f.Params {
+			if i >= len(args) {
+				break
+			}
+			t := normType(strings.TrimSuffix(strings.TrimSpace(p.Type), "&"))
+			a := args[i]
+			switch {
+			case isFloatType(t) && a.k == kFloat, (t == "string" || t == "String" || strings.Contains(t, "char*")) && a.k == kStr:
+				score += 3
+			case a.k == kInt && normType(a.t) == "char" && t == "char":
+				score += 3
+			case a.k == kInt || a.k == kBool:
+				if _, ok := cIntType(t); ok {
+					score += 2
+				} else if isFloatType(t) {
+					score++
+				}
+			case a.k == kObj && strings.Contains(t, a.o.class.name):
+				score += 3
+			case a.k == kList && (strings.Contains(t, "[]") || strings.Contains(t, "vector") || strings.Contains(t, "List")):
+				score += 2
+			}
+		}
+		if score > bestScore {
+			best, bestScore = f, score
+		}
+	}
+	nf := *fn
+	nf.decl = best
+	nf.overloads = nil
+	if c := it.classOf[best]; c != nil {
+		nf.class = c
+	}
+	return &nf
+}
+
+// ctorInits menjalankan ": base(args), field(nilai)" konstruktor C++.
+func (it *interp) ctorInits(decl *ir.Func, scope *Env) {
+	this := *scope.this
+	o := this.o
+	for _, x := range decl.Inits {
+		call, ok := x.(*ir.Call)
+		if !ok {
+			continue
+		}
+		id, ok := call.Fun.(*ir.Ident)
+		if !ok {
+			continue
+		}
+		args := it.evalArgs(call.Args, scope)
+		if o.fields.has(strV(id.Name)) {
+			typ := ""
+			for _, f := range it.allFields(o.class) {
+				if f.name == id.Name {
+					typ = f.typ
+				}
+			}
+			var v Value
+			if len(args.pos) == 1 {
+				v = it.sem.convert(it, copyFor(it, args.pos[0]), typ)
+			} else {
+				v = it.constructType(typ, args.pos, call)
+			}
+			o.fields.set(strV(id.Name), v)
+			continue
+		}
+		for c := o.class.super; c != nil; c = c.super {
+			if c.name != id.Name {
+				continue
+			}
+			if c.native != "" {
+				it.nativeInit(c, this, args.pos, call)
+			} else if ctor := it.findCtor(c, len(args.pos)); ctor != nil {
+				f := &Func{name: c.name, decl: ctor, env: c.env, class: c}
+				if ovs := c.overloads[c.name]; len(ovs) > 1 {
+					f.overloads = ovs
+				}
+				it.callFunc(f, this, args, call)
+			}
+			break
+		}
+	}
+}
+
+// recordSwapCall mencatat swap(a[i], a[j]) sebagai operasi tukar pada koleksi.
+func (it *interp) recordSwapCall(args []ir.Expr, e *Env) {
+	if it.rec.coll == "" || !it.recording() {
+		return
+	}
+	i0, i1 := it.collIndex(args[0], e), it.collIndex(args[1], e)
+	if i0 >= 0 && i1 >= 0 && i0 != i1 {
+		it.rec.ops = it.rec.ops[:0]
+		a, b := min(i0, i1), max(i0, i1)
+		it.rec.op(trace.Op{Op: trace.OpSwap, A: a, B: &b})
+	}
+}
+
+// setAggField mengisi field dari inisialisasi agregat {...}; field array diisi elemen demi
+// elemen (string literal menjadi karakter + NUL).
+func (it *interp) setAggField(obj Value, f fieldInit, v Value) {
+	if !f.array {
+		obj.o.fields.set(strV(f.name), it.sem.convert(it, v, f.typ))
+		return
+	}
+	arr, _ := obj.o.fields.get(strV(f.name))
+	if arr.k != kList {
+		arr = f.init(it, obj)
+	}
+	switch v.k {
+	case kStr:
+		for i := 0; i < len(arr.l.elems); i++ {
+			ch := int64(0)
+			if i < len(v.s) {
+				ch = int64(int8(v.s[i]))
+			}
+			arr.l.elems[i] = typedInt(ch, "char")
+		}
+	case kList:
+		for i := 0; i < len(arr.l.elems) && i < len(v.l.elems); i++ {
+			arr.l.elems[i] = it.sem.convert(it, v.l.elems[i], f.typ)
+		}
+	}
+	obj.o.fields.set(strV(f.name), arr)
 }

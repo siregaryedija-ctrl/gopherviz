@@ -21,6 +21,8 @@ var oracles = []oracle{
 	{"javascript", ".js", func(p, dir string) ([]string, bool) { return []string{"node", p}, true }},
 	{"python", ".py", func(p, dir string) ([]string, bool) { return []string{"python", p}, true }},
 	{"php", ".php", func(p, dir string) ([]string, bool) { return []string{"php", p}, true }},
+	{"cpp", ".cpp", func(p, dir string) ([]string, bool) { return compileRun("g++", "-std=c++17", p, dir) }},
+	{"c", ".c", func(p, dir string) ([]string, bool) { return compileRun("gcc", "-std=c11", p, dir) }},
 	{"typescript", ".ts", func(p, dir string) ([]string, bool) {
 		return []string{"node", "--experimental-transform-types", "--no-warnings", p}, true
 	}},
@@ -82,7 +84,7 @@ func TestAgainstReal(t *testing.T) {
 
 // FuzzTrace: simulator tidak boleh mengalami kesalahan internal untuk program apa pun.
 func FuzzTrace(f *testing.F) {
-	for _, l := range []string{"javascript", "typescript", "python", "php"} {
+	for _, l := range []string{"javascript", "typescript", "python", "php", "cpp", "c"} {
 		files, _ := filepath.Glob(filepath.Join("../../testdata", l, "*.*"))
 		for _, p := range files {
 			if lang.Detect(p) != l {
@@ -109,4 +111,17 @@ func FuzzTrace(f *testing.F) {
 			t.Fatalf("%s: %s", language, why)
 		}
 	})
+}
+
+// compileRun mengompilasi file C/C++ lalu mengembalikan perintah untuk menjalankannya.
+func compileRun(cc, std, path, dir string) ([]string, bool) {
+	exe := filepath.Join(dir, "prog.exe")
+	if _, err := exec.LookPath(cc); err != nil {
+		return []string{cc}, true // runOracle akan melewati test (compiler tidak ada)
+	}
+	out, err := exec.Command(cc, std, "-O0", "-o", exe, path, "-lm").CombinedOutput()
+	if err != nil {
+		panic("kompilasi gagal: " + string(out))
+	}
+	return []string{exe}, true
 }

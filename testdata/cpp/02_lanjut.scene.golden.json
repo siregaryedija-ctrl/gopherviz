@@ -1,0 +1,1045 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "cpp",
+    "file": "02_lanjut.cpp",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 17,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Shape.Shape",
+        "header": "Shape(const string& name) : name(name)",
+        "params": [
+          "name"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "count++;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 18,
+        "endLine": 18,
+        "state": "complete",
+        "name": "Shape.~Shape",
+        "header": "virtual ~Shape()"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 20,
+        "endLine": 22,
+        "state": "complete",
+        "name": "Shape.describe",
+        "header": "string describe() const",
+        "body": [
+          {
+            "kind": "return",
+            "line": 21,
+            "text": "return name + \" luas \" + to_string(area());"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 32,
+        "endLine": 32,
+        "state": "complete",
+        "name": "Circle.Circle",
+        "header": "Circle(double r) : Shape(\"lingkaran\"), r(r)",
+        "params": [
+          "r"
+        ]
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 33,
+        "endLine": 33,
+        "state": "complete",
+        "name": "Circle.area",
+        "header": "double area() const override",
+        "body": [
+          {
+            "kind": "return",
+            "line": 33,
+            "text": "return 3.14159 * r * r;"
+          }
+        ]
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 40,
+        "endLine": 40,
+        "state": "complete",
+        "name": "Rect.Rect",
+        "header": "Rect(double w, double h) : Shape(\"persegi panjang\"), w(w), …",
+        "params": [
+          "w",
+          "h"
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 41,
+        "endLine": 41,
+        "state": "complete",
+        "name": "Rect.area",
+        "header": "double area() const override",
+        "body": [
+          {
+            "kind": "return",
+            "line": 41,
+            "text": "return w * h;"
+          }
+        ]
+      },
+      {
+        "id": "F8",
+        "kind": "func",
+        "line": 48,
+        "endLine": 48,
+        "state": "complete",
+        "name": "Point.operator+",
+        "header": "Point operator+(const Point& o) const",
+        "params": [
+          "o"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 48,
+            "text": "return {x + o.x, y + o.y};"
+          }
+        ]
+      },
+      {
+        "id": "F9",
+        "kind": "func",
+        "line": 49,
+        "endLine": 49,
+        "state": "complete",
+        "name": "Point.operator<",
+        "header": "bool operator<(const Point& o) const",
+        "params": [
+          "o"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 49,
+            "text": "return x < o.x || (x == o.x && y < o.y);"
+          }
+        ]
+      },
+      {
+        "id": "F10",
+        "kind": "func",
+        "line": 52,
+        "endLine": 55,
+        "state": "complete",
+        "name": "operator<<",
+        "header": "ostream& operator<<(ostream& os, const Point& p)",
+        "params": [
+          "os",
+          "p"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 53,
+            "text": "os << \"(\" << p.x << \", \" << p.y << \")\";"
+          },
+          {
+            "kind": "return",
+            "line": 54,
+            "text": "return os;"
+          }
+        ]
+      },
+      {
+        "id": "F11",
+        "kind": "func",
+        "line": 58,
+        "endLine": 60,
+        "state": "complete",
+        "name": "maxOf",
+        "header": "T maxOf(T a, T b)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 59,
+            "text": "return a > b ? a : b;"
+          }
+        ]
+      },
+      {
+        "id": "F12",
+        "kind": "func",
+        "line": 65,
+        "endLine": 65,
+        "state": "complete",
+        "name": "Box.Box",
+        "header": "Box(T v) : value(v)",
+        "params": [
+          "v"
+        ]
+      },
+      {
+        "id": "F13",
+        "kind": "func",
+        "line": 66,
+        "endLine": 66,
+        "state": "complete",
+        "name": "Box.get",
+        "header": "T get() const",
+        "body": [
+          {
+            "kind": "return",
+            "line": 66,
+            "text": "return value;"
+          }
+        ]
+      },
+      {
+        "id": "F14",
+        "kind": "func",
+        "line": 74,
+        "endLine": 74,
+        "state": "complete",
+        "name": "Node.Node",
+        "header": "Node(int d) : data(d), next(nullptr)",
+        "params": [
+          "d"
+        ]
+      },
+      {
+        "id": "F15",
+        "kind": "func",
+        "line": 79,
+        "endLine": 79,
+        "state": "complete",
+        "name": "InsufficientFunds.InsufficientFunds",
+        "header": "InsufficientFunds(int need) : runtime_error(\"saldo kurang \"…",
+        "params": [
+          "need"
+        ]
+      },
+      {
+        "id": "F16",
+        "kind": "func",
+        "line": 82,
+        "endLine": 85,
+        "state": "complete",
+        "name": "withdraw",
+        "header": "void withdraw(int& balance, int amount)",
+        "params": [
+          "balance",
+          "amount"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 83,
+            "text": "if (amount > balance)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 83,
+                "text": "throw InsufficientFunds(amount - balance);"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 84,
+            "text": "balance -= amount;"
+          }
+        ],
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 83,
+        "endLine": 83,
+        "state": "complete",
+        "header": "if (amount > balance)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "amount > balance",
+            "line": 83,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 83,
+                "text": "throw InsufficientFunds(amount - balance);"
+              }
+            ]
+          }
+        ],
+        "parent": "F16"
+      },
+      {
+        "id": "F17",
+        "kind": "func",
+        "line": 87,
+        "endLine": 90,
+        "state": "complete",
+        "name": "counter",
+        "header": "int counter()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 88,
+            "text": "static int calls = 0;"
+          },
+          {
+            "kind": "return",
+            "line": 89,
+            "text": "return ++calls;"
+          }
+        ]
+      },
+      {
+        "id": "F18",
+        "kind": "func",
+        "line": 92,
+        "endLine": 186,
+        "state": "complete",
+        "name": "main",
+        "header": "int main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 93,
+            "text": "vector<Shape*> shapes = {new Circle(1.5), new Rect(2, 3)};"
+          },
+          {
+            "kind": "loop",
+            "line": 94,
+            "endLine": 96,
+            "ref": "L1"
+          },
+          {
+            "kind": "stmt",
+            "line": 97,
+            "text": "cout << \"jumlah bentuk: \" << Shape::count << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 99,
+            "text": "Point a{1, 2}, b{3, 4};"
+          },
+          {
+            "kind": "stmt",
+            "line": 100,
+            "text": "Point c = a + b;"
+          },
+          {
+            "kind": "stmt",
+            "line": 101,
+            "text": "cout << c << \" \" << (a < b) << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 102,
+            "text": "vector<Point> pts = {{3, 1}, {1, 5}, {1, 2}};"
+          },
+          {
+            "kind": "stmt",
+            "line": 103,
+            "text": "sort(pts.begin(), pts.end());"
+          },
+          {
+            "kind": "loop",
+            "line": 104,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 105,
+            "text": "cout << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 107,
+            "text": "cout << maxOf(3, 7) << \" \" << maxOf(2.5, 1.5) << \" \" << max…"
+          },
+          {
+            "kind": "stmt",
+            "line": 108,
+            "text": "Box<int> bi(42);"
+          },
+          {
+            "kind": "stmt",
+            "line": 109,
+            "text": "Box<string> bs(\"halo\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 110,
+            "text": "cout << bi.get() << \" \" << bs.get() << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 112,
+            "text": "vector<int> nums = {5, 2, 8, 1, 9, 3};"
+          },
+          {
+            "kind": "stmt",
+            "line": 113,
+            "text": "sort(nums.begin(), nums.end(), [](int x, int y) { return x …"
+          },
+          {
+            "kind": "stmt",
+            "line": 114,
+            "text": "cout << \"urut turun:\";"
+          },
+          {
+            "kind": "loop",
+            "line": 115,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 116,
+            "text": "cout << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 117,
+            "text": "int total = accumulate(nums.begin(), nums.end(), 0);"
+          },
+          {
+            "kind": "stmt",
+            "line": 118,
+            "endLine": 119,
+            "text": "cout << \"total \" << total << \" max \" << *max_element(nums.b…"
+          },
+          {
+            "kind": "stmt",
+            "line": 120,
+            "text": "reverse(nums.begin(), nums.end());"
+          },
+          {
+            "kind": "stmt",
+            "line": 121,
+            "text": "nums.push_back(10);"
+          },
+          {
+            "kind": "stmt",
+            "line": 122,
+            "text": "nums.erase(nums.begin());"
+          },
+          {
+            "kind": "stmt",
+            "line": 123,
+            "text": "cout << nums.size() << \" \" << nums.front() << \" \" << nums.b…"
+          },
+          {
+            "kind": "stmt",
+            "line": 125,
+            "text": "map<string, int> freq;"
+          },
+          {
+            "kind": "stmt",
+            "line": 126,
+            "text": "string words[] = {\"apel\", \"jeruk\", \"apel\", \"mangga\", \"apel\"…"
+          },
+          {
+            "kind": "loop",
+            "line": 127,
+            "ref": "L4"
+          },
+          {
+            "kind": "loop",
+            "line": 128,
+            "ref": "L5"
+          },
+          {
+            "kind": "stmt",
+            "line": 129,
+            "text": "cout << freq.count(\"pisang\") << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 130,
+            "text": "set<int> uniq = {3, 1, 3, 2, 1};"
+          },
+          {
+            "kind": "stmt",
+            "line": 131,
+            "text": "cout << uniq.size() << \" \" << *uniq.begin() << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 133,
+            "text": "stack<int> st;"
+          },
+          {
+            "kind": "stmt",
+            "line": 134,
+            "text": "queue<string> q;"
+          },
+          {
+            "kind": "loop",
+            "line": 135,
+            "endLine": 138,
+            "ref": "L6"
+          },
+          {
+            "kind": "stmt",
+            "line": 139,
+            "text": "cout << st.top() << \" \" << q.front() << \" \";"
+          },
+          {
+            "kind": "stmt",
+            "line": 140,
+            "text": "st.pop();"
+          },
+          {
+            "kind": "stmt",
+            "line": 141,
+            "text": "q.pop();"
+          },
+          {
+            "kind": "stmt",
+            "line": 142,
+            "text": "cout << st.top() << \" \" << q.front() << \" \" << st.size() <<…"
+          },
+          {
+            "kind": "stmt",
+            "line": 143,
+            "text": "priority_queue<int> pq;"
+          },
+          {
+            "kind": "loop",
+            "line": 144,
+            "ref": "L7"
+          },
+          {
+            "kind": "stmt",
+            "line": 145,
+            "text": "cout << \"pq top \" << pq.top() << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 147,
+            "text": "Node* head = new Node(1);"
+          },
+          {
+            "kind": "stmt",
+            "line": 148,
+            "text": "head->next = new Node(2);"
+          },
+          {
+            "kind": "stmt",
+            "line": 149,
+            "text": "head->next->next = new Node(3);"
+          },
+          {
+            "kind": "stmt",
+            "line": 150,
+            "text": "int sum = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 151,
+            "ref": "L8"
+          },
+          {
+            "kind": "stmt",
+            "line": 152,
+            "text": "cout << \"linked list sum \" << sum << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 154,
+            "text": "int balance = 100;"
+          },
+          {
+            "kind": "stmt",
+            "line": 155,
+            "endLine": 160,
+            "text": "try { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 161,
+            "text": "cout << \"saldo \" << balance << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 162,
+            "endLine": 167,
+            "text": "try { …"
+          },
+          {
+            "kind": "stmt",
+            "line": 169,
+            "text": "string s = \"Belajar C++\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 170,
+            "text": "s += \" itu seru\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 171,
+            "text": "cout << s.size() << \" \" << s.substr(8, 3) << \" \" << s.find(…"
+          },
+          {
+            "kind": "stmt",
+            "line": 172,
+            "text": "string rev = s;"
+          },
+          {
+            "kind": "loop",
+            "line": 173,
+            "ref": "L9"
+          },
+          {
+            "kind": "stmt",
+            "line": 174,
+            "text": "cout << rev << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 176,
+            "text": "counter();"
+          },
+          {
+            "kind": "stmt",
+            "line": 177,
+            "text": "counter();"
+          },
+          {
+            "kind": "stmt",
+            "line": 178,
+            "text": "cout << \"counter \" << counter() << endl;"
+          },
+          {
+            "kind": "stmt",
+            "line": 179,
+            "text": "double avg = static_cast<double>(total) / nums.size();"
+          },
+          {
+            "kind": "stmt",
+            "line": 180,
+            "text": "cout << fixed << setprecision(2) << avg << \" \" << setw(8) <…"
+          },
+          {
+            "kind": "stmt",
+            "line": 181,
+            "text": "char grade = 'A';"
+          },
+          {
+            "kind": "stmt",
+            "line": 182,
+            "text": "grade += 2;"
+          },
+          {
+            "kind": "stmt",
+            "line": 183,
+            "text": "cout << grade << \" \" << int(grade) << \" \" << (7 / 2) << \" \"…"
+          },
+          {
+            "kind": "loop",
+            "line": 184,
+            "ref": "L10"
+          },
+          {
+            "kind": "return",
+            "line": 185,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "L1",
+          "L2",
+          "F19",
+          "L3",
+          "L4",
+          "L5",
+          "L6",
+          "L7",
+          "L8",
+          "L9",
+          "L10"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 94,
+        "endLine": 96,
+        "state": "complete",
+        "header": "for (Shape* s : shapes)",
+        "parent": "F18"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 104,
+        "endLine": 104,
+        "state": "complete",
+        "header": "for (const auto& p : pts)",
+        "parent": "F18"
+      },
+      {
+        "id": "F19",
+        "kind": "func",
+        "line": 113,
+        "endLine": 113,
+        "state": "complete",
+        "name": "(anonim)",
+        "header": "[](int x, int y)",
+        "params": [
+          "x",
+          "y"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 113,
+            "text": "return x > y;"
+          }
+        ],
+        "parent": "F18"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 115,
+        "endLine": 115,
+        "state": "complete",
+        "header": "for (int n : nums)",
+        "parent": "F18"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 127,
+        "endLine": 127,
+        "state": "complete",
+        "header": "for (const string& w : words)",
+        "parent": "F18"
+      },
+      {
+        "id": "L5",
+        "kind": "loop",
+        "line": 128,
+        "endLine": 128,
+        "state": "complete",
+        "header": "for (const auto& [word, n] : freq)",
+        "parent": "F18"
+      },
+      {
+        "id": "L6",
+        "kind": "loop",
+        "line": 135,
+        "endLine": 138,
+        "state": "complete",
+        "header": "for (int i = 1; i <= 3; i++)",
+        "parent": "F18"
+      },
+      {
+        "id": "L7",
+        "kind": "loop",
+        "line": 144,
+        "endLine": 144,
+        "state": "complete",
+        "header": "for (int x : {4, 9, 2})",
+        "parent": "F18"
+      },
+      {
+        "id": "L8",
+        "kind": "loop",
+        "line": 151,
+        "endLine": 151,
+        "state": "complete",
+        "header": "for (Node* cur = head; cur != nullptr; cur = cur->next)",
+        "parent": "F18"
+      },
+      {
+        "id": "L9",
+        "kind": "loop",
+        "line": 173,
+        "endLine": 173,
+        "state": "complete",
+        "header": "for (size_t i = 0, j = rev.size() - 1; i < j; i++, j--)",
+        "parent": "F18"
+      },
+      {
+        "id": "L10",
+        "kind": "loop",
+        "line": 184,
+        "endLine": 184,
+        "state": "complete",
+        "header": "for (Shape* s : shapes)",
+        "parent": "F18"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "range-slice",
+        "line": 94,
+        "endLine": 96,
+        "state": "complete",
+        "header": {
+          "text": "for (Shape* s : shapes)",
+          "value": "s",
+          "define": true,
+          "range": "shapes"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 95,
+            "text": "cout << s->describe() << endl;"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "range-slice",
+        "line": 104,
+        "endLine": 104,
+        "state": "complete",
+        "header": {
+          "text": "for (const auto& p : pts)",
+          "value": "p",
+          "define": true,
+          "range": "pts"
+        },
+        "vars": [
+          "p"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 104,
+            "text": "cout << p << \" \";"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "range-slice",
+        "line": 115,
+        "endLine": 115,
+        "state": "complete",
+        "header": {
+          "text": "for (int n : nums)",
+          "value": "n",
+          "define": true,
+          "range": "nums"
+        },
+        "vars": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 115,
+            "text": "cout << \" \" << n;"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "range-slice",
+        "line": 127,
+        "endLine": 127,
+        "state": "complete",
+        "header": {
+          "text": "for (const string& w : words)",
+          "value": "w",
+          "define": true,
+          "range": "words"
+        },
+        "vars": [
+          "w"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 127,
+            "text": "freq[w]++;"
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "kind": "range-slice",
+        "line": 128,
+        "endLine": 128,
+        "state": "complete",
+        "header": {
+          "text": "for (const auto& [word, n] : freq)",
+          "value": "[word, n]",
+          "define": true,
+          "range": "freq"
+        },
+        "vars": [
+          "word",
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 128,
+            "text": "cout << word << \":\" << n << \" \";"
+          }
+        ]
+      },
+      {
+        "id": "L6",
+        "kind": "for3",
+        "line": 135,
+        "endLine": 138,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 1; i <= 3; i++)",
+          "init": "int i = 1",
+          "cond": "i <= 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 136,
+            "text": "st.push(i * 10);"
+          },
+          {
+            "kind": "stmt",
+            "line": 137,
+            "text": "q.push(\"q\" + to_string(i));"
+          }
+        ]
+      },
+      {
+        "id": "L7",
+        "kind": "range-slice",
+        "line": 144,
+        "endLine": 144,
+        "state": "complete",
+        "header": {
+          "text": "for (int x : {4, 9, 2})",
+          "value": "x",
+          "define": true,
+          "range": "{4, 9, 2}"
+        },
+        "vars": [
+          "x"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 144,
+            "text": "pq.push(x);"
+          }
+        ]
+      },
+      {
+        "id": "L8",
+        "kind": "for3",
+        "line": 151,
+        "endLine": 151,
+        "state": "complete",
+        "header": {
+          "text": "for (Node* cur = head; cur != nullptr; cur = cur->next)",
+          "init": "Node* cur = head",
+          "cond": "cur != nullptr",
+          "post": "cur = cur->next"
+        },
+        "vars": [
+          "cur"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 151,
+            "text": "sum += cur->data;"
+          }
+        ]
+      },
+      {
+        "id": "L9",
+        "kind": "for3",
+        "line": 173,
+        "endLine": 173,
+        "state": "complete",
+        "header": {
+          "text": "for (size_t i = 0, j = rev.size() - 1; i < j; i++, j--)",
+          "init": "size_t i = 0, j = rev.size() - 1",
+          "cond": "i < j",
+          "post": "i++, j--"
+        },
+        "vars": [
+          "i",
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 173,
+            "text": "swap(rev[i], rev[j]);"
+          }
+        ]
+      },
+      {
+        "id": "L10",
+        "kind": "range-slice",
+        "line": 184,
+        "endLine": 184,
+        "state": "complete",
+        "header": {
+          "text": "for (Shape* s : shapes)",
+          "value": "s",
+          "define": true,
+          "range": "shapes"
+        },
+        "vars": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 184,
+            "text": "delete s;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

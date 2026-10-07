@@ -119,6 +119,8 @@ func (it *interp) run(node ir.Node) (structural string) {
 			return
 		}
 		switch x := r.(type) {
+		case progExit:
+			return
 		case thrown:
 			msg := x.msg
 			if msg == "" {
@@ -275,9 +277,36 @@ func (it *interp) declareC(body []ir.Stmt, e *Env) {
 		case *ir.Simple:
 			it.simple(x, e)
 		case *ir.VarDecl:
+			if cls, name, ok := it.outOfClassStatic(x); ok {
+				d := *x
+				d.Specs = []*ir.VarSpec{{S: x.Specs[0].S, Name: name, Type: x.Specs[0].Type, Init: x.Specs[0].Init}}
+				tmp := newEnv(e, false)
+				it.varDecl(&d, tmp)
+				cls.statics.set(strV(name), tmp.vars[name].get())
+				continue
+			}
 			it.varDecl(x, e)
 		}
 	}
+}
+
+// outOfClassStatic mengenali "int Kelas::nama = nilai;" (definisi anggota statis C++).
+func (it *interp) outOfClassStatic(d *ir.VarDecl) (*Class, string, bool) {
+	if it.lang != "cpp" || len(d.Specs) != 1 {
+		return nil, "", false
+	}
+	text := it.text(d.Specs[0])
+	before, _, _ := strings.Cut(text, "=")
+	before = strings.TrimSpace(before)
+	if i := strings.LastIndex(before, "::"); i > 0 {
+		fields := strings.Fields(before[:i])
+		if len(fields) > 0 {
+			if c := it.classes[fields[len(fields)-1]]; c != nil {
+				return c, d.Specs[0].Name, true
+			}
+		}
+	}
+	return nil, "", false
 }
 
 func (it *interp) runTasks() {
@@ -439,6 +468,10 @@ func semFor(language string) (semantics, bool) {
 		return &pySem{}, true
 	case "php":
 		return &phpSem{}, true
+	case "cpp":
+		return &cSem{cpp: true}, true
+	case "c":
+		return &cSem{}, true
 	}
 	return nil, false
 }
@@ -468,6 +501,7 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 		defer func() {
 			if r := recover(); r != nil {
 				switch x := r.(type) {
+				case progExit:
 				case thrown:
 					err = "exception: " + x.msg
 				case abort:

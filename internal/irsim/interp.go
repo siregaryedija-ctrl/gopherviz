@@ -1141,6 +1141,9 @@ func (it *interp) currentException(e *Env) *Value { return it.handling }
 
 // catchMatches: tanpa tipe = tangkap semua; selain itu cocokkan kelas exception.
 func (it *interp) catchMatches(c *ir.Catch, v Value, e *Env) bool {
+	if v.k == kObj && v.o.class.native == "crash" {
+		return false // crash C/C++ (mis. bagi nol) tidak bisa ditangkap
+	}
 	if len(c.Types) == 0 {
 		return true
 	}

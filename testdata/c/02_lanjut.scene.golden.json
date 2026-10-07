@@ -1,0 +1,912 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "c",
+    "file": "02_lanjut.c",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 16,
+        "endLine": 20,
+        "state": "complete",
+        "name": "tukar",
+        "header": "void tukar(int *a, int *b)",
+        "params": [
+          "a",
+          "b"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "int t = *a;"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "*a = *b;"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "*b = t;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 22,
+        "endLine": 30,
+        "state": "complete",
+        "name": "urutkan",
+        "header": "void urutkan(int arr[], int n)",
+        "params": [
+          "arr",
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 23,
+            "endLine": 29,
+            "ref": "L1"
+          }
+        ],
+        "children": [
+          "L1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 23,
+        "endLine": 29,
+        "state": "complete",
+        "header": "for (int i = 0; i < n - 1; i++)",
+        "parent": "F2",
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 24,
+        "endLine": 28,
+        "state": "complete",
+        "header": "for (int j = 0; j < n - 1 - i; j++)",
+        "parent": "L1",
+        "children": [
+          "I1"
+        ]
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 25,
+        "endLine": 27,
+        "state": "complete",
+        "header": "if (arr[j] > arr[j + 1])",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "arr[j] > arr[j + 1]",
+            "line": 25,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 26,
+                "text": "tukar(&arr[j], &arr[j + 1]);"
+              }
+            ]
+          }
+        ],
+        "parent": "L2"
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 32,
+        "endLine": 34,
+        "state": "complete",
+        "name": "faktorial",
+        "header": "long faktorial(int n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 33,
+            "text": "return n <= 1 ? 1 : n * faktorial(n - 1);"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 36,
+        "endLine": 41,
+        "state": "complete",
+        "name": "fib",
+        "header": "int fib(int n)",
+        "params": [
+          "n"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 37,
+            "text": "static int memo[50];"
+          },
+          {
+            "kind": "if",
+            "line": 38,
+            "text": "if (n < 2)",
+            "ref": "I2",
+            "then": [
+              {
+                "kind": "return",
+                "line": 38,
+                "text": "return n;"
+              }
+            ]
+          },
+          {
+            "kind": "if",
+            "line": 39,
+            "text": "if (memo[n])",
+            "ref": "I3",
+            "then": [
+              {
+                "kind": "return",
+                "line": 39,
+                "text": "return memo[n];"
+              }
+            ]
+          },
+          {
+            "kind": "return",
+            "line": 40,
+            "text": "return memo[n] = fib(n - 1) + fib(n - 2);"
+          }
+        ],
+        "children": [
+          "I2",
+          "I3"
+        ]
+      },
+      {
+        "id": "I2",
+        "kind": "if",
+        "line": 38,
+        "endLine": 38,
+        "state": "complete",
+        "header": "if (n < 2)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "n < 2",
+            "line": 38,
+            "body": [
+              {
+                "kind": "return",
+                "line": 38,
+                "text": "return n;"
+              }
+            ]
+          }
+        ],
+        "parent": "F4"
+      },
+      {
+        "id": "I3",
+        "kind": "if",
+        "line": 39,
+        "endLine": 39,
+        "state": "complete",
+        "header": "if (memo[n])",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "memo[n]",
+            "line": 39,
+            "body": [
+              {
+                "kind": "return",
+                "line": 39,
+                "text": "return memo[n];"
+              }
+            ]
+          }
+        ],
+        "parent": "F4"
+      },
+      {
+        "id": "F5",
+        "kind": "func",
+        "line": 43,
+        "endLine": 47,
+        "state": "complete",
+        "name": "kapital",
+        "header": "void kapital(char *s)",
+        "params": [
+          "s"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 44,
+            "endLine": 46,
+            "ref": "L3"
+          }
+        ],
+        "children": [
+          "L3"
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 44,
+        "endLine": 46,
+        "state": "complete",
+        "header": "for (int i = 0; s[i] != '\\0'; i++)",
+        "parent": "F5"
+      },
+      {
+        "id": "F6",
+        "kind": "func",
+        "line": 49,
+        "endLine": 53,
+        "state": "complete",
+        "name": "hitung",
+        "header": "int hitung(void)",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 50,
+            "text": "static int n = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 51,
+            "text": "n++;"
+          },
+          {
+            "kind": "return",
+            "line": 52,
+            "text": "return n;"
+          }
+        ]
+      },
+      {
+        "id": "F7",
+        "kind": "func",
+        "line": 55,
+        "endLine": 122,
+        "state": "complete",
+        "name": "main",
+        "header": "int main(void)",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 56,
+            "text": "int data[MAX] = {42, 7, 19, 3, 25};"
+          },
+          {
+            "kind": "stmt",
+            "line": 57,
+            "text": "urutkan(data, MAX);"
+          },
+          {
+            "kind": "loop",
+            "line": 58,
+            "endLine": 60,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 62,
+            "text": "Mahasiswa kelas[3] = {{\"Ani\", 85}, {\"Budi\", 72}, {\"Cici\", 9…"
+          },
+          {
+            "kind": "stmt",
+            "line": 63,
+            "text": "Mahasiswa *terbaik = &kelas[0];"
+          },
+          {
+            "kind": "loop",
+            "line": 64,
+            "endLine": 68,
+            "ref": "L5"
+          },
+          {
+            "kind": "stmt",
+            "line": 69,
+            "text": "printf(\"terbaik: %s (%d)\\n\", terbaik->nama, terbaik->nilai);"
+          },
+          {
+            "kind": "stmt",
+            "line": 70,
+            "text": "strcpy(kelas[1].nama, \"Bambang\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 71,
+            "text": "printf(\"%s %zu %d\\n\", kelas[1].nama, strlen(kelas[1].nama),…"
+          },
+          {
+            "kind": "stmt",
+            "line": 73,
+            "text": "char kata[30] = \"halo dunia\";"
+          },
+          {
+            "kind": "stmt",
+            "line": 74,
+            "text": "kapital(kata);"
+          },
+          {
+            "kind": "stmt",
+            "line": 75,
+            "text": "strcat(kata, \"!\");"
+          },
+          {
+            "kind": "stmt",
+            "line": 76,
+            "text": "printf(\"%s (%d huruf)\\n\", kata, (int)strlen(kata));"
+          },
+          {
+            "kind": "stmt",
+            "line": 78,
+            "text": "int n = 6;"
+          },
+          {
+            "kind": "stmt",
+            "line": 79,
+            "text": "int *dinamis = malloc(n * sizeof(int));"
+          },
+          {
+            "kind": "loop",
+            "line": 80,
+            "endLine": 82,
+            "ref": "L6"
+          },
+          {
+            "kind": "stmt",
+            "line": 83,
+            "text": "int *p = dinamis;"
+          },
+          {
+            "kind": "stmt",
+            "line": 84,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 85,
+            "endLine": 88,
+            "ref": "L7"
+          },
+          {
+            "kind": "stmt",
+            "line": 89,
+            "text": "printf(\"total kuadrat %d, elemen ke-3 %d\\n\", total, *(dinam…"
+          },
+          {
+            "kind": "stmt",
+            "line": 90,
+            "text": "free(dinamis);"
+          },
+          {
+            "kind": "stmt",
+            "line": 92,
+            "text": "printf(\"%ld %d %d\\n\", faktorial(10), fib(30), hitung() + hi…"
+          },
+          {
+            "kind": "stmt",
+            "line": 93,
+            "text": "Warna w = HIJAU;"
+          },
+          {
+            "kind": "switch",
+            "line": 94,
+            "endLine": 103,
+            "text": "switch (w)",
+            "ref": "S1"
+          },
+          {
+            "kind": "stmt",
+            "line": 104,
+            "text": "unsigned int flags = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 105,
+            "text": "flags |= 1 << 2;"
+          },
+          {
+            "kind": "stmt",
+            "line": 106,
+            "text": "flags |= 1 << 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 107,
+            "text": "printf(\"flags=%u bit2=%d neg=%d hex=%x oct=%o\\n\", flags, (f…"
+          },
+          {
+            "kind": "stmt",
+            "line": 108,
+            "text": "int matriks[2][3] = {{1, 2, 3}, {4, 5, 6}};"
+          },
+          {
+            "kind": "stmt",
+            "line": 109,
+            "text": "int jumlah = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 110,
+            "endLine": 112,
+            "ref": "L8"
+          },
+          {
+            "kind": "stmt",
+            "line": 113,
+            "text": "double rata = jumlah / 6.0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 114,
+            "text": "printf(\"jumlah %d rata %.3f %5.1f|%-6s|%06.2f\\n\", jumlah, r…"
+          },
+          {
+            "kind": "stmt",
+            "line": 115,
+            "text": "int x = 10;"
+          },
+          {
+            "kind": "loop",
+            "line": 116,
+            "endLine": 118,
+            "ref": "L10"
+          },
+          {
+            "kind": "stmt",
+            "line": 119,
+            "text": "char c = 'a';"
+          },
+          {
+            "kind": "stmt",
+            "line": 120,
+            "text": "printf(\"x=%d c=%c next=%c ascii=%d %d %d\\n\", x, c, c + 1, c…"
+          },
+          {
+            "kind": "return",
+            "line": 121,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "L4",
+          "L5",
+          "L6",
+          "L7",
+          "S1",
+          "L8",
+          "L10"
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 58,
+        "endLine": 60,
+        "state": "complete",
+        "header": "for (int i = 0; i < MAX; i++)",
+        "parent": "F7"
+      },
+      {
+        "id": "L5",
+        "kind": "loop",
+        "line": 64,
+        "endLine": 68,
+        "state": "complete",
+        "header": "for (int i = 1; i < 3; i++)",
+        "parent": "F7",
+        "children": [
+          "I4"
+        ]
+      },
+      {
+        "id": "I4",
+        "kind": "if",
+        "line": 65,
+        "endLine": 67,
+        "state": "complete",
+        "header": "if (kelas[i].nilai > terbaik->nilai)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "kelas[i].nilai > terbaik->nilai",
+            "line": 65,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 66,
+                "text": "terbaik = &kelas[i];"
+              }
+            ]
+          }
+        ],
+        "parent": "L5"
+      },
+      {
+        "id": "L6",
+        "kind": "loop",
+        "line": 80,
+        "endLine": 82,
+        "state": "complete",
+        "header": "for (int i = 0; i < n; i++)",
+        "parent": "F7"
+      },
+      {
+        "id": "L7",
+        "kind": "loop",
+        "line": 85,
+        "endLine": 88,
+        "state": "complete",
+        "header": "while (p < dinamis + n)",
+        "parent": "F7"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 94,
+        "endLine": 103,
+        "state": "complete",
+        "header": "switch (w)",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "MERAH",
+            "line": 95,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 96,
+                "text": "printf(\"merah\\n\");"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "KUNING",
+            "line": 97,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 98,
+                "text": "printf(\"kuning\\n\");"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "HIJAU",
+            "line": 99,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 100,
+                "text": "printf(\"hijau %d\\n\", w);"
+              }
+            ]
+          },
+          {
+            "kind": "default",
+            "label": "",
+            "line": 101,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 102,
+                "text": "printf(\"selesai\\n\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F7"
+      },
+      {
+        "id": "L8",
+        "kind": "loop",
+        "line": 110,
+        "endLine": 112,
+        "state": "complete",
+        "header": "for (int i = 0; i < 2; i++)",
+        "parent": "F7",
+        "children": [
+          "L9"
+        ]
+      },
+      {
+        "id": "L9",
+        "kind": "loop",
+        "line": 111,
+        "endLine": 112,
+        "state": "complete",
+        "header": "for (int j = 0; j < 3; j++)",
+        "parent": "L8"
+      },
+      {
+        "id": "L10",
+        "kind": "loop",
+        "line": 116,
+        "endLine": 118,
+        "state": "complete",
+        "header": "do … while (x > 0)",
+        "parent": "F7"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "for3",
+        "line": 23,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < n - 1; i++)",
+          "init": "int i = 0",
+          "cond": "i < n - 1",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 24,
+            "endLine": 28,
+            "ref": "L2"
+          }
+        ],
+        "children": [
+          "L2"
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "for3",
+        "line": 24,
+        "endLine": 28,
+        "state": "complete",
+        "header": {
+          "text": "for (int j = 0; j < n - 1 - i; j++)",
+          "init": "int j = 0",
+          "cond": "j < n - 1 - i",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 25,
+            "endLine": 27,
+            "text": "if (arr[j] > arr[j + 1])",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 26,
+                "text": "tukar(&arr[j], &arr[j + 1]);"
+              }
+            ]
+          }
+        ],
+        "parent": "L1"
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 44,
+        "endLine": 46,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; s[i] != '\\0'; i++)",
+          "init": "int i = 0",
+          "cond": "s[i] != '\\0'",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 45,
+            "text": "s[i] = toupper(s[i]);"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "for3",
+        "line": 58,
+        "endLine": 60,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < MAX; i++)",
+          "init": "int i = 0",
+          "cond": "i < MAX",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 59,
+            "text": "printf(\"%d%s\", data[i], i < MAX - 1 ? \", \" : \"\\n\");"
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "kind": "for3",
+        "line": 64,
+        "endLine": 68,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 1; i < 3; i++)",
+          "init": "int i = 1",
+          "cond": "i < 3",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "if",
+            "line": 65,
+            "endLine": 67,
+            "text": "if (kelas[i].nilai > terbaik->nilai)",
+            "ref": "I4",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 66,
+                "text": "terbaik = &kelas[i];"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "L6",
+        "kind": "for3",
+        "line": 80,
+        "endLine": 82,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < n; i++)",
+          "init": "int i = 0",
+          "cond": "i < n",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 81,
+            "text": "dinamis[i] = i * i;"
+          }
+        ]
+      },
+      {
+        "id": "L7",
+        "kind": "cond",
+        "line": 85,
+        "endLine": 88,
+        "state": "complete",
+        "header": {
+          "text": "while (p < dinamis + n)",
+          "cond": "p < dinamis + n"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 86,
+            "text": "total += *p;"
+          },
+          {
+            "kind": "stmt",
+            "line": 87,
+            "text": "p++;"
+          }
+        ]
+      },
+      {
+        "id": "L8",
+        "kind": "for3",
+        "line": 110,
+        "endLine": 112,
+        "state": "complete",
+        "header": {
+          "text": "for (int i = 0; i < 2; i++)",
+          "init": "int i = 0",
+          "cond": "i < 2",
+          "post": "i++"
+        },
+        "vars": [
+          "i"
+        ],
+        "body": [
+          {
+            "kind": "loop",
+            "line": 111,
+            "endLine": 112,
+            "ref": "L9"
+          }
+        ],
+        "children": [
+          "L9"
+        ]
+      },
+      {
+        "id": "L9",
+        "kind": "for3",
+        "line": 111,
+        "endLine": 112,
+        "state": "complete",
+        "header": {
+          "text": "for (int j = 0; j < 3; j++)",
+          "init": "int j = 0",
+          "cond": "j < 3",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 112,
+            "text": "jumlah += matriks[i][j];"
+          }
+        ],
+        "parent": "L8"
+      },
+      {
+        "id": "L10",
+        "kind": "do-while",
+        "line": 116,
+        "endLine": 118,
+        "state": "complete",
+        "header": {
+          "text": "do … while (x > 0)",
+          "cond": "x > 0"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 117,
+            "text": "x -= 3;"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

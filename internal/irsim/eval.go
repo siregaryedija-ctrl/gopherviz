@@ -105,7 +105,7 @@ func (it *interp) lookupName(id *ir.Ident, e *Env) Value {
 	}
 	if it.lang == "c" || it.lang == "cpp" {
 		if fs := it.funcs[name]; len(fs) > 0 {
-			return Value{k: kFunc, fn: &Func{name: name, decl: fs[0], env: it.globals}}
+			return Value{k: kFunc, fn: &Func{name: name, decl: fs[0], env: it.globals, overloads: fs}}
 		}
 	}
 	if it.lang == "php" && !strings.HasPrefix(name, "$") {
@@ -305,6 +305,19 @@ func (it *interp) varDecl(n *ir.VarDecl, e *Env) {
 		}
 	default:
 		for _, s := range n.Specs {
+			if strings.HasPrefix(n.Kind, "static ") && !e.global && e.fnEnv() != it.globals {
+				// variabel lokal static: diinisialisasi sekali, nilainya bertahan antar panggilan
+				c, ok := it.statics[s]
+				if !ok {
+					tmp := newEnv(it.globals, false)
+					it.typedDecl(n, s, tmp)
+					c = tmp.vars[s.Name]
+					it.statics[s] = c
+				}
+				e.vars[s.Name] = c
+				e.order = append(e.order, s.Name)
+				continue
+			}
 			it.typedDecl(n, s, e)
 		}
 	}
@@ -356,11 +369,11 @@ func (it *interp) typedDecl(n *ir.VarDecl, s *ir.VarSpec, e *Env) {
 	default:
 		v = it.zeroOfType(typ, s)
 	}
-	if typ != "auto" && typ != "var" && !strings.HasSuffix(typ, "auto") {
+	if typ != "auto" && typ != "var" && !strings.HasSuffix(typ, "auto") && len(s.Dims) == 0 {
 		v = it.sem.convert(it, v, typ)
 	}
 	c := e.define(s.Name, v)
-	if typ != "auto" && typ != "var" {
+	if typ != "auto" && typ != "var" && len(s.Dims) == 0 {
 		c.typ = typ
 	}
 	c.konst = konst
@@ -460,6 +473,9 @@ func (it *interp) bindTarget(t ir.Expr, e *Env, v Value, declare bool) {
 				it.structural(fmt.Sprintf("dereferensi di baris %d bukan pointer", it.line(x)))
 			}
 			p.p.store(it.convertPtr(p.p, v))
+			if p.p.list != nil && it.rec.coll != "" {
+				it.rec.dirty = true // elemen koleksi berubah lewat pointer (mis. tukar(&a[i], &a[j]))
+			}
 			return
 		}
 		it.structural(fmt.Sprintf("target assignment di baris %d belum disimulasikan", it.line(t)))
@@ -710,6 +726,13 @@ func (it *interp) addrOf(x ir.Expr, e *Env) *Ptr {
 	case *ir.Index:
 		base := it.eval(t.X, e)
 		idx := it.eval(t.I, e)
+		if base.k == kStr && isNum(idx) {
+			if id, ok := t.X.(*ir.Ident); ok {
+				if c := it.varCell(e, id.Name); c != nil {
+					return &Ptr{cell: c, idx: int(toF(idx)), char: true, name: it.text(t)}
+				}
+			}
+		}
 		if base.k == kList && isNum(idx) {
 			return &Ptr{list: base.l, idx: int(toF(idx)), name: it.text(t)}
 		}

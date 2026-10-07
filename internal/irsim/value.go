@@ -84,22 +84,25 @@ type Ptr struct {
 	idx   int
 	obj   *Object // pointer ke field objek/struct (&p.x)
 	field string
-	dict  *Dict // referensi ke entri array PHP (foreach dengan &)
+	dict  *Dict // referensi ke entri array PHP (foreach dengan &), atau iterator map C++
 	key   Value
+	iter  bool   // iterator map/set C++: idx = posisi entri
+	char  bool   // referensi ke karakter ke-idx dari string di cell
 	name  string // nama variabel yang ditunjuk (untuk tampilan)
 }
 
 // Func adalah fungsi user (decl) atau bawaan (builtin).
 type Func struct {
-	name     string
-	decl     *Fn
-	env      *Env
-	this     *Value // this yang terikat (method terikat / arrow function)
-	class    *Class // kelas pemilik (untuk super)
-	builtin  func(it *interp, this Value, args []Value, at nodeRef) Value
-	static   bool
-	defaults map[int]Value    // Python: nilai default dievaluasi sekali saat def
-	captured map[string]Value // PHP: variabel dari use (...) disalin saat closure dibuat
+	name      string
+	decl      *Fn
+	env       *Env
+	this      *Value // this yang terikat (method terikat / arrow function)
+	class     *Class // kelas pemilik (untuk super)
+	builtin   func(it *interp, this Value, args []Value, at nodeRef) Value
+	static    bool
+	defaults  map[int]Value    // Python: nilai default dievaluasi sekali saat def
+	captured  map[string]Value // PHP: variabel dari use (...) disalin saat closure dibuat
+	overloads []*Fn            // C++/Java: kandidat overload; dipilih saat dipanggil
 }
 
 // Class adalah kelas user atau bawaan.
@@ -122,9 +125,10 @@ type Class struct {
 }
 
 type fieldInit struct {
-	name string
-	typ  string
-	init func(it *interp, this Value) Value
+	name  string
+	typ   string
+	array bool // field array (char nama[20]): diisi elemen demi elemen
+	init  func(it *interp, this Value) Value
 }
 
 // ---------- konstruktor ----------

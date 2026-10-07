@@ -20,7 +20,8 @@ func builtinTypes(lang string) map[string]bool {
 			"int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t")
 		if lang == "cpp" {
 			add("auto string vector map unordered_map set unordered_set multimap multiset pair tuple list deque " +
-				"queue stack priority_queue array optional function string_view ostream istream iostream char16_t char32_t std")
+				"queue stack priority_queue array optional function string_view ostream istream iostream char16_t char32_t std " +
+				"ifstream ofstream stringstream exception runtime_error")
 		}
 	case "java":
 		add("int long short byte char boolean float double void var String Integer Long Short Byte Character " +
@@ -174,7 +175,7 @@ func isWordAfterQual(p *parser) bool {
 		return false
 	}
 	switch n.text {
-	case "=", ";", ",", "[", ")", ":":
+	case "=", ";", ",", "[", ")", ":", "(":
 		return true
 	}
 	return false
@@ -536,6 +537,7 @@ func (p *parser) classDecl(start ir.Pos, mods []string) *ir.Class {
 	c := &ir.Class{Kind: p.next().text}
 	if c.Kind == "enum" && (p.is("class") || p.is("struct")) {
 		p.next()
+		c.Kind = "enum class" // C++ scoped enum: konstanta hanya lewat Nama::X
 	}
 	if p.at(tIdent) && !p.is("extends") && !p.is("implements") {
 		c.Name = p.next().text
@@ -598,7 +600,7 @@ func (p *parser) classBody(c *ir.Class) {
 	prevCls := p.inCls
 	p.inCls = c.Name
 	defer func() { p.inCls = prevCls }()
-	if c.Kind == "enum" {
+	if c.Kind == "enum" || c.Kind == "enum class" {
 		p.enumConstants(c)
 	}
 	for !p.is("}") && !p.at(tEOF) {

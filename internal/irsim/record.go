@@ -39,6 +39,12 @@ func (c *Cell) set(v Value) {
 
 func (p *Ptr) load() Value {
 	switch {
+	case p.char && p.cell != nil:
+		s := p.cell.get().s
+		if p.idx >= 0 && p.idx < len(s) {
+			return typedInt(int64(int8(s[p.idx])), "char")
+		}
+		return typedInt(0, "char")
 	case p.cell != nil:
 		return p.cell.get()
 	case p.list != nil && p.idx >= 0 && p.idx < len(p.list.elems):
@@ -46,6 +52,14 @@ func (p *Ptr) load() Value {
 	case p.obj != nil:
 		v, _ := p.obj.fields.get(strV(p.field))
 		return v
+	case p.dict != nil && p.iter:
+		if p.idx < 0 || p.idx >= len(p.dict.keys) {
+			return unknown("iterator di luar batas (end)")
+		}
+		if p.dict.kind == "set-sorted" || p.dict.kind == "uset" {
+			return p.dict.keys[p.idx]
+		}
+		return Value{k: kList, l: &List{elems: []Value{p.dict.keys[p.idx], p.dict.vals[p.idx]}, kind: "pair"}}
 	case p.dict != nil:
 		v, _ := p.dict.get(p.key)
 		return v
@@ -55,6 +69,12 @@ func (p *Ptr) load() Value {
 
 func (p *Ptr) store(v Value) {
 	switch {
+	case p.char && p.cell != nil:
+		b := []byte(p.cell.get().s)
+		if p.idx >= 0 && p.idx < len(b) {
+			b[p.idx] = byte(intOf(v))
+			p.cell.set(strV(string(b)))
+		}
 	case p.cell != nil:
 		p.cell.set(v)
 	case p.list != nil && p.idx >= 0 && p.idx < len(p.list.elems):
@@ -233,8 +253,12 @@ func (r *recorder) add(s trace.Step, vars map[string]string, items func() ([]str
 	s.Output = r.out.String()
 	r.out.Reset()
 	if r.dirty {
-		s.Items, s.Keys = items()
-		r.dirty = false
+		// bila koleksi tidak terlihat dari cakupan langkah ini (mis. di dalam fungsi lain),
+		// tanda "berubah" disimpan sampai langkah berikutnya yang bisa melihatnya
+		if items, keys := items(); items != nil {
+			s.Items, s.Keys = items, keys
+			r.dirty = false
+		}
 	}
 	r.steps = append(r.steps, s)
 	if len(r.steps) >= r.maxSteps {
