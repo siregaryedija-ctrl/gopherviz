@@ -188,6 +188,8 @@ type Func struct {
 	Async     bool
 	Generator bool
 	Arrow     bool
+	Kind      string   // "get" / "set" untuk getter/setter JS/TS, "" untuk fungsi biasa
+	Decor     []string // dekorator Python: "property", "staticmethod", "classmethod", "x.setter", ...
 	Uses      []string // PHP closure use ($x)
 	Inits     []Expr   // C++: daftar inisialisasi konstruktor ": x(a), y(b)" sebagai Call{Fun: x, Args}
 	Header    Span
@@ -435,6 +437,9 @@ type BadExpr struct {
 // ---------- implementasi interface ----------
 
 func (n *Block) Span() Span    { return n.S }
+func (n *VarSpec) Span() Span  { return n.S }
+func (n *Case) Span() Span     { return n.S }
+func (n *Catch) Span() Span    { return n.S }
 func (n *ExprStmt) Span() Span { return n.S }
 func (n *VarDecl) Span() Span  { return n.S }
 func (n *If) Span() Span       { return n.S }

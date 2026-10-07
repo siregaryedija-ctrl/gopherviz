@@ -904,8 +904,9 @@ func (p *parser) objectLit() ir.Expr {
 		if p.accept("*") {
 			gen = true
 		}
+		accessor := ""
 		if (p.is("get") || p.is("set")) && !p.isAt(1, ":") && !p.isAt(1, "(") && !p.isAt(1, ",") && !p.isAt(1, "}") {
-			p.next() // getter/setter: dibaca sebagai method biasa
+			accessor = p.next().text
 		}
 		kt := p.tok()
 		switch {
@@ -926,7 +927,7 @@ func (p *parser) objectLit() ir.Expr {
 			if p.is("<") {
 				p.skipBalanced()
 			}
-			f := &ir.Func{Async: async, Generator: gen, Params: p.params()}
+			f := &ir.Func{Async: async, Generator: gen, Kind: accessor, Params: p.params()}
 			if id, ok := pr.Key.(*ir.Ident); ok {
 				f.Name = id.Name
 			}

@@ -12,6 +12,7 @@ import (
 
 // Result adalah hasil analisis satu file non-Go: Scene untuk tampilan dan IR untuk simulasi.
 type Result struct {
+	Src         string // teks sumber (untuk simulator)
 	Scene       scene.Scene
 	Diagnostics []scene.Diagnostic
 	File        *ir.File
@@ -21,7 +22,7 @@ type Result struct {
 
 // Analyze mem-parse src lalu membangun Scene v2. Tidak pernah panik.
 func Analyze(language, filename, src string) (res *Result) {
-	res = &Result{Nodes: map[string]ir.Node{}, IDs: map[ir.Node]string{}}
+	res = &Result{Src: src, Nodes: map[string]ir.Node{}, IDs: map[ir.Node]string{}}
 	res.Scene = scene.Scene{Version: scene.Version, Language: language, File: filename, Blocks: []scene.Block{}, Loops: []scene.Loop{}}
 	defer func() {
 		if r := recover(); r != nil {

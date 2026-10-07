@@ -1,0 +1,480 @@
+package irsim
+
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+
+	"gopherviz/internal/ir"
+	"gopherviz/internal/lang"
+	"gopherviz/internal/scene"
+	"gopherviz/internal/trace"
+)
+
+// Options membatasi simulasi (sama dengan sim.Options).
+type Options struct {
+	MaxSteps int
+	MaxIter  int
+	Budget   int
+	Seed     int64
+}
+
+func (o Options) withDefaults() Options {
+	if o.MaxSteps <= 0 {
+		o.MaxSteps = 1000
+	}
+	if o.MaxIter <= 0 {
+		o.MaxIter = 50
+	}
+	if o.Budget <= 0 {
+		o.Budget = 300_000
+	}
+	if o.Seed == 0 {
+		o.Seed = 1
+	}
+	return o
+}
+
+// Supported melaporkan apakah bahasa ini sudah bisa disimulasikan.
+func Supported(language string) bool {
+	_, ok := semFor(language)
+	return ok
+}
+
+// Trace mensimulasikan program dan merekam blok blockID. Tidak pernah panik.
+func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
+	opt = opt.withDefaults()
+	tr = trace.Trace{
+		Version: trace.Version, Language: res.Scene.Language, File: res.Scene.File,
+		Mode: trace.ModeStructural, Steps: []trace.Step{}, Warnings: []string{},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tr.Mode, tr.Steps = trace.ModeStructural, []trace.Step{}
+			tr.Warnings = append([]string{fmt.Sprintf("kesalahan internal simulator: %v", r)}, tr.Warnings...)
+		}
+	}()
+	blk, ok := res.Scene.Block(blockID)
+	if !ok {
+		tr.Warnings = append(tr.Warnings, "blok "+blockID+" tidak ditemukan")
+		return tr
+	}
+	tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}
+	for _, l := range res.Scene.Loops {
+		if l.ID == blockID {
+			tr.Loop = trace.LoopInfo{ID: l.ID, Kind: l.Kind, Line: l.Line, EndLine: l.EndLine, Label: l.Label, Vars: l.Vars, Children: l.Children}
+		}
+	}
+	sem, ok := semFor(res.Scene.Language)
+	if !ok {
+		tr.Warnings = append(tr.Warnings, "simulasi nilai untuk "+lang.Names[res.Scene.Language]+" belum tersedia, jadi yang tampil hanya alurnya")
+		return tr
+	}
+	node := res.Nodes[blockID]
+	if node == nil || blk.State == scene.StateIncomplete || len(res.Diagnostics) > 0 {
+		tr.Warnings = append(tr.Warnings, "kode belum lengkap atau masih ada error; selesaikan dulu supaya nilainya bisa dihitung")
+		return tr
+	}
+	coll := findCollection(node)
+	it := &interp{
+		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
+		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
+		rec:     &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll},
+		funcs:   map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
+		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
+		statics: map[*ir.VarSpec]*Cell{},
+	}
+	it.globals.global = true
+	reason := it.run(node)
+	r := it.rec
+	tr.Warnings = append(tr.Warnings, r.warnings...)
+	switch {
+	case reason != "":
+		tr.Warnings = append([]string{reason}, tr.Warnings...)
+		return tr
+	case !r.reached:
+		tr.Warnings = append([]string{"blok ini tidak pernah dijalankan (fungsinya tidak dipanggil, atau kondisinya tidak pernah tercapai)"}, tr.Warnings...)
+		return tr
+	}
+	tr.Mode = trace.ModeSimulated
+	tr.Steps = r.steps
+	tr.Truncated = r.truncated
+	if coll != "" && r.collKind != "" {
+		for _, s := range r.steps {
+			if s.Items != nil {
+				tr.Collection = &trace.Collection{Kind: r.collKind, Items: s.Items, Keys: s.Keys}
+				break
+			}
+		}
+	}
+	return tr
+}
+
+// run menjalankan program dari titik masuknya dan mengembalikan alasan bila simulasi
+// harus beralih ke mode struktur.
+func (it *interp) run(node ir.Node) (structural string) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		switch x := r.(type) {
+		case thrown:
+			msg := x.msg
+			if msg == "" {
+				msg = it.exceptionText(x.v)
+			}
+			if !it.rec.reached {
+				structural = "program akan berhenti karena error sebelum sampai ke blok ini: " + msg
+				return
+			}
+			it.rec.warn("program berhenti karena " + msg)
+			it.finalStep(x, msg)
+		case abort:
+			switch x.kind {
+			case abortStructural:
+				structural = "nilai tidak bisa dihitung, jadi yang tampil hanya alurnya: " + x.msg
+			case abortBudget:
+				if len(it.rec.steps) > 0 {
+					it.rec.truncated = true
+					it.rec.warn(x.msg)
+				} else {
+					structural = x.msg
+				}
+			}
+		default:
+			structural = fmt.Sprintf("kesalahan internal simulator: %v", r)
+		}
+	}()
+	it.sem.setup(it)
+	it.runProgram()
+	if !it.rec.reached {
+		if fn := enclosingFunc(it.res, node); fn != nil {
+			it.callUnknown(fn)
+		}
+	}
+	return ""
+}
+
+// finalStep merekam exception yang tidak tertangkap sebagai langkah terakhir.
+func (it *interp) finalStep(x thrown, msg string) {
+	defer func() { recover() }() // batas langkah sudah tercapai: abaikan
+	line := 0
+	if x.at != nil {
+		line = it.line(x.at)
+	}
+	note := it.uncaughtNote(msg)
+	it.rec.add(trace.Step{Phase: trace.PhaseExit, Line: line, Reason: trace.ReasonPanic, Note: note}, nil, func() ([]string, []string) { return nil, nil })
+}
+
+func (it *interp) uncaughtNote(msg string) string {
+	switch it.lang {
+	case "python":
+		return "Traceback: " + msg + " → program berhenti"
+	case "javascript", "typescript":
+		return "Uncaught " + msg + " → program berhenti"
+	case "php":
+		return "Fatal error: Uncaught " + msg + " → program berhenti"
+	case "java":
+		return "Exception in thread \"main\" " + msg + " → program berhenti"
+	case "cpp":
+		return "terminate called after throwing " + msg + " → program berhenti"
+	}
+	return msg + " → program berhenti"
+}
+
+// runProgram menjalankan titik masuk sesuai bahasa.
+func (it *interp) runProgram() {
+	body := it.res.File.Body
+	switch it.lang {
+	case "javascript", "typescript":
+		it.hoist(body, it.globals)
+		it.execTop(body)
+		it.runTasks()
+	case "python":
+		it.execTop(body)
+	case "php":
+		it.hoistPHP(body)
+		it.execTop(body)
+	case "c", "cpp":
+		it.declareC(body, it.globals)
+		if fs := it.funcs["main"]; len(fs) > 0 {
+			ret := it.callFunc(&Func{name: "main", decl: fs[0], env: it.globals}, undef(), argList{}, fs[0])
+			_ = ret
+		}
+	case "java":
+		for _, s := range body {
+			if c, ok := s.(*ir.Class); ok {
+				it.defineClass(c, it.globals)
+			}
+		}
+		for _, s := range body {
+			c, ok := s.(*ir.Class)
+			if !ok {
+				continue
+			}
+			if m := it.classes[c.Name].methods["main"]; m != nil && m.Static {
+				args := it.newList("array", nil)
+				args.l.elem = "String"
+				it.callFunc(&Func{name: "main", decl: m, env: it.globals, class: it.classes[c.Name], static: true}, undef(), argList{pos: []Value{args}}, m)
+				return
+			}
+		}
+		it.structural("tidak ada method public static void main(String[] args)")
+	}
+}
+
+func (it *interp) execTop(body []ir.Stmt) {
+	for _, s := range body {
+		if f := it.exec(s, it.globals); f.k == fReturn {
+			return
+		}
+	}
+}
+
+// hoistPHP: fungsi dan kelas tingkat atas PHP bisa dipakai sebelum ditulis.
+func (it *interp) hoistPHP(body []ir.Stmt) {
+	for _, s := range body {
+		switch x := s.(type) {
+		case *ir.Func:
+			if x.Name != "" {
+				it.globals.define(strings.ToLower(x.Name), Value{k: kFunc, fn: it.closure(x, it.globals)})
+				it.funcs[strings.ToLower(x.Name)] = []*Fn{x}
+			}
+		case *ir.Class:
+			c := it.defineClass(x, it.globals)
+			it.classes[x.Name] = c
+		}
+	}
+}
+
+// declareC mendaftarkan fungsi, struct/kelas, makro, dan variabel global C/C++.
+func (it *interp) declareC(body []ir.Stmt, e *Env) {
+	for _, s := range body {
+		switch x := s.(type) {
+		case *ir.Func:
+			if x.Body == nil {
+				continue
+			}
+			if x.Class != "" { // int Point::area() { } di luar kelas
+				if c := it.classes[x.Class]; c != nil {
+					c.methods[x.Name] = x
+					c.addOverload(x.Name, x)
+					it.classOf[x] = c
+					continue
+				}
+			}
+			it.funcs[x.Name] = append(it.funcs[x.Name], x)
+		case *ir.Class:
+			c := it.defineClass(x, e)
+			if x.Name != "" {
+				it.classes[x.Name] = c
+			}
+		case *ir.Block: // namespace { ... }
+			it.declareC(x.List, e)
+		case *ir.Simple:
+			it.simple(x, e)
+		case *ir.VarDecl:
+			it.varDecl(x, e)
+		}
+	}
+}
+
+func (it *interp) runTasks() {
+	for i := 0; i < 10_000; i++ {
+		if len(it.tasks) > 0 {
+			t := it.tasks[0]
+			it.tasks = it.tasks[1:]
+			t()
+			continue
+		}
+		if len(it.timers) > 0 {
+			best := 0
+			for j, t := range it.timers {
+				if t.at < it.timers[best].at || t.at == it.timers[best].at && t.seq < it.timers[best].seq {
+					best = j
+				}
+			}
+			t := it.timers[best]
+			it.timers = append(it.timers[:best:best], it.timers[best+1:]...)
+			t.fn()
+			continue
+		}
+		return
+	}
+}
+
+// callUnknown menjalankan fungsi yang memuat blok fokus dengan parameter tidak diketahui.
+func (it *interp) callUnknown(fn *ir.Func) {
+	f := &Func{name: fn.Name, decl: fn, env: it.globals, class: it.classOf[fn]}
+	this := undef()
+	if c := it.classOf[fn]; c != nil && !fn.Static {
+		it.ids++
+		o := &Object{class: c, fields: it.newDict("fields"), id: it.ids}
+		this = Value{k: kObj, o: o}
+		func() {
+			defer func() { recover() }()
+			it.initFields(c, this)
+		}()
+	}
+	var args []Value
+	for _, p := range fn.Params {
+		if p.Name == "self" && it.lang == "python" {
+			continue
+		}
+		args = append(args, unknown(p.Name+" adalah parameter fungsi "+fn.Name+" yang tidak dipanggil dengan nilai"))
+	}
+	it.callFunc(f, this, argList{pos: args}, fn)
+}
+
+func enclosingFunc(res *lang.Result, node ir.Node) *ir.Func {
+	ns := node.Span()
+	var best *ir.Func
+	for _, n := range res.Nodes {
+		f, ok := n.(*ir.Func)
+		if !ok || f.Body == nil {
+			continue
+		}
+		fs := f.Span()
+		if fs.Start.Off <= ns.Start.Off && ns.End.Off <= fs.End.Off {
+			if best == nil || fs.End.Off-fs.Start.Off < best.S.End.Off-best.S.Start.Off {
+				best = f
+			}
+		}
+	}
+	return best
+}
+
+// findCollection memilih variabel koleksi yang paling sering diakses di blok fokus.
+func findCollection(node ir.Node) string {
+	score := map[string]int{}
+	order := []string{}
+	add := func(x ir.Expr, w int) {
+		id, ok := x.(*ir.Ident)
+		if !ok {
+			return
+		}
+		if _, seen := score[id.Name]; !seen {
+			order = append(order, id.Name)
+		}
+		score[id.Name] += w
+	}
+	ir.Walk(node, func(n ir.Node) bool {
+		switch x := n.(type) {
+		case *ir.Index:
+			add(x.X, 1)
+		case *ir.ForEach:
+			add(x.X, 2)
+		case *ir.Assign:
+			if ix, ok := x.L.(*ir.Index); ok {
+				add(ix.X, 3)
+			}
+			if al, ok := x.L.(*ir.ArrayLit); ok {
+				for _, el := range al.Elems {
+					if ix, ok := el.(*ir.Index); ok {
+						add(ix.X, 3)
+					}
+				}
+			}
+		case *ir.Call:
+			if m, ok := x.Fun.(*ir.Member); ok {
+				switch m.Name {
+				case "push", "append", "push_back", "add", "emplace_back", "insert", "pop", "remove", "put", "set":
+					add(m.X, 3)
+				}
+			}
+		}
+		return true
+	})
+	best, bestScore := "", 0
+	for _, name := range order {
+		if score[name] > bestScore {
+			best, bestScore = name, score[name]
+		}
+	}
+	return best
+}
+
+// detectCollKind dipanggil sebelum langkah direkam: jenis koleksi diketahui dari nilainya.
+func (it *interp) detectCollKind(e *Env) {
+	if it.rec.coll == "" || it.rec.collKind != "" || e == nil {
+		return
+	}
+	c := it.findVar(e, it.rec.coll)
+	if c == nil {
+		return
+	}
+	switch v := c.get(); v.k {
+	case kList:
+		if v.l.kind == "carray" || v.l.kind == "array" && it.lang == "java" {
+			it.rec.collKind = "array"
+		} else {
+			it.rec.collKind = "slice"
+		}
+	case kDict:
+		if v.d.kind == "array" && phpIsList(v.d) {
+			it.rec.collKind = "slice"
+		} else {
+			it.rec.collKind = "map"
+		}
+	default:
+		it.rec.coll = "" // bukan koleksi
+	}
+}
+
+func phpIsList(d *Dict) bool {
+	for i, k := range d.keys {
+		if k.k != kInt || k.i != int64(i) {
+			return false
+		}
+	}
+	return true
+}
+
+func semFor(language string) (semantics, bool) {
+	switch language {
+	case "javascript", "typescript":
+		return &jsSem{}, true
+	}
+	return nil, false
+}
+
+// Run mensimulasikan seluruh program tanpa merekam langkah dan mengembalikan stdout-nya
+// (dipakai test pembanding dengan interpreter asli). err berisi alasan bila simulasi
+// tidak selesai (mode struktur, exception tak tertangkap, batas komputasi).
+func Run(res *lang.Result, opt Options) (stdout string, err string) {
+	opt = opt.withDefaults()
+	sem, ok := semFor(res.Scene.Language)
+	if !ok {
+		return "", "bahasa belum didukung"
+	}
+	if len(res.Diagnostics) > 0 {
+		return "", "kode masih ada error: " + res.Diagnostics[0].Message
+	}
+	it := &interp{
+		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
+		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
+		rec:     &recorder{maxSteps: opt.MaxSteps, maxIter: opt.MaxIter},
+		funcs:   map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
+		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
+		statics: map[*ir.VarSpec]*Cell{},
+	}
+	it.globals.global = true
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				switch x := r.(type) {
+				case thrown:
+					err = "exception: " + x.msg
+				case abort:
+					err = x.msg
+				default:
+					err = fmt.Sprintf("kesalahan internal: %v", r)
+				}
+			}
+		}()
+		it.sem.setup(it)
+		it.runProgram()
+	}()
+	return it.rec.out.String(), err
+}

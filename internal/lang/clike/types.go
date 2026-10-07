@@ -749,8 +749,9 @@ func (p *parser) jsMember(c *ir.Class, start ir.Pos, static bool) ir.Stmt {
 	if p.accept("*") {
 		gen = true
 	}
+	accessor := ""
 	if (p.is("get") || p.is("set")) && !p.isAt(1, "(") && !p.isAt(1, "=") && !p.isAt(1, ";") && !p.isAt(1, ":") {
-		p.next()
+		accessor = p.next().text
 	}
 	var name string
 	switch t := p.tok(); {
@@ -774,7 +775,7 @@ func (p *parser) jsMember(c *ir.Class, start ir.Pos, static bool) ir.Stmt {
 		if p.is("<") {
 			p.skipBalanced()
 		}
-		f := &ir.Func{Name: name, Class: c.Name, Static: static, Async: async, Generator: gen}
+		f := &ir.Func{Name: name, Class: c.Name, Static: static, Async: async, Generator: gen, Kind: accessor}
 		f.Params = p.params()
 		if p.accept(":") {
 			f.Ret = p.tsType(false)

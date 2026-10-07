@@ -198,12 +198,20 @@ func (p *parser) stmt() []ir.Stmt {
 			}
 		}
 	}
-	if p.is("@") { // dekorator
+	if p.is("@") { // dekorator: @property, @staticmethod, @x.setter, ...
+		var decor []string
 		for p.accept("@") {
-			p.test()
+			x := p.test()
+			decor = append(decor, strings.TrimSpace(p.text(x.Span())))
 			p.endLine()
 		}
-		return p.stmt()
+		out := p.stmt()
+		if len(out) == 1 {
+			if f, ok := out[0].(*ir.Func); ok {
+				f.Decor = decor
+			}
+		}
+		return out
 	}
 	return p.simpleStmts()
 }
