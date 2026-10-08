@@ -2,7 +2,7 @@
   "name": "gopherviz",
   "displayName": "GopherViz",
   "description": "Visual pixel-art dan animasi cara kerja kode, realtime saat kamu mengetik. Go: nilai asli (loop, if, switch, fungsi, struct, pointer, map, goroutine, channel). JavaScript, TypeScript, Python, PHP, C++, C, Java: alur struktur.",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "publisher": "gopherviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",
@@ -56,6 +56,12 @@
         "command": "gopherviz.restartServer",
         "title": "Mulai ulang server gopherviz",
         "category": "GopherViz"
+      },
+      {
+        "command": "gopherviz.moveTo",
+        "title": "Pindahkan panel…",
+        "category": "GopherViz",
+        "icon": "$(layout)"
       }
     ],
     "keybindings": [
@@ -70,12 +76,20 @@
       {
         "id": "gopherviz.stepLineBackground",
         "description": "Latar baris yang sedang dijalankan Gopher di editor.",
-        "defaults": { "dark": "#264f7880", "light": "#add6ff80", "highContrast": "#264f7880" }
+        "defaults": {
+          "dark": "#264f7880",
+          "light": "#add6ff80",
+          "highContrast": "#264f7880"
+        }
       },
       {
         "id": "gopherviz.stepLineBorder",
         "description": "Garis kiri baris yang sedang dijalankan Gopher di editor.",
-        "defaults": { "dark": "#4fc1ff", "light": "#0078d4", "highContrast": "#4fc1ff" }
+        "defaults": {
+          "dark": "#4fc1ff",
+          "light": "#0078d4",
+          "highContrast": "#4fc1ff"
+        }
       }
     ],
     "configuration": {
@@ -90,6 +104,28 @@
           "type": "boolean",
           "default": true,
           "description": "Buka panel otomatis saat kursor pertama kali masuk ke sebuah blok (loop, if, switch)."
+        },
+        "gopherviz.location": {
+          "type": "string",
+          "enum": [
+            "editor",
+            "sidebar",
+            "panel"
+          ],
+          "default": "editor",
+          "enumDescriptions": [
+            "Tab editor (bisa diseret ke samping atau bawah editor).",
+            "Sidebar kiri, di bawah Explorer.",
+            "Panel bawah, sebelah Terminal (tombol dan output di samping gambar)."
+          ],
+          "description": "Tempat panel GopherViz. Bisa juga dipilih lewat perintah \"GopherViz: Pindahkan panel…\" atau tombol di judul panel."
+        },
+        "gopherviz.size": {
+          "type": "number",
+          "default": 100,
+          "minimum": 25,
+          "maximum": 100,
+          "description": "Ukuran gambar dalam persen dari ruang yang tersedia. Bisa juga diatur dengan menyeret pojok kanan bawah gambar (klik dua kali: kembali penuh)."
         },
         "gopherviz.details": {
           "type": "boolean",
@@ -133,6 +169,51 @@
           "description": "Path ke binary gopherviz. Kosongkan untuk memakai binary bawaan ekstensi."
         }
       }
+    },
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "gopherviz-bottom",
+          "title": "GopherViz",
+          "icon": "media/activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "gopherviz.sideView",
+          "name": "GopherViz",
+          "icon": "media/activity.svg",
+          "when": "config.gopherviz.location == 'sidebar'"
+        }
+      ],
+      "gopherviz-bottom": [
+        {
+          "type": "webview",
+          "id": "gopherviz.bottomView",
+          "name": "GopherViz",
+          "icon": "media/activity.svg",
+          "when": "config.gopherviz.location == 'panel'"
+        }
+      ]
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "gopherviz.moveTo",
+          "when": "activeWebviewPanelId == 'gopherviz.panel'",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "gopherviz.moveTo",
+          "when": "view == gopherviz.sideView || view == gopherviz.bottomView",
+          "group": "navigation"
+        }
+      ]
     }
   },
   "scripts": {

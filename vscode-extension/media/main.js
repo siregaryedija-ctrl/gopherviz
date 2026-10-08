@@ -60,7 +60,7 @@
   const BRANCH = { 'if': 'if', 'else-if': 'else if', 'else': 'else', 'case': 'case', 'default': 'default' };
 
   let state = null;
-  let config = { speed: 1, sound: true, music: true, details: false };
+  let config = { speed: 1, sound: true, music: true, details: false, size: 100 };
   let blocks = [], loops = [];
   let currentBlock = null, currentLoop = null, blockKey = '';
   let traceNote = ''; // peringatan dari trace mode struktur
@@ -83,7 +83,8 @@
   });
 
   function applyConfig(m) {
-    config = { speed: m.speed, sound: m.sound, music: m.music, details: !!m.details };
+    config = { speed: m.speed, sound: m.sound, music: m.music, details: !!m.details, size: m.size || 100 };
+    stageScale = P_clamp(config.size / 100, 0.25, 1);
     // Bawaan: panel hanya gambar (keputusan user 2026-10-07); teks penjelasan lewat setting gopherviz.details.
     document.body.classList.toggle('pic', !config.details);
     level.speed = config.speed;
@@ -560,6 +561,70 @@
   $('inReroll').addEventListener('click', () => vscode.postMessage({ type: 'reroll' }));
   ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, () => snd.unlock()));
 
+  // ---------- ukuran & tata letak gambar ----------
+
+  const P_clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let stageScale = 1, fitKey = '';
+  /** Lebar tampil canvas bila memenuhi ruang (skala 1): selebar kolomnya, setinggi sisa layar. */
+  function fullWidth() {
+    const cv = $('stage'), stage = cv.parentElement, aspect = cv.width / cv.height;
+    const wide = document.body.classList.contains('wide');
+    const availW = Math.max(60, stage.clientWidth - 4);
+    const availH = Math.max(80, window.innerHeight - (wide ? 24 : 150)) - 4;
+    return Math.min(availW, availH * aspect);
+  }
+  /** Ukuran tampil canvas + posisi pegangan; dipanggil tiap frame (murah: hanya berubah bila perlu). */
+  function fitStage() {
+    const cv = $('stage');
+    const W = window.innerWidth, H = window.innerHeight;
+    document.body.classList.toggle('wide', W >= 560 && W > H * 1.7);
+    const key = [W, H, cv.width, cv.height, stageScale, cv.parentElement.clientWidth, document.body.className].join();
+    if (key === fitKey) return;
+    fitKey = key;
+    const w = Math.round(fullWidth() * stageScale), h = Math.round(w * cv.height / cv.width);
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+    const grip = $('grip');
+    if (grip) {
+      grip.hidden = false;
+      grip.style.left = (cv.offsetLeft + cv.offsetWidth - 16) + 'px';
+      grip.style.top = (cv.offsetTop + cv.offsetHeight - 16) + 'px';
+    }
+  }
+  // seret pojok kanan bawah gambar: perkecil/perbesar (25%..100% dari ruang yang ada)
+  if ($('grip')) {
+    const grip = $('grip');
+    let drag = null;
+    grip.addEventListener('pointerdown', e => {
+      const cv = $('stage');
+      drag = { x: e.clientX, y: e.clientY, w: cv.offsetWidth - 4, full: fullWidth(), aspect: cv.width / cv.height };
+      grip.setPointerCapture(e.pointerId);
+      grip.classList.add('drag');
+      e.preventDefault();
+    });
+    grip.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const grow = Math.max(e.clientX - drag.x, (e.clientY - drag.y) * drag.aspect);
+      stageScale = P_clamp((drag.w + grow) / drag.full, 0.25, 1);
+      fitStage();
+    });
+    const end = () => {
+      if (!drag) return;
+      drag = null;
+      grip.classList.remove('drag');
+      config.size = Math.round(stageScale * 100);
+      vscode.postMessage({ type: 'setConfig', key: 'size', value: config.size });
+    };
+    grip.addEventListener('pointerup', end);
+    grip.addEventListener('pointercancel', end);
+    grip.addEventListener('dblclick', () => {
+      stageScale = 1;
+      config.size = 100;
+      fitStage();
+      vscode.postMessage({ type: 'setConfig', key: 'size', value: 100 });
+    });
+  }
+
   // ---------- loop animasi ----------
 
   let last = performance.now();
@@ -579,6 +644,7 @@
     const playing = !!currentBlock && currentBlock.state === 'complete' && document.visibilityState === 'visible' &&
       (!tp.active || tp.playing);
     snd.music(config.music && playing);
+    fitStage();
     requestAnimationFrame(frame);
   }
 

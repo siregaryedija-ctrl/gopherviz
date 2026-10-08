@@ -14,13 +14,13 @@ export type ToPanel =
       input?: string;
     }
   | { type: 'trace'; blockId: string; trace: Trace }
-  | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean };
+  | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean; size: number };
 
 /** Pesan dari webview ke ekstensi. */
 export type FromPanel =
   | { type: 'ready' }
   | { type: 'reveal'; line: number }
-  | { type: 'setConfig'; key: 'speed' | 'sound' | 'music'; value: number | boolean }
+  | { type: 'setConfig'; key: 'speed' | 'sound' | 'music' | 'size'; value: number | boolean }
   | { type: 'restart' }
   | { type: 'input'; text: string }
   | { type: 'reroll' }
@@ -45,9 +45,24 @@ export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
   </div>
   <p id="stepNote" class="step-note" hidden></p>`;
 
+/**
+ * Tempat panel (setting gopherviz.location, keputusan user 2026-10-08: bisa dipindah sesuka user):
+ * tab editor (bisa diseret ke samping/bawah editor), bagian bawah Explorer, atau panel bawah sebelah
+ * Terminal. Dua yang terakhir adalah webview view; view itu juga bisa diseret user ke tempat lain.
+ */
+export type PanelLocation = 'editor' | 'sidebar' | 'panel';
+export const VIEW_IDS = { sidebar: 'gopherviz.sideView', panel: 'gopherviz.bottomView' } as const;
+
 /** Panel webview GopherViz. Pesan terakhir disimpan dan dikirim ulang saat webview siap. */
-export class LoopPanel implements vscode.Disposable {
+export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider {
   private panel?: vscode.WebviewPanel;
+  private view?: vscode.WebviewView;
+  /** Webview yang sedang dipakai (tab editor atau view); pesan dari webview lain diabaikan. */
+  private host?: vscode.Webview;
+  /** Tab editor ditutup oleh kode (pindah tempat), bukan oleh user. */
+  private moving = false;
+  /** Panel pernah dibuka di sesi ini (dipakai saat pindah tempat: view lama bisa sudah ditutup VS Code). */
+  private shown = false;
   private ready = false;
   private lastState?: ToPanel;
   private lastTrace?: ToPanel;
@@ -56,20 +71,35 @@ export class LoopPanel implements vscode.Disposable {
   private readonly extensionUri: vscode.Uri;
   private readonly onMessage: (m: FromPanel) => void;
   private readonly onView: (visible: boolean) => void;
+  private readonly location: () => PanelLocation;
 
-  constructor(extensionUri: vscode.Uri, onMessage: (m: FromPanel) => void, onView: (visible: boolean) => void = () => {}) {
+  constructor(
+    extensionUri: vscode.Uri,
+    onMessage: (m: FromPanel) => void,
+    onView: (visible: boolean) => void = () => {},
+    location: () => PanelLocation = () => 'editor',
+  ) {
     this.extensionUri = extensionUri;
     this.onMessage = onMessage;
     this.onView = onView;
+    this.location = location;
   }
 
   /** true bila panel terbuka dan terlihat (animasi berjalan). */
   get isVisible(): boolean {
-    return this.panel?.visible ?? false;
+    return (this.panel?.visible ?? false) || (this.view?.visible ?? false);
+  }
+
+  /** Untuk test: tempat panel yang terbuka dan webview-nya sudah siap menerima pesan. */
+  get place(): 'editor' | 'view' | undefined {
+    if (!this.ready) {
+      return undefined;
+    }
+    return this.panel && this.host === this.panel.webview ? 'editor' : this.view ? 'view' : undefined;
   }
 
   get isOpen(): boolean {
-    return this.panel !== undefined;
+    return this.panel !== undefined || this.view !== undefined;
   }
 
   /** true bila user pernah menutup panel di sesi ini (jangan buka otomatis lagi). */
@@ -77,9 +107,54 @@ export class LoopPanel implements vscode.Disposable {
     return this.closedByUser;
   }
 
-  show(preserveFocus: boolean): void {
+  show(preserveFocus: boolean, tries = 0): void {
+    this.shown = true;
+    const loc = this.location();
+    if (loc === 'editor') {
+      this.showEditor(preserveFocus);
+      return;
+    }
+    if (this.view && this.view.viewType === VIEW_IDS[loc]) {
+      this.view.show(preserveFocus);
+      return;
+    }
+    // view belum dibuka: perintah bawaan <id>.focus membuka tempatnya lalu memanggil resolveWebviewView.
+    // Sesudah setting berubah, view baru bisa belum terdaftar (klausa when): coba lagi sebentar kemudian.
+    void vscode.commands.executeCommand(`${VIEW_IDS[loc]}.focus`).then(() => {
+      if (preserveFocus) {
+        void vscode.commands.executeCommand('workbench.action.focusActiveEditorGroup');
+      }
+      setTimeout(() => {
+        if (!this.view && this.location() === loc && tries < 8) {
+          this.show(preserveFocus, tries + 1);
+        }
+      }, 250);
+    });
+  }
+
+  /** Setting gopherviz.location berubah: tutup tempat lama, buka tempat baru bila panel sedang terbuka. */
+  relocate(): void {
+    const wasOpen = this.isOpen || (this.shown && !this.closedByUser);
+    const loc = this.location();
+    if (loc !== 'editor' && this.panel) {
+      this.moving = true;
+      this.panel.dispose();
+      this.moving = false;
+    }
+    if (this.view && (loc === 'editor' || this.view.viewType !== VIEW_IDS[loc])) {
+      this.detach(this.view.webview); // view lama disembunyikan VS Code (klausa when)
+      this.view = undefined;
+    }
+    if (wasOpen) {
+      // klausa when view baru diperbarui VS Code sesudah event setting; beri jeda sebelum membukanya
+      setTimeout(() => this.show(false), loc === 'editor' ? 0 : 150);
+    }
+  }
+
+  /** Tab editor; bila sudah ada, dimunculkan di kolomnya sekarang (tidak ditarik balik ke samping). */
+  private showEditor(preserveFocus: boolean): void {
     if (this.panel) {
-      this.panel.reveal(vscode.ViewColumn.Beside, preserveFocus);
+      this.panel.reveal(undefined, preserveFocus);
       return;
     }
     const media = vscode.Uri.joinPath(this.extensionUri, 'media');
@@ -90,26 +165,64 @@ export class LoopPanel implements vscode.Disposable {
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [media] },
     );
     panel.iconPath = vscode.Uri.joinPath(media, 'icon.svg');
-    panel.webview.html = this.html(panel.webview, media);
-    panel.webview.onDidReceiveMessage((m: FromPanel) => {
+    this.attach(panel.webview, media);
+    panel.onDidChangeViewState(e => this.onView(e.webviewPanel.visible));
+    panel.onDidDispose(() => {
+      if (this.panel === panel) {
+        this.panel = undefined;
+      }
+      this.detach(panel.webview);
+      if (!this.moving) {
+        this.closedByUser = true;
+      }
+      this.onView(false);
+    });
+    this.panel = panel;
+  }
+
+  /** Dipanggil VS Code saat view di Explorer / panel bawah pertama kali tampil. */
+  resolveWebviewView(view: vscode.WebviewView): void {
+    const media = vscode.Uri.joinPath(this.extensionUri, 'media');
+    view.webview.options = { enableScripts: true, localResourceRoots: [media] };
+    this.view = view;
+    this.attach(view.webview, media);
+    view.onDidChangeVisibility(() => this.onView(view.visible));
+    view.onDidDispose(() => {
+      if (this.view === view) {
+        this.view = undefined;
+      }
+      this.detach(view.webview);
+      this.onView(false);
+    });
+    this.onView(view.visible);
+  }
+
+  /** Jadikan webview ini tujuan pesan; pesan terakhir dikirim ulang begitu webview siap. */
+  private attach(webview: vscode.Webview, media: vscode.Uri): void {
+    this.host = webview;
+    this.ready = false;
+    webview.html = this.html(webview, media);
+    webview.onDidReceiveMessage((m: FromPanel) => {
+      if (webview !== this.host) {
+        return;
+      }
       if (m.type === 'ready') {
         this.ready = true;
         for (const msg of [this.lastConfig, this.lastState, this.lastTrace]) {
           if (msg) {
-            void panel.webview.postMessage(msg);
+            void webview.postMessage(msg);
           }
         }
       }
       this.onMessage(m);
     });
-    panel.onDidChangeViewState(e => this.onView(e.webviewPanel.visible));
-    panel.onDidDispose(() => {
-      this.panel = undefined;
+  }
+
+  private detach(webview: vscode.Webview): void {
+    if (this.host === webview) {
+      this.host = undefined;
       this.ready = false;
-      this.closedByUser = true;
-      this.onView(false);
-    });
-    this.panel = panel;
+    }
   }
 
   post(msg: ToPanel): void {
@@ -120,8 +233,8 @@ export class LoopPanel implements vscode.Disposable {
     } else {
       this.lastConfig = msg;
     }
-    if (this.panel && this.ready) {
-      void this.panel.webview.postMessage(msg);
+    if (this.host && this.ready) {
+      void this.host.postMessage(msg);
     }
   }
 
@@ -164,6 +277,7 @@ export class LoopPanel implements vscode.Disposable {
 
   <div class="stage">
     <canvas id="stage" width="768" height="384" aria-label="Panggung pixel: Gopher berjalan melewati setiap bagian loop"></canvas>
+    <div id="grip" class="grip" title="Seret untuk mengubah ukuran gambar (klik dua kali: ukuran penuh)" hidden></div>
     <div id="overlay" class="overlay" hidden>
       <p id="overlayText"></p>
       <button id="btnRestart" class="btn" hidden>Mulai ulang server</button>

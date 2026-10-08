@@ -125,6 +125,21 @@ test('kotak Input: nilai dari user dipakai simulasi', async api => {
   api.panelMessage({ type: 'input', text: '' });
 });
 
+test('panel bisa dipindah: panel bawah, sidebar, lalu kembali ke tab editor', async api => {
+  const doc = vscode.window.activeTextEditor!.document;
+  const cfg = () => vscode.workspace.getConfiguration('gopherviz');
+  try {
+    await cfg().update('location', 'panel', vscode.ConfigurationTarget.Global);
+    await waitFor('view panel bawah siap', () => api.panelPlace() === 'view');
+    await cfg().update('location', 'sidebar', vscode.ConfigurationTarget.Global);
+    await waitFor('view sidebar siap', () => api.panelPlace() === 'view');
+  } finally {
+    await cfg().update('location', undefined, vscode.ConfigurationTarget.Global);
+  }
+  await waitFor('tab editor siap', () => api.panelPlace() === 'editor');
+  await vscode.window.showTextDocument(doc);
+});
+
 export async function run(): Promise<void> {
   const ext = vscode.extensions.getExtension<TestApi>('gopherviz.gopherviz');
   assert.ok(ext, 'ekstensi gopherviz tidak ditemukan');

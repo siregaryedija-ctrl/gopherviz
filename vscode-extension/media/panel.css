@@ -18,7 +18,13 @@ body {
   color: var(--vscode-foreground);
   background: var(--vscode-editor-background);
 }
-.app { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); max-width: 720px; margin: 0 auto; padding-top: 12px; }
+.app { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); margin: 0 auto; padding-top: 12px; }
+/* Tempat lebar dan pendek (mis. panel bawah sebelah Terminal): gambar di kiri, tombol & output di kanan. */
+body.wide { padding-bottom: 8px; }
+body.wide .app { grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); grid-template-rows: repeat(14, auto) 1fr; row-gap: 0; padding-top: 8px; }
+body.wide .app > * { grid-column: 2; margin-bottom: 8px; }
+body.wide .app > .stage { grid-column: 1; grid-row: 1 / -1; align-self: start; margin-bottom: 0; }
+body.wide .tracebar { margin-top: 0; flex-wrap: wrap; }
 .app > * { min-width: 0; }
 h2 {
   margin: 0 0 6px;
@@ -61,22 +67,28 @@ h2 {
   position: relative;
   display: flex;
   justify-content: center;
-  border: 2px solid #4a3550;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #fde3eb;
 }
-/* Canvas berukuran sebesar dunia (lihat P.present); diperkecil sampai muat selebar panel dan setinggi
-   layar (sisa ruang untuk tombol di bawahnya), dengan bentuk dunia tetap utuh. */
+/* Canvas berukuran sebesar dunia (lihat P.present). Ukuran tampilnya diatur main.js (fitStage): memenuhi
+   ruang yang ada dengan bentuk dunia tetap utuh, dikali ukuran pilihan user (pegangan di pojok). */
 .stage canvas {
   display: block;
-  width: auto;
-  height: auto;
   max-width: 100%;
-  max-height: calc(100vh - 150px);
-  min-height: 120px;
+  border: 2px solid #4a3550;
+  border-radius: var(--radius);
+  background: #fde3eb;
   image-rendering: pixelated;
 }
+.grip {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+  touch-action: none;
+  border-bottom-right-radius: var(--radius);
+  background: linear-gradient(135deg, transparent 0 45%, #4a3550 45% 55%, transparent 55% 65%, #4a3550 65% 75%, transparent 75%);
+  opacity: 0.55;
+}
+.grip:hover, .grip.drag { opacity: 1; }
 .overlay {
   position: absolute;
   inset: 0;
@@ -86,6 +98,7 @@ h2 {
   justify-content: flex-end;
   gap: 8px;
   padding: 12px;
+  border-radius: var(--radius);
   background: linear-gradient(rgba(253, 227, 235, 0) 35%, rgba(253, 241, 245, 0.92));
   color: #3f2c47;
   text-align: center;

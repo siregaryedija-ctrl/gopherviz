@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'node:path';
 import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type Trace, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
-import { LoopPanel, type FromPanel } from './panel';
+import { LoopPanel, VIEW_IDS, type FromPanel, type PanelLocation } from './panel';
 import { LoopCodeLens } from './codelens';
 
 const UPDATE_DELAY_MS = 75; // jeda setelah ketikan terakhir sebelum scene dihitung ulang
@@ -67,7 +67,12 @@ class Controller implements vscode.Disposable {
     this.ctx = ctx;
     this.inputs = ctx.workspaceState.get(INPUTS_KEY, {});
     this.output = vscode.window.createOutputChannel('GopherViz');
-    this.panel = new LoopPanel(ctx.extensionUri, m => this.onPanelMessage(m), () => this.paintStep());
+    this.panel = new LoopPanel(
+      ctx.extensionUri,
+      m => this.onPanelMessage(m),
+      () => this.paintStep(),
+      () => config().get<PanelLocation>('location', 'editor'),
+    );
     // Sorotan baris yang sedang dijalankan Gopher (seperti penanda baris di debugger), ikon gopher di gutter.
     this.stepDeco = vscode.window.createTextEditorDecorationType({
       isWholeLine: true,
@@ -92,6 +97,10 @@ class Controller implements vscode.Disposable {
       this.status,
       vscode.languages.registerCodeLensProvider(LANGUAGES.map(language => ({ language })), this.lens),
       vscode.commands.registerCommand('gopherviz.showPanel', () => this.panel.show(true)),
+      vscode.commands.registerCommand('gopherviz.moveTo', () => this.pickLocation()),
+      ...Object.values(VIEW_IDS).map(id =>
+        vscode.window.registerWebviewViewProvider(id, this.panel, { webviewOptions: { retainContextWhenHidden: true } }),
+      ),
       vscode.commands.registerCommand('gopherviz.visualizeAtCursor', (uri?: vscode.Uri, line?: number) =>
         this.visualize(uri, line),
       ),
@@ -128,6 +137,9 @@ class Controller implements vscode.Disposable {
         }
         if (e.affectsConfiguration('gopherviz.binaryPath')) {
           void this.restart();
+        }
+        if (e.affectsConfiguration('gopherviz.location')) {
+          this.panel.relocate();
         }
         this.postConfig();
         this.lens.refresh();
@@ -355,7 +367,33 @@ class Controller implements vscode.Disposable {
       sound: c.get('sound', true),
       music: c.get('music', true),
       details: c.get('details', false),
+      size: c.get('size', 100),
     });
+  }
+
+  /** Pilih tempat panel: tab editor, bawah Explorer, atau panel bawah sebelah Terminal. */
+  private async pickLocation(): Promise<void> {
+    const cur = config().get<PanelLocation>('location', 'editor');
+    const items: (vscode.QuickPickItem & { loc: PanelLocation })[] = [
+      { loc: 'editor', label: '$(window) Tab editor', description: 'seperti semula; tab bisa diseret ke samping/bawah editor' },
+      { loc: 'sidebar', label: '$(layout-sidebar-left) Sidebar kiri', description: 'di bawah Explorer' },
+      { loc: 'panel', label: '$(layout-panel) Panel bawah', description: 'sebelah Terminal; tombol & output di samping gambar' },
+    ];
+    for (const it of items) {
+      if (it.loc === cur) {
+        it.detail = 'tempat sekarang';
+      }
+    }
+    const pick = await vscode.window.showQuickPick(items, { placeHolder: 'Tampilkan GopherViz di…' });
+    if (!pick) {
+      return;
+    }
+    if (pick.loc === cur) {
+      this.panel.show(false);
+      return;
+    }
+    await config().update('location', pick.loc, vscode.ConfigurationTarget.Global);
+    this.panel.show(false); // pilihan user sendiri: buka juga walau panel sempat ditutup
   }
 
   private updateStatus(): void {
@@ -469,6 +507,7 @@ class Controller implements vscode.Disposable {
       traceKey: () => this.traceKey,
       lastTrace: () => this.lastTrace,
       panelOpen: () => this.panel.isOpen,
+      panelPlace: () => this.panel.place,
       panelMessage: (m: FromPanel) => this.onPanelMessage(m),
       stepLine: () => this.stepLine,
     };
