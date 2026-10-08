@@ -109,6 +109,11 @@
     }
   }
   const textCenter = (c, s, cx, y, col) => text(c, s, Math.round(cx - textW(s) / 2), y, col);
+  /** Teks dalam huruf besar tanpa karakter yang tidak ada di font, dipotong ".." bila lebih dari max karakter. */
+  function fit(s, max) {
+    s = [...String(s).toUpperCase()].map(ch => (FONT[ch] ? ch : ch === '\t' ? ' ' : '')).join('').replace(/\s+/g, ' ').trim();
+    return max != null && s.length > max ? s.slice(0, Math.max(1, max - 2)) + '..' : s;
+  }
 
   // ---------- bentuk ----------
   function disc(c, cx, cy, r, col) {
@@ -368,7 +373,7 @@
   }
 
   G.pixel = {
-    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter,
+    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
     along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth,
   };

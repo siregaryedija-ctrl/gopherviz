@@ -64,6 +64,7 @@ const samples = {
   py_dfs_stack: ['@/graph.py', 37],
   go_bfs: ['@/graph.go', 6],
   py_balok: ['@/balok.py', 4],
+  py_balok_if: ['@/balok.py', 5],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

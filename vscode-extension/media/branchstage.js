@@ -1,19 +1,34 @@
 // Mode persimpangan: if / else if / else dan switch. Setiap cabang = satu jalur bertingkat.
 // Gopher menuruni tangga sambil mengecek papan kondisi dari atas; cabang pertama yang
-// true pintunya terbuka dan Gopher berjalan menyusuri ubin-ubin isinya. Jalur lain meredup.
+// true pintunya terbuka dan Gopher berjalan menyusuri ubin-ubin isinya (berlabel nama perintahnya,
+// mis. PRINT, BREAK). Jalur lain meredup. Baris paling bawah = kode yang sedang dijalankan.
 (function (G) {
   'use strict';
   const P = G.pixel;
 
-  const TOP = 16;     // ruang HUD
   const LANE = 32;    // jarak antar jalur
   const X_START = 8;  // posisi awal gopher di jalur pertama
   const X_SHAFT = 20; // tangga turun antar jalur
   const X_SIGN = 30;  // papan kondisi
   const X_DOOR = 76;  // pintu jalur
-  const X_TILES = 92; // ubin pertama
-  const TILE = 18;
+  const X_TILES = 86; // tepi kiri ubin pertama
   const LABEL = { 'if': 'IF', 'else-if': 'ELSE IF', 'else': 'ELSE', 'case': 'CASE', 'default': 'DEFAULT', 'skip': 'LEWATI' };
+  const KEYWORD = { 'break': 'BREAK', 'continue': 'CONTINUE', 'return': 'RETURN', 'goto': 'GOTO' };
+
+  /**
+   * Label ubin isi cabang = nama perintahnya (keputusan user 2026-10-08: nomor 1, 2 tidak jelas):
+   * kata kunci (BREAK, RETURN), variabel yang diubah (X=, COUNT+=), atau fungsi yang dipanggil (PRINT).
+   */
+  function tileLabel(n) {
+    if (KEYWORD[n.kind]) return KEYWORD[n.kind];
+    const t = (n.text || '').trim();
+    let m = t.match(/^(?:(?:let|const|var|auto|int|long|float|double|string|bool|char)\s+)?\$?([A-Za-z_]\w*)(\[[^\]]*\])?\s*(\+\+|--|:=|[-+*/%]?=)(?!=)/);
+    if (m) return P.fit(m[1] + (m[2] ? '[]' : '') + m[3], 9);
+    m = t.match(/^(?:await\s+)?\$?([A-Za-z_][\w.]*)\s*\(/);
+    if (m) return P.fit(m[1].split('.').pop(), 9);
+    m = t.match(/^[A-Za-z_]\w*/);
+    return P.fit(m ? m[0] : n.kind, 9) || '...';
+  }
 
   class BranchStage {
     constructor(canvas, hooks) {
@@ -29,7 +44,7 @@
       this.snaps = [];
     }
 
-    groundY(k) { return TOP + 30 + k * LANE; }
+    groundY(k) { return this.top + 30 + k * LANE; }
 
     /** Membangun jalur dari blok if/switch (Scene). Cabang "LEWATI" ditambahkan bila tidak ada else/default. */
     setBlock(block) {
@@ -39,22 +54,56 @@
       if (!brs.some(b => b.kind === 'else' || b.kind === 'default')) {
         this.lanes.push({ k: this.lanes.length, kind: 'skip', label: '', line: 0, body: [] });
       }
-      const maxTiles = Math.max(1, ...this.lanes.map(l => l.body.length));
-      this.exitX = X_TILES + maxTiles * TILE + 4;
-      this.W = Math.max(192, this.exitX + 20);
-      this.H = Math.max(96, this.groundY(this.lanes.length - 1) + 12);
-      this.world.width = this.W; this.world.height = this.H;
-      this.bg.width = this.W; this.bg.height = this.H;
-      P.paintSky(this.bg.getContext('2d'), this.W, this.H);
+      // ubin selebar labelnya; jalur kosong selebar tulisannya (supaya tidak tertimpa pipa keluar)
+      let end = X_TILES + 16;
+      for (const ln of this.lanes) {
+        let x = X_TILES;
+        ln.tiles = ln.body.map(n => {
+          const label = tileLabel(n), w = Math.max(12, P.textW(label) + 6);
+          const t = { x, w, cx: x + w / 2, label };
+          x += w + 3;
+          return t;
+        });
+        ln.empty = ln.body.length ? '' : ln.kind === 'skip' ? 'TIDAK ADA YANG COCOK' : 'KOSONG';
+        end = Math.max(end, ln.empty ? X_TILES + P.textW(ln.empty) + 4 : x + 1);
+      }
+      this.exitX = end;
       // variabel yang disebut di kepala blok atau label cabang → tampil di HUD
       const text = [block.header, ...brs.map(b => b.label)].join(' ');
       this.hudVars = [...new Set((text.match(/[A-Za-z_]\w*/g) || []).filter(n => !/^(if|else|switch|case|default|true|false|nil|len)$/.test(n)))];
+      this.layout(1);
       this.snaps = [];
+    }
+
+    /** Ukuran dunia; HUD variabel bisa beberapa baris (yang tidak muat pindah ke baris bawahnya). */
+    layout(hudLines) {
+      this.hudLines = hudLines;
+      this.top = 16 + (hudLines - 1) * 7;
+      this.W = Math.max(192, this.exitX + 20);
+      this.H = Math.max(96, this.groundY(this.lanes.length - 1) + 16);
+      this.world.width = this.W; this.world.height = this.H;
+      this.bg.width = this.W; this.bg.height = this.H;
+      P.paintSky(this.bg.getContext('2d'), this.W, this.H);
+    }
+
+    /** Baris HUD variabel: "nama=nilai" dijejer, pindah baris bila tidak muat; nilai panjang dipotong. */
+    hudText(s) {
+      const max = Math.floor((this.W - 8) / 4), lines = [];
+      let cur = '';
+      for (const n of this.hudVars) {
+        if (!s.vars || s.vars[n] == null) continue;
+        const item = P.fit(`${n}=${s.vars[n]}`, max);
+        if (cur && cur.length + 2 + item.length > max) { lines.push(cur); cur = item; }
+        else cur = cur ? `${cur}  ${item}` : item;
+      }
+      if (cur) lines.push(cur);
+      return lines.slice(0, 4);
     }
 
     /** Mengubah langkah trace menjadi posisi dan aksi Gopher. */
     prepare(trace) {
       const focus = trace.block.id;
+      this.layout(Math.max(1, ...trace.steps.map(s => this.hudText(s).length)));
       const views = [];
       let run = null, st = null;
       for (const s of trace.steps) {
@@ -87,7 +136,7 @@
           if (k < 0) k = st.lane;
           const ti = P.nodeAt(this.lanes[k].body, s.line);
           v.lane = k; v.tile = ti;
-          v.x = ti >= 0 ? X_TILES + ti * TILE : st.x;
+          v.x = ti >= 0 ? this.lanes[k].tiles[ti].cx : st.x;
         }
         v.tested = st.tested;
         v.chosen = st.chosen;
@@ -171,6 +220,16 @@
       this.draw(v, pos, a, walking, alpha, face);
     }
 
+    /** Teks kode untuk langkah ini: perintah di ubin, kondisi yang dicek, atau kepala blok. */
+    codeOf(v) {
+      const ln = this.lanes[v.lane];
+      if (v.act === 'hit' && ln && v.tile >= 0) return ln.body[v.tile].text || ln.tiles[v.tile].label;
+      if (v.act === 'check' && ln) return `${LABEL[ln.kind].toLowerCase()} ${ln.label || ''}`;
+      if (v.act === 'tag' || v.act === 'idle') return this.block.header || '';
+      if (v.act === 'exit' && v.step.reason) return v.step.reason;
+      return '';
+    }
+
     draw(v, pos, a, walking, alpha, face) {
       const w = this.wx, now = this.clock;
       w.drawImage(this.bg, 0, 0);
@@ -214,30 +273,40 @@
         P.rect(w, X_DOOR - 2, gy - 19, 7, 1, P.INK);
         if (doorH > 0) P.rect(w, X_DOOR - 1, gy - 18, 5, doorH, tested === false ? '#f39a8a' : '#c9b3d8');
 
-        // ubin isi cabang
-        if (!ln.body.length) {
-          P.text(w, ln.kind === 'skip' ? 'TIDAK ADA YANG COCOK' : 'KOSONG', X_TILES - 6, gy - 7, '#c58ba3');
-        }
+        // ubin isi cabang, berlabel nama perintahnya
+        if (ln.empty) P.text(w, ln.empty, X_TILES, gy - 7, '#c58ba3');
         ln.body.forEach((n, j) => {
-          const hit = v.act === 'hit' && v.lane === k && v.tile === j;
-          P.tile(w, X_TILES + j * TILE, gy, n.kind, String(j + 1), hit && a > 0.45 ? (a - 0.45) / 0.4 : 0, false);
+          const t = ln.tiles[j], hit = v.act === 'hit' && v.lane === k && v.tile === j;
+          const col = P.NODE_COL[n.kind] || P.NODE_COL.stmt;
+          const ty = gy - 9 - Math.round(Math.sin(Math.PI * P.clamp(hit && a > 0.45 ? (a - 0.45) / 0.4 : 0, 0, 1)) * 3);
+          P.box(w, t.x, ty, t.w, 9, col, P.INK);
+          P.rect(w, t.x + 1, ty + 1, t.w - 2, 1, P.mix(col, '#ffffff', 0.5));
+          P.textCenter(w, t.label, t.cx, ty + 2, P.INK);
         });
         w.globalAlpha = 1;
       });
 
       // gopher
       const jump = (v.act === 'hit' && v.tile >= 0) ? Math.round(Math.sin(Math.PI * a) * 8) : 0;
+      // saat mengecek kondisi tanda tanya ada di papan kondisi (balon di kepala akan menimpanya)
       const head = P.drawGopher(w, pos.x, pos.y - jump, face, walking ? Math.floor(now / 140) % 2 : 0, alpha);
-      if (v.act === 'idle' || (v.act === 'check' && a < 0.55)) P.bubble(w, pos.x, head - 14 + (Math.floor(now / 300) % 2 ? -1 : 0), '?', P.INK);
+      if (v.act === 'idle') P.bubble(w, pos.x, head - 14 + (Math.floor(now / 300) % 2 ? -1 : 0), '?', P.INK);
 
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), 1, 1, p.col);
 
       // seluruh dunia terlihat (tanpa kamera); HUD di pojok kiri atas
       const ox = 0, oy = 0;
       const s = v.step;
+      P.rect(w, 0, 0, this.W, this.top + 1, 'rgba(255,248,251,0.75)'); // latar HUD supaya awan tidak menimpa teks
       P.text(w, `${this.block.id} ${this.block.kind === 'switch' ? 'SWITCH' : 'IF'}${s.run > 1 ? ' KE-' + s.run : ''}`, ox + 4, oy + 3, P.INK);
-      const vars = this.hudVars.filter(n => s.vars && s.vars[n] != null).slice(0, 3).map(n => `${n}=${s.vars[n]}`).join(' ');
-      if (vars) P.text(w, vars, ox + 4, oy + 10, '#c2457a');
+      this.hudText(s).slice(0, this.hudLines).forEach((ln, j) => P.text(w, ln, ox + 4, oy + 10 + j * 7, '#c2457a'));
+      // baris paling bawah: kode yang sedang dijalankan Gopher
+      const code = this.codeOf(v);
+      if (code) {
+        const y = this.H - 8;
+        P.rect(w, 0, y - 2, this.W, 9, 'rgba(255,248,251,0.85)');
+        P.text(w, P.fit('> ' + code, Math.floor((this.W - 8) / 4)), 4, y, P.INK);
+      }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);
       if (v.act === 'panic' && a > 0.2) {
         const img = P.stamp('PANIC!', '#d9467c'), S = this.cv.__k || 4;
