@@ -1,5 +1,6 @@
-// Mode data: elemen slice/array digambar sebagai barisan gopher (tinggi = nilai), seperti
-// prototype/bubble-sort.html. Digerakkan langkah demi langkah oleh Trace dari simulator.
+// Mode data: elemen slice/array digambar sebagai barisan kubus berangka (warna = peringkat nilai);
+// Gopher berdiri di atas kubus yang sedang dikerjakan. Pencarian memakai grid kubus yang dipotong
+// (referensi: video binary search penguin). Digerakkan langkah demi langkah oleh Trace dari simulator.
 (function (G) {
   'use strict';
   const P = G.pixel;
@@ -37,10 +38,9 @@
       this.cv = canvas;
       this.ctx = canvas.getContext('2d');
       this.world = document.createElement('canvas');
-      this.world.height = H;
       this.wx = this.world.getContext('2d');
       this.bg = document.createElement('canvas');
-      this.bg.height = H;
+      this.worldH = H;
       this.hooks = hooks;
       this.parts = [];
       this.clock = 0;
@@ -86,7 +86,7 @@
       this.n = maxN;
       this.slot = 28;
       this.offset = Math.max(10, Math.round((VIEW - this.slot * maxN) / 2));
-      this.resize(Math.max(VIEW, this.offset * 2 + this.slot * maxN));
+      this.resize(Math.max(VIEW, this.offset * 2 + this.slot * maxN), H, false);
       return this.snaps;
     }
 
@@ -153,7 +153,7 @@
       P.drawGopher(w, gx, GY + 14, face, t < wf ? Math.floor(now / 140) % 2 : 0);
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s || 1, p.s || 1, p.col);
 
-      P.present(this.ctx, this.cv, this.world, this.worldW, H);
+      P.present(this.ctx, this.cv, this.world, this.worldW, this.worldH);
     }
 
     /** Menyiapkan snapshot per langkah. Mengembalikan daftar langkah untuk pemutar. */
@@ -230,8 +230,17 @@
       this.n = maxN;
       this.slot = P.clamp(Math.floor((VIEW - 16) / Math.max(1, maxN)), SLOT_MIN, SLOT_MAX);
       this.offset = Math.max(8, Math.round((VIEW - this.slot * maxN) / 2));
-      // mode eliminasi: lebar tetap (balok mengecil), lebih lebar untuk array panjang
-      this.resize(this.elim ? (maxN > 24 ? 320 : VIEW) : Math.max(VIEW, this.offset * 2 + this.slot * maxN));
+      // mode eliminasi: panggung grid berukuran tetap (kubus mengecil), lebih besar untuk array panjang
+      if (this.elim) this.resize(maxN > 24 ? 320 : VIEW, maxN > 24 ? 176 : 120, true);
+      else this.resize(Math.max(VIEW, this.offset * 2 + this.slot * maxN), H, false);
+      // posisi Gopher per langkah: di atas kubus yang sedang dikerjakan, tetap di tempat bila tidak ada
+      let gx = this.slotX(0);
+      for (const s of this.snaps) {
+        s.gxFrom = gx;
+        const f = this.focusSlots(s) || (s.read >= 0 ? [s.read] : null);
+        if (f) gx = f.reduce((a, k) => a + this.slotX(k), 0) / f.length;
+        s.gx = gx;
+      }
       this.lastIdx = -1;
       return this.snaps;
     }
@@ -276,6 +285,14 @@
           if (k != null && k >= 0 && k < n && !s.ptr.some(p => p.name === name)) s.ptr.push({ name, k });
         }
       }
+      // target sudah tampil sejak awal run (sebelum perbandingan pertama)
+      let ahead = null;
+      run = null;
+      for (let k = snaps.length - 1; k >= 0; k--) {
+        const s = snaps[k];
+        if (s.step.run !== run) { run = s.step.run; ahead = null; }
+        if (s.target == null || (s.checks === 0 && ahead != null)) s.target = ahead; else ahead = s.target;
+      }
       this.prepareElimination(trace);
     }
 
@@ -309,19 +326,37 @@
       }
     }
 
-    /** Tata letak kandidat: lebar slot (piksel dunia) dan posisi tengah slot ke-r. */
-    elimLayout(count) {
-      const sw = P.clamp(Math.floor((this.worldW - 16) / Math.max(1, count)), 2, 30);
-      const x0 = (this.worldW - sw * count) / 2;
-      return { sw, x: r => x0 + (r + 0.5) * sw };
+    /**
+     * Grid kandidat seperti lantai petak di video referensi: m kubus diurutkan indeks, baris demi
+     * baris, sebesar mungkin yang muat (sedikit kandidat = satu baris). p = jarak antarsel,
+     * s = sisi depan kubus, d = kedalaman; pos(r) = pojok kiri atas sisi depan sel ke-r.
+     */
+    gridLayout(m) {
+      const top = 22, AW = this.worldW - 16, AH = this.worldH - top - 6;
+      m = Math.max(1, m);
+      let best = null;
+      if (AW / m >= 18) best = { cols: m, rows: 1, p: Math.min(Math.floor(AW / m), AH, 40) };
+      else for (let cols = 1; cols <= m; cols++) {
+        const rows = Math.ceil(m / cols), p = Math.min(Math.floor(AW / cols), Math.floor(AH / rows), 40);
+        if (!best || p > best.p) best = { cols, rows, p };
+      }
+      const cols = best.cols, rows = best.rows, p = Math.max(1, best.p);
+      const d = p < 6 ? 0 : Math.max(1, Math.round(p / 5)), gap = p >= 8 ? 1 : 0, s = Math.max(1, p - d - gap);
+      const x0 = Math.round((this.worldW - cols * p) / 2), y0 = Math.round(top + (AH - rows * p) / 2);
+      return { cols, rows, p, s, d, pos: r => ({ x: x0 + (r % cols) * p, y: y0 + d + Math.floor(r / cols) * p }) };
     }
 
-    resize(w) {
-      if (w === this.worldW) return;
-      this.worldW = w;
-      this.world.width = w;
-      this.bg.width = w;
-      P.paintWorld(this.bg.getContext('2d'), w, H, GY);
+    resize(w, h, grid) {
+      if (w === this.worldW && h === this.worldH && grid === this.gridBg) return;
+      this.worldW = w; this.worldH = h; this.gridBg = grid;
+      this.world.width = this.bg.width = w;
+      this.world.height = this.bg.height = h;
+      const c = this.bg.getContext('2d');
+      if (!grid) { P.paintWorld(c, w, h, GY); return; }
+      P.paintSky(c, w, h); // langit + alas petak tempat grid kubus
+      P.box(c, 4, 19, w - 8, h - 22, '#fff4f7', '#f2c4d2');
+      c.fillStyle = '#fbe3e8';
+      for (let y = 21; y < h - 4; y += 4) for (let x = 6 + (y % 8 ? 2 : 0); x < w - 6; x += 4) c.fillRect(x, y, 1, 1);
     }
 
     slotX(k) { return this.offset + (k + 0.5) * this.slot; }
@@ -347,7 +382,7 @@
         out.push({ t: 0, sound: 'think' });
         const yes = this.search ? s.cmp.result === '=' : st.result != null ? st.result : s.cmp.result === '>';
         out.push({ t: 0.45, sound: yes ? 'yes' : 'no' });
-        if (this.search && this.eqSearch && s.cmp.result === '=' && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=')) out.push({ t: 0.5, sound: 'sparkle', fx: () => this.burst(this.elim ? this.worldW / 2 : this.slotX(s.cmp.a), GY - 40, 12, ['#f3c75a', '#ffffff', '#9fd88f'], { sp: 70, up: 50, g: 60, life: 700 }) });
+        if (this.search && this.eqSearch && s.cmp.result === '=' && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=')) out.push({ t: 0.5, sound: 'sparkle', fx: () => this.burst(this.elim ? this.worldW / 2 : this.slotX(s.cmp.a), this.elim ? this.worldH / 2 : GY - 40, 12, ['#f3c75a', '#ffffff', '#9fd88f'], { sp: 70, up: 50, g: 60, life: 700 }) });
         if (this.elim && s.alive.length < s.aliveBefore.length - 1) out.push({ t: 0.6, sound: 'warp' }); // banyak yang dibuang sekaligus
       }
       if (s.swap) {
@@ -387,7 +422,7 @@
       const f = dt / 1000;
       this.parts = this.parts.filter(p => {
         p.vy += p.g * f; p.x += p.vx * f; p.y += p.vy * f; p.life -= dt;
-        return p.life > 0 && p.y < H + 4;
+        return p.life > 0 && p.y < this.worldH + 4;
       });
     }
 
@@ -448,56 +483,54 @@
         if (g.slot === foundSlot) { g.face = 'happy'; if (!done) g.y = -Math.round(Math.abs(Math.sin(now / 150)) * 3); }
         else if (done) { g.face = (now + g.id * 1370) % 3400 < 130 ? 'blink' : 'idle'; g.y = 0; }
       }
-      for (const g of L) { w.globalAlpha = dim(g); P.ell(w, Math.round(g.x), GY + 1, Math.min(9, this.slot / 2 - 1), 2, P.mix(P.VCOL[this.levelOf(g.v)], '#ffffff', 0.3)); }
+      // kubus berangka: warna = peringkat nilai; yang dibandingkan terangkat dan berbingkai
+      const d = Math.max(2, Math.round(this.slot / 6)), cs = this.slot - d - 4;
+      const cmpSlot = g => s.cmp && !s.prevOrder && (g.slot === s.cmp.a || g.slot === s.cmp.b);
+      for (const g of L) { w.globalAlpha = dim(g); P.rect(w, Math.round(g.x - cs / 2), GY + 1, cs + d, 1, P.mix(P.VCOL[this.levelOf(g.v)], P.INK, 0.15)); }
       w.globalAlpha = 1;
-      for (const g of [...L].sort((a, b) => a.z - b.z)) {
+      for (const g of [...L].sort((a, b) => a.z - b.z || a.slot - b.slot)) {
         const lv = this.levelOf(g.v);
-        const spr = P.gopher(lv, g.face, 0);
-        const dx = Math.round(g.x - 8), dy = Math.round(GY + 2 - spr.height + g.y);
-        w.globalAlpha = dim(g);
-        w.drawImage(spr, dx, dy);
-        g.top = dy;
-        // lencana nilai
-        const label = String(g.v).slice(0, 3);
-        const bw = Math.max(9, P.textW(label) + 4), bx = Math.round(g.x - bw / 2), by = dy - 10;
         const flash = g.slot === s.set && t > 0.3 && Math.floor(now / 100) % 2;
-        P.box(w, bx, by, bw, 9, flash ? '#f3c75a' : P.mix(P.VCOL[lv], P.INK, 0.4), '#ffffff');
-        P.textCenter(w, label, g.x, by + 2, '#ffffff');
+        const lift = cmpSlot(g) ? Math.round(2 * P.clamp(t / 0.15, 0, 1)) : 0;
+        const x = Math.round(g.x - (cs + d) / 2), y = Math.round(GY + 1 - cs + g.y) - lift;
+        w.globalAlpha = dim(g);
+        P.cube(w, x, y, cs, cs, flash ? '#f3c75a' : P.VCOL[lv], d, cmpSlot(g) || g.slot === foundSlot ? '#d9467c' : null);
+        P.textCenter(w, String(g.v).slice(0, Math.max(1, Math.floor(cs / 4))), x + cs / 2, y + Math.floor((cs - 5) / 2), P.INK);
         w.globalAlpha = 1;
-        if (g.slot === foundSlot) this.star(w, g.x, by - 9 - (Math.floor(now / 250) % 2));
+        g.top = y - d;
+        if (g.slot === foundSlot) this.star(w, g.x, g.top - 9 - (Math.floor(now / 250) % 2));
       }
+
+      // Gopher berdiri di atas kubus yang sedang dikerjakan; melompat dari kubus sebelumnya
+      const hopT = P.clamp(t / 0.3, 0, 1), moving = Math.abs(s.gx - s.gxFrom) > 1 && hopT < 1;
+      const gx = moving ? P.lerp(s.gxFrom, s.gx, P.ease(hopT)) : s.gx;
+      let gy = GY - cs - Math.ceil(d / 2) - (moving ? Math.round(Math.sin(Math.PI * hopT) * 10) : 0);
+      let face = (now % 3400) < 130 ? 'blink' : 'idle';
+      if (s.cmp && !s.prevOrder) {
+        const yes = this.search ? s.cmp.result === '=' : st.result != null ? st.result : s.cmp.result === '>';
+        face = t < 0.45 ? 'think' : yes ? 'happy' : 'shock';
+      }
+      if (s.swap) { face = 'happy'; gy -= Math.round(Math.sin(Math.PI * t) * 20); }
+      if (s.set >= 0 && t > 0.3) face = 'happy';
+      if (st.reason === 'panic') face = 'shock';
+      if (done) { face = 'happy'; gy -= Math.round(Math.abs(Math.sin(now / 150)) * 4); }
+      const head = P.drawGopher(w, gx, gy, face, moving ? Math.floor(now / 120) % 2 : 0);
       if (this.search && s.range) { // kurung siku rentang pencarian lo..hi di bawah barisan
         const x0 = Math.round(this.slotX(s.range.lo) - this.slot / 2 + 1), x1 = Math.round(this.slotX(s.range.hi) + this.slot / 2 - 2);
         if (x1 > x0) { P.rect(w, x0, GY + 2, x1 - x0 + 1, 1, '#c2457a'); P.rect(w, x0, GY, 1, 3, '#c2457a'); P.rect(w, x1, GY, 1, 3, '#c2457a'); }
       }
 
       const at = slot => L.find(g => g.slot === slot);
-      if (s.cmp) {
-        const ga = at(s.cmp.a), gb = s.cmp.b != null ? at(s.cmp.b) : null;
-        if (ga) {
-          const tops = gb ? Math.min(ga.top, gb.top) : ga.top;
-          if (t > 0.15 && gb) {
-            P.dashedLine(w, Math.round(Math.min(ga.x, gb.x) - 10), Math.round(Math.max(ga.x, gb.x) + 10), ga.top, '#c2457a');
-            if (gb.top !== ga.top) P.dashedLine(w, Math.round(Math.min(ga.x, gb.x) - 10), Math.round(Math.max(ga.x, gb.x) + 10), gb.top, '#c2457a');
-          }
-          const ch = t < 0.45 ? '?' : s.cmp.result;
-          const col = t < 0.45 ? P.INK : s.cmp.result === '>' ? '#d9467c' : '#2f8a5c';
-          const cx = gb ? (ga.x + gb.x) / 2 : ga.x;
-          P.bubble(w, cx, tops - 26 + (t < 0.45 && Math.floor(now / 200) % 2 ? -1 : 0), ch, col);
-          if (!gb && s.cmp.value != null && t >= 0.45) P.text(w, String(s.cmp.value).slice(0, 4), Math.round(cx + 7), tops - 23, col);
-        }
-      }
-      if (s.read >= 0 && !s.cmp && !s.swap) {
-        const g = at(s.read);
-        if (g) { // panah kecil yang memantul di atas elemen yang sedang dibaca
-          const ay = g.top - 15 + (Math.floor(now / 180) % 2);
-          w.fillStyle = '#d9467c';
-          w.fillRect(Math.round(g.x) - 2, ay, 5, 1); w.fillRect(Math.round(g.x) - 1, ay + 1, 3, 1); w.fillRect(Math.round(g.x), ay + 2, 1, 1);
-        }
+      if (s.cmp && !s.prevOrder) { // balon hasil perbandingan di atas kepala Gopher
+        const ch = t < 0.45 ? '?' : s.cmp.result;
+        const col = t < 0.45 ? P.INK : s.cmp.result === '>' ? '#d9467c' : '#2f8a5c';
+        const by = Math.max(1, head - 14 + (t < 0.45 && Math.floor(now / 200) % 2 ? -1 : 0));
+        P.bubble(w, gx, by, ch, col);
+        if (s.cmp.b == null && s.cmp.value != null && t >= 0.45) P.text(w, String(s.cmp.value).slice(0, 4), Math.round(gx + 7), by + 3, col);
       }
       if (s.swap && t > 0.55) {
         const ga = at(s.swap.a), gb = at(s.swap.b);
-        if (ga && gb) P.textCenter(w, 'TUKAR!', (ga.x + gb.x) / 2, Math.min(ga.top, gb.top) - 20 - Math.round((t - 0.55) * 16), '#d9467c');
+        if (ga && gb) P.textCenter(w, 'TUKAR!', (ga.x + gb.x) / 2, Math.max(1, head - 8 - Math.round((t - 0.55) * 16)), '#d9467c');
       }
       let label = null, col = '#d9467c';
       if (st.reason === 'panic') label = 'PANIC!';
@@ -520,94 +553,125 @@
     }
 
     /**
-     * Panggung eliminasi: kandidat dijejer selebar panggung; yang dibuang jatuh dan memudar,
-     * sisanya merapat dan membesar. Tampilan elemen mengikuti lebar slot: Gopher berlencana
-     * (lebar), balok berangka (sedang), atau batang tipis (sempit, mis. 100 elemen).
+     * Panggung eliminasi (referensi: video binary search penguin): kandidat = grid kubus. Langkah:
+     * kubus yang dicek terangkat di bawah sorot cahaya dan balon "nilai ? target" muncul; garis
+     * potong bersinar di antara yang tersisa dan yang dibuang; yang dibuang meluncur keluar
+     * (indeks lebih kecil ke kiri, lebih besar ke kanan, di tengah jatuh); sisanya disusun ulang ke
+     * grid yang lebih kecil sehingga kubusnya membesar. Yang ketemu dinaiki Gopher.
      */
     renderElim(i, t) {
-      const s = this.snaps[i], st = s.step, w = this.wx, now = this.clock;
+      const s = this.snaps[i], st = s.step, w = this.wx, now = this.clock, W = this.worldW;
       const last = i === this.snaps.length - 1;
       const done = last && (st.phase === 'exit' || st.phase === 'return') && st.reason !== 'panic';
       w.drawImage(this.bg, 0, 0);
-      const before = this.elimLayout(s.aliveBefore.length), after = this.elimLayout(s.alive.length);
-      const u = P.ease(P.clamp((t - 0.55) / 0.45, 0, 1)); // 0 = sebelum, 1 = sesudah eliminasi
-      const keep = new Set(s.alive);
+      const A = this.gridLayout(s.aliveBefore.length), B = this.gridLayout(s.alive.length);
+      const keep = new Set(s.alive), rankB = new Map(s.alive.map((k, r) => [k, r]));
+      const lo = s.alive.length ? s.alive[0] : Infinity, hi = s.alive.length ? s.alive[s.alive.length - 1] : -Infinity;
       const cmpA = s.cmp && s.cmp.b == null ? s.cmp.a : -1;
       const found = s.found >= 0 && keep.has(s.found) ? s.found : -1;
-      const items = [];
-      s.aliveBefore.forEach((k, r) => {
-        const alive = keep.has(k);
-        const x = alive ? P.lerp(before.x(r), after.x(s.alive.indexOf(k)), u) : before.x(r);
-        const sw = alive ? P.lerp(before.sw, after.sw, u) : before.sw;
-        items.push({ k, x, sw, alive, fall: alive ? 0 : u, v: s.vals[s.order[k]] });
+      const cut = P.clamp((t - 0.5) / 0.28, 0, 1), slide = cut * cut; // yang dibuang meluncur keluar
+      const zoom = P.ease(P.clamp((t - 0.72) / 0.28, 0, 1)); // sisanya membesar mengisi alas
+      const items = s.aliveBefore.map((k, r) => {
+        const a = A.pos(r), v = s.vals[s.order[k]];
+        const it = { k, r, v, alive: keep.has(k), cell: a };
+        if (it.alive) {
+          const b = B.pos(rankB.get(k));
+          Object.assign(it, { x: P.lerp(a.x, b.x, zoom), y: P.lerp(a.y, b.y, zoom), s: P.lerp(A.s, B.s, zoom), d: P.lerp(A.d, B.d, zoom), alpha: 1 });
+        } else {
+          const dir = k > hi ? 1 : k < lo ? -1 : 0;
+          Object.assign(it, { x: a.x + dir * slide * W * 0.9, y: a.y + (dir ? 0 : slide * 50), s: A.s, d: A.d, alpha: 1 - cut });
+        }
+        if (k === cmpA) it.y -= Math.round(3 * P.clamp(t / 0.15, 0, 1) * (1 - cut));
+        return it;
       });
-      // tanah + garis indeks
-      P.rect(w, 0, GY + 1, this.worldW, 1, '#f2c4d2');
-      for (const it of items) {
-        const lv = this.levelOf(it.v), col = P.VCOL[lv];
-        const y = Math.round(it.fall * it.fall * 60);
-        w.globalAlpha = 1 - it.fall;
-        const isCmp = it.k === cmpA && it.fall === 0, isFound = it.k === found;
-        if (it.sw >= 18) { // Gopher berlencana
-          let face = (now + it.k * 1370) % 3400 < 130 ? 'blink' : 'idle';
-          if (isCmp) face = t < 0.45 ? 'think' : s.cmp.result === '=' ? 'happy' : 'shock';
-          if (it.fall > 0) face = 'shock';
-          if (isFound) face = 'happy';
-          const hop = isFound ? Math.round(Math.abs(Math.sin(now / 150)) * 3) : 0;
-          const spr = P.gopher(lv, face, 0);
-          const dy = Math.round(GY + 2 - spr.height + y - hop);
-          w.drawImage(spr, Math.round(it.x - 8), dy);
-          const label = String(it.v).slice(0, 3), bw = Math.max(9, P.textW(label) + 4);
-          P.box(w, Math.round(it.x - bw / 2), dy - 10, bw, 9, P.mix(col, P.INK, 0.4), '#ffffff');
-          P.textCenter(w, label, it.x, dy - 8, '#ffffff');
-          it.top = dy - 10;
-        } else { // balok / batang
-          const bw = Math.max(1, Math.round(it.sw) - 1), bh = 8 + lv * 4;
-          const bx = Math.round(it.x - bw / 2), by = GY + 1 - bh + y;
-          P.rect(w, bx, by, bw, bh, col);
-          if (bw >= 4) { P.rect(w, bx, by, bw, 1, P.mix(col, '#ffffff', 0.5)); P.rect(w, bx, by + bh - 1, bw, 1, P.mix(col, P.INK, 0.35)); }
-          const label = String(it.v).slice(0, 3);
-          if (bw >= P.textW(label) + 2) P.textCenter(w, label, it.x, by + 2, '#ffffff');
-          if (isCmp || isFound) { P.rect(w, bx - 1, by - 1, bw + 2, 1, '#d9467c'); P.rect(w, bx - 1, by - 1, 1, bh + 1, '#d9467c'); P.rect(w, bx + bw, by - 1, 1, bh + 1, '#d9467c'); }
-          it.top = by;
+      const ci = items.find(it => it.k === cmpA);
+
+      // sorot cahaya dari atas ke kubus yang sedang dicek
+      if (ci && t < 0.6) {
+        const f = 1 - P.clamp((t - 0.45) / 0.15, 0, 1), bx = Math.round(ci.x), top = Math.round(ci.y - ci.d);
+        w.globalAlpha = 0.28 * f;
+        P.rect(w, bx, 18, Math.round(ci.s + ci.d), Math.max(0, top - 18), '#ffffff');
+        w.globalAlpha = 0.7 * f;
+        P.rect(w, Math.round(ci.x + (ci.s + ci.d) / 2), 18, 1, Math.max(0, top - 18), '#ffffff');
+        w.globalAlpha = 1;
+      }
+
+      // kubus: baris belakang dulu, lalu kiri ke kanan (sisi atas/kanan tertutup tetangga depan)
+      const order = items.slice().sort((p, q) => Math.round(p.y) - Math.round(q.y) || p.x - q.x);
+      for (const it of order) {
+        if (it.alpha <= 0.02 || it.x > W + 4 || it.x + it.s + it.d < -4) continue;
+        w.globalAlpha = it.alpha;
+        const lv = this.levelOf(it.v), sz = Math.round(it.s), dd = Math.round(it.d);
+        const ring = it.k === found ? '#f3c75a' : it.k === cmpA && cut < 1 ? '#d9467c' : null;
+        P.cube(w, it.x, it.y, sz, sz, P.VCOL[lv], dd, ring);
+        const fit = Math.floor((sz - 1) / 4);
+        if (sz >= 8 && fit >= 1) P.textCenter(w, String(it.v).slice(0, fit), Math.round(it.x) + sz / 2, Math.round(it.y) + Math.floor((sz - 5) / 2), P.INK);
+        w.globalAlpha = 1;
+      }
+
+      // garis potong bersinar di batas antara yang tersisa dan yang dibuang (posisi grid lama)
+      const glow = P.clamp((t - 0.45) / 0.08, 0, 1) * (1 - zoom);
+      if (glow > 0 && s.alive.length < s.aliveBefore.length && s.alive.length) {
+        const gone = r => r >= 0 && r < items.length && !items[r].alive;
+        const p = A.p, cols = A.cols;
+        w.globalAlpha = glow * (0.75 + 0.25 * Math.sin(now / 60));
+        for (const it of items) {
+          if (!it.alive) continue;
+          const c = it.r % cols, x = it.cell.x, y = it.cell.y - A.d;
+          if (c < cols - 1 && gone(it.r + 1)) P.rect(w, x + p - 1, y - 1, 2, p + 1, '#f3b13a');
+          if (c > 0 && gone(it.r - 1)) P.rect(w, x - 2, y - 1, 2, p + 1, '#f3b13a');
+          if (gone(it.r + cols)) P.rect(w, x - 1, y + p - 1, p + 1, 2, '#f3b13a');
+          if (gone(it.r - cols)) P.rect(w, x - 1, y - 2, p + 1, 2, '#f3b13a');
         }
         w.globalAlpha = 1;
-        if (isFound) this.star(w, it.x, it.top - 9 - (Math.floor(now / 250) % 2));
       }
-      // indeks di bawah: semua bila muat, selain itu ujung kiri/kanan dan yang sedang dicek
-      const vis = items.filter(it => it.alive);
-      const room = vis.length && vis[0].sw >= 10;
-      for (const it of vis) {
-        if (room || it === vis[0] || it === vis[vis.length - 1] || it.k === cmpA) P.textCenter(w, String(it.k), it.x, GY + 4, it.k === cmpA ? '#c2457a' : '#d9a0b6');
+
+      // Gopher naik ke kubus yang ketemu
+      const fi = found >= 0 ? items.find(it => it.k === found) : null;
+      if (fi) {
+        const fresh = s.foundBefore !== found;
+        const drop = fresh ? P.clamp((t - 0.5) / 0.4, 0, 1) : 1;
+        const sz = Math.round(fi.s), dd = Math.round(fi.d);
+        const gy = Math.round(fi.y) - Math.ceil(dd / 2) - 1 - Math.round((1 - P.bounce(drop)) * 60) - (drop >= 1 ? Math.round(Math.abs(Math.sin(now / 150)) * 3) : 0);
+        if (drop > 0) {
+          const head = P.drawGopher(w, Math.round(fi.x) + (sz + dd) / 2, gy, 'happy', 0, P.clamp(drop * 4, 0, 1));
+          if (drop >= 1) this.star(w, Math.round(fi.x) + (sz + dd) / 2, head - 9 - (Math.floor(now / 250) % 2));
+        }
       }
-      const stack = {};
-      for (const p of s.ptr) { // penunjuk lo/mid/hi di bawah elemennya
-        const it = items.find(x => x.k === p.k && x.alive);
-        if (!it) continue;
-        const row = stack[p.k] = (stack[p.k] || 0) + 1;
-        P.textCenter(w, p.name.slice(0, 3), it.x, GY + 4 + row * 6, '#c2457a');
-      }
-      // gelembung hasil perbandingan di atas elemen yang dicek
-      const ci = items.find(it => it.k === cmpA);
-      if (ci && ci.fall < 0.5) {
-        const ch = t < 0.45 ? '?' : s.cmp.result, colr = t < 0.45 ? P.INK : s.cmp.result === '=' ? '#2f8a5c' : '#d9467c';
-        const by = Math.max(18, ci.top - 26 + (t < 0.45 && Math.floor(now / 200) % 2 ? -1 : 0));
-        const bx = P.clamp(ci.x, 8, this.worldW - 30);
-        P.bubble(w, bx, by, ch, colr);
-        P.text(w, String(ci.v).slice(0, 5), Math.round(bx + 7), by + 3, P.INK);
+
+      // balon "nilai ? target" di atas kubus yang dicek (di bawahnya bila tidak muat)
+      if (ci && cut < 0.6) {
+        const sym = t < 0.45 ? '?' : s.cmp.result;
+        const colS = t < 0.45 ? P.INK : s.cmp.result === '=' ? '#2f8a5c' : '#d9467c';
+        const va = String(ci.v).slice(0, 7), vb = String(s.cmp.value != null ? s.cmp.value : s.target != null ? s.target : '').slice(0, 7);
+        const bw = P.textW(va) + P.textW(sym) + P.textW(vb) + 14;
+        const cx = ci.x + (ci.s + ci.d) / 2;
+        const bx = Math.round(P.clamp(cx - bw / 2, 2, W - bw - 2));
+        let by = Math.round(ci.y - ci.d - 15);
+        if (by < 18) by = Math.round(ci.y + ci.s + 3);
+        w.globalAlpha = 1 - P.clamp((cut - 0.3) / 0.3, 0, 1);
+        P.box(w, bx, by, bw, 11, '#ffffff', P.INK);
+        let tx = bx + 4;
+        P.text(w, va, tx, by + 3, P.INK); tx += P.textW(va) + 3;
+        P.text(w, sym, tx, by + 3, colS); tx += P.textW(sym) + 3;
+        P.text(w, vb, tx, by + 3, '#c2457a');
+        w.globalAlpha = 1;
       }
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s, p.s, p.col);
-      // HUD
-      P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
+
+      // HUD: target, jumlah cek, sisa kandidat, penunjuk (lo/mid/hi, i)
+      P.rect(w, 0, 0, W, 17, 'rgba(255,248,251,0.8)');
       P.text(w, s.target != null ? `CARI ${String(s.target).slice(0, 10)}` : 'CARI', 4, 3, P.INK);
-      P.text(w, `CEK ${s.checks}  SISA ${s.alive.length}`, 4, 10, '#c2457a');
+      let hud = `CEK ${s.checks}  SISA ${s.alive.length}`;
+      for (const q of s.ptr.slice(0, 4)) hud += `  ${q.name.slice(0, 4)} ${q.k}`;
+      P.text(w, hud, 4, 10, '#c2457a');
       let label = null, col = '#2f8a5c';
       if (st.reason === 'panic') { label = 'PANIC!'; col = '#d9467c'; }
       else if (done) { label = !this.eqSearch ? 'SELESAI!' : s.found >= 0 ? 'KETEMU!' : 'TIDAK ADA'; if (this.eqSearch && s.found < 0) col = '#d9467c'; }
       else if (s.cmp && s.cmp.result === '=' && keep.size === 1 && t > 0.6) label = 'KETEMU!';
       if (label) {
         const img = P.stamp(label, col);
-        w.drawImage(img, Math.round(this.worldW - img.width * 2 - 6), 2, img.width * 2, img.height * 2);
+        w.drawImage(img, Math.round(W - img.width * 2 - 4), 2, img.width * 2, img.height * 2);
       }
       this.present(s);
     }
@@ -631,7 +695,7 @@
 
     /** Seluruh deretan terlihat sekaligus (tanpa zoom/kamera). */
     present() {
-      P.present(this.ctx, this.cv, this.world, this.worldW, H);
+      P.present(this.ctx, this.cv, this.world, this.worldW, this.worldH);
     }
   }
 

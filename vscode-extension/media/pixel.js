@@ -138,6 +138,33 @@
     for (let j = 0; j < h; j += 2) { c.fillRect(x, y + j, 1, 1); c.fillRect(x + w - 1, y + j, 1, 1); }
   }
 
+  /** Kedalaman sisi atas/kanan kubus untuk sisi depan selebar s piksel (0 = kotak datar). */
+  function cubeDepth(s) { return s < 4 ? 0 : s < 6 ? 1 : s < 12 ? 2 : clamp(Math.round(s / 4), 3, 8); }
+
+  /**
+   * Kubus pixel art (proyeksi miring, keputusan user 2026-10-08: balok = kubus, bukan batang
+   * berdiri). Sisi depan w x h berpojok kiri atas (x, y) berwarna col; sisi atas terang setebal d
+   * di atasnya dan sisi kanan gelap di kanannya. ring = warna bingkai sorotan (opsional).
+   */
+  function cube(c, x, y, w, h, col, d, ring) {
+    x = Math.round(x); y = Math.round(y); w = Math.max(1, Math.round(w)); h = Math.max(1, Math.round(h));
+    d = d == null ? cubeDepth(Math.min(w, h)) : Math.max(0, Math.round(d));
+    if (ring) { // siluet satu piksel lebih besar di belakang kubus
+      rect(c, x - 1, y - 1, w + 2, h + 2, ring);
+      for (let k = 1; k <= d; k++) { rect(c, x - 1 + k, y - 1 - k, w + 2, 1, ring); rect(c, x + w + k, y - 1 - k, 1, h + 2, ring); }
+    }
+    const top = mix(col, '#ffffff', 0.45), side = mix(col, INK, 0.3);
+    for (let k = 1; k <= d; k++) {
+      rect(c, x + w - 1 + k, y - k, 1, h, side);
+      rect(c, x + k, y - k, w, 1, top);
+    }
+    rect(c, x, y, w, h, col);
+    if (w >= 5 && h >= 5) {
+      rect(c, x, y + h - 1, w, 1, mix(col, INK, 0.45));
+      rect(c, x, y, 1, h - 1, mix(col, '#ffffff', 0.25));
+    }
+  }
+
   function dashedLine(c, x0, x1, y, col) {
     c.fillStyle = col;
     for (let x = x0; x <= x1; x += 3) c.fillRect(x, y, 2, 1);
@@ -287,23 +314,24 @@
   }
 
   /**
-   * Tata letak tembok penghitung: satu balok per putaran loop / per panggilan rekursif, dijejer lalu
-   * pindah baris saat penuh. Supaya semuanya tetap terlihat, balok mengecil bila jumlahnya banyak:
-   * berlabel (nilai variabel) bila sedikit, lalu balok polos 7px, lalu 4px.
-   * n = jumlah balok terbanyak; labels = label terlebar yang mungkin muncul; more = trace terpotong.
+   * Tata letak tembok penghitung: satu kubus per putaran loop / per panggilan rekursif, dijejer lalu
+   * pindah baris saat penuh. Supaya semuanya tetap terlihat, kubus mengecil bila jumlahnya banyak:
+   * berlabel (nilai variabel) bila sedikit, lalu kubus polos 7px, lalu 4px.
+   * n = jumlah kubus terbanyak; labels = label terlebar yang mungkin muncul; more = trace terpotong.
    */
   function wallLayout(n, labels, W, more) {
     const slots = n + (more ? 1 : 0), usable = W - 16;
     const lw = Math.max(7, ...labels.map(textW));
     const sizes = [
-      { cw: lw + 5, ch: 9, label: true, maxRows: 3 },
-      { cw: 7, ch: 7, label: false, maxRows: 4 },
-      { cw: 4, ch: 4, label: false, maxRows: Infinity },
+      { cw: Math.max(9, lw + 4), label: true, maxRows: 3 },
+      { cw: 7, label: false, maxRows: 4 },
+      { cw: 4, label: false, maxRows: Infinity },
     ];
     for (const s of sizes) {
-      const perRow = Math.max(1, Math.floor((usable + 1) / (s.cw + 1)));
+      const d = cubeDepth(s.cw), pitch = s.cw + d + (s.cw >= 7 ? 1 : 0);
+      const perRow = Math.max(1, Math.floor((usable - d) / pitch));
       const rows = Math.max(1, Math.ceil(slots / perRow));
-      if (rows <= s.maxRows) return Object.assign(s, { perRow, rows, x0: 8, h: rows * (s.ch + 1) + 7 });
+      if (rows <= s.maxRows) return Object.assign(s, { ch: s.cw, d, pitch, perRow, rows, x0: 8, h: rows * pitch + 7 });
     }
   }
 
@@ -312,23 +340,17 @@
    * ghost = gambar balok hantu "+" sesudahnya (trace dipotong, putaran berikutnya tidak disimulasikan).
    */
   function drawWall(c, L, y0, labels, count, pop, ghost) {
-    const at = k => ({ x: L.x0 + (k % L.perRow) * (L.cw + 1), y: y0 + 4 + Math.floor(k / L.perRow) * (L.ch + 1) });
+    const at = k => ({ x: L.x0 + (k % L.perRow) * L.pitch, y: y0 + 4 + L.d + Math.floor(k / L.perRow) * L.pitch });
     for (let k = 0; k < count; k++) {
       let { x, y } = at(k);
       if (k === count - 1 && pop != null && pop < 1) {
         y -= Math.round((1 - bounce(clamp(pop, 0, 1))) * 10);
         c.globalAlpha = clamp(pop * 3, 0, 1);
       }
-      // setiap balok ke-10 berwarna jingga supaya mudah dihitung
-      const tenth = k % 10 === 9, fill = tenth ? '#f7b779' : '#f3c75a', line = tenth ? '#a5622a' : '#a8741f';
-      if (L.ch < 7) {
-        rect(c, x, y, L.cw, L.ch, fill);
-        rect(c, x, y + L.ch - 1, L.cw, 1, line);
-      } else {
-        box(c, x, y, L.cw, L.ch, fill, INK);
-        rect(c, x + 1, y + 1, L.cw - 2, 1, mix(fill, '#ffffff', 0.5));
-        if (L.label) textCenter(c, labels[k] || String(k + 1), x + L.cw / 2, y + 2, INK);
-      }
+      // setiap kubus ke-10 berwarna jingga supaya mudah dihitung
+      const fill = k % 10 === 9 ? '#f7b779' : '#f3c75a';
+      cube(c, x, y, L.cw, L.ch, fill, L.d);
+      if (L.label) textCenter(c, labels[k] || String(k + 1), x + L.cw / 2, y + Math.floor((L.ch - 5) / 2), INK);
       c.globalAlpha = 1;
     }
     if (ghost) {
@@ -348,6 +370,6 @@
   G.pixel = {
     INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
-    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall,
+    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth,
   };
 })(window.GV = window.GV || {});
