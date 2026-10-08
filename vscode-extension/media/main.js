@@ -300,7 +300,7 @@
 
   // ---------- pemutar trace ----------
 
-  const tp = { active: false, trace: null, view: [], r: null, i: 0, el: 0, playing: true, once: false, cues: [], ci: 0, hold: 0 };
+  const tp = { active: false, trace: null, view: [], boost: [], r: null, i: 0, el: 0, playing: true, once: false, cues: [], ci: 0, hold: 0 };
 
   /** Adapter supaya semua renderer diputar dengan cara yang sama. */
   const levelR = { prepare: tr => level.prepareTrace(tr), duration: i => level.traceDuration(i), cues: i => level.traceCues(i), render: (i, t) => level.renderTrace(i, t) };
@@ -363,6 +363,7 @@
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
+    tp.boost = boostOf(tp.view);
     tp.active = true;
     tp.playing = true;
     $('tracebar').hidden = false;
@@ -372,6 +373,30 @@
     goto(0, false);
     syncPlay();
     renderNote([]);
+  }
+
+  /**
+   * Percepatan otomatis untuk trace panjang (mis. mencari 67 di antara 100 balok): langkah yang
+   * jauh dari kejadian penting diputar makin cepat (sampai 12x), lalu melambat lagi menjelang
+   * kejadian berikutnya. Kejadian penting: beberapa langkah pertama/terakhir, ketemu (compare =
+   * dengan ==), break/keluar/return/panic.
+   */
+  function boostOf(view) {
+    const n = view.length, out = new Array(n).fill(1);
+    if (n <= 40) return out;
+    const max = Math.min(12, n / 25);
+    const key = view.map((v, i) => {
+      const s = v.step || {};
+      return i < 6 || i >= n - 6 || !!s.reason || s.phase === 'break' || s.phase === 'return' ||
+        (s.ops || []).some(o => o.op === 'compare' && o.result === '=' && (!o.cmp || o.cmp === '=='));
+    });
+    let d = Infinity;
+    const dist = new Array(n);
+    for (let i = 0; i < n; i++) { d = key[i] ? 0 : d + 1; dist[i] = d; }
+    d = Infinity;
+    for (let i = n - 1; i >= 0; i--) { d = key[i] ? 0 : d + 1; dist[i] = Math.min(dist[i], d); }
+    for (let i = 0; i < n; i++) out[i] = 1 + (max - 1) * Math.min(1, Math.max(0, (dist[i] - 2) / 6));
+    return out;
   }
 
   function stopTrace() {
@@ -398,7 +423,7 @@
   function fireCues(t) {
     while (tp.ci < tp.cues.length && tp.cues[tp.ci].t <= t) {
       const c = tp.cues[tp.ci++];
-      if (c.sound) snd.play(c.sound);
+      if (c.sound && (tp.boost[tp.i] || 1) < 2.5) snd.play(c.sound); // langkah yang dipercepat: tanpa suara
       if (c.fx) c.fx();
     }
   }
@@ -479,7 +504,7 @@
     const d = tp.r.duration(tp.i);
     if (tp.playing || tp.once) {
       if (tp.el < d) {
-        tp.el = Math.min(d, tp.el + dt * config.speed);
+        tp.el = Math.min(d, tp.el + dt * config.speed * (tp.boost[tp.i] || 1));
         fireCues(tp.el / d);
       } else if (tp.i < tp.view.length - 1) {
         if (tp.once) { tp.once = false; } else goto(tp.i + 1, false);

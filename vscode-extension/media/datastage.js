@@ -230,7 +230,8 @@
       this.n = maxN;
       this.slot = P.clamp(Math.floor((VIEW - 16) / Math.max(1, maxN)), SLOT_MIN, SLOT_MAX);
       this.offset = Math.max(8, Math.round((VIEW - this.slot * maxN) / 2));
-      this.resize(Math.max(VIEW, this.offset * 2 + this.slot * maxN));
+      // mode eliminasi: lebar tetap (balok mengecil), lebih lebar untuk array panjang
+      this.resize(this.elim ? (maxN > 24 ? 320 : VIEW) : Math.max(VIEW, this.offset * 2 + this.slot * maxN));
       this.lastIdx = -1;
       return this.snaps;
     }
@@ -242,6 +243,7 @@
      */
     prepareSearch(trace) {
       const snaps = this.snaps;
+      this.elim = false;
       this.search = !snaps.some(s => s.swap || s.set >= 0 || s.appended >= 0) && snaps.some(s => s.cmp && s.cmp.b == null);
       if (!this.search) return;
       // "ketemu" hanya bermakna untuk perbandingan kesamaan (==, !=); loop yang hanya memakai < / >
@@ -274,6 +276,44 @@
           if (k != null && k >= 0 && k < n && !s.ptr.some(p => p.name === name)) s.ptr.push({ name, k });
         }
       }
+      this.prepareElimination(trace);
+    }
+
+    /**
+     * Mode eliminasi (pencarian kesamaan atau dengan rentang lo..hi): setiap langkah menyisakan
+     * kandidat. Linear: elemen yang dicek dan tidak cocok dibuang. Koleksi terurut: hasil < / >
+     * membuang satu sisi sekaligus (binary search, bisect). Variabel lo/hi: yang di luar rentang
+     * dibuang. Ketemu: semua selain target dibuang. s.aliveBefore / s.alive = kandidat sebelum /
+     * sesudah langkah (urut indeks); panggung menjatuhkan yang dibuang lalu membesarkan sisanya.
+     */
+    prepareElimination(trace) {
+      const snaps = this.snaps;
+      this.elim = this.eqSearch || snaps.some(s => s.range);
+      if (!this.elim) return;
+      const items = trace.collection.items;
+      const nums = items.map(Number);
+      const sorted = items.length > 1 && nums.every(x => !isNaN(x)) && nums.every((x, k) => k === 0 || nums[k - 1] <= x);
+      const all = () => items.map((_, k) => k);
+      let run = null, alive = all();
+      for (const s of snaps) {
+        if (s.step.run !== run) { run = s.step.run; alive = all(); }
+        s.aliveBefore = alive;
+        let next = alive;
+        const c = s.cmp && s.cmp.b == null ? s.cmp : null;
+        if (c && c.result === '=' && (!c.cmp || c.cmp === '==' || c.cmp === '!=')) next = [c.a];
+        else if (c && sorted && c.result === '<') next = alive.filter(k => k > c.a);
+        else if (c && sorted && c.result === '>') next = alive.filter(k => k < c.a);
+        else if (c && c.result !== '=') next = alive.filter(k => k !== c.a);
+        if (s.range) next = next.filter(k => k >= s.range.lo && k <= s.range.hi);
+        s.alive = alive = next;
+      }
+    }
+
+    /** Tata letak kandidat: lebar slot (piksel dunia) dan posisi tengah slot ke-r. */
+    elimLayout(count) {
+      const sw = P.clamp(Math.floor((this.worldW - 16) / Math.max(1, count)), 2, 30);
+      const x0 = (this.worldW - sw * count) / 2;
+      return { sw, x: r => x0 + (r + 0.5) * sw };
     }
 
     resize(w) {
@@ -307,7 +347,8 @@
         out.push({ t: 0, sound: 'think' });
         const yes = this.search ? s.cmp.result === '=' : st.result != null ? st.result : s.cmp.result === '>';
         out.push({ t: 0.45, sound: yes ? 'yes' : 'no' });
-        if (this.search && this.eqSearch && s.cmp.result === '=' && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=')) out.push({ t: 0.5, sound: 'sparkle', fx: () => this.burst(this.slotX(s.cmp.a), GY - 40, 12, ['#f3c75a', '#ffffff', '#9fd88f'], { sp: 70, up: 50, g: 60, life: 700 }) });
+        if (this.search && this.eqSearch && s.cmp.result === '=' && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=')) out.push({ t: 0.5, sound: 'sparkle', fx: () => this.burst(this.elim ? this.worldW / 2 : this.slotX(s.cmp.a), GY - 40, 12, ['#f3c75a', '#ffffff', '#9fd88f'], { sp: 70, up: 50, g: 60, life: 700 }) });
+        if (this.elim && s.alive.length < s.aliveBefore.length - 1) out.push({ t: 0.6, sound: 'warp' }); // banyak yang dibuang sekaligus
       }
       if (s.swap) {
         out.push({ t: 0, sound: 'jump' });
@@ -354,6 +395,7 @@
       const s = this.snaps[i];
       if (!s) return;
       if (this.mapMode) { this.renderMap(i, t); return; }
+      if (this.elim) { this.renderElim(i, t); return; }
       const w = this.wx, now = this.clock, st = s.step;
       const last = i === this.snaps.length - 1;
       const done = last && st.phase === 'exit' && st.reason !== 'panic';
@@ -474,6 +516,99 @@
         P.text(w, `CEK ${s.checks}`, 4, 10, '#c2457a');
       }
 
+      this.present(s);
+    }
+
+    /**
+     * Panggung eliminasi: kandidat dijejer selebar panggung; yang dibuang jatuh dan memudar,
+     * sisanya merapat dan membesar. Tampilan elemen mengikuti lebar slot: Gopher berlencana
+     * (lebar), balok berangka (sedang), atau batang tipis (sempit, mis. 100 elemen).
+     */
+    renderElim(i, t) {
+      const s = this.snaps[i], st = s.step, w = this.wx, now = this.clock;
+      const last = i === this.snaps.length - 1;
+      const done = last && (st.phase === 'exit' || st.phase === 'return') && st.reason !== 'panic';
+      w.drawImage(this.bg, 0, 0);
+      const before = this.elimLayout(s.aliveBefore.length), after = this.elimLayout(s.alive.length);
+      const u = P.ease(P.clamp((t - 0.55) / 0.45, 0, 1)); // 0 = sebelum, 1 = sesudah eliminasi
+      const keep = new Set(s.alive);
+      const cmpA = s.cmp && s.cmp.b == null ? s.cmp.a : -1;
+      const found = s.found >= 0 && keep.has(s.found) ? s.found : -1;
+      const items = [];
+      s.aliveBefore.forEach((k, r) => {
+        const alive = keep.has(k);
+        const x = alive ? P.lerp(before.x(r), after.x(s.alive.indexOf(k)), u) : before.x(r);
+        const sw = alive ? P.lerp(before.sw, after.sw, u) : before.sw;
+        items.push({ k, x, sw, alive, fall: alive ? 0 : u, v: s.vals[s.order[k]] });
+      });
+      // tanah + garis indeks
+      P.rect(w, 0, GY + 1, this.worldW, 1, '#f2c4d2');
+      for (const it of items) {
+        const lv = this.levelOf(it.v), col = P.VCOL[lv];
+        const y = Math.round(it.fall * it.fall * 60);
+        w.globalAlpha = 1 - it.fall;
+        const isCmp = it.k === cmpA && it.fall === 0, isFound = it.k === found;
+        if (it.sw >= 18) { // Gopher berlencana
+          let face = (now + it.k * 1370) % 3400 < 130 ? 'blink' : 'idle';
+          if (isCmp) face = t < 0.45 ? 'think' : s.cmp.result === '=' ? 'happy' : 'shock';
+          if (it.fall > 0) face = 'shock';
+          if (isFound) face = 'happy';
+          const hop = isFound ? Math.round(Math.abs(Math.sin(now / 150)) * 3) : 0;
+          const spr = P.gopher(lv, face, 0);
+          const dy = Math.round(GY + 2 - spr.height + y - hop);
+          w.drawImage(spr, Math.round(it.x - 8), dy);
+          const label = String(it.v).slice(0, 3), bw = Math.max(9, P.textW(label) + 4);
+          P.box(w, Math.round(it.x - bw / 2), dy - 10, bw, 9, P.mix(col, P.INK, 0.4), '#ffffff');
+          P.textCenter(w, label, it.x, dy - 8, '#ffffff');
+          it.top = dy - 10;
+        } else { // balok / batang
+          const bw = Math.max(1, Math.round(it.sw) - 1), bh = 8 + lv * 4;
+          const bx = Math.round(it.x - bw / 2), by = GY + 1 - bh + y;
+          P.rect(w, bx, by, bw, bh, col);
+          if (bw >= 4) { P.rect(w, bx, by, bw, 1, P.mix(col, '#ffffff', 0.5)); P.rect(w, bx, by + bh - 1, bw, 1, P.mix(col, P.INK, 0.35)); }
+          const label = String(it.v).slice(0, 3);
+          if (bw >= P.textW(label) + 2) P.textCenter(w, label, it.x, by + 2, '#ffffff');
+          if (isCmp || isFound) { P.rect(w, bx - 1, by - 1, bw + 2, 1, '#d9467c'); P.rect(w, bx - 1, by - 1, 1, bh + 1, '#d9467c'); P.rect(w, bx + bw, by - 1, 1, bh + 1, '#d9467c'); }
+          it.top = by;
+        }
+        w.globalAlpha = 1;
+        if (isFound) this.star(w, it.x, it.top - 9 - (Math.floor(now / 250) % 2));
+      }
+      // indeks di bawah: semua bila muat, selain itu ujung kiri/kanan dan yang sedang dicek
+      const vis = items.filter(it => it.alive);
+      const room = vis.length && vis[0].sw >= 10;
+      for (const it of vis) {
+        if (room || it === vis[0] || it === vis[vis.length - 1] || it.k === cmpA) P.textCenter(w, String(it.k), it.x, GY + 4, it.k === cmpA ? '#c2457a' : '#d9a0b6');
+      }
+      const stack = {};
+      for (const p of s.ptr) { // penunjuk lo/mid/hi di bawah elemennya
+        const it = items.find(x => x.k === p.k && x.alive);
+        if (!it) continue;
+        const row = stack[p.k] = (stack[p.k] || 0) + 1;
+        P.textCenter(w, p.name.slice(0, 3), it.x, GY + 4 + row * 6, '#c2457a');
+      }
+      // gelembung hasil perbandingan di atas elemen yang dicek
+      const ci = items.find(it => it.k === cmpA);
+      if (ci && ci.fall < 0.5) {
+        const ch = t < 0.45 ? '?' : s.cmp.result, colr = t < 0.45 ? P.INK : s.cmp.result === '=' ? '#2f8a5c' : '#d9467c';
+        const by = Math.max(18, ci.top - 26 + (t < 0.45 && Math.floor(now / 200) % 2 ? -1 : 0));
+        const bx = P.clamp(ci.x, 8, this.worldW - 30);
+        P.bubble(w, bx, by, ch, colr);
+        P.text(w, String(ci.v).slice(0, 5), Math.round(bx + 7), by + 3, P.INK);
+      }
+      for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s, p.s, p.col);
+      // HUD
+      P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
+      P.text(w, s.target != null ? `CARI ${String(s.target).slice(0, 10)}` : 'CARI', 4, 3, P.INK);
+      P.text(w, `CEK ${s.checks}  SISA ${s.alive.length}`, 4, 10, '#c2457a');
+      let label = null, col = '#2f8a5c';
+      if (st.reason === 'panic') { label = 'PANIC!'; col = '#d9467c'; }
+      else if (done) { label = !this.eqSearch ? 'SELESAI!' : s.found >= 0 ? 'KETEMU!' : 'TIDAK ADA'; if (this.eqSearch && s.found < 0) col = '#d9467c'; }
+      else if (s.cmp && s.cmp.result === '=' && keep.size === 1 && t > 0.6) label = 'KETEMU!';
+      if (label) {
+        const img = P.stamp(label, col);
+        w.drawImage(img, Math.round(this.worldW - img.width * 2 - 6), 2, img.width * 2, img.height * 2);
+      }
       this.present(s);
     }
 

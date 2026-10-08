@@ -33,10 +33,10 @@ type Options struct {
 
 func (o Options) withDefaults() Options {
 	if o.MaxSteps <= 0 {
-		o.MaxSteps = 1000
+		o.MaxSteps = 5000
 	}
 	if o.MaxIter <= 0 {
-		o.MaxIter = 50
+		o.MaxIter = 1000
 	}
 	if o.Budget <= 0 {
 		o.Budget = 300_000
