@@ -79,6 +79,10 @@ const samples = {
   maze_js: ['@/maze.js', 6],
   maze_go: ['@/mazego/main.go', 7],
   pulau_py: ['@/pulau.py', 7],
+  tree_pre: ['@/pohon.py', 9],
+  tree_height: ['@/pohon.py', 16],
+  tree_umum: ['@/pohon_umum.py', 6],
+  tree_go: ['@/pohongo/main.go', 10],
   js_class: ['@/kelas.js', 1],
 };
 

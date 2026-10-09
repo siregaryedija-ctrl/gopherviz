@@ -185,6 +185,8 @@ export interface TraceStep {
   selfCopy?: boolean;
   /** File langkah ini bila bukan file fokus (relatif, mis. "utils.py"). */
   file?: string;
+  /** Simpul pohon yang dipegang parameter; null = anak kosong (None/null). */
+  node?: { cur?: string; null?: boolean };
   /** Keadaan penelusuran grid/labirin: sel [baris, kolom]. */
   cells?: { cur?: [number, number]; visited?: [number, number][]; frontier?: [number, number][] };
 }
@@ -219,6 +221,8 @@ export interface Trace {
   graph?: { var: string; kind?: 'bfs' | 'dfs' | ''; nodes: string[]; edges: [string, string][]; directed?: boolean; frontier?: string; visited?: string };
   /** Cetak biru class (blok class, atau class pemilik method fokus). */
   class?: ClassInfo;
+  /** Pohon yang ditelusuri rekursi node.left/node.right (panggung pohon). */
+  tree?: { var: string; root: string; nodes: { id: string; label: string; left?: string; right?: string; kids?: string[] }[] };
   /** Grid labirin yang ditelusuri BFS/DFS (panggung labirin). */
   grid?: { var: string; rows: string[][]; start?: [number, number]; goal?: [number, number]; kind?: 'bfs' | 'dfs'; frontier?: string; visited?: string };
   /** File program yang ikut berjalan (file fokus dulu), bila lebih dari satu. */

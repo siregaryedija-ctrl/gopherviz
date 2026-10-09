@@ -26,7 +26,7 @@ import (
 	"gopherviz/internal/trace"
 )
 
-const version = "0.11.0"
+const version = "0.12.0"
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr))
