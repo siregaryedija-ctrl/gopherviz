@@ -119,6 +119,10 @@ func (it *interp) add(s trace.Step, e *Env) {
 		it.detectCollKind(e)
 		s.Graph = it.graphStep(e)
 	}
+	if it.rec.objMode() {
+		s.Objs, s.Self = it.objSnapshot(e)
+		it.rec.obj.lastSig = objSig(s.Objs)
+	}
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) })
 }
 
@@ -450,7 +454,7 @@ func patternIdents(x ir.Expr) []ir.Expr {
 
 func (it *interp) enterBlock(n ir.Node, kind scene.BlockKind) (*frame, func()) {
 	r := it.rec
-	isFocus := n == r.focus
+	isFocus := n == r.focus || it.focusMethod(n) // trace class: setiap method class fokus
 	if isFocus {
 		if r.active == 0 {
 			r.runs++
@@ -531,11 +535,13 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 		return it.execList(n.List, it.blockScope(e))
 	case *ir.ExprStmt:
 		it.execExpr(n, e)
+		it.classWatch(n, e)
 	case *ir.VarDecl:
 		it.varDecl(n, e)
 		if it.recording() {
 			it.step(n, e, it.effectNote(n, assignTargets(n), e))
 		}
+		it.classWatch(n, e)
 	case *ir.If:
 		return it.execIf(n, e)
 	case *ir.For:

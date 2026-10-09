@@ -80,6 +80,7 @@ type Trace struct {
 	Steps      []Step      `json:"steps"`
 	Collection *Collection `json:"collection,omitempty"`
 	Graph      *Graph      `json:"graph,omitempty"` // graf yang ditelusuri DFS/BFS di blok fokus
+	Class      *ClassInfo  `json:"class,omitempty"` // cetak biru class (blok fokus class, atau class pemilik method fokus)
 	Truncated  bool        `json:"truncated"`
 	Warnings   []string    `json:"warnings"`
 	ReadsInput bool        `json:"readsInput,omitempty"` // program membaca input user (panel menampilkan kotak Input)
@@ -127,14 +128,34 @@ type Step struct {
 	Output    string            `json:"output,omitempty"`
 	Reason    Reason            `json:"reason,omitempty"`
 	Ops       []Op              `json:"ops,omitempty"`
-	Items     []string          `json:"items,omitempty"` // isi koleksi terbaru, hanya bila berubah di langkah ini
-	Keys      []string          `json:"keys,omitempty"`  // key map yang sejajar dengan Items (koleksi map)
-	Mem       *Memory           `json:"mem,omitempty"`   // potret memori (bila program memakai struct/pointer)
-	Child     string            `json:"child,omitempty"` // ID loop anak pada PhaseEnterChild
-	G         int               `json:"g,omitempty"`     // goroutine yang menjalankan langkah ini (1 = main); 0 bila tanpa goroutine
-	Gs        []GState          `json:"gs,omitempty"`    // potret semua goroutine (bila program memakai go)
-	Chans     []ChanState       `json:"chans,omitempty"` // potret semua channel
-	Graph     *GraphState       `json:"graph,omitempty"` // keadaan penelusuran graf (bila Trace.Graph ada)
+	Items     []string          `json:"items,omitempty"`    // isi koleksi terbaru, hanya bila berubah di langkah ini
+	Keys      []string          `json:"keys,omitempty"`     // key map yang sejajar dengan Items (koleksi map)
+	Mem       *Memory           `json:"mem,omitempty"`      // potret memori (bila program memakai struct/pointer)
+	Child     string            `json:"child,omitempty"`    // ID loop anak pada PhaseEnterChild
+	G         int               `json:"g,omitempty"`        // goroutine yang menjalankan langkah ini (1 = main); 0 bila tanpa goroutine
+	Gs        []GState          `json:"gs,omitempty"`       // potret semua goroutine (bila program memakai go)
+	Chans     []ChanState       `json:"chans,omitempty"`    // potret semua channel
+	Graph     *GraphState       `json:"graph,omitempty"`    // keadaan penelusuran graf (bila Trace.Graph ada)
+	Objs      []ObjState        `json:"objs,omitempty"`     // potret object class fokus (trace class) atau object self (trace method)
+	Self      string            `json:"self,omitempty"`     // ID object yang menjadi this/self di langkah ini
+	SelfCopy  bool              `json:"selfCopy,omitempty"` // Go: method value receiver bekerja pada salinan object Self
+}
+
+// ClassInfo adalah "cetak biru" class fokus: field dan method yang dideklarasikan.
+type ClassInfo struct {
+	Name    string   `json:"name"`
+	Super   string   `json:"super,omitempty"`   // class induk (pewarisan)
+	Subs    []string `json:"subs,omitempty"`    // class anak di file yang sama
+	Fields  []string `json:"fields,omitempty"`  // field yang terlihat di kode (deklarasi atau self.x = ...)
+	Methods []string `json:"methods,omitempty"` // nama method, urut sumber
+}
+
+// ObjState adalah satu object pada satu langkah: rumah yang dibangun dari cetak biru class.
+type ObjState struct {
+	ID     string     `json:"id"`             // "obj1", stabil sepanjang trace
+	Class  string     `json:"class"`          // class object ini (bisa class anak)
+	Name   string     `json:"name,omitempty"` // variabel yang memegangnya, mis. "a" atau "siswa[0]"
+	Fields []MemField `json:"fields"`         // urut field dibuat; Points = ID object lain bila field berisi object
 }
 
 // Graph adalah graf (daftar ketetanggaan atau matriks) yang ditelusuri di blok fokus.

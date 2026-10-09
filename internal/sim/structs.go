@@ -156,11 +156,16 @@ func (it *interp) receiver(n *ast.SelectorExpr, e *env) (value, *ast.FuncDecl) {
 	}
 	if ptrRecv(decl) {
 		if x.k == kPtr {
+			it.noteRecv(x, x, n)
 			return x, decl
 		}
-		return it.addressOf(n.X, e), decl
+		p := it.addressOf(n.X, e)
+		it.noteRecv(p, p, n)
+		return p, decl
 	}
-	return copyVal(it.deref(x, n)), decl
+	c := copyVal(it.deref(x, n))
+	it.noteRecv(x, c, n) // value receiver: method bekerja pada salinan
+	return c, decl
 }
 
 func derefType(t types.Type) types.Type {

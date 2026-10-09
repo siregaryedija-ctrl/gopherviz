@@ -56,9 +56,10 @@ const (
 	BlockIf     BlockKind = "if"     // if beserta seluruh rantai else if / else
 	BlockSwitch BlockKind = "switch" // switch / match
 	BlockLoop   BlockKind = "loop"   // rinciannya di Scene.Loops
+	BlockClass  BlockKind = "class"  // class / struct (method-methodnya menjadi blok fungsi anaknya)
 )
 
-// Block adalah satu blok kode. ID: F1.. fungsi, I1.. if, S1.. switch, L1.. loop.
+// Block adalah satu blok kode. ID: F1.. fungsi, I1.. if, S1.. switch, L1.. loop, C1.. class.
 type Block struct {
 	ID       string    `json:"id"`
 	Kind     BlockKind `json:"kind"`

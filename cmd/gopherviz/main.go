@@ -261,6 +261,7 @@ var blockKindNames = map[scene.BlockKind]string{
 	scene.BlockIf:     "if",
 	scene.BlockSwitch: "switch",
 	scene.BlockLoop:   "loop",
+	scene.BlockClass:  "class",
 }
 
 const maxDiagnostics = 5
@@ -297,6 +298,14 @@ func printList(w io.Writer, res analyzer.Result) {
 				body = parts(len(l.Body))
 			case scene.BlockFunc:
 				body = parts(len(b.Body))
+			case scene.BlockClass:
+				n := 0
+				for _, c := range b.Children {
+					if cb, ok := res.Scene.Block(c); ok && cb.Kind == scene.BlockFunc {
+						n++
+					}
+				}
+				body = fmt.Sprintf("%d method", n)
 			default:
 				body = fmt.Sprintf("%d cabang", len(b.Branches))
 			}

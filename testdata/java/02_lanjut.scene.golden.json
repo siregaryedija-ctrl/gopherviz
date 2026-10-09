@@ -5,6 +5,27 @@
     "file": "02_lanjut.java",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 3,
+        "endLine": 235,
+        "state": "complete",
+        "name": "Main",
+        "header": "public class Main",
+        "children": [
+          "F1",
+          "F2",
+          "F3",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "F16",
+          "F17"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 11,
@@ -21,7 +42,8 @@
             "line": 12,
             "text": "this.bobot = bobot;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F2",
@@ -37,7 +59,8 @@
             "line": 22,
             "text": "return nama() + \" luas \" + String.format(\"%.2f\", luas());"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -53,6 +76,21 @@
             "line": 28,
             "text": "return Math.abs(x) + Math.abs(y);"
           }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 32,
+        "endLine": 44,
+        "state": "complete",
+        "name": "Hewan",
+        "header": "class Hewan",
+        "parent": "C1",
+        "children": [
+          "F4",
+          "F5"
         ]
       },
       {
@@ -72,7 +110,8 @@
             "line": 36,
             "text": "this.nama = nama;"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F5",
@@ -88,6 +127,21 @@
             "line": 42,
             "text": "return nama + \" bilang \" + suara();"
           }
+        ],
+        "parent": "C2"
+      },
+      {
+        "id": "C3",
+        "kind": "class",
+        "line": 46,
+        "endLine": 54,
+        "state": "complete",
+        "name": "Kucing",
+        "header": "class Kucing extends Hewan",
+        "parent": "C1",
+        "children": [
+          "F6",
+          "F7"
         ]
       },
       {
@@ -107,7 +161,8 @@
             "line": 48,
             "text": "super(n);"
           }
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "F7",
@@ -123,6 +178,21 @@
             "line": 52,
             "text": "return \"meong\";"
           }
+        ],
+        "parent": "C3"
+      },
+      {
+        "id": "C4",
+        "kind": "class",
+        "line": 56,
+        "endLine": 64,
+        "state": "complete",
+        "name": "Anjing",
+        "header": "class Anjing extends Hewan",
+        "parent": "C1",
+        "children": [
+          "F8",
+          "F9"
         ]
       },
       {
@@ -142,7 +212,8 @@
             "line": 58,
             "text": "super(n);"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F9",
@@ -158,6 +229,22 @@
             "line": 62,
             "text": "return \"guk\";"
           }
+        ],
+        "parent": "C4"
+      },
+      {
+        "id": "C5",
+        "kind": "class",
+        "line": 66,
+        "endLine": 80,
+        "state": "complete",
+        "name": "Persegi",
+        "header": "class Persegi implements Bentuk",
+        "parent": "C1",
+        "children": [
+          "F10",
+          "F11",
+          "F12"
         ]
       },
       {
@@ -177,7 +264,8 @@
             "line": 70,
             "text": "sisi = s;"
           }
-        ]
+        ],
+        "parent": "C5"
       },
       {
         "id": "F11",
@@ -193,7 +281,8 @@
             "line": 74,
             "text": "return sisi * sisi;"
           }
-        ]
+        ],
+        "parent": "C5"
       },
       {
         "id": "F12",
@@ -209,6 +298,22 @@
             "line": 78,
             "text": "return \"Persegi\";"
           }
+        ],
+        "parent": "C5"
+      },
+      {
+        "id": "C6",
+        "kind": "class",
+        "line": 82,
+        "endLine": 96,
+        "state": "complete",
+        "name": "Lingkaran",
+        "header": "class Lingkaran implements Bentuk",
+        "parent": "C1",
+        "children": [
+          "F13",
+          "F14",
+          "F15"
         ]
       },
       {
@@ -228,7 +333,8 @@
             "line": 86,
             "text": "this.r = r;"
           }
-        ]
+        ],
+        "parent": "C6"
       },
       {
         "id": "F14",
@@ -244,7 +350,8 @@
             "line": 90,
             "text": "return Math.PI * r * r;"
           }
-        ]
+        ],
+        "parent": "C6"
       },
       {
         "id": "F15",
@@ -260,7 +367,8 @@
             "line": 94,
             "text": "return \"Lingkaran\";"
           }
-        ]
+        ],
+        "parent": "C6"
       },
       {
         "id": "F16",
@@ -285,7 +393,8 @@
             "line": 102,
             "text": "return a / b;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F17",
@@ -613,6 +722,7 @@
             "ref": "L8"
           }
         ],
+        "parent": "C1",
         "children": [
           "L1",
           "L2",

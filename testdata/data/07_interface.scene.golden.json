@@ -5,6 +5,24 @@
     "file": "07_interface.go",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "name": "Rect",
+        "header": "type Rect struct"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 13,
+        "endLine": 15,
+        "state": "complete",
+        "name": "Circle",
+        "header": "type Circle struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 17,

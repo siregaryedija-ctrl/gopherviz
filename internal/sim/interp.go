@@ -170,7 +170,7 @@ func (it *interp) recording() bool { return it.rec.on() && it.quiet == 0 }
 
 func (it *interp) insideFocus(n ast.Node) bool {
 	f := it.rec.focus
-	return f != nil && f.Pos() <= n.Pos() && n.End() <= f.End()
+	return f != nil && f.Pos() <= n.Pos() && n.End() <= f.End() || it.inFocusMethod(n)
 }
 
 func (it *interp) add(s trace.Step, e *env) {
@@ -181,6 +181,10 @@ func (it *interp) add(s trace.Step, e *env) {
 	}
 	if sch := it.sch; sch != nil && (sch.used || len(sch.chans) > 0) {
 		s.G, s.Gs, s.Chans = it.curG(), it.gStates(), it.chanStates(e)
+	}
+	if it.rec.objMode() {
+		s.Objs, s.Self, s.SelfCopy = it.objSnapshot(e)
+		it.rec.obj.lastSig = objSig(s.Objs)
 	}
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) }, func() *trace.Memory { return it.memory(e) })
 }
@@ -427,9 +431,11 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 			note = it.text(n) + " → cetak " + fmt.Sprintf("%q", strings.TrimSuffix(out, "\n"))
 		}
 		it.step(n, e, note)
+		it.classWatch(n, e)
 	case *ast.AssignStmt:
 		it.assign(n, e)
 		it.step(n, e, it.effectNote(n, n.Lhs, e))
+		it.classWatch(n, e)
 	case *ast.IncDecStmt:
 		op := token.ADD
 		if n.Tok == token.DEC {
@@ -439,9 +445,11 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 		t.set(it.binary(op, t.get(), intV(1), n))
 		it.markColl(n.X, e)
 		it.step(n, e, it.effectNote(n, []ast.Expr{n.X}, e))
+		it.classWatch(n, e)
 	case *ast.DeclStmt:
 		it.decl(n.Decl, e)
 		it.step(n, e, "")
+		it.classWatch(n, e)
 	case *ast.IfStmt:
 		return it.execIf(n, e)
 	case *ast.ForStmt:
@@ -708,7 +716,7 @@ func (it *interp) decl(d ast.Decl, e *env) {
 // tidak menambah Run, tetapi tetap tercatat lewat Depth.
 func (it *interp) enterBlock(n ast.Node, kind scene.BlockKind) (*frame, func()) {
 	r := it.rec
-	isFocus := n == r.focus
+	isFocus := n == r.focus || it.focusMethod(n) // trace class: setiap method struct fokus
 	if isFocus {
 		if r.active == 0 {
 			r.runs++

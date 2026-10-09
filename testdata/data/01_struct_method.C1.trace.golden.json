@@ -1,0 +1,1410 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "01_struct_method.go",
+  "mode": "simulated",
+  "block": {
+    "id": "C1",
+    "kind": "class",
+    "line": 5,
+    "endLine": 8,
+    "name": "Person",
+    "names": [
+      "Age",
+      "Name",
+      "Person",
+      "int",
+      "string"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "phase": "body",
+      "line": 19,
+      "vars": {
+        "ani": "{Ani 20}"
+      },
+      "note": "ani := Person{Name: \"Ani\", Age: 20}",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 20,
+      "func": "Person.Birthday",
+      "args": "p = &{Ani 20}",
+      "vars": {
+        "p": "&{Ani 20}"
+      },
+      "note": "panggil Person.Birthday(p = &{Ani 20})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "20"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "p": "&{Ani 21}"
+      },
+      "note": "p.Age++",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 16,
+      "func": "Person.Birthday",
+      "vars": {
+        "p": "&{Ani 21}"
+      },
+      "note": "Person.Birthday(p = &{Ani 20}) selesai",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 21,
+      "func": "Person.Greet",
+      "args": "p = {Ani 21}",
+      "vars": {
+        "p": "{Ani 21}"
+      },
+      "note": "panggil Person.Greet(p = {Ani 21})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 11,
+      "vars": {
+        "p": "{Ani 21}"
+      },
+      "note": "return \"Halo, aku \" + p.Name → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 12,
+      "func": "Person.Greet",
+      "return": "\"Halo, aku Ani\"",
+      "vars": {
+        "p": "{Ani 21}"
+      },
+      "note": "Person.Greet(p = {Ani 21}) mengembalikan \"Halo, aku Ani\"",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "run": 2,
+      "phase": "body",
+      "line": 23,
+      "vars": {
+        "ani": "{Ani 21}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "people := []Person{{\"Budi\", 30}, {\"Citra\", 25}}",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "run": 2,
+      "phase": "body",
+      "line": 25,
+      "vars": {
+        "ani": "{Ani 21}",
+        "p": "{Budi 99}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "p.Age = 99",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "run": 2,
+      "phase": "body",
+      "line": 25,
+      "vars": {
+        "ani": "{Ani 21}",
+        "p": "{Citra 99}",
+        "people": "[{Budi 30} {Citra 25}]"
+      },
+      "note": "p.Age = 99",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "call",
+      "line": 28,
+      "func": "Person.Birthday",
+      "args": "p = &{Budi 30}",
+      "vars": {
+        "p": "&{Budi 30}"
+      },
+      "note": "panggil Person.Birthday(p = &{Budi 30})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "p": "&{Budi 31}"
+      },
+      "note": "p.Age++",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "F2",
+      "run": 3,
+      "phase": "return",
+      "line": 16,
+      "func": "Person.Birthday",
+      "vars": {
+        "p": "&{Budi 31}"
+      },
+      "note": "Person.Birthday(p = &{Budi 30}) selesai",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "run": 3,
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "ani": "{Ani 21}",
+        "i": "0",
+        "people": "[{Budi 31} {Citra 25}]"
+      },
+      "note": "people[i].Birthday()",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F2",
+      "run": 4,
+      "phase": "call",
+      "line": 28,
+      "func": "Person.Birthday",
+      "args": "p = &{Citra 25}",
+      "vars": {
+        "p": "&{Citra 25}"
+      },
+      "note": "panggil Person.Birthday(p = &{Citra 25})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ],
+      "self": "obj3"
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "F2",
+      "run": 4,
+      "phase": "body",
+      "line": 15,
+      "vars": {
+        "p": "&{Citra 26}"
+      },
+      "note": "p.Age++",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ],
+      "self": "obj3"
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "F2",
+      "run": 4,
+      "phase": "return",
+      "line": 16,
+      "func": "Person.Birthday",
+      "vars": {
+        "p": "&{Citra 26}"
+      },
+      "note": "Person.Birthday(p = &{Citra 25}) selesai",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        }
+      ],
+      "self": "obj3"
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "run": 4,
+      "phase": "body",
+      "line": 33,
+      "vars": {
+        "ani": "{Ani 21}",
+        "copyAni": "{Ani 21}",
+        "people": "[{Budi 31} {Citra 26}]"
+      },
+      "note": "copyAni := ani",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Person",
+          "name": "copyAni",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "run": 4,
+      "phase": "body",
+      "line": 34,
+      "vars": {
+        "ani": "{Ani 21}",
+        "copyAni": "{Salinan 21}",
+        "people": "[{Budi 31} {Citra 26}]"
+      },
+      "note": "copyAni.Name = \"Salinan\"",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Person",
+          "name": "copyAni",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Salinan"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "run": 4,
+      "phase": "exit",
+      "note": "program selesai",
+      "reason": "done",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "people[0]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "people[1]",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Person",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "99"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Person",
+          "name": "copyAni",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Salinan"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "class": {
+    "name": "Person",
+    "fields": [
+      "Name",
+      "Age"
+    ],
+    "methods": [
+      "Greet",
+      "Birthday"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

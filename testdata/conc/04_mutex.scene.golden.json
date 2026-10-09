@@ -5,6 +5,15 @@
     "file": "04_mutex.go",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 8,
+        "endLine": 11,
+        "state": "complete",
+        "name": "Counter",
+        "header": "type Counter struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 13,

@@ -5,6 +5,19 @@
     "file": "02_classes.ts",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 12,
+        "endLine": 18,
+        "state": "complete",
+        "name": "Base",
+        "header": "abstract class Base implements Shape",
+        "children": [
+          "F1",
+          "F2"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 13,
@@ -15,7 +28,8 @@
         "params": [
           "name",
           "id"
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F2",
@@ -31,6 +45,20 @@
             "line": 16,
             "text": "return `${this.name}#${this.id} luas ${this.area().toFixed(…"
           }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 20,
+        "endLine": 27,
+        "state": "complete",
+        "name": "Circle",
+        "header": "class Circle extends Base",
+        "children": [
+          "F3",
+          "F4"
         ]
       },
       {
@@ -50,7 +78,8 @@
             "line": 22,
             "text": "super(\"lingkaran\", 1);"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F4",
@@ -66,6 +95,20 @@
             "line": 25,
             "text": "return Math.PI * this.r ** 2;"
           }
+        ],
+        "parent": "C2"
+      },
+      {
+        "id": "C3",
+        "kind": "class",
+        "line": 29,
+        "endLine": 36,
+        "state": "complete",
+        "name": "Square",
+        "header": "class Square extends Base",
+        "children": [
+          "F5",
+          "F6"
         ]
       },
       {
@@ -85,7 +128,8 @@
             "line": 31,
             "text": "super(\"persegi\", 2);"
           }
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "F6",
@@ -101,7 +145,8 @@
             "line": 34,
             "text": "return this.side * this.side;"
           }
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "F7",

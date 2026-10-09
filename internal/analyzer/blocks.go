@@ -49,6 +49,11 @@ func (b *builder) collectBlocks() []*blockCand {
 			add(x, scene.BlockSwitch, "S")
 		case *ast.TypeSwitchStmt:
 			add(x, scene.BlockSwitch, "S")
+		case *ast.TypeSpec:
+			// type X struct { ... } = "class" Go: method-methodnya dicari lewat receiver
+			if _, ok := x.Type.(*ast.StructType); ok && x.Name != nil && x.Name.Name != "_" {
+				add(x, scene.BlockClass, "C")
+			}
 		}
 		return true
 	})
@@ -160,6 +165,12 @@ func (b *builder) block(c *blockCand) scene.Block {
 		blk.Header = head(n.Body)
 		mark(n.Body)
 		blk.Branches = b.caseBranches(n.Body)
+	case *ast.TypeSpec:
+		blk.Name = n.Name.Name
+		blk.Header = "type " + n.Name.Name + " struct"
+		if st, ok := n.Type.(*ast.StructType); ok && (st.Fields == nil || b.incomplete(n, &ast.BlockStmt{Rbrace: st.Fields.Closing})) {
+			blk.State = scene.StateIncomplete
+		}
 	}
 	return blk
 }

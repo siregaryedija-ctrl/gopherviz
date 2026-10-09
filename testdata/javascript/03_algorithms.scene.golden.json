@@ -278,6 +278,20 @@
         ]
       },
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 57,
+        "endLine": 61,
+        "state": "complete",
+        "name": "Animal",
+        "header": "class Animal",
+        "children": [
+          "F4",
+          "F5",
+          "F6"
+        ]
+      },
+      {
         "id": "F4",
         "kind": "func",
         "line": 58,
@@ -294,7 +308,8 @@
             "line": 58,
             "text": "this.name = name;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F5",
@@ -310,7 +325,8 @@
             "line": 59,
             "text": "return `${this.name} bersuara`;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F6",
@@ -326,6 +342,20 @@
             "line": 60,
             "text": "return `Animal(${this.name})`;"
           }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 62,
+        "endLine": 68,
+        "state": "complete",
+        "name": "Dog",
+        "header": "class Dog extends Animal",
+        "children": [
+          "F7",
+          "F8"
         ]
       },
       {
@@ -351,7 +381,8 @@
             "line": 65,
             "text": "this.breed = breed;"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F8",
@@ -367,7 +398,8 @@
             "line": 67,
             "text": "return super.speak() + \" guk guk\";"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F9",

@@ -116,8 +116,9 @@ type Class struct {
 	statics *Dict
 	fields  []fieldInit // inisialisasi field instance (urut deklarasi)
 	env     *Env
-	native  string // kelas bawaan: "Error", "Map", "Set", "ArrayList", ...
-	kind    string // "class", "struct", "enum", "interface"
+	native  string   // kelas bawaan: "Error", "Map", "Set", "ArrayList", ...
+	kind    string   // "class", "struct", "enum", "interface"
+	decl    *irClass // deklarasi di kode user (nil untuk kelas bawaan); dipakai trace class
 
 	overloads map[string][]*Fn                                             // C++/Java: method/konstruktor dengan nama sama
 	ctor      func(it *interp, args []Value, at nodeRef) Value             // bawaan: new X(args)

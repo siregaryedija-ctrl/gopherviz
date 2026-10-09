@@ -65,6 +65,20 @@
         "parent": "F1"
       },
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 23,
+        "endLine": 37,
+        "state": "complete",
+        "name": "Stack",
+        "header": "class Stack<T>",
+        "children": [
+          "F2",
+          "F3",
+          "F4"
+        ]
+      },
+      {
         "id": "F2",
         "kind": "func",
         "line": 26,
@@ -81,7 +95,8 @@
             "line": 27,
             "text": "this.items.push(item);"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -97,7 +112,8 @@
             "line": 31,
             "text": "return this.items.pop();"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F4",
@@ -113,7 +129,8 @@
             "line": 35,
             "text": "return this.items.length;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "L1",

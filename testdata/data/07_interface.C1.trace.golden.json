@@ -1,0 +1,2037 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_interface.go",
+  "mode": "simulated",
+  "block": {
+    "id": "C1",
+    "kind": "class",
+    "line": 9,
+    "endLine": 11,
+    "name": "Rect",
+    "names": [
+      "H",
+      "Rect",
+      "W",
+      "float64"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "shapes": "[{2 3} {1} {1 1}]"
+      },
+      "note": "shapes := []Shape{Rect{2, 3}, Circle{1}, Rect{1, 1}}",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "Rect.Area",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.Area(r = {2 3})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "6",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.Area(r = {2 3}) mengembalikan 6",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "s": "{2 3}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "6"
+      },
+      "note": "total += s.Area()",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.Area",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.Area(r = {2 3})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj3",
+      "selfCopy": true
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj3",
+      "selfCopy": true
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "6",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.Area(r = {2 3}) mengembalikan 6",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj3",
+      "selfCopy": true
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F3",
+      "run": 3,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.String",
+      "args": "r = {2 3}",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "panggil Rect.String(r = {2 3})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj4"
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F3",
+      "run": 3,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj4"
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F3",
+      "run": 3,
+      "phase": "return",
+      "line": 21,
+      "func": "Rect.String",
+      "return": "\"Rect(2x3)\"",
+      "vars": {
+        "r": "{2 3}"
+      },
+      "note": "Rect.String(r = {2 3}) mengembalikan \"Rect(2x3)\"",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj4"
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "run": 3,
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "s": "{2 3}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "6"
+      },
+      "note": "fmt.Println(s, s.Area())",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "run": 3,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "s": "{1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "9"
+      },
+      "note": "total += s.Area()",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "call",
+      "line": 27,
+      "func": "Rect.Area",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.Area(r = {1 1})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "1",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.Area(r = {1 1}) mengembalikan 1",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "run": 4,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "s": "{1 1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "total += s.Area()",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "F1",
+      "run": 5,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.Area",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.Area(r = {1 1})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj5",
+      "selfCopy": true
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "F1",
+      "run": 5,
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "return r.W * r.H → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj5",
+      "selfCopy": true
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "F1",
+      "run": 5,
+      "phase": "return",
+      "line": 17,
+      "func": "Rect.Area",
+      "return": "1",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.Area(r = {1 1}) mengembalikan 1",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj5",
+      "selfCopy": true
+    },
+    {
+      "n": 20,
+      "loop": "",
+      "block": "F3",
+      "run": 6,
+      "phase": "call",
+      "line": 28,
+      "func": "Rect.String",
+      "args": "r = {1 1}",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "panggil Rect.String(r = {1 1})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj6"
+    },
+    {
+      "n": 21,
+      "loop": "",
+      "block": "F3",
+      "run": 6,
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj6"
+    },
+    {
+      "n": 22,
+      "loop": "",
+      "block": "F3",
+      "run": 6,
+      "phase": "return",
+      "line": 21,
+      "func": "Rect.String",
+      "return": "\"Rect(1x1)\"",
+      "vars": {
+        "r": "{1 1}"
+      },
+      "note": "Rect.String(r = {1 1}) mengembalikan \"Rect(1x1)\"",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj6"
+    },
+    {
+      "n": 23,
+      "loop": "",
+      "run": 6,
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "s": "{1 1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "fmt.Println(s, s.Area())",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 24,
+      "loop": "",
+      "run": 6,
+      "phase": "body",
+      "line": 30,
+      "vars": {
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "fmt.Println(\"total\", total)",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 25,
+      "loop": "",
+      "run": 6,
+      "phase": "exit",
+      "note": "program selesai",
+      "reason": "done",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "shapes[0]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "shapes[2]",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj4",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "id": "obj5",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj6",
+          "class": "Rect",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "class": {
+    "name": "Rect",
+    "fields": [
+      "W",
+      "H"
+    ],
+    "methods": [
+      "Area",
+      "String"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

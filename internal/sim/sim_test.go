@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
 
@@ -727,5 +728,68 @@ func TestNoGoroutineLeak(t *testing.T) {
 	if n := runtime.NumGoroutine(); n > before+2 {
 		buf := make([]byte, 1<<16)
 		t.Errorf("goroutine bocor: %d sebelum, %d sesudah\n%s", before, n, buf[:runtime.Stack(buf, true)])
+	}
+}
+
+// TestClassTrace: blok "class" Go = type X struct beserta method-methodnya. Pointer receiver
+// mengubah object asli; value receiver bekerja pada salinan (SelfCopy) sehingga object asli
+// kembali ke nilai semula setelah method selesai.
+func TestClassTrace(t *testing.T) {
+	src := `package main
+
+type Akun struct {
+	Nama  string
+	Saldo int
+}
+
+func (a *Akun) Setor(n int) { a.Saldo += n }
+
+func (a Akun) Kosongkan() { a.Saldo = 0 }
+
+func main() {
+	x := Akun{"Ani", 100}
+	y := &Akun{Nama: "Budi"}
+	x.Setor(20)
+	x.Kosongkan()
+	y.Saldo = 7
+}
+`
+	p := analyzer.Load("t.go", []byte(src))
+	var id string
+	for _, b := range p.Result.Scene.Blocks {
+		if b.Kind == scene.BlockClass {
+			id = b.ID
+		}
+	}
+	if id == "" {
+		t.Fatal("blok class untuk type Akun struct tidak ada")
+	}
+	tr := Trace(p, id, Options{})
+	if tr.Mode != trace.ModeSimulated || tr.Class == nil || strings.Join(tr.Class.Methods, ",") != "Setor,Kosongkan" {
+		t.Fatalf("mode %s, class %+v, warnings %v", tr.Mode, tr.Class, tr.Warnings)
+	}
+	fields := func(o trace.ObjState) string {
+		var fs []string
+		for _, f := range o.Fields {
+			fs = append(fs, f.Name+"="+f.Value)
+		}
+		return o.Name + ":" + strings.Join(fs, ",")
+	}
+	last := tr.Steps[len(tr.Steps)-1]
+	var got []string
+	for _, o := range last.Objs {
+		got = append(got, fields(o))
+	}
+	if want := "x:Nama=Ani,Saldo=120 y:Nama=Budi,Saldo=7"; strings.Join(got, " ") != want {
+		t.Errorf("object akhir = %q, mau %q", strings.Join(got, " "), want)
+	}
+	copied := false
+	for _, s := range tr.Steps {
+		if s.Phase == trace.PhaseCall && s.Func == "Akun.Kosongkan" {
+			copied = s.SelfCopy && s.Self == "obj1"
+		}
+	}
+	if !copied {
+		t.Error("value receiver Kosongkan seharusnya bekerja pada salinan x (SelfCopy, Self = obj1)")
 	}
 }

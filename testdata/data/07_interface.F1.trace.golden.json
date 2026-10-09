@@ -56,7 +56,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 1,
@@ -87,7 +106,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 2,
@@ -120,7 +158,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 3,
@@ -153,7 +210,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 4,
@@ -184,7 +260,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 5,
@@ -217,7 +312,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 6,
@@ -250,7 +364,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
     },
     {
       "n": 7,
@@ -281,7 +414,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
     },
     {
       "n": 8,
@@ -314,7 +466,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
     },
     {
       "n": 9,
@@ -347,7 +518,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
     },
     {
       "n": 10,
@@ -378,7 +568,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
     },
     {
       "n": 11,
@@ -411,9 +620,39 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "s",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
     }
   ],
+  "class": {
+    "name": "Rect",
+    "fields": [
+      "W",
+      "H"
+    ],
+    "methods": [
+      "Area",
+      "String"
+    ]
+  },
   "truncated": false,
   "warnings": []
 }

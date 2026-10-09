@@ -5,6 +5,20 @@
     "file": "02_lanjut.php",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 8,
+        "endLine": 25,
+        "state": "complete",
+        "name": "BentukDasar",
+        "header": "abstract class BentukDasar implements Bentuk",
+        "children": [
+          "F1",
+          "F2",
+          "F3"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 12,
@@ -21,7 +35,8 @@
             "line": 13,
             "text": "static::$jumlah++;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F2",
@@ -37,7 +52,8 @@
             "line": 19,
             "text": "return sprintf(\"%s: %.2f %s²\", $this->nama, $this->luas(), …"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -53,6 +69,20 @@
             "line": 23,
             "text": "return self::$jumlah;"
           }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 27,
+        "endLine": 34,
+        "state": "complete",
+        "name": "Lingkaran",
+        "header": "class Lingkaran extends BentukDasar",
+        "children": [
+          "F4",
+          "F5"
         ]
       },
       {
@@ -72,7 +102,8 @@
             "line": 29,
             "text": "parent::__construct(\"lingkaran\");"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F5",
@@ -88,6 +119,20 @@
             "line": 32,
             "text": "return M_PI * $this->r ** 2;"
           }
+        ],
+        "parent": "C2"
+      },
+      {
+        "id": "C3",
+        "kind": "class",
+        "line": 36,
+        "endLine": 43,
+        "state": "complete",
+        "name": "Persegi",
+        "header": "class Persegi extends BentukDasar",
+        "children": [
+          "F6",
+          "F7"
         ]
       },
       {
@@ -107,7 +152,8 @@
             "line": 38,
             "text": "parent::__construct(\"persegi\");"
           }
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "F7",
@@ -123,7 +169,8 @@
             "line": 41,
             "text": "return $this->sisi * $this->sisi;"
           }
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "L1",
@@ -132,6 +179,19 @@
         "endLine": 49,
         "state": "complete",
         "header": "foreach ($bentuk as $b)"
+      },
+      {
+        "id": "C4",
+        "kind": "class",
+        "line": 52,
+        "endLine": 59,
+        "state": "complete",
+        "name": "SaldoTidakCukup",
+        "header": "class SaldoTidakCukup extends Exception",
+        "children": [
+          "F8",
+          "F9"
+        ]
       },
       {
         "id": "F8",
@@ -150,7 +210,8 @@
             "line": 54,
             "text": "parent::__construct(\"kurang Rp\" . number_format($kurang, 0,…"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F9",
@@ -166,7 +227,8 @@
             "line": 57,
             "text": "return $this->kurang;"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F10",

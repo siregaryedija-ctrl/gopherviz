@@ -61,7 +61,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "20"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 1,
@@ -99,7 +117,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 2,
@@ -138,7 +174,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 3,
@@ -178,7 +232,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "30"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
     },
     {
       "n": 4,
@@ -216,7 +288,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
     },
     {
       "n": 5,
@@ -255,7 +345,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Budi"
+            },
+            {
+              "name": "Age",
+              "value": "31"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
     },
     {
       "n": 6,
@@ -295,7 +403,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "25"
+            }
+          ]
+        }
+      ],
+      "self": "obj3"
     },
     {
       "n": 7,
@@ -333,7 +459,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        }
+      ],
+      "self": "obj3"
     },
     {
       "n": 8,
@@ -372,9 +516,38 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj3",
+          "class": "Person",
+          "name": "p",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Citra"
+            },
+            {
+              "name": "Age",
+              "value": "26"
+            }
+          ]
+        }
+      ],
+      "self": "obj3"
     }
   ],
+  "class": {
+    "name": "Person",
+    "fields": [
+      "Name",
+      "Age"
+    ],
+    "methods": [
+      "Greet",
+      "Birthday"
+    ]
+  },
   "truncated": false,
   "warnings": []
 }

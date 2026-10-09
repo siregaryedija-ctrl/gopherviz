@@ -48,6 +48,11 @@ type builder struct {
 	order  []ir.Node
 }
 
+// IsClassBlock: class/struct bernama menjadi blok (interface, enum, trait, dan class anonim tidak).
+func IsClassBlock(c *ir.Class) bool {
+	return c.Name != "" && (c.Kind == "class" || c.Kind == "struct" || c.Kind == "")
+}
+
 // collect memberi ID pada fungsi (berbadan blok), kepala rantai if, switch, dan loop
 // dengan urutan kemunculan di sumber.
 func (b *builder) collect(f *ir.File) {
@@ -75,6 +80,10 @@ func (b *builder) collect(f *ir.File) {
 				}
 			case *ir.Switch:
 				add(x, "S")
+			case *ir.Class:
+				if IsClassBlock(x) {
+					add(x, "C")
+				}
 			case *ir.For, *ir.ForEach, *ir.While:
 				add(x, "L")
 			case *ir.Labeled:
@@ -276,6 +285,14 @@ func (b *builder) block(n ir.Node) scene.Block {
 			}
 			cur = nil
 		}
+	case *ir.Class:
+		blk.Kind = scene.BlockClass
+		blk.Name = x.Name
+		blk.Header = short(b.headerText(x.Header))
+		if blk.Header == "" {
+			blk.Header = x.Kind + " " + x.Name
+		}
+		blk.State = state(b.incomplete(x, &ir.Block{Closed: true}))
 	case *ir.Switch:
 		blk.Kind = scene.BlockSwitch
 		blk.Header = short(b.headerText(x.Header))

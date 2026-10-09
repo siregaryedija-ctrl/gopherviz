@@ -5,6 +5,15 @@
     "file": "03_linked_list.go",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 5,
+        "endLine": 8,
+        "state": "complete",
+        "name": "Node",
+        "header": "type Node struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 10,

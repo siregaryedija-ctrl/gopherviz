@@ -38,6 +38,8 @@ type recorder struct {
 	graph     *trace.Graph // graf yang sudah terbaca dari nilai program
 	graphCur  string       // variabel simpul yang sedang diproses
 
+	obj objects // trace class / method: struct yang digambar
+
 	mem     bool              // sertakan potret memori di setiap langkah
 	objIDs  map[*value]string // ID objek heap yang stabil antar langkah
 	nextObj int

@@ -5,6 +5,20 @@
     "file": "02_modern.js",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 1,
+        "endLine": 18,
+        "state": "complete",
+        "name": "Counter",
+        "header": "class Counter",
+        "children": [
+          "F1",
+          "F2",
+          "F3"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 5,
@@ -26,7 +40,8 @@
             "line": 7,
             "text": "Counter.created++;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F2",
@@ -50,7 +65,8 @@
             "line": 12,
             "text": "return this;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -66,7 +82,8 @@
             "line": 16,
             "text": "return this.#count;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F4",

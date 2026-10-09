@@ -5,6 +5,37 @@
     "file": "03_koleksi.java",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 3,
+        "endLine": 147,
+        "state": "complete",
+        "name": "Main",
+        "header": "public class Main",
+        "children": [
+          "C2",
+          "C3",
+          "C4",
+          "F7",
+          "F8",
+          "F9",
+          "F10"
+        ]
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 4,
+        "endLine": 8,
+        "state": "complete",
+        "name": "SaldoKurang",
+        "header": "class SaldoKurang extends Exception",
+        "parent": "C1",
+        "children": [
+          "F1"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 5,
@@ -21,6 +52,22 @@
             "line": 6,
             "text": "super(pesan);"
           }
+        ],
+        "parent": "C2"
+      },
+      {
+        "id": "C3",
+        "kind": "class",
+        "line": 10,
+        "endLine": 29,
+        "state": "complete",
+        "name": "Rekening",
+        "header": "class Rekening",
+        "parent": "C1",
+        "children": [
+          "F2",
+          "F3",
+          "F4"
         ]
       },
       {
@@ -46,7 +93,8 @@
             "line": 16,
             "text": "this.saldo = saldo;"
           }
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "F3",
@@ -80,6 +128,7 @@
             "text": "saldo -= jumlah;"
           }
         ],
+        "parent": "C3",
         "children": [
           "I1"
         ]
@@ -121,6 +170,21 @@
             "line": 27,
             "text": "return saldo;"
           }
+        ],
+        "parent": "C3"
+      },
+      {
+        "id": "C4",
+        "kind": "class",
+        "line": 31,
+        "endLine": 41,
+        "state": "complete",
+        "name": "Kotak",
+        "header": "class Kotak<T>",
+        "parent": "C1",
+        "children": [
+          "F5",
+          "F6"
         ]
       },
       {
@@ -140,7 +204,8 @@
             "line": 35,
             "text": "isi = x;"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F6",
@@ -156,7 +221,8 @@
             "line": 39,
             "text": "return isi;"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F7",
@@ -182,6 +248,7 @@
             "ref": "L1"
           }
         ],
+        "parent": "C1",
         "children": [
           "L1"
         ]
@@ -289,7 +356,8 @@
             "line": 62,
             "text": "return n <= 1 ? 1 : n * faktorial(n - 1);"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F9",
@@ -320,6 +388,7 @@
             "text": "return nilai.length == 0 ? 0 : (double) total / nilai.lengt…"
           }
         ],
+        "parent": "C1",
         "children": [
           "L3"
         ]
@@ -596,6 +665,7 @@
             "text": "System.out.println(teks.length());"
           }
         ],
+        "parent": "C1",
         "children": [
           "L4",
           "L5",

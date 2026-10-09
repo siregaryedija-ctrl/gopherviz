@@ -5,6 +5,15 @@
     "file": "06_errors.go",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 11,
+        "endLine": 13,
+        "state": "complete",
+        "name": "RangeError",
+        "header": "type RangeError struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 15,

@@ -60,7 +60,21 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "e",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 1,
@@ -94,7 +108,21 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "e",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 2,
@@ -130,9 +158,32 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "e",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     }
   ],
+  "class": {
+    "name": "RangeError",
+    "fields": [
+      "Value"
+    ],
+    "methods": [
+      "Error"
+    ]
+  },
   "truncated": false,
   "warnings": []
 }

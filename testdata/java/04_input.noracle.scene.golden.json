@@ -5,6 +5,18 @@
     "file": "04_input.noracle.java",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 4,
+        "endLine": 22,
+        "state": "complete",
+        "name": "Main",
+        "header": "public class Main",
+        "children": [
+          "F1"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 5,
@@ -79,6 +91,7 @@
             "text": "sc.close();"
           }
         ],
+        "parent": "C1",
         "children": [
           "I1",
           "L1"

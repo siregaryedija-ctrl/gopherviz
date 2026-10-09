@@ -5,6 +5,20 @@
     "file": "02_lanjut.cpp",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 15,
+        "endLine": 26,
+        "state": "complete",
+        "name": "Shape",
+        "header": "class Shape",
+        "children": [
+          "F1",
+          "F2",
+          "F3"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 17,
@@ -21,7 +35,8 @@
             "line": 17,
             "text": "count++;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F2",
@@ -30,7 +45,8 @@
         "endLine": 18,
         "state": "complete",
         "name": "Shape.~Shape",
-        "header": "virtual ~Shape()"
+        "header": "virtual ~Shape()",
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -46,6 +62,20 @@
             "line": 21,
             "text": "return name + \" luas \" + to_string(area());"
           }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 30,
+        "endLine": 36,
+        "state": "complete",
+        "name": "Circle",
+        "header": "class Circle : public Shape",
+        "children": [
+          "F4",
+          "F5"
         ]
       },
       {
@@ -58,7 +88,8 @@
         "header": "Circle(double r) : Shape(\"lingkaran\"), r(r)",
         "params": [
           "r"
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F5",
@@ -74,6 +105,20 @@
             "line": 33,
             "text": "return 3.14159 * r * r;"
           }
+        ],
+        "parent": "C2"
+      },
+      {
+        "id": "C3",
+        "kind": "class",
+        "line": 38,
+        "endLine": 44,
+        "state": "complete",
+        "name": "Rect",
+        "header": "class Rect : public Shape",
+        "children": [
+          "F6",
+          "F7"
         ]
       },
       {
@@ -87,7 +132,8 @@
         "params": [
           "w",
           "h"
-        ]
+        ],
+        "parent": "C3"
       },
       {
         "id": "F7",
@@ -103,6 +149,20 @@
             "line": 41,
             "text": "return w * h;"
           }
+        ],
+        "parent": "C3"
+      },
+      {
+        "id": "C4",
+        "kind": "class",
+        "line": 46,
+        "endLine": 50,
+        "state": "complete",
+        "name": "Point",
+        "header": "struct Point",
+        "children": [
+          "F8",
+          "F9"
         ]
       },
       {
@@ -122,7 +182,8 @@
             "line": 48,
             "text": "return {x + o.x, y + o.y};"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F9",
@@ -141,7 +202,8 @@
             "line": 49,
             "text": "return x < o.x || (x == o.x && y < o.y);"
           }
-        ]
+        ],
+        "parent": "C4"
       },
       {
         "id": "F10",
@@ -189,6 +251,19 @@
         ]
       },
       {
+        "id": "C5",
+        "kind": "class",
+        "line": 63,
+        "endLine": 69,
+        "state": "complete",
+        "name": "Box",
+        "header": "class Box",
+        "children": [
+          "F12",
+          "F13"
+        ]
+      },
+      {
         "id": "F12",
         "kind": "func",
         "line": 65,
@@ -198,7 +273,8 @@
         "header": "Box(T v) : value(v)",
         "params": [
           "v"
-        ]
+        ],
+        "parent": "C5"
       },
       {
         "id": "F13",
@@ -214,6 +290,19 @@
             "line": 66,
             "text": "return value;"
           }
+        ],
+        "parent": "C5"
+      },
+      {
+        "id": "C6",
+        "kind": "class",
+        "line": 71,
+        "endLine": 75,
+        "state": "complete",
+        "name": "Node",
+        "header": "struct Node",
+        "children": [
+          "F14"
         ]
       },
       {
@@ -226,6 +315,19 @@
         "header": "Node(int d) : data(d), next(nullptr)",
         "params": [
           "d"
+        ],
+        "parent": "C6"
+      },
+      {
+        "id": "C7",
+        "kind": "class",
+        "line": 77,
+        "endLine": 80,
+        "state": "complete",
+        "name": "InsufficientFunds",
+        "header": "class InsufficientFunds : public runtime_error",
+        "children": [
+          "F15"
         ]
       },
       {
@@ -238,7 +340,8 @@
         "header": "InsufficientFunds(int need) : runtime_error(\"saldo kurang \"…",
         "params": [
           "need"
-        ]
+        ],
+        "parent": "C7"
       },
       {
         "id": "F16",

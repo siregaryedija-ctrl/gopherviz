@@ -599,6 +599,10 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	if fn.recv != nil && fn.decl != nil && fn.decl.Recv != nil && len(fn.decl.Recv.List[0].Names) > 0 {
 		name := fn.decl.Recv.List[0].Names[0].Name
 		scope.define(name, *fn.recv)
+		if r.objMode() { // receiver = object yang menjadi self selama method berjalan
+			r.obj.recv = append(r.obj.recv, *fn.recv)
+			defer func() { r.obj.recv = r.obj.recv[:len(r.obj.recv)-1] }()
+		}
 		if name != "_" {
 			params = append(params, name+" = "+show(*fn.recv))
 		}

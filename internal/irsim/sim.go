@@ -83,10 +83,22 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	tr.Block.Names = blockNames(node)
 	coll := findCollection(node)
 	gspec := findGraph(node)
+	var obj objects
+	switch x := node.(type) {
+	case *ir.Class: // trace class: object-objectnya, bukan koleksi/graf di dalam method
+		coll, gspec = "", nil
+		obj.cls = x
+		tr.Class = classInfo(res, x)
+	case *ir.Func:
+		if c := classOfMethod(res, x); c != nil {
+			obj.method = true
+			tr.Class = classInfo(res, c)
+		}
+	}
 	it := &interp{
 		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
 		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
-		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec},
+		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec, obj: obj},
 		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
 		statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
@@ -167,6 +179,7 @@ func (it *interp) run(node ir.Node) (structural string) {
 	}()
 	it.sem.setup(it)
 	it.runProgram()
+	it.classFinish()
 	if !it.rec.reached {
 		if fn := enclosingFunc(it.res, node); fn != nil {
 			it.callUnknown(fn)

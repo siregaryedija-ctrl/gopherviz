@@ -185,6 +185,20 @@
         ]
       },
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 43,
+        "endLine": 58,
+        "state": "complete",
+        "name": "Akun",
+        "header": "class Akun",
+        "children": [
+          "F2",
+          "F3",
+          "F4"
+        ]
+      },
+      {
         "id": "F2",
         "kind": "func",
         "line": 47,
@@ -201,7 +215,8 @@
             "line": 48,
             "text": "self::$jumlah++;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -220,7 +235,8 @@
             "line": 52,
             "text": "$this->saldo += $x;"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F4",
@@ -236,7 +252,8 @@
             "line": 56,
             "text": "return $this->saldo;"
           }
-        ]
+        ],
+        "parent": "C1"
       }
     ],
     "loops": [

@@ -5,6 +5,15 @@
     "file": "02_lanjut.c",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 9,
+        "endLine": 12,
+        "state": "complete",
+        "name": "Mahasiswa",
+        "header": "typedef struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 16,

@@ -25,6 +25,15 @@
         ]
       },
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 9,
+        "endLine": 11,
+        "state": "complete",
+        "name": "Counter",
+        "header": "type Counter struct"
+      },
+      {
         "id": "F2",
         "kind": "func",
         "line": 13,

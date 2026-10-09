@@ -5,6 +5,19 @@
     "file": "01_basics.java",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 4,
+        "endLine": 50,
+        "state": "complete",
+        "name": "Main",
+        "header": "public class Main",
+        "children": [
+          "F1",
+          "F2"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 5,
@@ -36,6 +49,7 @@
             "text": "return fib(n - 1) + fib(n - 2);"
           }
         ],
+        "parent": "C1",
         "children": [
           "I1"
         ]
@@ -157,6 +171,7 @@
             "text": "System.out.println(total + \" \" + fib(6) + \" \" + p.sum() + \"…"
           }
         ],
+        "parent": "C1",
         "children": [
           "L1",
           "L2",
@@ -297,6 +312,19 @@
         "parent": "F2"
       },
       {
+        "id": "C2",
+        "kind": "class",
+        "line": 52,
+        "endLine": 63,
+        "state": "complete",
+        "name": "Point",
+        "header": "class Point",
+        "children": [
+          "F3",
+          "F4"
+        ]
+      },
+      {
         "id": "F3",
         "kind": "func",
         "line": 55,
@@ -319,7 +347,8 @@
             "line": 57,
             "text": "this.y = y;"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F4",
@@ -335,7 +364,8 @@
             "line": 61,
             "text": "return x + y;"
           }
-        ]
+        ],
+        "parent": "C2"
       }
     ],
     "loops": [

@@ -55,7 +55,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 1,
@@ -86,7 +105,26 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     },
     {
       "n": 2,
@@ -119,9 +157,39 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Person",
+          "name": "ani",
+          "fields": [
+            {
+              "name": "Name",
+              "value": "Ani"
+            },
+            {
+              "name": "Age",
+              "value": "21"
+            }
+          ]
+        }
+      ],
+      "self": "obj1",
+      "selfCopy": true
     }
   ],
+  "class": {
+    "name": "Person",
+    "fields": [
+      "Name",
+      "Age"
+    ],
+    "methods": [
+      "Greet",
+      "Birthday"
+    ]
+  },
   "truncated": false,
   "warnings": []
 }

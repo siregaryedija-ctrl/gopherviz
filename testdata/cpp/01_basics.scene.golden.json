@@ -5,6 +5,28 @@
     "file": "01_basics.cpp",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 6,
+        "endLine": 9,
+        "state": "complete",
+        "name": "Point",
+        "header": "struct Point"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 11,
+        "endLine": 17,
+        "state": "complete",
+        "name": "Rect",
+        "header": "class Rect",
+        "children": [
+          "F1",
+          "F2"
+        ]
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 13,
@@ -15,7 +37,8 @@
         "params": [
           "w",
           "h"
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F2",
@@ -31,7 +54,8 @@
             "line": 14,
             "text": "return w * h;"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "F3",

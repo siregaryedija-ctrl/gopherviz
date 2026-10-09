@@ -448,6 +448,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	if name == "" {
 		name = "(anonim)"
 	}
+	it.nameFromCall(at, this)
 	if recordCall && it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: name, Args: argText,
 			Note: fmt.Sprintf("panggil %s(%s)", name, argText)}, scope)
@@ -1269,7 +1270,7 @@ func pySliceIndices(n int, lo, hi, step *int, zero func()) []int {
 
 func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 	c := &Class{name: n.Name, methods: map[string]*Fn{}, getters: map[string]*Fn{}, setters: map[string]*Fn{},
-		statics: it.newDict("statics"), env: e, kind: n.Kind}
+		statics: it.newDict("statics"), env: e, kind: n.Kind, decl: n}
 	if c.name == "" {
 		c.name = "(anonim)"
 	}
@@ -1550,6 +1551,7 @@ func (it *interp) constructArgs(c *Class, args argList, at ir.Node) Value {
 	}
 	it.ids++
 	o := &Object{class: c, fields: it.newDict("fields"), id: it.ids}
+	it.noteObj(o)
 	obj := Value{k: kObj, o: o}
 	it.initFields(c, obj)
 	ctor := it.findCtor(c, len(args.pos))

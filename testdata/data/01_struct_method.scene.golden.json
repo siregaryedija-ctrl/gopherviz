@@ -5,6 +5,15 @@
     "file": "01_struct_method.go",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 5,
+        "endLine": 8,
+        "state": "complete",
+        "name": "Person",
+        "header": "type Person struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 10,

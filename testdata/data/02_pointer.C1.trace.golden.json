@@ -1,0 +1,137 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "02_pointer.go",
+  "mode": "simulated",
+  "block": {
+    "id": "C1",
+    "kind": "class",
+    "line": 9,
+    "endLine": 11,
+    "name": "Counter",
+    "names": [
+      "Counter",
+      "int",
+      "n"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "phase": "body",
+      "line": 26,
+      "vars": {
+        "c": "&{0}",
+        "p": "→ 10",
+        "q": "→ 5",
+        "x": "10",
+        "y": "1"
+      },
+      "note": "c := &Counter{}",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "n",
+              "value": "0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "c": "&{1}",
+        "i": "1",
+        "p": "→ 10",
+        "q": "→ 5",
+        "x": "10",
+        "y": "1"
+      },
+      "note": "c.n += i",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "phase": "body",
+      "line": 28,
+      "vars": {
+        "c": "&{3}",
+        "i": "2",
+        "p": "→ 10",
+        "q": "→ 5",
+        "x": "10",
+        "y": "1"
+      },
+      "note": "c.n += i",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "n",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "phase": "exit",
+      "note": "program selesai",
+      "reason": "done",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "n",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "class": {
+    "name": "Counter",
+    "fields": [
+      "n"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

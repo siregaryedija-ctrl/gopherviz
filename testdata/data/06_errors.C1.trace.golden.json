@@ -1,0 +1,168 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "06_errors.go",
+  "mode": "simulated",
+  "block": {
+    "id": "C1",
+    "kind": "class",
+    "line": 11,
+    "endLine": 13,
+    "name": "RangeError",
+    "names": [
+      "RangeError",
+      "Value",
+      "int"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "phase": "body",
+      "line": 35,
+      "vars": {
+        "err": "&{500}",
+        "n": "0",
+        "s": "\"500\""
+      },
+      "note": "n, err := parse(s)",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "err",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 37,
+      "func": "RangeError.Error",
+      "args": "e = &{500}",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "panggil RangeError.Error(e = &{500})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "err",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 16,
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "return \"nilai \" + strconv.Itoa(e.Value) + \" di luar batas\" → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "err",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 17,
+      "func": "RangeError.Error",
+      "return": "\"nilai 500 di luar batas\"",
+      "vars": {
+        "e": "&{500}"
+      },
+      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\"",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "err",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "run": 1,
+      "phase": "exit",
+      "vars": {
+        "ErrKosong": "error(\"input kosong\")"
+      },
+      "note": "program selesai",
+      "reason": "done",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "RangeError",
+          "name": "err",
+          "fields": [
+            {
+              "name": "Value",
+              "value": "500"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "class": {
+    "name": "RangeError",
+    "fields": [
+      "Value"
+    ],
+    "methods": [
+      "Error"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

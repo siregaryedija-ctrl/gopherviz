@@ -58,7 +58,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 1,
@@ -89,7 +107,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 2,
@@ -122,7 +158,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "2"
+            },
+            {
+              "name": "H",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 3,
@@ -155,7 +209,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
     },
     {
       "n": 4,
@@ -186,7 +258,25 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
     },
     {
       "n": 5,
@@ -219,9 +309,38 @@
             ]
           }
         ]
-      }
+      },
+      "objs": [
+        {
+          "id": "obj2",
+          "class": "Rect",
+          "name": "r",
+          "fields": [
+            {
+              "name": "W",
+              "value": "1"
+            },
+            {
+              "name": "H",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2"
     }
   ],
+  "class": {
+    "name": "Rect",
+    "fields": [
+      "W",
+      "H"
+    ],
+    "methods": [
+      "Area",
+      "String"
+    ]
+  },
   "truncated": false,
   "warnings": []
 }

@@ -5,6 +5,15 @@
     "file": "01_basics.c",
     "blocks": [
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 4,
+        "endLine": 7,
+        "state": "complete",
+        "name": "Point",
+        "header": "typedef struct"
+      },
+      {
         "id": "F1",
         "kind": "func",
         "line": 9,

@@ -146,6 +146,19 @@
         "header": "for nama, jumlah in stok.items()"
       },
       {
+        "id": "C1",
+        "kind": "class",
+        "line": 41,
+        "endLine": 50,
+        "state": "complete",
+        "name": "Hewan",
+        "header": "class Hewan",
+        "children": [
+          "F2",
+          "F3"
+        ]
+      },
+      {
         "id": "F2",
         "kind": "func",
         "line": 44,
@@ -174,7 +187,8 @@
             "line": 47,
             "text": "Hewan.jumlah += 1"
           }
-        ]
+        ],
+        "parent": "C1"
       },
       {
         "id": "F3",
@@ -193,6 +207,19 @@
             "line": 50,
             "text": "return f\"{self.nama} berkata {self.suara!r}\""
           }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "C2",
+        "kind": "class",
+        "line": 53,
+        "endLine": 55,
+        "state": "complete",
+        "name": "Kucing",
+        "header": "class Kucing(Hewan)",
+        "children": [
+          "F4"
         ]
       },
       {
@@ -213,7 +240,8 @@
             "line": 55,
             "text": "super().__init__(nama, \"meong\")"
           }
-        ]
+        ],
+        "parent": "C2"
       },
       {
         "id": "S1",

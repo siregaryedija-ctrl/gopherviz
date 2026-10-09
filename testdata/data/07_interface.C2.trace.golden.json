@@ -1,0 +1,364 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_interface.go",
+  "mode": "simulated",
+  "block": {
+    "id": "C2",
+    "kind": "class",
+    "line": 13,
+    "endLine": 15,
+    "name": "Circle",
+    "names": [
+      "Circle",
+      "R",
+      "float64"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "shapes": "[{2 3} {1} {1 1}]"
+      },
+      "note": "shapes := []Shape{Rect{2, 3}, Circle{1}, Rect{1, 1}}",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "call",
+      "line": 27,
+      "func": "Circle.Area",
+      "args": "c = {1}",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "panggil Circle.Area(c = {1})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "body",
+      "line": 19,
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "return 3 * c.R * c.R → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F2",
+      "run": 1,
+      "phase": "return",
+      "line": 19,
+      "func": "Circle.Area",
+      "return": "3",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "Circle.Area(c = {1}) mengembalikan 3",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "selfCopy": true
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "run": 1,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "s": "{1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "9"
+      },
+      "note": "total += s.Area()",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Circle",
+          "name": "s",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "call",
+      "line": 28,
+      "func": "Circle.Area",
+      "args": "c = {1}",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "panggil Circle.Area(c = {1})",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Circle",
+          "name": "s",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "body",
+      "line": 19,
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "return 3 * c.R * c.R → keluar dari fungsi",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Circle",
+          "name": "s",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F2",
+      "run": 2,
+      "phase": "return",
+      "line": 19,
+      "func": "Circle.Area",
+      "return": "3",
+      "vars": {
+        "c": "{1}"
+      },
+      "note": "Circle.Area(c = {1}) mengembalikan 3",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Circle",
+          "name": "s",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj2",
+      "selfCopy": true
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "run": 2,
+      "phase": "body",
+      "line": 27,
+      "vars": {
+        "s": "{1 1}",
+        "shapes": "[{2 3} {1} {1 1}]",
+        "total": "10"
+      },
+      "note": "total += s.Area()",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Circle",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "run": 2,
+      "phase": "exit",
+      "note": "program selesai",
+      "reason": "done",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Circle",
+          "name": "shapes[1]",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Circle",
+          "fields": [
+            {
+              "name": "R",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "class": {
+    "name": "Circle",
+    "fields": [
+      "R"
+    ],
+    "methods": [
+      "Area"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}

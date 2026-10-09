@@ -88,7 +88,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "0"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 1,
@@ -150,7 +168,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "0"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 2,
@@ -212,7 +248,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "0"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 3,
@@ -274,7 +328,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 4,
@@ -307,7 +379,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 5,
@@ -369,7 +459,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 6,
@@ -432,7 +540,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "jalan"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 7,
@@ -496,7 +622,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 8,
@@ -558,7 +702,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 9,
@@ -620,7 +782,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 10,
@@ -682,7 +862,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 11,
@@ -715,7 +913,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 12,
@@ -777,7 +993,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 13,
@@ -840,7 +1074,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 14,
@@ -904,7 +1156,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 15,
@@ -966,7 +1236,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 16,
@@ -1028,7 +1316,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 17,
@@ -1090,7 +1396,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 18,
@@ -1123,7 +1447,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{true}"
+            },
+            {
+              "name": "n",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 19,
@@ -1185,7 +1527,25 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     },
     {
       "n": 20,
@@ -1248,9 +1608,37 @@
           "name": "func() { defer wg.Done() c.Inc() }()",
           "state": "selesai"
         }
-      ]
+      ],
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Counter",
+          "name": "c",
+          "fields": [
+            {
+              "name": "mu",
+              "value": "{false}"
+            },
+            {
+              "name": "n",
+              "value": "3"
+            }
+          ]
+        }
+      ],
+      "self": "obj1"
     }
   ],
+  "class": {
+    "name": "Counter",
+    "fields": [
+      "mu",
+      "n"
+    ],
+    "methods": [
+      "Inc"
+    ]
+  },
   "truncated": false,
   "warnings": []
 }

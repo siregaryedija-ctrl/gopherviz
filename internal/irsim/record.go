@@ -13,6 +13,7 @@ import (
 type (
 	Fn      = ir.Func
 	nodeRef = ir.Node
+	irClass = ir.Class
 )
 
 // Cell adalah tempat satu variabel; pointer C/C++ menunjuk ke sini.
@@ -195,6 +196,8 @@ type recorder struct {
 	graphSpec *graphs.Spec // analisis DFS/BFS blok fokus (nil = bukan penelusuran graf)
 	graph     *trace.Graph // graf yang sudah terbaca dari nilai program
 	graphCur  string       // variabel simpul yang sedang diproses
+
+	obj objects // trace class / method: object yang digambar
 }
 
 // bindElem mencatat bahwa variabel name sekarang memegang elemen koleksi ke-idx; fungsi

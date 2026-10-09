@@ -84,6 +84,19 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 
 	tr.Block.Names = blockNames(node)
 	coll, collKind := findCollection(p, node)
+	var obj objects
+	switch x := node.(type) {
+	case *ast.TypeSpec: // trace class: struct beserta method-methodnya
+		coll, collKind = "", ""
+		obj.typ, obj.className = x.Name.Name, x.Name.Name
+		obj.methods = focusMethods(p.File, x.Name.Name)
+		tr.Class = classInfo(p.File, x.Name.Name)
+	case *ast.FuncDecl:
+		if x.Recv != nil && recvTypeName(x) != "" {
+			obj.method, obj.className = true, recvTypeName(x)
+			tr.Class = classInfo(p.File, obj.className)
+		}
+	}
 	it := &interp{
 		p:       p,
 		globals: newEnv(nil, true),
@@ -92,7 +105,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		rng:     rand.New(rand.NewSource(opt.Seed)),
 		input:   userinput.New(opt.Input, opt.InputSeed),
 		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
-			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: findGraph(node)},
+			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: findGraph(node), obj: obj},
 	}
 	reason := it.run(node)
 	r := it.rec
@@ -183,6 +196,7 @@ func (it *interp) run(node ast.Node) (structural string) {
 		if main, ok := it.funcs["main"]; ok && main.Body != nil {
 			it.callFunc(&funcVal{name: "main", decl: main}, nil, main)
 		}
+		it.classFinish()
 	}); r != nil {
 		panic(r)
 	}

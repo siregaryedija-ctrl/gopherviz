@@ -1,0 +1,406 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "03_linked_list.go",
+  "mode": "simulated",
+  "block": {
+    "id": "C1",
+    "kind": "class",
+    "line": 5,
+    "endLine": 8,
+    "name": "Node",
+    "names": [
+      "Next",
+      "Node",
+      "Val",
+      "int"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "head": "&{3 <nil>}",
+        "v": "3"
+      },
+      "note": "head = push(head, v)",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "head": "&{2 &{3 <nil>}}",
+        "v": "2"
+      },
+      "note": "head = push(head, v)",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "head.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "2"
+            },
+            {
+              "name": "Next",
+              "value": "&{3 <nil>}",
+              "points": "obj1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "phase": "body",
+      "line": 17,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "v": "1"
+      },
+      "note": "head = push(head, v)",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "head.Next.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Node",
+          "name": "head.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "2"
+            },
+            {
+              "name": "Next",
+              "value": "&{3 <nil>}",
+              "points": "obj1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "1"
+            },
+            {
+              "name": "Next",
+              "value": "&{2 &{3 <nil>}}",
+              "points": "obj2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{2 &{3 <nil>}}",
+        "total": "3"
+      },
+      "note": "total += n.Val",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "n.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Node",
+          "name": "n",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "2"
+            },
+            {
+              "name": "Next",
+              "value": "&{3 <nil>}",
+              "points": "obj1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "1"
+            },
+            {
+              "name": "Next",
+              "value": "&{2 &{3 <nil>}}",
+              "points": "obj2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "phase": "body",
+      "line": 21,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "n": "&{3 <nil>}",
+        "total": "6"
+      },
+      "note": "total += n.Val",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "n",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Node",
+          "name": "head.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "2"
+            },
+            {
+              "name": "Next",
+              "value": "&{3 <nil>}",
+              "points": "obj1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "1"
+            },
+            {
+              "name": "Next",
+              "value": "&{2 &{3 <nil>}}",
+              "points": "obj2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "phase": "body",
+      "line": 24,
+      "vars": {
+        "head": "&{1 &{2 &{3 <nil>}}}",
+        "total": "6"
+      },
+      "note": "fmt.Println(\"total\", total)",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "head.Next.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Node",
+          "name": "head.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "2"
+            },
+            {
+              "name": "Next",
+              "value": "&{3 <nil>}",
+              "points": "obj1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "1"
+            },
+            {
+              "name": "Next",
+              "value": "&{2 &{3 <nil>}}",
+              "points": "obj2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "phase": "exit",
+      "note": "program selesai",
+      "reason": "done",
+      "objs": [
+        {
+          "id": "obj1",
+          "class": "Node",
+          "name": "head.Next.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "3"
+            },
+            {
+              "name": "Next",
+              "value": "<nil>"
+            }
+          ]
+        },
+        {
+          "id": "obj2",
+          "class": "Node",
+          "name": "head.Next",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "2"
+            },
+            {
+              "name": "Next",
+              "value": "&{3 <nil>}",
+              "points": "obj1"
+            }
+          ]
+        },
+        {
+          "id": "obj3",
+          "class": "Node",
+          "name": "head",
+          "fields": [
+            {
+              "name": "Val",
+              "value": "1"
+            },
+            {
+              "name": "Next",
+              "value": "&{2 &{3 <nil>}}",
+              "points": "obj2"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "class": {
+    "name": "Node",
+    "fields": [
+      "Val",
+      "Next"
+    ]
+  },
+  "truncated": false,
+  "warnings": []
+}
