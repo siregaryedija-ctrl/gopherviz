@@ -11,6 +11,7 @@ import (
 
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/lang"
+	"gopherviz/internal/project"
 	"gopherviz/internal/protocol"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/sim"
@@ -26,11 +27,12 @@ const maxLine = 32 << 20
 type Server struct {
 	version string
 	progs   map[string]*analyzer.Program
+	texts   map[string]string // isi buffer editor per file: modul yang di-import dibaca dari sini dulu, baru disk
 }
 
 // New membuat Server. version adalah versi binary gopherviz.
 func New(version string) *Server {
-	return &Server{version: version, progs: map[string]*analyzer.Program{}}
+	return &Server{version: version, progs: map[string]*analyzer.Program{}, texts: map[string]string{}}
 }
 
 // Run memproses request dari r sampai EOF. Hanya response yang ditulis ke w;
@@ -82,6 +84,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		text := bytes.ReplaceAll([]byte(p.Text), []byte("\r\n"), []byte("\n"))
 		prog := analyzer.LoadLang(p.File, text, lang.FromEditor(p.Language))
 		s.progs[p.File] = prog
+		s.texts[p.File] = string(text)
 		res := prog.Result
 		loop, _ := res.Scene.LoopAt(p.Cursor.Line)
 		block, _ := res.Scene.BlockAt(p.Cursor.Line)
@@ -106,6 +109,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 			return fail(req.ID, err.Error())
 		}
 		delete(s.progs, p.File)
+		delete(s.texts, p.File)
 		return ok(req.ID, struct{}{})
 
 	case protocol.MethodTrace:
@@ -121,7 +125,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		if id == "" {
 			id = p.LoopID
 		}
-		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, id, sim.Options{Input: userinput.Split(p.Input), InputSeed: p.Seed})})
+		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, id, sim.Options{Input: userinput.Split(p.Input), InputSeed: p.Seed, Files: project.Disk{Overlay: s.texts}})})
 
 	default:
 		return fail(req.ID, fmt.Sprintf("method tidak dikenal: %q", req.Method))

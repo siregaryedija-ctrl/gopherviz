@@ -453,6 +453,12 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: name, Args: argText,
 			Note: fmt.Sprintf("panggil %s(%s)", name, argText)}, scope)
 	}
+	// fungsi dari file lain: langkah call di atas masih di file pemanggil (baris pemanggilannya),
+	// isi dan return-nya tercatat di file fungsi itu
+	if m := it.modOf(decl); m != nil && m != it.cur {
+		restore := it.setCur(m)
+		defer func() { it.syncModule(m); restore() }()
+	}
 	quietBody := it.rec.on() && !it.insideFocus(decl)
 	if quietBody {
 		it.quiet++
@@ -1553,7 +1559,10 @@ func (it *interp) constructArgs(c *Class, args argList, at ir.Node) Value {
 	o := &Object{class: c, fields: it.newDict("fields"), id: it.ids}
 	it.noteObj(o)
 	obj := Value{k: kObj, o: o}
-	it.initFields(c, obj)
+	func() {
+		defer it.setCur(it.modOf(c.decl))() // nilai awal field ditulis di file class-nya
+		it.initFields(c, obj)
+	}()
 	ctor := it.findCtor(c, len(args.pos))
 	switch {
 	case ctor != nil:

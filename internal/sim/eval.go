@@ -646,6 +646,9 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: fn.name, Args: argText,
 			Note: fmt.Sprintf("panggil %s(%s)", fn.name, argText)}, scope)
 	}
+	// fungsi dari file lain di package yang sama: langkah call di atas masih di file pemanggil,
+	// isi dan return-nya di file fungsi itu
+	defer it.enterFile(node.Pos())()
 	var named []*ast.Ident
 	if ft.Results != nil {
 		for _, field := range ft.Results.List {

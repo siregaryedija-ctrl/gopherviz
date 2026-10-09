@@ -3,8 +3,11 @@ package sim
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
+	"path/filepath"
 	"strings"
 
+	"gopherviz/internal/analyzer"
 	"gopherviz/internal/trace"
 )
 
@@ -314,9 +317,14 @@ func (it *interp) classFinish() {
 
 // classInfo: cetak biru struct name: field, method (urut sumber), struct tertanam (induk),
 // dan struct lain yang menanamkan struct ini (anak).
-func classInfo(file *ast.File, name string) *trace.ClassInfo {
+func classInfo(files []*ast.File, name string) *trace.ClassInfo {
 	info := &trace.ClassInfo{Name: name}
-	ast.Inspect(file, func(n ast.Node) bool {
+	inspect := func(fn func(ast.Node) bool) {
+		for _, f := range files {
+			ast.Inspect(f, fn)
+		}
+	}
+	inspect(func(n ast.Node) bool {
 		ts, ok := n.(*ast.TypeSpec)
 		if !ok {
 			return true
@@ -352,21 +360,74 @@ func classInfo(file *ast.File, name string) *trace.ClassInfo {
 		}
 		return true
 	})
-	for _, d := range file.Decls {
-		if fd, ok := d.(*ast.FuncDecl); ok && fd.Recv != nil && recvTypeName(fd) == name {
-			info.Methods = append(info.Methods, fd.Name.Name)
+	for _, f := range files {
+		for _, d := range f.Decls {
+			if fd, ok := d.(*ast.FuncDecl); ok && fd.Recv != nil && recvTypeName(fd) == name {
+				info.Methods = append(info.Methods, fd.Name.Name)
+			}
 		}
 	}
 	return info
 }
 
 // focusMethods: semua method tipe name di file.
-func focusMethods(file *ast.File, name string) []*ast.FuncDecl {
+func focusMethods(files []*ast.File, name string) []*ast.FuncDecl {
 	var out []*ast.FuncDecl
-	for _, d := range file.Decls {
-		if fd, ok := d.(*ast.FuncDecl); ok && fd.Recv != nil && fd.Body != nil && recvTypeName(fd) == name {
-			out = append(out, fd)
+	for _, f := range files {
+		for _, d := range f.Decls {
+			if fd, ok := d.(*ast.FuncDecl); ok && fd.Recv != nil && fd.Body != nil && recvTypeName(fd) == name {
+				out = append(out, fd)
+			}
 		}
 	}
 	return out
+}
+
+// ---------- program multi-file (Fase 10b) ----------
+
+// allDecls: deklarasi tingkat atas semua file di package (file fokus dulu).
+func allDecls(p *analyzer.Program) []ast.Decl {
+	var out []ast.Decl
+	for _, f := range p.Files() {
+		out = append(out, f.Decls...)
+	}
+	return out
+}
+
+// enterFile memindahkan "file yang sedang berjalan" ke file tempat pos berada; kembaliannya
+// memulihkan file sebelumnya.
+func (it *interp) enterFile(pos token.Pos) func() {
+	name := it.p.FileOf(pos)
+	if name == it.curFile {
+		return func() {}
+	}
+	prev := it.curFile
+	it.curFile = name
+	return func() { it.curFile = prev }
+}
+
+// traceFiles: file program yang ikut berjalan (file fokus dulu) dan file tempat main berada
+// bila bukan file fokus. files nil bila hanya satu file.
+func (it *interp) traceFiles() (entry string, files []string) {
+	if len(it.p.Siblings) == 0 {
+		return "", nil
+	}
+	if m := it.funcs["main"]; m != nil {
+		entry = it.p.FileOf(m.Pos())
+	}
+	files = []string{filepath.Base(it.p.Result.Scene.File)}
+	seen := map[string]bool{"": true}
+	for _, s := range it.rec.steps {
+		if !seen[s.File] {
+			seen[s.File] = true
+			files = append(files, s.File)
+		}
+	}
+	if entry != "" && !seen[entry] {
+		files = append(files, entry)
+	}
+	if len(files) < 2 {
+		files = nil
+	}
+	return entry, files
 }

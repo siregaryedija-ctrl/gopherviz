@@ -18,6 +18,7 @@ import (
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/ir"
 	"gopherviz/internal/lang"
+	"gopherviz/internal/project"
 	"gopherviz/internal/protocol"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/serve"
@@ -194,7 +195,7 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		fmt.Fprintf(stderr, "tidak ada blok (fungsi, if, switch, atau loop) di baris %d\n", line)
 		return 1
 	}
-	tr := sim.Trace(prog, id, sim.Options{})
+	tr := sim.Trace(prog, id, sim.Options{Files: project.Disk{}})
 
 	if asJSON {
 		enc := json.NewEncoder(stdout)

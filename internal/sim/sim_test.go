@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/project"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
@@ -791,5 +792,35 @@ func main() {
 	}
 	if !copied {
 		t.Error("value receiver Kosongkan seharusnya bekerja pada salinan x (SelfCopy, Self = obj1)")
+	}
+}
+
+// TestPackageFiles: file Go lain di package yang sama ikut disimulasikan (Fase 10b); langkah di
+// file itu mencatat Step.File, dan dari file tanpa main program dimulai dari main di file lain.
+func TestPackageFiles(t *testing.T) {
+	dir := t.TempDir()
+	mainPath, bankPath := filepath.Join(dir, "main.go"), filepath.Join(dir, "bank.go")
+	files := project.Mem{
+		mainPath: "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(Bunga(200))\n}\n",
+		bankPath: "package main\n\nfunc Bunga(saldo int) int {\n\thasil := saldo / 10\n\treturn hasil\n}\n",
+	}
+	p := analyzer.Load(mainPath, []byte(files[mainPath]))
+	tr := Trace(p, "F1", Options{Files: files})
+	if tr.Mode != trace.ModeSimulated || output(tr) != "20\n" {
+		t.Fatalf("mode %s, output %q, warnings %v", tr.Mode, output(tr), tr.Warnings)
+	}
+	if strings.Join(tr.Files, ",") != "main.go,bank.go" {
+		t.Errorf("files = %v", tr.Files)
+	}
+	q := analyzer.Load(bankPath, []byte(files[bankPath]))
+	tr = Trace(q, "F1", Options{Files: files})
+	if tr.Mode != trace.ModeSimulated || tr.Entry != "main.go" {
+		t.Fatalf("trace dari bank.go: mode %s, entry %q, warnings %v", tr.Mode, tr.Entry, tr.Warnings)
+	}
+	if s := tr.Steps[0]; s.Phase != trace.PhaseCall || s.File != "main.go" || s.Line != 6 {
+		t.Errorf("langkah pertama = %s di %q baris %d, mau call di main.go baris 6", s.Phase, s.File, s.Line)
+	}
+	if s := tr.Steps[1]; s.File != "" || s.Line != 4 {
+		t.Errorf("langkah kedua di %q baris %d, mau bank.go (file fokus) baris 4", s.File, s.Line)
 	}
 }

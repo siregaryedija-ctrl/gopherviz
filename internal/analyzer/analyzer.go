@@ -55,15 +55,31 @@ type Program struct {
 	// blok. Fset/File/Info tetap terisi kosong supaya kode lama aman.
 	Lang  string
 	Other *lang.Result
+
+	// Siblings: file Go lain di package yang sama (lihat WithPackage); posisinya di Fset yang sama.
+	Siblings []*Sibling
 }
 
 // Line mengembalikan nomor baris di teks asli (sudah dikoreksi bila potongan kode dibungkus).
-func (p *Program) Line(pos token.Pos) int { return p.src.line(pos) }
+func (p *Program) Line(pos token.Pos) int {
+	if p.sibling(pos) != nil {
+		return p.Fset.Position(pos).Line
+	}
+	return p.src.line(pos)
+}
 
 // Text mengembalikan sumber node dalam satu baris.
 func (p *Program) Text(n ast.Node) string {
 	if n == nil {
 		return ""
+	}
+	if s := p.sibling(n.Pos()); s != nil {
+		from, to := p.Fset.Position(n.Pos()).Offset, p.Fset.Position(n.End()).Offset
+		from, to = max(0, from), min(len(s.text), to)
+		if from >= to {
+			return ""
+		}
+		return oneLine(string(s.text[from:to]))
 	}
 	return oneLine(p.src.slice(p.src.offset(n.Pos()), p.src.offset(n.End())))
 }
@@ -125,9 +141,20 @@ func loadOther(filename string, src []byte, language string) *Program {
 
 func analyze(filename string, src []byte) Result { return load(filename, src).Result }
 
-func load(filename string, src []byte) *Program {
+func load(filename string, src []byte) *Program { return loadWith(filename, src, nil) }
+
+// loadWith seperti load, ditambah file lain di package yang sama (ikut dicek tipenya).
+func loadWith(filename string, src []byte, sibs []sibSrc) *Program {
 	s := parse(filename, src)
-	info := typeCheck(s)
+	var siblings []*Sibling
+	if len(sibs) > 0 && s.shift == 0 && s.file.Name != nil {
+		siblings = parseSiblings(s.fset, s.file, sibs)
+	}
+	var extra []*ast.File
+	for _, sb := range siblings {
+		extra = append(extra, sb.File)
+	}
+	info := typeCheck(s, extra...)
 	b := &builder{src: s, info: info, ids: map[ast.Node]string{}}
 	cands := b.collect()
 
@@ -167,7 +194,7 @@ func load(filename string, src []byte) *Program {
 		}
 	}
 	return &Program{
-		Fset: s.fset, File: s.file, Info: info, src: s,
+		Fset: s.fset, File: s.file, Info: info, src: s, Siblings: siblings,
 		LoopNodes: loopNodes, LoopIDs: loopIDs, BlockNodes: blockNodes, BlockIDs: b.ids,
 		Result: Result{
 			Scene: scene.Scene{
@@ -291,7 +318,7 @@ func (s source) diagnostics(orig []byte) []scene.Diagnostic {
 // stubImporter ada di stubs.go: package standar yang sering dipakai punya tanda tangan
 // tiruan, package lain kosong (tipenya tidak diketahui, tapi pemeriksaan tetap cepat).
 
-func typeCheck(s source) *types.Info {
+func typeCheck(s source, extra ...*ast.File) *types.Info {
 	info := &types.Info{
 		Types:      map[ast.Expr]types.TypeAndValue{},
 		Defs:       map[*ast.Ident]types.Object{},
@@ -302,7 +329,7 @@ func typeCheck(s source) *types.Info {
 	func() {
 		// AST dari kode setengah jadi bisa aneh; kegagalan di sini cukup berarti "tipe tidak diketahui".
 		defer func() { _ = recover() }()
-		_, _ = conf.Check("p", s.fset, []*ast.File{s.file}, info)
+		_, _ = conf.Check("p", s.fset, append([]*ast.File{s.file}, extra...), info)
 	}()
 	return info
 }

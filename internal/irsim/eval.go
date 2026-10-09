@@ -85,7 +85,7 @@ func (it *interp) varCell(e *Env, name string) *Cell {
 	case "python":
 		fe := e.fnEnv()
 		if it.pyGlobals[fe][name] {
-			return it.globals.vars[name]
+			return e.root().vars[name] // global modul ini (file utama: it.globals)
 		}
 	}
 	return e.lookup(name)
@@ -201,7 +201,7 @@ func (it *interp) assignName(id *ir.Ident, e *Env, v Value) {
 		fe := e.fnEnv()
 		switch {
 		case it.pyGlobals[fe][name]:
-			it.globals.define(name, v)
+			e.root().define(name, v)
 		case it.pyNonloc[fe][name]:
 			for s := fe.parent; s != nil; s = s.parent {
 				if c, ok := s.vars[name]; ok {

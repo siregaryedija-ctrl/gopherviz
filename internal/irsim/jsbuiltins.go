@@ -202,6 +202,11 @@ func (it *interp) setupJS(s *jsSem) {
 		nm := name
 		g[nm] = bf(nm, func(it *interp, this Value, args []Value, at ir.Node) Value {
 			if nm == "require" {
+				if a := arg(args, 0); a.k == kStr {
+					if v, ok := it.jsRequire(a.s, at); ok {
+						return v
+					}
+				}
 				return unknown("modul")
 			}
 			if nm == "prompt" { // kotak dialog browser: teks yang diketik user (angka acak), null bila habis

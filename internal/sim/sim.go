@@ -15,6 +15,7 @@ import (
 
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/irsim"
+	"gopherviz/internal/project"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -29,6 +30,8 @@ type Options struct {
 
 	Input     []string // nilai input user dari panel; sisanya angka acak
 	InputSeed int64    // benih angka acak input (0 = bawaan)
+
+	Files project.Files // akses baca file lain (modul, file lain di package yang sama); nil = hanya file ini
 }
 
 func (o Options) withDefaults() Options {
@@ -65,7 +68,10 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		return tr
 	}
 	if p.Lang != "" && p.Lang != "go" {
-		return irsim.Trace(p.Other, blockID, irsim.Options{MaxSteps: opt.MaxSteps, MaxIter: opt.MaxIter, Budget: opt.Budget, Seed: opt.Seed, Input: opt.Input, InputSeed: opt.InputSeed})
+		return irsim.Trace(p.Other, blockID, irsim.Options{MaxSteps: opt.MaxSteps, MaxIter: opt.MaxIter, Budget: opt.Budget, Seed: opt.Seed, Input: opt.Input, InputSeed: opt.InputSeed, Files: opt.Files})
+	}
+	if opt.Files != nil {
+		p = analyzer.WithPackage(p, opt.Files) // file lain di package yang sama (Fase 10b)
 	}
 	tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}
 	for _, loop := range p.Result.Scene.Loops {
@@ -89,12 +95,12 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	case *ast.TypeSpec: // trace class: struct beserta method-methodnya
 		coll, collKind = "", ""
 		obj.typ, obj.className = x.Name.Name, x.Name.Name
-		obj.methods = focusMethods(p.File, x.Name.Name)
-		tr.Class = classInfo(p.File, x.Name.Name)
+		obj.methods = focusMethods(p.Files(), x.Name.Name)
+		tr.Class = classInfo(p.Files(), x.Name.Name)
 	case *ast.FuncDecl:
 		if x.Recv != nil && recvTypeName(x) != "" {
 			obj.method, obj.className = true, recvTypeName(x)
-			tr.Class = classInfo(p.File, obj.className)
+			tr.Class = classInfo(p.Files(), obj.className)
 		}
 	}
 	it := &interp{
@@ -125,6 +131,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	}
 	tr.Mode = trace.ModeSimulated
 	tr.Steps = r.steps
+	tr.Entry, tr.Files = it.traceFiles()
 	tr.Truncated = r.truncated
 	tr.Graph = r.graph
 	if r.graph == nil {

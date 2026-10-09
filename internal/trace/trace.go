@@ -81,6 +81,8 @@ type Trace struct {
 	Collection *Collection `json:"collection,omitempty"`
 	Graph      *Graph      `json:"graph,omitempty"` // graf yang ditelusuri DFS/BFS di blok fokus
 	Class      *ClassInfo  `json:"class,omitempty"` // cetak biru class (blok fokus class, atau class pemilik method fokus)
+	Files      []string    `json:"files,omitempty"` // file program yang ikut berjalan: file fokus dulu, lalu modul (relatif), bila lebih dari satu
+	Entry      string      `json:"entry,omitempty"` // file tempat program dimulai bila bukan file fokus (file yang meng-import-nya)
 	Truncated  bool        `json:"truncated"`
 	Warnings   []string    `json:"warnings"`
 	ReadsInput bool        `json:"readsInput,omitempty"` // program membaca input user (panel menampilkan kotak Input)
@@ -117,6 +119,7 @@ type Step struct {
 	Depth     int               `json:"depth,omitempty"` // kedalaman panggilan fungsi relatif terhadap awal fokus
 	Phase     Phase             `json:"phase"`
 	Line      int               `json:"line,omitempty"`
+	File      string            `json:"file,omitempty"` // file langkah ini bila bukan file fokus (relatif, mis. "utils.py")
 	Iteration *int              `json:"iteration,omitempty"`
 	Branch    *int              `json:"branch,omitempty"` // indeks cabang yang dipilih (PhaseBranch); len(branches) = tidak ada yang cocok
 	Func      string            `json:"func,omitempty"`   // nama fungsi pada call/return

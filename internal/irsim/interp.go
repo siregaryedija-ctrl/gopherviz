@@ -7,6 +7,7 @@ import (
 
 	"gopherviz/internal/ir"
 	"gopherviz/internal/lang"
+	"gopherviz/internal/project"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -59,6 +60,15 @@ type interp struct {
 	input     *userinput.Source // angka pengganti input user (dibuat saat pertama dipakai)
 	stdinBuf  string            // sisa baris input untuk getchar
 	pendingNL bool              // Enter yang tertinggal setelah membaca angka (cin >>, nextInt)
+
+	// program multi-file (modules.go)
+	files    project.Files
+	mods     map[string]*module
+	modOrder []*module
+	declMod  map[ir.Node]*module
+	focusMod *module // file blok fokus
+	entry    *module // file tempat program dimulai (nil = file fokus)
+	cur      *module // file yang sedang berjalan
 }
 
 type timerTask struct {
@@ -129,6 +139,9 @@ func (it *interp) add(s trace.Step, e *Env) {
 			it.rec.obj.lastSig = objSig(s.Objs)
 		}
 	}()
+	if it.cur != nil {
+		s.File = it.cur.name // "" = file fokus
+	}
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) })
 }
 
@@ -1306,8 +1319,13 @@ func (it *interp) exceptionText(v Value) string {
 func (it *interp) simple(n *ir.Simple, e *Env) flow {
 	switch n.Kind {
 	case "import":
-		if it.lang == "python" {
+		switch it.lang {
+		case "python":
 			it.pyImport(n, e)
+		case "javascript", "typescript":
+			it.jsImport(n, e)
+		case "php":
+			it.phpInclude(n, e)
 		}
 	case "empty", "pass", "type", "prototype":
 		if n.Kind == "pass" {
@@ -1372,6 +1390,9 @@ func (it *interp) directive(n *ir.Simple, e *Env) {
 		return
 	}
 	line := strings.TrimSpace(strings.TrimPrefix(n.Names[0], "#"))
+	if it.cInclude(line, e) {
+		return
+	}
 	if !strings.HasPrefix(line, "define") {
 		return
 	}

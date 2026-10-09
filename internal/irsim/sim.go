@@ -8,6 +8,7 @@ import (
 
 	"gopherviz/internal/ir"
 	"gopherviz/internal/lang"
+	"gopherviz/internal/project"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -22,6 +23,8 @@ type Options struct {
 
 	Input     []string // nilai input user dari panel; sisanya angka acak
 	InputSeed int64    // benih angka acak input (0 = bawaan)
+
+	Files project.Files // akses baca file lain (modul yang di-import); nil = hanya file ini
 }
 
 func (o Options) withDefaults() Options {
@@ -95,16 +98,42 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 			tr.Class = classInfo(res, c)
 		}
 	}
-	it := &interp{
-		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
-		globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
-		rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec, obj: obj},
-		funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
-		pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
-		statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
+	mk := func() *interp {
+		it := &interp{
+			lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
+			globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
+			rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec, obj: obj},
+			funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
+			pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
+			statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
+		}
+		it.globals.global = true
+		it.newModules(opt.Files)
+		return it
 	}
-	it.globals.global = true
-	reason := it.run(node)
+	it := mk()
+	reason := it.run(node, false)
+	if !it.rec.reached && opt.Files != nil {
+		// blok fokus tidak tercapai dari file ini sendiri (mis. modul yang hanya berisi fungsi):
+		// jalankan program dari file yang meng-import-nya
+		for _, p := range importers(res, opt.Files) {
+			it2 := mk()
+			entry := it2.loadModule(p)
+			if entry == nil {
+				continue
+			}
+			it2.entry = entry
+			if reason2 := it2.run(node, false); it2.rec.reached {
+				it, reason = it2, reason2
+				tr.Entry = entry.name
+				break
+			}
+		}
+	}
+	if !it.rec.reached && reason == "" {
+		it = mk()
+		reason = it.run(node, true) // fungsi yang tidak dipanggil: parameter tidak diketahui
+	}
 	r := it.rec
 	tr.Warnings = append(tr.Warnings, r.warnings...)
 	tr.ReadsInput = it.input.Reads() > 0
@@ -121,6 +150,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	}
 	tr.Mode = trace.ModeSimulated
 	tr.Steps = r.steps
+	tr.Files = it.traceFiles(tr.Entry)
 	tr.Truncated = r.truncated
 	tr.Graph = r.graph
 	if r.graph == nil {
@@ -141,7 +171,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 
 // run menjalankan program dari titik masuknya dan mengembalikan alasan bila simulasi
 // harus beralih ke mode struktur.
-func (it *interp) run(node ir.Node) (structural string) {
+func (it *interp) run(node ir.Node, unknownArgs bool) (structural string) {
 	defer func() {
 		r := recover()
 		if r == nil {
@@ -180,7 +210,7 @@ func (it *interp) run(node ir.Node) (structural string) {
 	it.sem.setup(it)
 	it.runProgram()
 	it.classFinish()
-	if !it.rec.reached {
+	if !it.rec.reached && unknownArgs {
 		if fn := enclosingFunc(it.res, node); fn != nil {
 			it.callUnknown(fn)
 		}
@@ -217,7 +247,12 @@ func (it *interp) uncaughtNote(msg string) string {
 
 // runProgram menjalankan titik masuk sesuai bahasa.
 func (it *interp) runProgram() {
-	body := it.res.File.Body
+	entry := it.entry
+	if entry == nil {
+		entry = it.focusMod
+	}
+	defer it.setCur(entry)()
+	body := entry.res.File.Body
 	switch it.lang {
 	case "javascript", "typescript":
 		it.hoist(body, it.globals)
@@ -235,6 +270,7 @@ func (it *interp) runProgram() {
 			_ = ret
 		}
 	case "java":
+		it.javaSiblings() // class lain di folder yang sama (satu package); class file ini menang bila namanya sama
 		for _, s := range body {
 			if c, ok := s.(*ir.Class); ok {
 				it.defineClass(c, it.globals)
@@ -563,6 +599,7 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 		statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
 	}
 	it.globals.global = true
+	it.newModules(opt.Files)
 	func() {
 		defer func() {
 			if r := recover(); r != nil {

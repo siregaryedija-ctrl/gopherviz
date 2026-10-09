@@ -1049,8 +1049,10 @@ func (it *interp) pyImport(n *ir.Simple, e *Env) {
 	text := strings.Join(strings.Fields(it.text(n)), " ")
 	bind := func(name string, v Value) { it.assignName(&ir.Ident{S: n.S, Name: name}, e, v) }
 	module := func(name string) (Value, bool) {
-		m, ok := s.modules[name]
-		return m, ok
+		if m, ok := s.modules[name]; ok {
+			return m, true
+		}
+		return it.pyUserModule(name) // modul buatan user: name.py di folder yang sama
 	}
 	if strings.HasPrefix(text, "from ") {
 		rest := strings.TrimPrefix(text, "from ")

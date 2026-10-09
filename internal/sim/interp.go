@@ -79,6 +79,7 @@ func (e *env) define(name string, v value) *value {
 
 type interp struct {
 	p        *analyzer.Program
+	curFile  string // file yang sedang berjalan ("" = file fokus); lihat enterFile
 	globals  *env
 	funcs    map[string]*ast.FuncDecl
 	methods  map[string]map[string]*ast.FuncDecl // nama tipe → nama method → deklarasi
@@ -182,6 +183,7 @@ func (it *interp) add(s trace.Step, e *env) {
 	if sch := it.sch; sch != nil && (sch.used || len(sch.chans) > 0) {
 		s.G, s.Gs, s.Chans = it.curG(), it.gStates(), it.chanStates(e)
 	}
+	s.File = it.curFile
 	if it.rec.objMode() {
 		s.Objs, s.Self, s.SelfCopy = it.objSnapshot(e)
 		it.rec.obj.lastSig = objSig(s.Objs)
@@ -1278,7 +1280,7 @@ func (it *interp) index(at ast.Node, i value, length int) int {
 func (it *interp) initGlobals() {
 	it.methods = map[string]map[string]*ast.FuncDecl{}
 	// Fungsi dan method dulu, supaya variabel global boleh memanggil fungsi yang ditulis di bawahnya.
-	for _, d := range it.p.File.Decls {
+	for _, d := range allDecls(it.p) { // termasuk file lain di package yang sama
 		n, ok := d.(*ast.FuncDecl)
 		if !ok || n.Name == nil {
 			continue
@@ -1294,9 +1296,11 @@ func (it *interp) initGlobals() {
 			it.methods[t][n.Name.Name] = n
 		}
 	}
-	for _, d := range it.p.File.Decls {
+	for _, d := range allDecls(it.p) {
 		if n, ok := d.(*ast.GenDecl); ok && n.Tok == token.VAR {
+			restore := it.enterFile(n.Pos())
 			it.decl(n, it.globals)
+			restore()
 		}
 	}
 }
