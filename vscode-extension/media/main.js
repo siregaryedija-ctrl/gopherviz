@@ -51,6 +51,7 @@
     'func': 'Setiap pemanggilan fungsi = Gopher masuk pipa ke lantai baru membawa argumen; return = naik lagi membawa koin berisi nilai. Rekursi = lantai bertumpuk ke bawah.',
     'main': 'Timeline seluruh program dari awal main. Setiap fungsi yang dipanggil turun ke lantai baru.',
     'class': 'Class = cetak biru (daftar field dan method). Setiap object = rumah yang dibangun dari cetak biru itu; kamarnya = field. Memanggil method = Gopher masuk ke rumah object itu (self/this), jadi terlihat object mana yang berubah.',
+    'islands': 'Program ini terpecah ke beberapa file. Setiap file = pulau, fungsinya = pondok. Memanggil fungsi dari file lain = Gopher menyeberang jembatan ke pulau itu; return = koin hasilnya dibawa pulang.',
     'lanes': 'Setiap goroutine = satu Gopher di jalurnya sendiri. Channel = pipa: kirim melempar bola masuk, terima mengambilnya. Gopher yang menunggu berhenti sampai pasangannya datang. Urutan di sini mengikuti penjadwal Go dengan satu prosesor; di komputer kamu urutannya bisa berbeda.',
   };
   const NODE = {
@@ -74,6 +75,7 @@
   const lanes = new G.LaneStage($('stage'), {});
   const graph = new G.GraphStage($('stage'), {});
   const cls = new G.ClassStage($('stage'), {});
+  const isles = new G.IslandStage($('stage'), {});
 
   // ---------- state dari ekstensi ----------
 
@@ -325,6 +327,7 @@
   const branchR = { prepare: tr => branch.prepare(tr), duration: i => branch.duration(i), cues: i => branch.cues(i), render: (i, t) => branch.render(i, t) };
   const funcR = { prepare: tr => func.prepare(tr), duration: i => func.duration(i), cues: i => func.cues(i), render: (i, t) => func.render(i, t) };
   const graphR = { prepare: tr => graph.prepare(tr), duration: i => graph.duration(i), cues: i => graph.cues(i), render: (i, t) => graph.render(i, t) };
+  const islandR = { prepare: tr => isles.prepare(tr), duration: i => isles.duration(i), cues: i => isles.cues(i), render: (i, t) => isles.render(i, t) };
   const classR = { prepare: tr => cls.prepare(tr), duration: i => cls.duration(i), cues: i => cls.cues(i), render: (i, t) => cls.render(i, t) };
   const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
 
@@ -374,7 +377,10 @@
     const laneMode = tr.steps.some(s => s.gs) || (kind === 'func' && tr.steps.some(s => s.chans));
     if (laneMode) $('explain').textContent = BLOCK_EXPLAIN.lanes;
     // DFS/BFS: simulator mengenali graf (daftar ketetanggaan) yang ditelusuri → panggung graf
-    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.graph ? graphR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    // fungsi yang memanggil (atau dipanggil dari) file lain: pulau + jembatan
+    const islands = kind === 'func' && tr.files && tr.files.length > 1;
+    if (islands) $('explain').textContent = BLOCK_EXPLAIN.islands;
+    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.graph ? graphR : islands ? islandR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
@@ -460,7 +466,7 @@
     const v = tp.view[tp.i], s = v.step;
     const group = v.group && v.group.length > 1 ? `${s.loop} menjalankan ${v.group.length} langkah · ` : '';
     const floor = tp.r === laneR ? (s.g && !(s.note || '').startsWith(`G${s.g} `) ? `G${s.g} · ` : '') : s.depth ? `lantai ${s.depth} · ` : '';
-    $('stepNote').textContent = floor + group + (s.note || '');
+    $('stepNote').textContent = (s.file ? `${s.file}:${s.line || '?'} · ` : '') + floor + group + (s.note || '');
     $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
 
     // variabel: diagram memori bila program memakai struct/pointer, selain itu chip biasa.
@@ -498,7 +504,7 @@
     tp.outLen = out.length;
 
     // baris yang sedang dijalankan → disorot di editor VS Code
-    if (s.line) vscode.postMessage({ type: 'step', line: s.line });
+    if (s.line) vscode.postMessage({ type: 'step', line: s.line, file: s.file || '' });
 
     highlightPart(partOf(s.line, s));
     highlightPhase(currentLoop && s.loop === currentLoop.id ? { init: 'init', cond: 'cond', post: 'post' }[s.phase] || null : null);
@@ -652,6 +658,7 @@
     lanes.update(dt);
     graph.update(dt);
     cls.update(dt);
+    isles.update(dt);
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();

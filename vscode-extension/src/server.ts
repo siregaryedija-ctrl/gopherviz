@@ -183,6 +183,8 @@ export interface TraceStep {
   self?: string;
   /** Go: method value receiver bekerja pada salinan object self. */
   selfCopy?: boolean;
+  /** File langkah ini bila bukan file fokus (relatif, mis. "utils.py"). */
+  file?: string;
 }
 
 /** Satu object (rumah) pada satu langkah. */
@@ -215,6 +217,10 @@ export interface Trace {
   graph?: { var: string; kind?: 'bfs' | 'dfs' | ''; nodes: string[]; edges: [string, string][]; directed?: boolean; frontier?: string; visited?: string };
   /** Cetak biru class (blok class, atau class pemilik method fokus). */
   class?: ClassInfo;
+  /** File program yang ikut berjalan (file fokus dulu), bila lebih dari satu. */
+  files?: string[];
+  /** File tempat program dimulai bila bukan file fokus (file yang meng-import-nya). */
+  entry?: string;
   truncated: boolean;
   warnings: string[];
   /** Program membaca input user: panel menampilkan kotak Input. */

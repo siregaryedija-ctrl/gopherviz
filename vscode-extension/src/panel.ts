@@ -25,7 +25,7 @@ export type FromPanel =
   | { type: 'input'; text: string }
   | { type: 'reroll' }
   /** Baris (1-based) langkah trace yang sedang tampil; 0 = tidak ada (sorotan di editor dihapus). */
-  | { type: 'step'; line: number };
+  | { type: 'step'; line: number; /** File langkah ini bila bukan file fokus (relatif). */ file?: string };
 
 const icon = (d: string) => `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${d}"/></svg>`;
 
@@ -251,7 +251,7 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'memory.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>

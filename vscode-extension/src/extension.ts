@@ -54,6 +54,8 @@ class Controller implements vscode.Disposable {
   private inputs: Record<string, { text: string; seed: number }> = {};
   /** Baris langkah trace yang sedang tampil di panel (0 = tidak ada); disorot di editor. */
   private stepLine = 0;
+  /** File langkah itu bila bukan file yang divisualkan (relatif, mis. "utils.py"); "" = file itu sendiri. */
+  private stepFile = '';
   private readonly stepDeco: vscode.TextEditorDecorationType;
 
   private readonly panel: LoopPanel;
@@ -431,6 +433,7 @@ class Controller implements vscode.Disposable {
         break;
       case 'step':
         this.stepLine = m.line;
+        this.stepFile = m.file ?? '';
         this.paintStep();
         break;
       case 'setConfig':
@@ -466,8 +469,11 @@ class Controller implements vscode.Disposable {
   private paintStep(): void {
     const doc = this.editor?.document;
     const on = this.stepLine > 0 && this.panel.isVisible && config().get('highlightLine', true);
+    // langkah di file lain (modul yang di-import): sorot di editor file itu bila sedang terlihat
+    const target = doc && this.stepFile ? path.resolve(path.dirname(doc.fileName), this.stepFile).toLowerCase() : '';
+    const isTarget = (d: vscode.TextDocument) => (target ? d.fileName.toLowerCase() === target : d === doc);
     for (const ed of vscode.window.visibleTextEditors) {
-      if (on && doc && ed.document === doc && this.stepLine <= doc.lineCount) {
+      if (on && doc && isTarget(ed.document) && this.stepLine <= ed.document.lineCount) {
         ed.setDecorations(this.stepDeco, [new vscode.Range(this.stepLine - 1, 0, this.stepLine - 1, 0)]);
       } else {
         ed.setDecorations(this.stepDeco, []);

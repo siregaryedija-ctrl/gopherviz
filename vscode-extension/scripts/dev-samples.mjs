@@ -71,6 +71,10 @@ const samples = {
   go_class: ['@/kelasgo/kelas.go', 5],
   go_method: ['@/kelasgo/kelas.go', 14],
   py_linked: ['@/linked.py', 1],
+  mod_py: ['@/modpy/main.py', 4],
+  mod_py_util: ['@/modpy/utils.py', 7],
+  mod_js: ['@/modjs/main.js', 4],
+  mod_go: ['@/modgo/main.go', 5],
   js_class: ['@/kelas.js', 1],
 };
 

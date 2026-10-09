@@ -143,6 +143,25 @@ test('class: kursor di baris class menampilkan cetak biru dan object-objectnya',
   assert.ok(tr.steps.some(s => s.phase === 'call' && s.self), 'langkah method tanpa self');
 });
 
+test('multi-file: fungsi di modul dijalankan dari file yang meng-import-nya', async api => {
+  const util = path.resolve(__dirname, '..', '..', '..', 'dev', 'fixtures', 'modpy', 'utils.py');
+  const doc = await vscode.workspace.openTextDocument(util);
+  const ed = await vscode.window.showTextDocument(doc);
+  const uri = doc.uri.toString();
+  const res = await waitFor('scene utils.py', () => api.result(uri));
+  const fn = res.scene.blocks.find(b => b.kind === 'func' && b.name === 'total');
+  assert.ok(fn, 'fungsi total tidak ada');
+  const pos = new vscode.Position(fn.line, 4);
+  ed.selection = new vscode.Selection(pos, pos);
+  const tr = await waitFor('trace total dari main.py', () => {
+    const t = api.lastTrace();
+    return t && t.block.id === fn.id && t.mode === 'simulated' ? t : undefined;
+  }, 20_000);
+  assert.equal(tr.entry, 'main.py');
+  assert.deepEqual(tr.files, ['utils.py', 'main.py']);
+  assert.equal(tr.steps[0].file, 'main.py');
+});
+
 test('panel bisa dipindah: panel bawah, sidebar, lalu kembali ke tab editor', async api => {
   const doc = vscode.window.activeTextEditor!.document;
   const cfg = () => vscode.workspace.getConfiguration('gopherviz');
