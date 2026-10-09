@@ -14,8 +14,22 @@ import (
 
 // findGraph menganalisis sintaks blok fokus; nil bila tidak terlihat seperti penelusuran graf.
 func findGraph(node ir.Node) *graphs.Spec {
-	sp := &graphs.Spec{Cur: map[string]string{}}
-	count := map[string]int{}
+	sp, recursive, count := scanTraversal(node)
+	if len(sp.Graphs) == 0 || sp.Frontier == "" && !recursive && len(sp.Visited) == 0 {
+		return nil
+	}
+	slices.SortStableFunc(sp.Graphs, func(a, b string) int { return count[b] - count[a] })
+	if sp.Frontier == "" && recursive {
+		sp.Kind = "dfs"
+	}
+	return sp
+}
+
+// scanTraversal mengumpulkan ciri penelusuran di blok: kandidat graph[node], penanda visited,
+// antrian/tumpukan, dan rekursi (dipakai graf dan grid labirin).
+func scanTraversal(node ir.Node) (sp *graphs.Spec, recursive bool, count map[string]int) {
+	sp = &graphs.Spec{Cur: map[string]string{}}
+	count = map[string]int{}
 	note := func(g, cur ir.Expr) {
 		gi, ok1 := g.(*ir.Ident)
 		ci, ok2 := cur.(*ir.Ident)
@@ -34,7 +48,6 @@ func findGraph(node ir.Node) *graphs.Spec {
 	if f, ok := node.(*ir.Func); ok {
 		self = f.Name
 	}
-	recursive := false
 	ir.Walk(node, func(n ir.Node) bool {
 		switch x := n.(type) {
 		case *ir.Index:
@@ -88,14 +101,7 @@ func findGraph(node ir.Node) *graphs.Spec {
 		}
 		return true
 	})
-	if len(sp.Graphs) == 0 || sp.Frontier == "" && !recursive && len(sp.Visited) == 0 {
-		return nil
-	}
-	slices.SortStableFunc(sp.Graphs, func(a, b string) int { return count[b] - count[a] })
-	if sp.Frontier == "" && recursive {
-		sp.Kind = "dfs"
-	}
-	return sp
+	return sp, recursive, count
 }
 
 // graphStep membaca keadaan penelusuran dari variabel program pada langkah ini.

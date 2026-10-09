@@ -14,6 +14,7 @@ import (
 	"sort"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/graphs"
 	"gopherviz/internal/irsim"
 	"gopherviz/internal/project"
 	"gopherviz/internal/scene"
@@ -90,10 +91,11 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 
 	tr.Block.Names = blockNames(node)
 	coll, collKind := findCollection(p, node)
+	grid := findGrid(node)
 	var obj objects
 	switch x := node.(type) {
 	case *ast.TypeSpec: // trace class: struct beserta method-methodnya
-		coll, collKind = "", ""
+		coll, collKind, grid = "", "", nil
 		obj.typ, obj.className = x.Name.Name, x.Name.Name
 		obj.methods = focusMethods(p.Files(), x.Name.Name)
 		tr.Class = classInfo(p.Files(), x.Name.Name)
@@ -111,7 +113,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		rng:     rand.New(rand.NewSource(opt.Seed)),
 		input:   userinput.New(opt.Input, opt.InputSeed),
 		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
-			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: findGraph(node), obj: obj},
+			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: graphUnlessGrid(node, grid), gridSpec: grid, obj: obj},
 	}
 	reason := it.run(node)
 	r := it.rec
@@ -134,6 +136,10 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	tr.Entry, tr.Files = it.traceFiles()
 	tr.Truncated = r.truncated
 	tr.Graph = r.graph
+	tr.Grid = r.grid
+	if r.grid != nil {
+		coll = ""
+	}
 	if r.graph == nil {
 		for i := range tr.Steps {
 			tr.Steps[i].Graph = nil
@@ -305,4 +311,12 @@ func findCollection(p *analyzer.Program, node ast.Node) (name, kind string) {
 		}
 	}
 	return name, kinds[name]
+}
+
+// graphUnlessGrid: grid[r][c] bukan graf daftar ketetanggaan.
+func graphUnlessGrid(node ast.Node, grid *graphs.GridSpec) *graphs.Spec {
+	if grid != nil {
+		return nil
+	}
+	return findGraph(node)
 }

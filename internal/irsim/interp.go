@@ -133,6 +133,7 @@ func (it *interp) add(s trace.Step, e *Env) {
 			vars = it.snapshot(e)
 			it.detectCollKind(e)
 			s.Graph = it.graphStep(e)
+			s.Cells = it.gridStep(e)
 		}
 		if it.rec.objMode() {
 			s.Objs, s.Self = it.objSnapshot(e)
@@ -304,12 +305,37 @@ func (it *interp) evalQuiet(x ir.Expr, e *Env) Value {
 	return it.eval(x, e)
 }
 
+// evalNote menghitung nilai untuk catatan langkah: error (mis. indeks di luar batas pada bagian
+// yang di program aslinya tidak pernah dihitung) tidak boleh menghentikan program.
+func (it *interp) evalNote(x ir.Expr, e *Env) (v Value) {
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(thrown); !ok {
+				panic(r)
+			}
+			v = unknown("error saat menyusun catatan")
+		}
+	}()
+	return it.evalQuiet(x, e)
+}
+
 // subst menulis ulang ekspresi dengan nilainya, mis. "i < n" menjadi "0 < 3".
 func (it *interp) subst(x ir.Expr, e *Env) string {
 	switch n := x.(type) {
 	case *ir.Binary:
 		if !isCompareOp(n.Op) && !isLogicOp(n.Op) {
-			return it.sem.show(it, it.evalQuiet(n, e))
+			if v := it.evalNote(n, e); v.k != kUnknown {
+				return it.display(v, true)
+			}
+			return it.text(x)
+		}
+		if isLogicOp(n.Op) && n.Op != "??" {
+			// and/or berhenti lebih awal: sisi kanan yang tidak dihitung program ditulis apa adanya
+			l := it.evalNote(n.X, e)
+			and := n.Op == "&&" || n.Op == "and"
+			if l.k != kUnknown && it.sem.truthy(l) != and {
+				return it.subst(n.X, e) + " " + n.Op + " " + it.text(n.Y)
+			}
 		}
 		return it.subst(n.X, e) + " " + n.Op + " " + it.subst(n.Y, e)
 	case *ir.Unary:
@@ -330,14 +356,16 @@ func (it *interp) subst(x ir.Expr, e *Env) string {
 			return it.sem.show(it, v)
 		}
 	case *ir.Index, *ir.Member:
-		v := it.evalQuiet(n, e)
+		v := it.evalNote(n, e)
 		if v.k != kFunc && v.k != kUnknown {
-			return it.sem.show(it, v)
+			return it.display(v, true)
 		}
 	case *ir.Call:
-		v := it.evalQuiet(n, e)
-		if v.k != kUnknown && isSimpleCall(n) {
-			return it.sem.show(it, v)
+		if !isSimpleCall(n) {
+			break
+		}
+		if v := it.evalNote(n, e); v.k != kUnknown {
+			return it.display(v, true)
 		}
 	}
 	return it.text(x)

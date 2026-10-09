@@ -162,3 +162,7 @@ for k, val in sorted(data.items()):
     print(k, val, end="; ")
 print()
 print({3, 1, 2}, set(range(10, 0, -2)), {100, 5, 33, 8}, len({1, 1, 2}))
+
+# operator or (perbandingan lalu or, comprehension, ternary)
+kosong = 0
+print(kosong or "default", kosong < 1 or kosong > 9, [v for v in [] or [1, 2, 3] if v == 1 or v == 3], "ya" if kosong or 1 else "tidak")

@@ -179,6 +179,7 @@ func (it *interp) add(s trace.Step, e *env) {
 	if e != nil {
 		vars = it.snapshot(e)
 		s.Graph = it.graphStep(e)
+		s.Cells = it.gridStep(e)
 	}
 	if sch := it.sch; sch != nil && (sch.used || len(sch.chans) > 0) {
 		s.G, s.Gs, s.Chans = it.curG(), it.gStates(), it.chanStates(e)
@@ -351,11 +352,34 @@ func (it *interp) evalQuiet(x ast.Expr, e *env) value {
 }
 
 // subst menulis ulang ekspresi dengan nilai variabel, mis. "i < n" menjadi "0 < 3".
+// evalNote menghitung nilai untuk catatan langkah: panic (mis. indeks di luar batas pada bagian
+// yang di program aslinya tidak pernah dihitung karena && / ||) tidak boleh menghentikan program.
+func (it *interp) evalNote(x ast.Expr, e *env) (v value, ok bool) {
+	defer func() {
+		if r := recover(); r != nil {
+			if _, isPanic := r.(goPanic); !isPanic {
+				panic(r)
+			}
+			v, ok = value{}, false
+		}
+	}()
+	return it.evalQuiet(x, e), true
+}
+
 func (it *interp) subst(x ast.Expr, e *env) string {
 	switch n := x.(type) {
 	case *ast.BinaryExpr:
 		if !isCompare(n.Op) && n.Op != token.LAND && n.Op != token.LOR {
-			return show(it.evalQuiet(n, e)) // aritmetika langsung dihitung: "n-1" menjadi "5"
+			if v, ok := it.evalNote(n, e); ok {
+				return show(v) // aritmetika langsung dihitung: "n-1" menjadi "5"
+			}
+			return it.text(x)
+		}
+		if n.Op == token.LAND || n.Op == token.LOR {
+			// && / || berhenti lebih awal: sisi kanan yang tidak dihitung program ditulis apa adanya
+			if l, ok := it.evalNote(n.X, e); ok && l.k == kBool && l.b == (n.Op == token.LOR) {
+				return it.subst(n.X, e) + " " + n.Op.String() + " " + it.text(n.Y)
+			}
 		}
 		return it.subst(n.X, e) + " " + n.Op.String() + " " + it.subst(n.Y, e)
 	case *ast.ParenExpr:
@@ -367,10 +391,14 @@ func (it *interp) subst(x ast.Expr, e *env) string {
 			return show(*cell)
 		}
 	case *ast.IndexExpr:
-		return show(it.evalQuiet(n, e))
+		if v, ok := it.evalNote(n, e); ok {
+			return show(v)
+		}
 	case *ast.CallExpr:
 		if id, ok := n.Fun.(*ast.Ident); ok && (id.Name == "len" || id.Name == "cap") && it.isBuiltin(id) {
-			return show(it.evalQuiet(n, e))
+			if v, ok := it.evalNote(n, e); ok {
+				return show(v)
+			}
 		}
 	}
 	return it.text(x)

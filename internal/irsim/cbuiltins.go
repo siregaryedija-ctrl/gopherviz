@@ -576,6 +576,10 @@ func (it *interp) setupC(s *cSem) {
 	container("set", mapLike("set-sorted", true))
 	container("unordered_set", mapLike("uset", true))
 	container("pair", func(it *interp, t string, args []Value, at ir.Node) Value {
+		// pair<int,int> p = {5, 6}: daftar inisialisasi = first, second
+		if len(args) == 1 && args[0].k == kList && args[0].l.kind != "pair" && len(args[0].l.elems) == 2 {
+			return it.cppPair(args[0].l.elems[0], args[0].l.elems[1])
+		}
 		return it.cppPair(arg(args, 0), arg(args, 1))
 	})
 

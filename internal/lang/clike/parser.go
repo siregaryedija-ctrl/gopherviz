@@ -746,6 +746,11 @@ func (p *parser) tryForEach(start ir.Pos) ir.Stmt {
 		// for (Tipe nama : xs)
 		ts := p.i
 		typ, ok := p.typeText(false)
+		for ok && p.is("[") && p.isAt(1, "]") { // Java: for (int[] baris : grid)
+			p.next()
+			p.next()
+			typ += "[]"
+		}
 		if !ok || !(p.at(tIdent) || p.is("[") || p.is("&") || p.is("*")) {
 			p.i, p.diags = save, p.diags[:saveDiags]
 			return nil

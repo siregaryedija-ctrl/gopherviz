@@ -824,3 +824,94 @@ func TestPackageFiles(t *testing.T) {
 		t.Errorf("langkah kedua di %q baris %d, mau bank.go (file fokus) baris 4", s.File, s.Line)
 	}
 }
+
+// TestGridTraversal: labirin di Go (antrian struct sel dengan dist[r][c], dan DFS rekursif pada
+// grid [][]byte yang ditampilkan sebagai karakter).
+func TestGridTraversal(t *testing.T) {
+	for _, c := range []struct {
+		name, src, block, kind string
+		goal                   []int
+	}{
+		{"bfs", `package main
+
+import "fmt"
+
+type cell struct{ r, c int }
+
+func bfs(grid []string) int {
+	rows, cols := len(grid), len(grid[0])
+	dist := make([][]int, rows)
+	for i := range dist {
+		dist[i] = make([]int, cols)
+		for j := range dist[i] {
+			dist[i][j] = -1
+		}
+	}
+	dist[0][0] = 0
+	q := []cell{{0, 0}}
+	dirs := [][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}
+	for len(q) > 0 {
+		cur := q[0]
+		q = q[1:]
+		if grid[cur.r][cur.c] == 'G' {
+			return dist[cur.r][cur.c]
+		}
+		for _, d := range dirs {
+			nr, nc := cur.r+d[0], cur.c+d[1]
+			if nr >= 0 && nr < rows && nc >= 0 && nc < cols && dist[nr][nc] == -1 && grid[nr][nc] != '#' {
+				dist[nr][nc] = dist[cur.r][cur.c] + 1
+				q = append(q, cell{nr, nc})
+			}
+		}
+	}
+	return -1
+}
+
+func main() {
+	fmt.Println(bfs([]string{"S.#.", "..#.", "#..G"}))
+}
+`, "F1", "bfs", []int{2, 3}},
+		{"dfs", `package main
+
+import "fmt"
+
+var grid = [][]byte{[]byte("S.#"), []byte("..#"), []byte("#.G")}
+var seen [3][3]bool
+
+func dfs(r, c int) bool {
+	if r < 0 || r >= 3 || c < 0 || c >= 3 || seen[r][c] || grid[r][c] == '#' {
+		return false
+	}
+	seen[r][c] = true
+	if grid[r][c] == 'G' {
+		return true
+	}
+	return dfs(r+1, c) || dfs(r, c+1) || dfs(r-1, c) || dfs(r, c-1)
+}
+
+func main() {
+	fmt.Println(dfs(0, 0))
+}
+`, "F1", "dfs", []int{2, 2}},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			p := analyzer.Load("t.go", []byte(c.src))
+			tr := Trace(p, c.block, Options{})
+			if tr.Mode != trace.ModeSimulated || tr.Grid == nil {
+				t.Fatalf("grid tidak terdeteksi: mode %s, warnings %v", tr.Mode, tr.Warnings)
+			}
+			if tr.Grid.Kind != c.kind || fmt.Sprint(tr.Grid.Goal) != fmt.Sprint(c.goal) || fmt.Sprint(tr.Grid.Start) != "[0 0]" {
+				t.Errorf("grid %+v", tr.Grid)
+			}
+			cur := 0
+			for _, s := range tr.Steps {
+				if s.Cells != nil && len(s.Cells.Cur) == 2 {
+					cur++
+				}
+			}
+			if cur == 0 {
+				t.Error("sel aktif tidak pernah terbaca")
+			}
+		})
+	}
+}

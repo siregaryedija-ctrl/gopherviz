@@ -80,6 +80,7 @@ type Trace struct {
 	Steps      []Step      `json:"steps"`
 	Collection *Collection `json:"collection,omitempty"`
 	Graph      *Graph      `json:"graph,omitempty"` // graf yang ditelusuri DFS/BFS di blok fokus
+	Grid       *Grid       `json:"grid,omitempty"`  // grid labirin yang ditelusuri BFS/DFS di blok fokus
 	Class      *ClassInfo  `json:"class,omitempty"` // cetak biru class (blok fokus class, atau class pemilik method fokus)
 	Files      []string    `json:"files,omitempty"` // file program yang ikut berjalan: file fokus dulu, lalu modul (relatif), bila lebih dari satu
 	Entry      string      `json:"entry,omitempty"` // file tempat program dimulai bila bukan file fokus (file yang meng-import-nya)
@@ -139,6 +140,7 @@ type Step struct {
 	Gs        []GState          `json:"gs,omitempty"`       // potret semua goroutine (bila program memakai go)
 	Chans     []ChanState       `json:"chans,omitempty"`    // potret semua channel
 	Graph     *GraphState       `json:"graph,omitempty"`    // keadaan penelusuran graf (bila Trace.Graph ada)
+	Cells     *GridState        `json:"cells,omitempty"`    // keadaan penelusuran grid (bila Trace.Grid ada)
 	Objs      []ObjState        `json:"objs,omitempty"`     // potret object class fokus (trace class) atau object self (trace method)
 	Self      string            `json:"self,omitempty"`     // ID object yang menjadi this/self di langkah ini
 	SelfCopy  bool              `json:"selfCopy,omitempty"` // Go: method value receiver bekerja pada salinan object Self
@@ -170,6 +172,25 @@ type Graph struct {
 	Directed bool        `json:"directed,omitempty"` // false bila setiap sisi punya pasangan balik
 	Frontier string      `json:"frontier,omitempty"` // nama variabel antrian/tumpukan
 	Visited  string      `json:"visited,omitempty"`  // nama variabel penanda simpul yang sudah dikunjungi
+}
+
+// Grid adalah grid 2D (labirin) yang ditelusuri BFS/DFS di blok fokus. Rows = isi awal setiap sel
+// sebagai teks; panel menentukan tembok dari nilai sel yang tidak pernah dikunjungi.
+type Grid struct {
+	Var      string     `json:"var"`
+	Rows     [][]string `json:"rows"`
+	Start    []int      `json:"start,omitempty"`    // [baris, kolom] titik awal
+	Goal     []int      `json:"goal,omitempty"`     // [baris, kolom] tujuan
+	Kind     string     `json:"kind,omitempty"`     // "bfs" | "dfs"
+	Frontier string     `json:"frontier,omitempty"` // variabel antrian/tumpukan
+	Visited  string     `json:"visited,omitempty"`  // variabel penanda kunjungan / jarak
+}
+
+// GridState adalah keadaan penelusuran grid pada satu langkah: sel [baris, kolom].
+type GridState struct {
+	Cur      []int    `json:"cur,omitempty"`      // sel yang sedang diproses
+	Visited  [][2]int `json:"visited,omitempty"`  // sel yang sudah ditandai (penanda kunjungan / jarak / isi grid yang diubah)
+	Frontier [][2]int `json:"frontier,omitempty"` // isi antrian/tumpukan (depan/bawah dulu)
 }
 
 // GraphState adalah keadaan penelusuran graf pada satu langkah.

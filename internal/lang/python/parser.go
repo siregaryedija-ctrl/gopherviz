@@ -818,10 +818,10 @@ func (p *parser) test() ir.Expr {
 		f.S = p.span(start)
 		return f
 	}
-	x := p.binary(precOr)
+	x := p.binary(precOr - 1) // < precOr supaya "or" ikut terbaca
 	if p.is("if") {
 		p.next()
-		c := p.binary(precOr)
+		c := p.binary(precOr - 1)
 		if !p.expect("else", "di ekspresi ... if ... else ...") {
 			return &ir.Cond{S: p.span(start), C: c, T: x, F: &ir.BadExpr{S: p.span(start)}}
 		}
@@ -1189,10 +1189,10 @@ func (p *parser) comprehension(kind string, elt, key, val ir.Expr, start ir.Pos)
 		p.next()
 		f := &ir.CompFor{Target: p.targetList()}
 		p.expect("in", "di comprehension")
-		f.Iter = p.binary(precOr)
+		f.Iter = p.binary(precOr - 1)
 		for p.is("if") {
 			p.next()
-			f.Ifs = append(f.Ifs, p.binary(precOr))
+			f.Ifs = append(f.Ifs, p.binary(precOr-1))
 		}
 		c.Fors = append(c.Fors, f)
 	}

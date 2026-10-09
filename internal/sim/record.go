@@ -38,6 +38,9 @@ type recorder struct {
 	graph     *trace.Graph // graf yang sudah terbaca dari nilai program
 	graphCur  string       // variabel simpul yang sedang diproses
 
+	gridSpec *graphs.GridSpec // analisis penelusuran grid/labirin blok fokus (nil = bukan)
+	grid     *trace.Grid      // grid yang sudah terbaca dari nilai program
+
 	obj objects // trace class / method: struct yang digambar
 
 	mem     bool              // sertakan potret memori di setiap langkah
