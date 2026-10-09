@@ -75,6 +75,10 @@ const samples = {
   mod_py_util: ['@/modpy/utils.py', 7],
   mod_js: ['@/modjs/main.js', 4],
   mod_go: ['@/modgo/main.go', 5],
+  maze_py: ['@/maze.py', 11],
+  maze_js: ['@/maze.js', 6],
+  maze_go: ['@/mazego/main.go', 7],
+  pulau_py: ['@/pulau.py', 7],
   js_class: ['@/kelas.js', 1],
 };
 

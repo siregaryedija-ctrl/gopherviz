@@ -76,6 +76,7 @@
   const graph = new G.GraphStage($('stage'), {});
   const cls = new G.ClassStage($('stage'), {});
   const isles = new G.IslandStage($('stage'), {});
+  const maze = new G.GridStage($('stage'), {});
 
   // ---------- state dari ekstensi ----------
 
@@ -327,6 +328,7 @@
   const branchR = { prepare: tr => branch.prepare(tr), duration: i => branch.duration(i), cues: i => branch.cues(i), render: (i, t) => branch.render(i, t) };
   const funcR = { prepare: tr => func.prepare(tr), duration: i => func.duration(i), cues: i => func.cues(i), render: (i, t) => func.render(i, t) };
   const graphR = { prepare: tr => graph.prepare(tr), duration: i => graph.duration(i), cues: i => graph.cues(i), render: (i, t) => graph.render(i, t) };
+  const gridR = { prepare: tr => maze.prepare(tr), duration: i => maze.duration(i), cues: i => maze.cues(i), render: (i, t) => maze.render(i, t) };
   const islandR = { prepare: tr => isles.prepare(tr), duration: i => isles.duration(i), cues: i => isles.cues(i), render: (i, t) => isles.render(i, t) };
   const classR = { prepare: tr => cls.prepare(tr), duration: i => cls.duration(i), cues: i => cls.cues(i), render: (i, t) => cls.render(i, t) };
   const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
@@ -380,7 +382,7 @@
     // fungsi yang memanggil (atau dipanggil dari) file lain: pulau + jembatan
     const islands = kind === 'func' && tr.files && tr.files.length > 1;
     if (islands) $('explain').textContent = BLOCK_EXPLAIN.islands;
-    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.graph ? graphR : islands ? islandR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.grid ? gridR : tr.graph ? graphR : islands ? islandR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
@@ -659,6 +661,7 @@
     graph.update(dt);
     cls.update(dt);
     isles.update(dt);
+    maze.update(dt);
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();
