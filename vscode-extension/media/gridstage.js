@@ -2,6 +2,9 @@
 // kubus: tembok = kubus tinggi gelap, jalan = ubin. BFS menyebar seperti gelombang dari titik awal
 // (angka = jarak), antrian kuning, Gopher di sel yang sedang diproses. Setelah tujuan ketemu,
 // jalur terpendek menyala dan Gopher berjalan dari awal ke tujuan.
+// Revisi user 2026-10-09: Gopher selalu berjalan satu sel demi satu sel mengikuti urutan kode. Bila
+// sel berikutnya tidak bersebelahan (jalan buntu / pindah cabang), Gopher mundur cepat menyusuri
+// jejaknya sampai titik cabang lalu maju lagi; sel buntu yang ditinggalkan jadi abu-abu bertanda ✗.
 (function (G) {
   'use strict';
   const P = G.pixel;
@@ -11,6 +14,11 @@
   const WALL_HINT = new Set(['#', 'X', 'x', '█', '*', 'W']);
 
   const key = (r, c) => r * 1000 + c;
+  const BACK_MS = 90;  // satu langkah mundur (cepat)
+  const FWD_MS = 260;  // satu langkah maju
+  const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const adj = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) === 1;
+  const same = (a, b) => !!a && !!b && a[0] === b[0] && a[1] === b[1];
 
   class GridStage {
     constructor(canvas, hooks) {
@@ -69,6 +77,41 @@
       this.order = new Map();
       const views = [];
       let prevSeen = new Set(), prevCur = null;
+      // jejak = jalan yang sedang ditempuh Gopher (dari titik cabang terakhir ke sel aktif)
+      const trail = [];
+      const dead = new Set();
+      let found = null; // jejak saat tujuan pertama kali dicapai (jalur hasil DFS)
+      const goalK = g.goal ? key(g.goal[0], g.goal[1]) : -1;
+      const passable = ([r, c]) => r >= 0 && c >= 0 && r < this.R && c < this.C && !this.wall(r, c);
+      const exhausted = (cell, seen) => DIRS.every(([dr, dc]) => {
+        const n = [cell[0] + dr, cell[1] + dc];
+        return !passable(n) || seen.has(key(n[0], n[1]));
+      });
+      // sel ditinggalkan saat mundur: buntu bila semua tetangga sudah dicoba. Hanya DFS: di BFS sel yang
+      // ditinggalkan sudah selesai diperiksa, bukan jalan buntu.
+      const leave = (cell, seen) => {
+        if (g.kind === 'dfs' && !found && exhausted(cell, seen)) dead.add(key(cell[0], cell[1]));
+      };
+      // rute lewat sel yang sudah dikunjungi (bila jejak tidak menyambung ke sel tujuan)
+      const via = (from, to, seen) => {
+        const prev = new Map([[key(from[0], from[1]), null]]);
+        const q = [from];
+        while (q.length) {
+          const c = q.shift();
+          if (same(c, to)) break;
+          for (const [dr, dc] of DIRS) {
+            const n = [c[0] + dr, c[1] + dc];
+            const k = key(n[0], n[1]);
+            if (prev.has(k) || !passable(n) || !(seen.has(k) || same(n, to))) continue;
+            prev.set(k, c);
+            q.push(n);
+          }
+        }
+        if (!prev.has(key(to[0], to[1]))) return [to];
+        const out = [];
+        for (let c = to; c && !same(c, from); c = prev.get(key(c[0], c[1]))) out.unshift(c);
+        return out;
+      };
       steps.forEach((s, i) => {
         const st = s.cells || {};
         const seen = new Set((st.visited || []).map(([r, c]) => key(r, c)));
@@ -76,15 +119,59 @@
         const fresh = [...seen].filter(k => !prevSeen.has(k));
         fresh.forEach(k => { if (!this.order.has(k)) this.order.set(k, this.order.size + 1); });
         const front = new Set((st.frontier || []).map(([r, c]) => key(r, c)));
-        const cur = st.cur ? [st.cur[0], st.cur[1]] : prevCur;
-        views.push({ step: s, i, seen, fresh: new Set(fresh), front, cur, from: prevCur });
+        // Sel yang dipanggil tetapi tembok, atau sudah dikunjungi lalu langsung kembali (dfs(r, c)
+        // pada tetangga yang sudah dilewati) = Gopher hanya MENGINTIP, tidak berjalan ke sana.
+        const raw = st.cur ? [st.cur[0], st.cur[1]] : null;
+        let peek = null, cur = prevCur;
+        if (raw) {
+          if (this.wall(raw[0], raw[1]) || s.phase === 'call' && prevSeen.has(key(raw[0], raw[1])) && !same(raw, prevCur)) peek = raw;
+          else cur = raw;
+        }
+        let route = [], back = 0;
+        const top = () => trail[trail.length - 1];
+        if (cur && raw && !peek && !same(cur, prevCur)) {
+          const j = trail.findIndex(c => same(c, cur));
+          if (j >= 0) { // kembali ke sel di jejak (rekursi kembali): mundur
+            while (trail.length > j + 1) {
+              leave(trail.pop(), seen);
+              route.push(top());
+              back++;
+            }
+          } else {
+            while (trail.length && !adj(top(), cur)) { // mundur sampai titik cabang di sebelah sel tujuan
+              leave(trail.pop(), seen);
+              if (trail.length) { route.push(top()); back++; }
+            }
+            if (trail.length || !prevCur) {
+              trail.push(cur);
+              route.push(cur);
+            } else { // jejak habis: jalan lewat sel yang sudah dikunjungi
+              const r = via(prevCur, cur, seen);
+              route = r;
+              back = r.length - 1;
+              trail.push(cur);
+            }
+          }
+          dead.delete(key(cur[0], cur[1]));
+          if (!found && key(cur[0], cur[1]) === goalK) found = trail.slice();
+        } else if (cur && !trail.length) {
+          trail.push(cur);
+        }
+        views.push({
+          step: s, i, seen, fresh: new Set(fresh), front, cur, from: prevCur, route, back, peek,
+          trail: new Set(trail.map(c => key(c[0], c[1]))), dead: new Set(dead),
+        });
         prevSeen = seen;
         prevCur = cur;
       });
-      // akhir: jalur terpendek ke tujuan bila tujuan sudah dikunjungi
+      this.found = found;
+      // akhir: jalur ke tujuan bila tujuan sudah dikunjungi. DFS: jalur yang benar-benar ditemukan
+      // (jejak saat tujuan dicapai); BFS: jalur terpendek.
       this.path = null;
       const last = views[views.length - 1];
-      if (g.goal && g.start && last && last.seen.has(key(g.goal[0], g.goal[1])) && this.dist.has(key(g.goal[0], g.goal[1]))) {
+      if (g.kind === 'dfs' && this.found && this.found.length > 1) {
+        this.path = this.found;
+      } else if (g.goal && g.start && last && last.seen.has(key(g.goal[0], g.goal[1])) && this.dist.has(key(g.goal[0], g.goal[1]))) {
         const path = [[g.goal[0], g.goal[1]]];
         let [r, c] = g.goal;
         while (this.dist.get(key(r, c)) > 0) {
@@ -123,12 +210,14 @@
 
     cellXY(r, c) { return { x: this.x0 + c * this.p, y: this.y0 + r * this.p }; }
 
+    /** Lama berjalan di langkah ini: mundur cepat lalu maju. */
+    walkMs(v) { return v.back * BACK_MS + (v.route.length - v.back) * FWD_MS; }
+
     duration(i) {
       const v = this.snaps[i], last = i === this.snaps.length - 1;
       if (last) return 1800 + (this.path ? this.path.length * 160 : 0);
       if (v.step.reason === 'panic') return 2000;
-      if (v.fresh.size) return 600;
-      return 420;
+      return (v.fresh.size ? 450 : 320) + this.walkMs(v);
     }
 
     cues(i) {
@@ -177,10 +266,12 @@
           }
           let col = '#fbeef3';
           const seen = v.seen.has(k);
+          const deadEnd = seen && v.dead.has(k) && !pathOn;
           if (seen) {
             const n = bfs ? (this.dist.get(k) || 0) : (this.order.get(k) || 1);
             col = WAVE[Math.min(WAVE.length - 1, Math.floor(n / Math.max(1, Math.ceil((bfs ? this.maxDist() : this.order.size) / WAVE.length))))];
           }
+          if (deadEnd) col = '#d9d3de'; // jalan buntu yang sudah ditinggalkan
           if (v.front.has(k) && !seen) col = '#f3c75a';
           if (pathSet.has(k)) col = Math.floor(now / 160) % 2 ? '#f3c75a' : '#ffe08a';
           // sel yang baru dikunjungi: muncul membesar (gelombang)
@@ -190,7 +281,15 @@
           P.rect(w, x + off, y + off, s, s, col);
           P.rect(w, x + off, y + off + s - 1, s, 1, P.mix(col, P.INK, 0.25));
           if (v.front.has(k) && !seen) P.rect(w, x + Math.floor(p / 2) - 1, y + Math.floor(p / 2) - 1, 2, 2, '#c2457a');
-          if (seen && p >= 12) {
+          if (v.trail.has(k) && !pathOn && !deadEnd) { // jejak yang sedang ditempuh: bingkai pink
+            P.rect(w, x + off, y + off, s, 1, '#d9467c');
+            P.rect(w, x + off, y + off, 1, s, '#d9467c');
+            P.rect(w, x + off + s - 1, y + off, 1, s, '#d9467c');
+            P.rect(w, x + off, y + off + s - 1, s, 1, '#d9467c');
+          }
+          if (deadEnd && p >= 10) {
+            P.textCenter(w, '✗', x + (p - 1) / 2, y + Math.floor((p - 6) / 2), '#8a6a98');
+          } else if (seen && p >= 12) {
             const n = String(bfs ? (this.dist.has(k) ? this.dist.get(k) : '') : this.order.get(k) || '');
             if (P.textW(n) <= p - 3) P.textCenter(w, n, x + (p - 1) / 2, y + Math.floor((p - 6) / 2), P.INK);
           }
@@ -206,6 +305,16 @@
       };
       flag(g.start, '#d9467c', 'S');
       flag(g.goal, '#2f8a5c', 'G');
+      // mengintip sel tetangga (tembok / sudah dikunjungi): bingkai jingga + tanda tanya
+      if (v.peek && !pathOn) {
+        const { x, y } = this.cellXY(v.peek[0], v.peek[1]);
+        const blink = Math.floor(now / 150) % 2;
+        P.rect(w, x, y, p - 1, 1, blink ? '#f7b779' : '#e0a22a');
+        P.rect(w, x, y + p - 2, p - 1, 1, blink ? '#f7b779' : '#e0a22a');
+        P.rect(w, x, y, 1, p - 1, blink ? '#f7b779' : '#e0a22a');
+        P.rect(w, x + p - 2, y, 1, p - 1, blink ? '#f7b779' : '#e0a22a');
+        if (p >= 10) P.textCenter(w, '?', x + (p - 1) / 2, y + Math.floor((p - 6) / 2), '#a5622a');
+      }
 
       // Gopher: di sel aktif (melompat dari sel sebelumnya); di akhir berjalan menyusuri jalur
       let pos = null, walk = false;
@@ -216,15 +325,28 @@
         pos = { r: P.lerp(a[0], b[0], f), c: P.lerp(a[1], b[1], f) };
         walk = pathU < 1;
       } else if (v.cur) {
-        const u = v.from ? P.clamp(t / 0.3, 0, 1) : 1;
-        const from = v.from || v.cur;
-        pos = { r: P.lerp(from[0], v.cur[0], P.ease(u)), c: P.lerp(from[1], v.cur[1], P.ease(u)) };
-        walk = u < 1;
+        // berjalan menyusuri rute langkah ini: mundur cepat dulu, lalu maju satu sel
+        const ms = t * this.duration(i);
+        const pts = [v.from || v.cur, ...v.route];
+        let acc = 0;
+        pos = { r: v.cur[0], c: v.cur[1] };
+        this.backing = false;
+        for (let k = 1; k < pts.length; k++) {
+          const seg = k <= v.back ? BACK_MS : FWD_MS;
+          if (ms < acc + seg) {
+            const u = P.ease((ms - acc) / seg);
+            pos = { r: P.lerp(pts[k - 1][0], pts[k][0], u), c: P.lerp(pts[k - 1][1], pts[k][1], u) };
+            walk = true;
+            this.backing = k <= v.back;
+            break;
+          }
+          acc += seg;
+        }
       }
       if (pos) {
         const gx = this.x0 + pos.c * p + (p - 1) / 2;
         const gy = this.y0 + pos.r * p + p - 2 - (walk ? Math.round(Math.abs(Math.sin(now / 90)) * 2) : 0);
-        const face = pathOn && pathU >= 1 ? 'happy' : v.step.reason === 'panic' ? 'shock' : 'idle';
+        const face = pathOn && pathU >= 1 ? 'happy' : v.step.reason === 'panic' || this.backing ? 'shock' : v.peek ? 'think' : 'idle';
         P.drawGopher(w, gx, gy, face, walk ? Math.floor(now / 120) % 2 : 0);
       }
       for (const pt of this.parts) P.rect(w, Math.round(pt.x), Math.round(pt.y), 1, 1, pt.col);
@@ -235,6 +357,8 @@
       P.text(w, `${bfs ? 'BFS' : 'DFS'} LABIRIN ${this.R}x${this.C}`, 4, 3, P.INK);
       let info = `DIKUNJUNGI ${v.seen.size}/${total}`;
       if (v.front.size) info += `  ${bfs ? 'ANTRIAN' : 'TUMPUKAN'} ${v.front.size}`;
+      if (v.back && !last) info += `  MUNDUR ${v.back}`;
+      else if (v.dead.size && !pathOn) info += `  BUNTU ${v.dead.size}`;
       if (pathOn) info += `  JARAK ${this.path.length - 1}`;
       P.text(w, P.fit(info, Math.floor((this.W - 8) / 4)), 4, 10, '#c2457a');
       const code = (v.step.note || '').replace(/ → .*$/, '');

@@ -79,6 +79,7 @@ const samples = {
   maze_js: ['@/maze.js', 6],
   maze_go: ['@/mazego/main.go', 7],
   pulau_py: ['@/pulau.py', 7],
+  maze_dfs: ['@/maze_dfs.py', 12],
   tree_pre: ['@/pohon.py', 9],
   tree_height: ['@/pohon.py', 16],
   tree_umum: ['@/pohon_umum.py', 6],
