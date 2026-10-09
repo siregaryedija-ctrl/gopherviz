@@ -13,23 +13,6 @@
   const X_DOOR = 76;  // pintu jalur
   const X_TILES = 86; // tepi kiri ubin pertama
   const LABEL = { 'if': 'IF', 'else-if': 'ELSE IF', 'else': 'ELSE', 'case': 'CASE', 'default': 'DEFAULT', 'skip': 'LEWATI' };
-  const KEYWORD = { 'break': 'BREAK', 'continue': 'CONTINUE', 'return': 'RETURN', 'goto': 'GOTO' };
-
-  /**
-   * Label ubin isi cabang = nama perintahnya (keputusan user 2026-10-08: nomor 1, 2 tidak jelas):
-   * kata kunci (BREAK, RETURN), variabel yang diubah (X=, COUNT+=), atau fungsi yang dipanggil (PRINT).
-   */
-  function tileLabel(n) {
-    if (KEYWORD[n.kind]) return KEYWORD[n.kind];
-    const t = (n.text || '').trim();
-    let m = t.match(/^(?:(?:let|const|var|auto|int|long|float|double|string|bool|char)\s+)?\$?([A-Za-z_]\w*)(\[[^\]]*\])?\s*(\+\+|--|:=|[-+*/%]?=)(?!=)/);
-    if (m) return P.fit(m[1] + (m[2] ? '[]' : '') + m[3], 9);
-    m = t.match(/^(?:await\s+)?\$?([A-Za-z_][\w.]*)\s*\(/);
-    if (m) return P.fit(m[1].split('.').pop(), 9);
-    m = t.match(/^[A-Za-z_]\w*/);
-    return P.fit(m ? m[0] : n.kind, 9) || '...';
-  }
-
   class BranchStage {
     constructor(canvas, hooks) {
       this.cv = canvas;
@@ -59,7 +42,7 @@
       for (const ln of this.lanes) {
         let x = X_TILES;
         ln.tiles = ln.body.map(n => {
-          const label = tileLabel(n), w = Math.max(12, P.textW(label) + 6);
+          const label = P.stmtLabel(n), w = Math.max(12, P.textW(label) + 6);
           const t = { x, w, cx: x + w / 2, label };
           x += w + 3;
           return t;
@@ -277,11 +260,7 @@
         if (ln.empty) P.text(w, ln.empty, X_TILES, gy - 7, '#c58ba3');
         ln.body.forEach((n, j) => {
           const t = ln.tiles[j], hit = v.act === 'hit' && v.lane === k && v.tile === j;
-          const col = P.NODE_COL[n.kind] || P.NODE_COL.stmt;
-          const ty = gy - 9 - Math.round(Math.sin(Math.PI * P.clamp(hit && a > 0.45 ? (a - 0.45) / 0.4 : 0, 0, 1)) * 3);
-          P.box(w, t.x, ty, t.w, 9, col, P.INK);
-          P.rect(w, t.x + 1, ty + 1, t.w - 2, 1, P.mix(col, '#ffffff', 0.5));
-          P.textCenter(w, t.label, t.cx, ty + 2, P.INK);
+          P.labelTile(w, t, gy, n.kind, hit && a > 0.45 ? (a - 0.45) / 0.4 : 0);
         });
         w.globalAlpha = 1;
       });

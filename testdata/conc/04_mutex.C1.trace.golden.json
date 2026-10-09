@@ -1192,6 +1192,7 @@
       "run": 3,
       "phase": "exit",
       "note": "program selesai",
+      "output": "hitungan 3\n",
       "reason": "done",
       "g": 1,
       "gs": [

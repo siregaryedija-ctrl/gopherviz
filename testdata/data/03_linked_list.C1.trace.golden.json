@@ -166,6 +166,7 @@
         "total": "3"
       },
       "note": "total += n.Val",
+      "output": "1 ",
       "objs": [
         {
           "id": "obj1",
@@ -227,6 +228,7 @@
         "total": "6"
       },
       "note": "total += n.Val",
+      "output": "2 ",
       "objs": [
         {
           "id": "obj1",
@@ -287,6 +289,7 @@
         "total": "6"
       },
       "note": "fmt.Println(\"total\", total)",
+      "output": "3 total 6\n",
       "objs": [
         {
           "id": "obj1",

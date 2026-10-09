@@ -50,6 +50,7 @@
     'switch': 'Nilainya dicocokkan dengan setiap case dari atas. Case pertama yang cocok dijalankan.',
     'func': 'Setiap pemanggilan fungsi = Gopher masuk pipa ke lantai baru membawa argumen; return = naik lagi membawa koin berisi nilai. Rekursi = lantai bertumpuk ke bawah.',
     'main': 'Timeline seluruh program dari awal main. Setiap fungsi yang dipanggil turun ke lantai baru.',
+    'class': 'Class = cetak biru (daftar field dan method). Setiap object = rumah yang dibangun dari cetak biru itu; kamarnya = field. Memanggil method = Gopher masuk ke rumah object itu (self/this), jadi terlihat object mana yang berubah.',
     'lanes': 'Setiap goroutine = satu Gopher di jalurnya sendiri. Channel = pipa: kirim melempar bola masuk, terima mengambilnya. Gopher yang menunggu berhenti sampai pasangannya datang. Urutan di sini mengikuti penjadwal Go dengan satu prosesor; di komputer kamu urutannya bisa berbeda.',
   };
   const NODE = {
@@ -72,6 +73,7 @@
   const func = new G.FuncStage($('stage'), {});
   const lanes = new G.LaneStage($('stage'), {});
   const graph = new G.GraphStage($('stage'), {});
+  const cls = new G.ClassStage($('stage'), {});
 
   // ---------- state dari ekstensi ----------
 
@@ -121,6 +123,7 @@
       level.setLoop(loop);
       if (block && (block.kind === 'if' || block.kind === 'switch')) branch.setBlock(block);
       if (block && block.kind === 'func') func.setBlock(block, blocks);
+      if (block && block.kind === 'class') cls.setBlock(block);
       renderParts();
     }
     renderHeader();
@@ -184,6 +187,7 @@
       return (sceneLang() !== 'go' && KIND_OTHER[l.kind]) || KIND[l.kind] || l.kind;
     }
     if (b.kind === 'func') return `fungsi ${b.name || ''}`.trim();
+    if (b.kind === 'class') return `class ${b.name || ''}`.trim();
     const n = (b.branches || []).length;
     return b.kind === 'if' ? `if · ${n} cabang` : `switch · ${n} case`;
   }
@@ -251,6 +255,15 @@
     const ol = $('parts'), b = currentBlock;
     $('partsSection').hidden = !b;
     if (!b) { ol.innerHTML = ''; return; }
+    if (b.kind === 'class') { // daftar method: anak blok (Go: fungsi dengan receiver tipe ini)
+      $('partsTitle').textContent = 'Method';
+      const goRecv = new RegExp('^func\\s*\\(\\s*\\w*\\s*\\*?' + b.name + '\\s*\\)');
+      const ms = blocks.filter(x => x.kind === 'func' && (x.parent === b.id || goRecv.test(x.header || '')));
+      ol.innerHTML = ms.length
+        ? ms.map((m, i) => partRow(i + 1, 'stmt', m.header, `method · baris ${m.line}`, m.line)).join('')
+        : partRow('', 'empty', 'Belum ada method. Field-nya tetap terlihat di cetak biru.', '', 0);
+      return;
+    }
     if (b.kind === 'if' || b.kind === 'switch') {
       $('partsTitle').textContent = b.kind === 'if' ? 'Cabang' : 'Case';
       const brs = b.branches || [];
@@ -312,6 +325,7 @@
   const branchR = { prepare: tr => branch.prepare(tr), duration: i => branch.duration(i), cues: i => branch.cues(i), render: (i, t) => branch.render(i, t) };
   const funcR = { prepare: tr => func.prepare(tr), duration: i => func.duration(i), cues: i => func.cues(i), render: (i, t) => func.render(i, t) };
   const graphR = { prepare: tr => graph.prepare(tr), duration: i => graph.duration(i), cues: i => graph.cues(i), render: (i, t) => graph.render(i, t) };
+  const classR = { prepare: tr => cls.prepare(tr), duration: i => cls.duration(i), cues: i => cls.cues(i), render: (i, t) => cls.render(i, t) };
   const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
 
   /** Langkah call/return hanya berarti di mode fungsi; di renderer lain digabung ke langkah berikutnya. */
@@ -345,7 +359,7 @@
       return;
     }
     const kind = currentBlock.kind;
-    if (kind !== 'func') tr = foldCalls(tr);
+    if (kind !== 'func' && kind !== 'class') tr = foldCalls(tr);
     if (!tr.steps.length) return;
     // Mode data hanya untuk koleksi berisi nilai sederhana (angka, string pendek); slice bersarang memakai renderer lain.
     const scalar = v => v.length <= 12 && !/^(\[|map\[|\{|&)/.test(v);
@@ -360,7 +374,7 @@
     const laneMode = tr.steps.some(s => s.gs) || (kind === 'func' && tr.steps.some(s => s.chans));
     if (laneMode) $('explain').textContent = BLOCK_EXPLAIN.lanes;
     // DFS/BFS: simulator mengenali graf (daftar ketetanggaan) yang ditelusuri → panggung graf
-    tp.r = laneMode ? laneR : tr.graph ? graphR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.graph ? graphR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
@@ -637,9 +651,11 @@
     func.update(dt);
     lanes.update(dt);
     graph.update(dt);
+    cls.update(dt);
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();
+    else if (currentBlock && currentBlock.kind === 'class') cls.renderIdle();
     else level.render();
     const playing = !!currentBlock && currentBlock.state === 'complete' && document.visibilityState === 'visible' &&
       (!tp.active || tp.playing);

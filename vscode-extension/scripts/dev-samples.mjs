@@ -65,6 +65,13 @@ const samples = {
   go_bfs: ['@/graph.go', 6],
   py_balok: ['@/balok.py', 4],
   py_balok_if: ['@/balok.py', 5],
+  py_class: ['@/kelas.py', 5],
+  py_vector: ['python/02_lanjut.py', 5],
+  py_method: ['@/kelas.py', 11],
+  go_class: ['@/kelasgo/kelas.go', 5],
+  go_method: ['@/kelasgo/kelas.go', 14],
+  py_linked: ['@/linked.py', 1],
+  js_class: ['@/kelas.js', 1],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

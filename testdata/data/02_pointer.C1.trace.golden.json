@@ -35,6 +35,7 @@
         "y": "1"
       },
       "note": "c := &Counter{}",
+      "output": "2 1\n10 10 true\n5\n",
       "objs": [
         {
           "id": "obj1",
@@ -110,6 +111,7 @@
       "loop": "",
       "phase": "exit",
       "note": "program selesai",
+      "output": "3 {3}\ntrue\n",
       "reason": "done",
       "objs": [
         {

@@ -114,15 +114,21 @@ func (it *interp) throw(at ir.Node, class, msg string) {
 
 func (it *interp) add(s trace.Step, e *Env) {
 	var vars map[string]string
-	if e != nil {
-		vars = it.snapshot(e)
-		it.detectCollKind(e)
-		s.Graph = it.graphStep(e)
-	}
-	if it.rec.objMode() {
-		s.Objs, s.Self = it.objSnapshot(e)
-		it.rec.obj.lastSig = objSig(s.Objs)
-	}
+	func() {
+		// menampilkan nilai bisa menjalankan kode user (__repr__, toString, __toString): jangan
+		// direkam, supaya potret tidak memicu langkah (dan potret) baru tanpa henti
+		it.quiet++
+		defer func() { it.quiet-- }()
+		if e != nil {
+			vars = it.snapshot(e)
+			it.detectCollKind(e)
+			s.Graph = it.graphStep(e)
+		}
+		if it.rec.objMode() {
+			s.Objs, s.Self = it.objSnapshot(e)
+			it.rec.obj.lastSig = objSig(s.Objs)
+		}
+	}()
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) })
 }
 
@@ -149,13 +155,33 @@ func (it *interp) snapshot(e *Env) map[string]string {
 			if v.k == kFunc || v.k == kClass || v.k == kUnknown && v.why == "modul" {
 				continue
 			}
-			out[name] = it.sem.show(it, v)
+			out[name] = it.display(v, true)
 		}
 		if s.fn {
 			break
 		}
 	}
 	return out
+}
+
+// display: teks nilai untuk tampilan (variabel, field object). __repr__ / toString milik user
+// yang gagal (mis. dipanggil saat konstruktor belum selesai) tidak boleh menghentikan program.
+func (it *interp) display(v Value, quoted bool) (out string) {
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(thrown); !ok {
+				panic(r)
+			}
+			out = "<object>"
+			if v.k == kObj && v.o != nil {
+				out = "<" + v.o.class.name + " object>"
+			}
+		}
+	}()
+	if quoted {
+		return it.sem.show(it, v)
+	}
+	return it.format(v)
 }
 
 // collItems mengembalikan isi koleksi mode data saat ini.

@@ -252,6 +252,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "note": "people := []Person{{\"Budi\", 30}, {\"Citra\", 25}}",
+      "output": "Halo, aku Ani 21\n",
       "objs": [
         {
           "id": "obj1",
@@ -1101,6 +1102,7 @@
         "people": "[{Budi 31} {Citra 26}]"
       },
       "note": "copyAni := ani",
+      "output": "[{Budi 31} {Citra 26}]\n{Name:Budi Age:31}\n",
       "objs": [
         {
           "id": "obj1",
@@ -1301,6 +1303,7 @@
       "run": 4,
       "phase": "exit",
       "note": "program selesai",
+      "output": "Ani Salinan\n",
       "reason": "done",
       "objs": [
         {

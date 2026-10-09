@@ -12,7 +12,7 @@ export type LoopKind =
   | 'range-int' | 'range-slice' | 'range-array' | 'range-string'
   | 'range-map' | 'range-keys' | 'range-chan' | 'range-func' | 'range-unknown';
 
-export type BlockKind = 'func' | 'if' | 'switch' | 'loop';
+export type BlockKind = 'func' | 'if' | 'switch' | 'loop' | 'class';
 
 export interface SceneNode {
   kind: 'stmt' | 'if' | 'switch' | 'loop' | 'break' | 'continue' | 'return' | 'goto' | 'block' | 'bad';
@@ -177,6 +177,29 @@ export interface TraceStep {
   g?: number;
   gs?: GState[];
   chans?: ChanState[];
+  /** Potret object class fokus (trace class) atau object self (trace method). */
+  objs?: ObjState[];
+  /** ID object yang menjadi this/self di langkah ini. */
+  self?: string;
+  /** Go: method value receiver bekerja pada salinan object self. */
+  selfCopy?: boolean;
+}
+
+/** Satu object (rumah) pada satu langkah. */
+export interface ObjState {
+  id: string;
+  class: string;
+  name?: string;
+  fields: { name: string; value: string; points?: string }[];
+}
+
+/** Cetak biru class: field dan method yang dideklarasikan. */
+export interface ClassInfo {
+  name: string;
+  super?: string;
+  subs?: string[];
+  fields?: string[];
+  methods?: string[];
 }
 
 export interface Trace {
@@ -190,6 +213,8 @@ export interface Trace {
   collection?: { kind: string; items: string[]; keys?: string[] };
   /** Graf yang ditelusuri DFS/BFS (panggung graf). */
   graph?: { var: string; kind?: 'bfs' | 'dfs' | ''; nodes: string[]; edges: [string, string][]; directed?: boolean; frontier?: string; visited?: string };
+  /** Cetak biru class (blok class, atau class pemilik method fokus). */
+  class?: ClassInfo;
   truncated: boolean;
   warnings: string[];
   /** Program membaca input user: panel menampilkan kotak Input. */

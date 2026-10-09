@@ -125,6 +125,24 @@ test('kotak Input: nilai dari user dipakai simulasi', async api => {
   api.panelMessage({ type: 'input', text: '' });
 });
 
+test('class: kursor di baris class menampilkan cetak biru dan object-objectnya', async api => {
+  const doc = await vscode.workspace.openTextDocument(path.resolve(path.dirname(file0), '..', 'python', '02_lanjut.py'));
+  const ed = await vscode.window.showTextDocument(doc);
+  const uri = doc.uri.toString();
+  const res = await waitFor('scene python', () => api.result(uri));
+  const cls = res.scene.blocks.find(b => b.kind === 'class' && b.name === 'Vector');
+  assert.ok(cls, 'blok class Vector tidak ada');
+  const pos = new vscode.Position(cls.line - 1, 2);
+  ed.selection = new vscode.Selection(pos, pos);
+  const tr = await waitFor('trace class Vector', () => {
+    const t = api.lastTrace();
+    return t && t.block.id === cls.id && t.mode === 'simulated' ? t : undefined;
+  }, 20_000);
+  assert.equal(tr.class?.name, 'Vector');
+  assert.ok(tr.steps.some(s => (s.objs || []).length > 1), 'object tidak terekam');
+  assert.ok(tr.steps.some(s => s.phase === 'call' && s.self), 'langkah method tanpa self');
+});
+
 test('panel bisa dipindah: panel bawah, sidebar, lalu kembali ke tab editor', async api => {
   const doc = vscode.window.activeTextEditor!.document;
   const cfg = () => vscode.workspace.getConfiguration('gopherviz');

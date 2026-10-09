@@ -2,6 +2,8 @@
 // = Gopher masuk pipa dan turun ke lantai baru (call stack tumbuh ke bawah); return =
 // koin berisi nilai kembali melayang naik ke lantai pemanggil dan lantai itu hilang.
 // Fungsi rekursif: di bawah lantai terdalam ada tembok penghitung, satu balok per pemanggilan.
+// Method sebuah class: di atas lantai ada rumah object self (keputusan user 2026-10-08), field
+// yang diubah method berkedip di kamarnya.
 (function (G) {
   'use strict';
   const P = G.pixel;
@@ -9,8 +11,7 @@
   const TOP = 16;     // ruang HUD
   const FLOOR = 36;   // jarak antar lantai
   const X_PIPE = 12;  // pipa masuk di kiri setiap lantai
-  const X_TILES = 40; // ubin pertama
-  const TILE = 18;
+  const X_TILES = 40; // tengah ubin pertama (ubin berlabel nama perintahnya, selebar labelnya)
 
   class FuncStage {
     constructor(canvas, hooks) {
@@ -26,28 +27,42 @@
       this.snaps = [];
       this.blocks = [];
       this.wall = null;
+      this.top = TOP;
     }
 
-    groundY(d) { return TOP + 30 + d * FLOOR; }
+    groundY(d) { return this.top + 30 + d * FLOOR; }
 
     /** block = fungsi fokus; blocks = semua blok di file (untuk mencari isi fungsi lain). */
     setBlock(block, blocks) {
       this.block = block;
       this.blocks = blocks || [];
       this.wall = null;
+      this.rows = new Map();
+      this.top = TOP;
+      this.selfSize = null;
       this.layout(1, [block]);
       this.snaps = [];
     }
 
+    /** Blok fungsi untuk nama di langkah call ("Akun.Setor" cocok dengan method Go "Setor"). */
     funcBlock(name) {
-      if (name === this.block.name) return this.block;
-      return this.blocks.find(b => b.kind === 'func' && b.name === name) || null;
+      const same = b => b.name === name || (name || '').endsWith('.' + b.name) || (b.name || '').endsWith('.' + name);
+      if (same(this.block)) return this.block;
+      return this.blocks.find(b => b.kind === 'func' && same(b)) || null;
+    }
+
+    /** Ubin berlabel untuk isi fungsi f (disimpan supaya posisi sama di prepare dan draw). */
+    rowOf(f) {
+      if (!f) return [];
+      if (!this.rows) this.rows = new Map();
+      if (!this.rows.has(f)) this.rows.set(f, P.tileRow(f.body, X_TILES - 6));
+      return this.rows.get(f);
     }
 
     layout(floors, funcs, wallH) {
-      const maxTiles = Math.max(1, ...funcs.map(f => (f && f.body ? f.body.length : 1)));
-      this.exitX = X_TILES + maxTiles * TILE + 8;
-      this.W = Math.max(192, this.exitX + 24);
+      const ends = funcs.map(f => { const r = this.rowOf(f); return r.length ? r[r.length - 1].x + r[r.length - 1].w : X_TILES + 12; });
+      this.exitX = Math.max(X_TILES + 18, ...ends) + 8;
+      this.W = Math.max(192, this.exitX + 24, this.selfSize ? this.selfSize.w + 24 : 0);
       this.wallY = Math.max(96, this.groundY(floors - 1) + 12);
       this.H = this.wallY + (wallH || 0);
       this.world.width = this.W; this.world.height = this.H;
@@ -62,6 +77,18 @@
       const calls = [];
       this.truncated = !!trace.truncated;
       const used = new Set([this.block]);
+      // method: rumah object self di atas lantai (ukuran dari isi terbesar sepanjang trace)
+      this.selfSize = null;
+      this.top = TOP;
+      if (trace.class && G.house) {
+        for (const s of trace.steps) {
+          const o = (s.objs || [])[0];
+          if (!o) continue;
+          const sz = G.house.size(o.fields);
+          if (!this.selfSize || sz.w > this.selfSize.w || sz.h > this.selfSize.h) this.selfSize = sz;
+        }
+        if (this.selfSize) this.top = TOP + this.selfSize.h + 16;
+      }
       for (const s of trace.steps) {
         const d = s.depth || 0;
         const v = { step: s, from: { x, d: depth }, act: 'hit', d, x, tile: -1 };
@@ -79,7 +106,7 @@
           const fb = stack[d] ? stack[d].block : this.block;
           const ti = fb ? P.nodeAt(fb.body, s.line) : -1;
           v.tile = ti;
-          v.x = ti >= 0 ? X_TILES + ti * TILE : x;
+          v.x = ti >= 0 && this.rowOf(fb)[ti] ? this.rowOf(fb)[ti].cx : x;
         }
         v.stack = stack.slice(0, Math.max(d + 1, 1)).map(f => Object.assign({}, f));
         // tembok panggilan: setiap pemanggilan fungsi fokus menambah satu balok (label = nilai argumen)
@@ -176,6 +203,26 @@
       this.draw(v, pos, a, walking, alpha, face);
     }
 
+    /** Rumah object self (method sebuah class); field yang baru berubah berkedip. */
+    drawSelf(w, v, a) {
+      const s = v.step || {}, o = (s.objs || [])[0];
+      if (!this.selfSize || !o) return;
+      const i = this.snaps.indexOf(v), prev = i > 0 ? (this.snaps[i - 1].step.objs || [])[0] : null;
+      const flash = new Set();
+      if (prev && prev.id === o.id) {
+        const before = {};
+        for (const f of prev.fields) before[f.name] = f.value;
+        for (const f of o.fields) if (before[f.name] !== f.value) flash.add(f.name);
+      }
+      const x = 8, gy = TOP + 12 + this.selfSize.h;
+      const r = G.house.draw(w, x, gy, o, { size: this.selfSize, roof: '#f39a8a', now: this.clock, flash: a > 0.3 ? flash : null, self: true, copy: !!s.selfCopy });
+      const label = P.fit(`SELF = ${o.name || o.id}`, 18), lw = P.textW(label) + 6;
+      P.box(w, x, r.top - 11, lw, 9, '#fff3a8', P.INK);
+      P.text(w, label, x + 3, r.top - 9, P.INK);
+      if (s.selfCopy) P.text(w, 'SALINAN', x + this.selfSize.w + 6, gy - 8, '#8a6ac8');
+      P.rect(w, 2, gy + 3, this.W - 4, 1, '#e8c8d4');
+    }
+
     draw(v, pos, a, walking, alpha, face) {
       const w = this.wx, now = this.clock;
       w.drawImage(this.bg, 0, 0);
@@ -189,7 +236,7 @@
         P.rect(w, 2, gy, this.exitX + 12, 2, '#d7a2c9');
         P.rect(w, 2, gy + 2, this.exitX + 12, 2, '#efd3ea');
         // pipa masuk dari langit-langit
-        const pipeTop = d === 0 ? TOP + 2 : this.groundY(d - 1) + 4;
+        const pipeTop = d === 0 ? this.top + 2 : this.groundY(d - 1) + 4;
         P.rect(w, X_PIPE - 5, pipeTop, 10, gy - 22 - pipeTop, '#5a43a0');
         P.rect(w, X_PIPE - 4, pipeTop, 8, gy - 22 - pipeTop, '#b8a2ee');
         P.rect(w, X_PIPE - 6, gy - 24, 12, 3, '#5a43a0');
@@ -199,9 +246,10 @@
         // ubin isi fungsi
         const body = f.block && f.block.body ? f.block.body : [];
         if (!body.length) P.text(w, f.block ? 'KOSONG' : 'FUNGSI LUAR', X_TILES - 6, gy - 7, '#c58ba3');
+        const row = this.rowOf(f.block);
         body.forEach((n, j) => {
           const hit = active && v.act === 'hit' && v.tile === j;
-          P.tile(w, X_TILES + j * TILE, gy, n.kind, String(j + 1), hit && a > 0.45 ? (a - 0.45) / 0.4 : 0, false);
+          if (row[j]) P.labelTile(w, row[j], gy, n.kind, hit && a > 0.45 ? (a - 0.45) / 0.4 : 0);
         });
         // tempat koin return di ujung kanan
         P.rect(w, this.exitX, gy - 3, 8, 3, '#e0a22a');
@@ -225,6 +273,8 @@
         const i = this.snaps.indexOf(v), last = i === this.snaps.length - 1;
         P.drawWall(w, this.wall, this.wallY - 4, this.wallLabels, v.wallCount, v.wallPop ? a : null, this.truncated && last);
       }
+
+      this.drawSelf(w, v, a);
 
       const jump = v.act === 'hit' && v.tile >= 0 ? Math.round(Math.sin(Math.PI * a) * 8) : 0;
       P.drawGopher(w, pos.x, pos.y - jump, face, walking ? Math.floor(now / 140) % 2 : 0, alpha);

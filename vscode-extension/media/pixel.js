@@ -309,6 +309,46 @@
     c.globalAlpha = 1;
   }
 
+  const KEYWORD = { 'break': 'BREAK', 'continue': 'CONTINUE', 'return': 'RETURN', 'goto': 'GOTO' };
+
+  /**
+   * Label ubin isi blok (cabang if, fungsi) = nama perintahnya (keputusan user 2026-10-08: nomor 1, 2 tidak jelas):
+   * kata kunci (BREAK, RETURN), variabel yang diubah (X=, COUNT+=), atau fungsi yang dipanggil (PRINT).
+   */
+  function stmtLabel(n) {
+    if (KEYWORD[n.kind]) return KEYWORD[n.kind];
+    const t = (n.text || '').trim();
+    // self.nilai += n / this.saldo = x / $this->saldo -= 1: label = field yang diubah (NILAI+=)
+    let m = t.match(/^(?:(?:let|const|var|auto|int|long|float|double|string|bool|char)\s+)?\$?([A-Za-z_]\w*(?:(?:\.|->)\w+)*)(\[[^\]]*\])?\s*(\+\+|--|:=|[-+*/%]?=)(?!=)/);
+    if (m) return fit(m[1].split(/\.|->/).pop() + (m[2] ? '[]' : '') + m[3], 9);
+    m = t.match(/^(?:await\s+)?\$?([A-Za-z_][\w.]*)\s*\(/);
+    if (m) return fit(m[1].split('.').pop(), 9);
+    m = t.match(/^[A-Za-z_]\w*/);
+    return fit(m ? m[0] : n.kind, 9) || '...';
+  }
+
+  /** Ubin berlabel selebar labelnya, dijejer mulai x0: [{ x, w, cx, label }]. */
+  function tileRow(body, x0) {
+    let x = x0;
+    return (body || []).map(n => {
+      const label = stmtLabel(n), w = Math.max(12, textW(label) + 6);
+      const t = { x, w, cx: x + w / 2, label };
+      x += w + 3;
+      return t;
+    });
+  }
+
+  /** Menggambar satu ubin berlabel (hasil tileRow) berdiri di groundY; bump = 0..1 disundul. */
+  function labelTile(c, t, groundY, kind, bump, dim) {
+    const col = NODE_COL[kind] || NODE_COL.stmt;
+    const y = groundY - 9 - Math.round(Math.sin(Math.PI * clamp(bump || 0, 0, 1)) * 3);
+    c.globalAlpha = dim ? 0.35 : 1;
+    box(c, t.x, y, t.w, 9, col, INK);
+    rect(c, t.x + 1, y + 1, t.w - 2, 1, mix(col, '#ffffff', 0.5));
+    textCenter(c, t.label, t.cx, y + 2, INK);
+    c.globalAlpha = 1;
+  }
+
   // ---------- tembok penghitung ----------
 
   /** Label pendek untuk balok tembok (nilai variabel), atau null bila terlalu panjang / tidak bisa digambar. */
@@ -375,6 +415,6 @@
   G.pixel = {
     INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
-    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth,
+    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth, stmtLabel, tileRow, labelTile,
   };
 })(window.GV = window.GV || {});

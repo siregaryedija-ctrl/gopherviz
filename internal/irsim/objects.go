@@ -48,7 +48,7 @@ func (it *interp) focusMethod(n ir.Node) bool {
 		return false
 	}
 	_, ok := n.(*ir.Func)
-	return ok && it.insideFocus(n)
+	return ok && it.quiet == 0 && it.insideFocus(n)
 }
 
 // noteObj mendaftarkan object baru bila class-nya class fokus.
@@ -126,7 +126,7 @@ func (it *interp) objNames(e *Env) map[*Object][]string {
 					if i >= 50 {
 						break
 					}
-					see(x, fmt.Sprintf("%s[%s]", name, it.format(v.d.keys[i])))
+					see(x, fmt.Sprintf("%s[%s]", name, it.display(v.d.keys[i], false)))
 				}
 			}
 		}
@@ -204,7 +204,7 @@ func (it *interp) objSnapshot(e *Env) ([]trace.ObjState, string) {
 						v = v.p.cell.get()
 					}
 					if v.k == kObj && v.o != nil && ob.id[v.o] != "" && ob.name[v.o] == "" {
-						ob.name[v.o] = base + "." + it.format(k)
+						ob.name[v.o] = base + "." + it.display(k, false)
 						changed = true
 					}
 				}
@@ -227,13 +227,13 @@ func (it *interp) objSnapshot(e *Env) ([]trace.ObjState, string) {
 			if v.k == kFunc || v.k == kClass {
 				continue
 			}
-			f := trace.MemField{Name: it.format(k)}
+			f := trace.MemField{Name: it.display(k, false)}
 			if v.k == kObj && v.o != nil {
 				if id, ok := ob.id[v.o]; ok {
 					f.Points = id
 				}
 			}
-			f.Value = clipText(it.format(v), 24)
+			f.Value = clipText(it.display(v, false), 24)
 			st.Fields = append(st.Fields, f)
 		}
 		out = append(out, st)
@@ -279,7 +279,9 @@ func (it *interp) classWatch(n ir.Node, e *Env) {
 	if r.obj.cls == nil || it.recording() || it.quiet > 0 {
 		return
 	}
+	it.quiet++
 	objs, _ := it.objSnapshot(e)
+	it.quiet--
 	if len(objs) == 0 {
 		return
 	}

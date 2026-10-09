@@ -37,7 +37,7 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
     if (!scene) {
       return [];
     }
-    const what = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop' } as const;
+    const what = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop', class: 'class' } as const;
     // Satu tombol per baris: blok terluar yang mulai di baris itu (mis. fungsi satu baris berisi loop).
     const seen = new Set<number>();
     return scene.blocks

@@ -33,6 +33,7 @@
         "s": "\"500\""
       },
       "note": "n, err := parse(s)",
+      "output": "ok: 42\nerror: input kosong true\nerror: parse \"abc\": strconv.Atoi: parsing \"abc\": invalid syntax false\n",
       "objs": [
         {
           "id": "obj1",
@@ -138,6 +139,7 @@
         "ErrKosong": "error(\"input kosong\")"
       },
       "note": "program selesai",
+      "output": "error: nilai 500 di luar batas false\n",
       "reason": "done",
       "objs": [
         {

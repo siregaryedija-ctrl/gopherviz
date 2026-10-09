@@ -26,7 +26,7 @@ const KIND_NAMES: Record<LoopKind, string> = {
   'range-unknown': 'range',
 };
 
-const BLOCK_NAMES: Record<BlockKind, string> = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop' };
+const BLOCK_NAMES: Record<BlockKind, string> = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop', class: 'class' };
 
 /** languageId editor yang didukung GopherViz (Go disimulasikan; bahasa lain mode struktur dulu). */
 export const LANGUAGES = ['go', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'python', 'php', 'cpp', 'c', 'java'];
@@ -410,7 +410,7 @@ class Controller implements vscode.Disposable {
       this.status.tooltip = this.serverError;
     } else if (block) {
       const loop = block.kind === 'loop' ? scene?.loops.find(l => l.id === block.id) : undefined;
-      const name = loop ? KIND_NAMES[loop.kind] : `${BLOCK_NAMES[block.kind]}${block.name && block.kind === 'func' ? ' ' + block.name : ''}`;
+      const name = loop ? KIND_NAMES[loop.kind] : `${BLOCK_NAMES[block.kind]}${block.name && (block.kind === 'func' || block.kind === 'class') ? ' ' + block.name : ''}`;
       this.status.text = `$(sync) ${block.id} · ${name}`;
       this.status.tooltip = 'Buka panel GopherViz';
     } else {

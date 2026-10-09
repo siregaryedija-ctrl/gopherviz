@@ -970,7 +970,7 @@ func convert(v value, from, to types.Type) value {
 }
 
 func (it *interp) output(s string) {
-	if it.rec.on() {
+	if it.rec.on() || it.rec.obj.typ != "" { // trace class mengikuti seluruh program, termasuk output-nya
 		it.rec.out.WriteString(s)
 	}
 }
