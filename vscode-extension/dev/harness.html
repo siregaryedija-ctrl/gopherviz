@@ -44,6 +44,7 @@
     <button id="tPlay" class="icon-btn primary" title="Putar / jeda"></button>
     <button id="tNext" class="icon-btn" title="Langkah berikutnya"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
     <button id="tRestart" class="icon-btn" title="Ulang dari awal"><svg viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z"/></svg></button>
+    <button id="tRec" class="icon-btn" title="Rekam animasi"><svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z"/></svg></button>
     <input type="range" id="tScrub" min="0" max="0" value="0">
     <span id="tLabel" class="tlabel"></span>
   </div>
@@ -54,6 +55,27 @@
   </div>
   <p id="stepNote" class="step-note" hidden></p>
   <p id="note" class="note"></p>
+  <div id="recDialog" class="rec-dialog" hidden>
+    <div class="rec-box" role="dialog" aria-label="Rekam animasi">
+      <h2>Rekam animasi</h2>
+      <div class="rec-row"><span>Bingkai</span>
+        <label><input type="radio" name="recFrame" value="stage" checked> Panggung saja</label>
+        <label><input type="radio" name="recFrame" value="reel"> Vertikal (reel 9:16)</label>
+      </div>
+      <div class="rec-row"><span>Format</span>
+        <label><input type="radio" name="recFormat" value="gif" checked> GIF</label>
+        <label><input type="radio" name="recFormat" value="mp4"> MP4</label>
+        <label><input type="radio" name="recFormat" value="webm"> WebM</label>
+      </div>
+      <div class="rec-row" id="recTitleRow"><span>Judul</span><input id="recTitle" type="text" maxlength="40" spellcheck="false"></div>
+      <p id="recNote" class="rec-note"></p>
+      <div id="recProgress" class="rec-progress" hidden><div id="recBar"></div></div>
+      <div class="rec-actions">
+        <button id="recGo" class="btn primary">Rekam</button>
+        <button id="recCancel" class="btn">Batal</button>
+      </div>
+    </div>
+  </div>
   <section id="partsSection"><h2 id="partsTitle">Isi loop</h2><ol id="parts" class="parts"></ol></section>
   <section id="varsSection" hidden><h2>Variabel</h2><div id="vars" class="vars"></div></section>
   <section id="memSection" hidden><h2>Memori</h2><div id="mem" class="mem"></div><p class="mem-legend">Peti cokelat = variabel, peti ungu = data di heap, tali = pointer (menunjuk ke data lain).</p></section>
@@ -67,7 +89,16 @@
   </footer>
 </main>
 <script>
-  window.acquireVsCodeApi = () => ({ postMessage: m => console.log('[ke ekstensi]', JSON.stringify(m)) });
+  // Rekaman (type export) tidak dicetak: datanya disimpan base64 di <pre id="exported"> untuk diperiksa.
+  window.acquireVsCodeApi = () => ({ postMessage: m => {
+    if (m.type !== 'export') { console.log('[ke ekstensi]', JSON.stringify(m)); return; }
+    let bin = '';
+    for (let i = 0; i < m.data.length; i += 8192) bin += String.fromCharCode.apply(null, m.data.subarray(i, i + 8192));
+    const pre = document.getElementById('exported') || document.body.appendChild(Object.assign(document.createElement('pre'), { id: 'exported', hidden: true }));
+    pre.dataset.format = m.format;
+    pre.dataset.name = m.name;
+    pre.textContent = btoa(bin);
+  } });
   // Error dicatat di atribut <html data-err> supaya terbaca lewat chrome --dump-dom.
   window.addEventListener('error', e => {
     const el = document.documentElement;
@@ -88,6 +119,7 @@
 <script src="../media/gridstage.js"></script>
 <script src="../media/treestage.js"></script>
 <script src="../media/memory.js"></script>
+<script src="../media/recorder.js"></script>
 <script src="../media/main.js"></script>
 <script>
   const q = new URLSearchParams(location.search);
@@ -98,7 +130,14 @@
   if (q.get('sample')) {
     const s = window.SAMPLES[q.get('sample')];
     post({ type: 'state', file: s.file, focusBlock: s.focusBlock, server: { ok: true }, result: { scene: s.scene.scene, diagnostics: [] } });
-    if (q.get('struct') === null) post({ type: 'trace', blockId: s.focusBlock, trace: s.trace });
+    if (q.get('struct') === null) post({ type: 'trace', blockId: s.focusBlock, trace: s.trace, code: s.code });
+    if (q.get('recdialog') !== null) setTimeout(() => document.getElementById('tRec').click(), 120);
+    if (q.get('rec')) setTimeout(() => { // ?rec=gif|webm&frame=stage|reel: rekam lalu hasilnya ke <pre id="exported">
+      document.querySelector(`input[name="recFrame"][value="${q.get('frame') || 'stage'}"]`).checked = true;
+      document.querySelector(`input[name="recFormat"][value="${q.get('rec')}"]`).checked = true;
+      document.getElementById('tRec').click();
+      document.getElementById('recGo').click();
+    }, 120);
     if (q.get('at') !== null) setTimeout(() => {
       const app = GV.app, tp = app.tp;
       tp.playing = false;

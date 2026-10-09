@@ -1,7 +1,7 @@
 // Membuat dev/samples.js: scene + trace asli dari binary gopherviz untuk dev/harness.html.
 //   node scripts/dev-samples.mjs   (jalankan npm run build:bin dulu)
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -93,7 +93,8 @@ for (const [name, [file, line]] of Object.entries(samples)) {
   const f = file.startsWith('@/') ? path.join(root, 'dev', 'fixtures', file.slice(2)) : path.join(testdata, file);
   const scene = run('list', '--json', f);
   const trace = run('trace', '--json', `${f}:${line}`);
-  out[name] = { file: path.basename(file), scene, focusBlock: trace.block.id, trace };
+  const lines = readFileSync(f, 'utf8').split(/\r?\n/); // potongan kode untuk rekaman reel
+  out[name] = { file: path.basename(file), scene, focusBlock: trace.block.id, trace, code: { lines } };
 }
 writeFileSync(path.join(root, 'dev', 'samples.js'), `// Dibuat oleh scripts/dev-samples.mjs, jangan diedit manual.\nwindow.SAMPLES = ${JSON.stringify(out)};\n`);
 console.log(`dev/samples.js: ${Object.keys(out).join(', ')}`);

@@ -356,6 +356,7 @@
 
   function applyTrace(m) {
     if (!currentBlock || m.blockId !== currentBlock.id) return; // trace untuk blok lain
+    tp.code = m.code || null; // isi file: potongan kode di rekaman reel
     let tr = m.trace;
     readsInput = !!tr.readsInput;
     syncInputBar();
@@ -649,6 +650,143 @@
     });
   }
 
+  // ---------- rekam animasi (Fase 12a) ----------
+
+  const REC = G.recorder;
+  let recording = false, recCancel = false;
+  const allStages = () => [level, data, branch, func, lanes, graph, cls, isles, maze, pohon];
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const radio = name => (document.querySelector(`input[name="${name}"]:checked`) || {}).value;
+
+  /** Judul otomatis: jenis panggung + nama blok. */
+  function autoTitle() {
+    const tr = tp.trace || {};
+    if (tr.grid) return `${tr.grid.kind === 'dfs' ? 'DFS' : 'BFS'} Labirin`;
+    if (tr.tree) return 'DFS Pohon';
+    if (tr.graph) return `${(tr.graph.kind || 'DFS').toUpperCase()} Graf`;
+    if (tr.class) return `Class ${tr.class.name}`;
+    if (tp.r === dataR && data.elim) return 'Pencarian';
+    const b = currentBlock;
+    if (!b) return 'GopherViz';
+    if (b.kind === 'func') return `Fungsi ${b.name || ''}`.trim();
+    return kindLabel(b).replace(/ · .*$/, '');
+  }
+
+  /** Perkiraan lama rekaman (detik) dengan percepatan otomatis, maks 60 detik. */
+  function recPlan() {
+    const durs = tp.view.map((_, i) => tp.r.duration(i));
+    const real = durs.reduce((a, d, i) => a + d / (tp.boost[i] || 1), 0) + 1500;
+    return { durs, total: real, speed: Math.max(1, real / 60000) };
+  }
+
+  $('tRec').addEventListener('click', () => {
+    if (!tp.active || recording) return;
+    $('recTitle').value = autoTitle();
+    $('recProgress').hidden = true;
+    $('recGo').disabled = false;
+    const sec = Math.round(Math.min(60000, recPlan().total) / 1000);
+    $('recNote').textContent = `Seluruh langkah direkam (±${sec} detik, bagian berulang dipercepat). MP4 memakai ffmpeg di komputermu (atur di setting "GopherViz: Ffmpeg Path").`;
+    syncRecDialog();
+    $('recDialog').hidden = false;
+  });
+  const syncRecDialog = () => { $('recTitleRow').hidden = radio('recFrame') !== 'reel'; };
+  document.querySelectorAll('input[name="recFrame"]').forEach(el => el.addEventListener('change', syncRecDialog));
+  $('recCancel').addEventListener('click', () => {
+    if (recording) recCancel = true;
+    else $('recDialog').hidden = true;
+  });
+  $('recGo').addEventListener('click', () => {
+    if (recording) return;
+    void recordTrace(radio('recFrame') || 'stage', radio('recFormat') || 'gif', $('recTitle').value.trim() || autoTitle());
+  });
+
+  /**
+   * Memutar trace dari awal sampai akhir di luar layar dan merekam setiap frame. GIF dirender
+   * secepat mungkin; video (WebM/MP4) direkam waktu-nyata lewat MediaRecorder.
+   */
+  async function recordTrace(frame, format, title) {
+    recording = true;
+    recCancel = false;
+    $('recGo').disabled = true;
+    $('recProgress').hidden = false;
+    const wasPlaying = tp.playing, wasI = tp.i;
+    tp.playing = false;
+    const progress = (f, label) => { $('recBar').style.width = `${Math.round(f * 100)}%`; $('recNote').textContent = label; };
+    try {
+      const fps = format === 'gif' ? 12 : 30, frameMs = 1000 / fps;
+      const { durs, total, speed } = recPlan();
+      const nFrames = Math.ceil(total / speed / frameMs);
+      const stageCv = $('stage');
+      tp.r.render(0, 0);
+      const { w, h } = REC.frameSize(frame, format, stageCv.width, stageCv.height);
+      const out = document.createElement('canvas');
+      out.width = w; out.height = h;
+      const octx = out.getContext('2d', { willReadFrequently: true });
+      const lang = sceneLang();
+      const sub = `${LANG_NAME[lang] || lang || ''}${currentBlock ? ' · ' + currentBlock.id : ''}`;
+      let gif = null, rec = null;
+      const chunks = [];
+      if (format === 'gif') gif = new REC.GifWriter(w, h);
+      else {
+        const mime = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+        if (!mime) throw new Error('perekam video tidak tersedia di VS Code ini; pilih GIF');
+        rec = new MediaRecorder(out.captureStream(fps), { mimeType: mime, videoBitsPerSecond: 5_000_000 });
+        rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+        rec.start(250);
+      }
+      let i = 0, el = 0, cues = tp.r.cues(0).sort((a, b) => a.t - b.t), ci = 0;
+      let output = tp.view[0].step.output || '';
+      const fire = t => { while (ci < cues.length && cues[ci].t <= t) { const c = cues[ci++]; if (c.fx) c.fx(); } };
+      const t0 = performance.now();
+      for (let f = 0; f < nFrames && !recCancel; f++) {
+        const adv = frameMs * speed;
+        allStages().forEach(s => s.update(adv));
+        let left = adv;
+        while (left > 0) { // maju di trace (langkah dipercepat seperti saat diputar biasa)
+          const d = durs[i], b = tp.boost[i] || 1, need = (d - el) / b;
+          if (left < need) { el += left * b; left = 0; fire(el / d); break; }
+          el = d; left -= need; fire(1);
+          if (i < tp.view.length - 1) {
+            i++; el = 0; ci = 0;
+            cues = tp.r.cues(i).sort((a, b) => a.t - b.t);
+            output += tp.view[i].step.output || '';
+          } else left = 0;
+        }
+        tp.r.render(i, Math.min(1, el / durs[i]));
+        const st = tp.view[i].step;
+        REC.compose(octx, w, h, frame, stageCv, { title, sub, code: tp.code, line: st.line, file: st.file, output, startLine: currentBlock ? currentBlock.line : 1 });
+        if (gif) {
+          gif.addFrame(octx.getImageData(0, 0, w, h), frameMs);
+          if (f % 3 === 0) { progress((f + 1) / nFrames, `Membuat GIF… ${Math.round(((f + 1) / nFrames) * 100)}%`); await sleep(0); }
+        } else {
+          progress((f + 1) / nFrames, `Merekam video… ${Math.round((f + 1) / fps)} / ${Math.round(nFrames / fps)} detik`);
+          const wait = t0 + (f + 1) * frameMs - performance.now();
+          if (wait > 0) await sleep(wait);
+        }
+      }
+      if (recCancel) throw new Error('dibatalkan');
+      let bytes;
+      if (gif) bytes = gif.finish();
+      else {
+        await new Promise(res => { rec.onstop = res; rec.stop(); });
+        bytes = new Uint8Array(await new Blob(chunks, { type: 'video/webm' }).arrayBuffer());
+      }
+      const name = title.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').toLowerCase() || 'gopherviz';
+      progress(1, 'Menyimpan…');
+      vscode.postMessage({ type: 'export', format, name, data: bytes });
+      $('recDialog').hidden = true;
+    } catch (err) {
+      $('recNote').textContent = `Rekaman gagal: ${err && err.message ? err.message : err}`;
+      $('recProgress').hidden = true;
+      $('recGo').disabled = false;
+    } finally {
+      recording = false;
+      goto(wasI, true);
+      tp.el = tp.r.duration(tp.i);
+      tp.playing = wasPlaying;
+    }
+  }
+
   // ---------- loop animasi ----------
 
   let last = performance.now();
@@ -665,6 +803,7 @@
     isles.update(dt);
     maze.update(dt);
     pohon.update(dt);
+    if (recording) { requestAnimationFrame(frame); return; } // perekam yang menggambar panggung
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();

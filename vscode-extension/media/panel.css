@@ -294,3 +294,30 @@ h2 {
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 @media (prefers-reduced-motion: reduce) { .hp { transition: none; } .var.changed, #outSection.fresh::before { animation: none; } }
+
+/* Dialog rekam animasi (Fase 12a) */
+.rec-dialog { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(0, 0, 0, 0.45); padding: 16px; }
+.rec-box {
+  width: min(420px, 100%);
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+.rec-box h2 { margin: 0; }
+.rec-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 12px; }
+.rec-row > span { min-width: 56px; color: var(--muted); }
+.rec-row label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.rec-row input[type="text"] {
+  flex: 1; min-width: 0; padding: 4px 8px; border-radius: 6px;
+  border: 1px solid var(--vscode-input-border, var(--border));
+  background: var(--vscode-input-background); color: var(--vscode-input-foreground);
+}
+.rec-note { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+.rec-progress { height: 6px; border-radius: 3px; background: rgba(128, 128, 128, 0.25); overflow: hidden; }
+.rec-progress > div { height: 100%; width: 0; background: var(--vscode-button-background); transition: width 0.15s; }
+.rec-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.btn.primary { background: var(--vscode-button-background); color: var(--vscode-button-foreground); }
+#tRec svg { fill: #e5534b; }

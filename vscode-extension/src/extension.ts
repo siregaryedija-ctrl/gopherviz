@@ -4,6 +4,7 @@ import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type 
 import { resolveBinary } from './binary';
 import { LoopPanel, VIEW_IDS, type FromPanel, type PanelLocation } from './panel';
 import { LoopCodeLens } from './codelens';
+import { saveExport } from './exporter';
 
 const UPDATE_DELAY_MS = 75; // jeda setelah ketikan terakhir sebelum scene dihitung ulang
 const FOCUS_DELAY_MS = 40;
@@ -327,7 +328,7 @@ class Controller implements vscode.Disposable {
       }
       this.traceKey = key;
       this.lastTrace = res.trace;
-      this.panel.post({ type: 'trace', blockId, trace: res.trace });
+      this.panel.post({ type: 'trace', blockId, trace: res.trace, code: { lines: doc.getText().split(/\r?\n/) } });
     } catch (e) {
       this.output.appendLine(`trace gagal: ${errMsg(e)}`);
     }
@@ -438,6 +439,11 @@ class Controller implements vscode.Disposable {
         break;
       case 'setConfig':
         void config().update(m.key, m.value, vscode.ConfigurationTarget.Global);
+        break;
+      case 'export':
+        void saveExport(m, this.editor ? path.dirname(this.editor.document.fileName) : undefined).catch(e =>
+          vscode.window.showErrorMessage(`GopherViz: rekaman gagal disimpan: ${errMsg(e)}`),
+        );
         break;
       case 'restart':
         void this.restart();

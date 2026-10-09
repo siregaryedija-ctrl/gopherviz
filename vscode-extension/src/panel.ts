@@ -13,7 +13,7 @@ export type ToPanel =
       /** Isi kotak Input untuk file ini (nilai dipisah koma). */
       input?: string;
     }
-  | { type: 'trace'; blockId: string; trace: Trace }
+  | { type: 'trace'; blockId: string; trace: Trace; /** Isi file (untuk potongan kode di rekaman reel). */ code?: { lines: string[] } }
   | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean; size: number };
 
 /** Pesan dari webview ke ekstensi. */
@@ -24,6 +24,8 @@ export type FromPanel =
   | { type: 'restart' }
   | { type: 'input'; text: string }
   | { type: 'reroll' }
+  /** Hasil rekaman animasi (MP4 dikirim sebagai WebM lalu diubah ffmpeg). */
+  | { type: 'export'; format: 'gif' | 'mp4' | 'webm'; name: string; data: Uint8Array | number[] | Record<string, number> }
   /** Baris (1-based) langkah trace yang sedang tampil; 0 = tidak ada (sorotan di editor dihapus). */
   | { type: 'step'; line: number; /** File langkah ini bila bukan file fokus (relatif). */ file?: string };
 
@@ -35,6 +37,7 @@ export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
     <button id="tPlay" class="icon-btn primary" title="Putar / jeda" aria-label="Putar atau jeda">${icon('M3 2h4v12H3zM9 2h4v12H9z')}</button>
     <button id="tNext" class="icon-btn" title="Langkah berikutnya" aria-label="Langkah berikutnya">${icon('M11 2h2v12h-2zM2 2v12l8-6z')}</button>
     <button id="tRestart" class="icon-btn" title="Ulang dari awal" aria-label="Ulang dari awal">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
+    <button id="tRec" class="icon-btn" title="Rekam animasi (GIF / MP4 / WebM)" aria-label="Rekam animasi">${icon('M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z')}</button>
     <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Posisi langkah">
     <span id="tLabel" class="tlabel"></span>
   </div>
@@ -251,7 +254,7 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'memory.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'recorder.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
@@ -285,6 +288,27 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
   </div>
   ${TRACE_MARKUP}
   <p id="note" class="note"></p>
+  <div id="recDialog" class="rec-dialog" hidden>
+    <div class="rec-box" role="dialog" aria-label="Rekam animasi">
+      <h2>Rekam animasi</h2>
+      <div class="rec-row"><span>Bingkai</span>
+        <label><input type="radio" name="recFrame" value="stage" checked> Panggung saja</label>
+        <label><input type="radio" name="recFrame" value="reel"> Vertikal (reel 9:16)</label>
+      </div>
+      <div class="rec-row"><span>Format</span>
+        <label><input type="radio" name="recFormat" value="gif" checked> GIF</label>
+        <label><input type="radio" name="recFormat" value="mp4"> MP4</label>
+        <label><input type="radio" name="recFormat" value="webm"> WebM</label>
+      </div>
+      <div class="rec-row" id="recTitleRow"><span>Judul</span><input id="recTitle" type="text" maxlength="40" spellcheck="false"></div>
+      <p id="recNote" class="rec-note"></p>
+      <div id="recProgress" class="rec-progress" hidden><div id="recBar"></div></div>
+      <div class="rec-actions">
+        <button id="recGo" class="btn primary">Rekam</button>
+        <button id="recCancel" class="btn">Batal</button>
+      </div>
+    </div>
+  </div>
 
   <section id="partsSection">
     <h2 id="partsTitle">Isi loop</h2>
