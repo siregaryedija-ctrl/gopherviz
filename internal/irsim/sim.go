@@ -90,10 +90,11 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	if grid != nil {
 		gspec = nil // grid[r][c] bukan graf daftar ketetanggaan
 	}
+	tree := findTree(node)
 	var obj objects
 	switch x := node.(type) {
 	case *ir.Class: // trace class: object-objectnya, bukan koleksi/graf di dalam method
-		coll, gspec, grid = "", nil, nil
+		coll, gspec, grid, tree = "", nil, nil, nil
 		obj.cls = x
 		tr.Class = classInfo(res, x)
 	case *ir.Func:
@@ -106,7 +107,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		it := &interp{
 			lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
 			globals: newEnv(nil, true), budget: opt.Budget, rng: rand.New(rand.NewSource(opt.Seed)),
-			rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec, gridSpec: grid, obj: obj},
+			rec:   &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, graphSpec: gspec, gridSpec: grid, treeSpec: tree, obj: obj},
 			funcs: map[string][]*Fn{}, classes: map[string]*Class{}, macros: map[string]Value{}, classOf: map[*Fn]*Class{},
 			pyGlobals: map[*Env]map[string]bool{}, pyNonloc: map[*Env]map[string]bool{}, phpGlobal: map[*Env]map[string]bool{},
 			statics: map[*ir.VarSpec]*Cell{}, input: userinput.New(opt.Input, opt.InputSeed),
@@ -158,7 +159,13 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	tr.Truncated = r.truncated
 	tr.Graph = r.graph
 	tr.Grid = r.grid
-	if r.grid != nil {
+	tr.Tree = r.tree
+	if r.tree == nil {
+		for i := range tr.Steps {
+			tr.Steps[i].Node = nil
+		}
+	}
+	if r.grid != nil || r.tree != nil {
 		tr.Collection = nil
 		coll = ""
 	}

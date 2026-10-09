@@ -200,6 +200,11 @@ type recorder struct {
 	gridSpec *graphs.GridSpec // analisis penelusuran grid/labirin blok fokus (nil = bukan)
 	grid     *trace.Grid      // grid yang sudah terbaca dari nilai program
 
+	treeSpec *graphs.TreeSpec // analisis penelusuran pohon blok fokus (nil = bukan)
+	tree     *trace.Tree      // pohon yang sudah terbaca dari nilai program
+	treeIDs  map[any]string   // identitas simpul → ID
+	treeRoot Value            // nilai akar (untuk membaca ulang bila pohon berubah)
+
 	obj objects // trace class / method: object yang digambar
 }
 

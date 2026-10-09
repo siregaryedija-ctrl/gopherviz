@@ -133,3 +133,28 @@ func MarkedCells(vals [][]string) [][2]int {
 	}
 	return out
 }
+
+// ---------- pohon (Fase 11b) ----------
+
+// MaxTreeNodes membatasi besar pohon yang digambar.
+const MaxTreeNodes = 31
+
+// TreeSpec adalah hasil analisis statis penelusuran pohon: parameter simpul dan field anaknya.
+type TreeSpec struct {
+	Param  string   // parameter yang memegang simpul, mis. "node"
+	Fields []string // field anak yang dipakai pada panggilan rekursif (left, right, ...); urut sumber
+	Kids   string   // field daftar anak (children) bila pohon umum
+}
+
+var (
+	leftName  = regexp.MustCompile(`(?i)^(left|l|kiri|lo|lchild|leftchild)$`)
+	childName = regexp.MustCompile(`(?i)^(children|kids|anak|childs|child_nodes|nodes)$`)
+	labelName = []string{"val", "value", "data", "key", "item", "v", "nilai", "isi", "name", "label", "Val", "Value", "Data", "Key", "Name"}
+)
+
+// IsLeftName / IsChildrenName: field anak kiri / daftar anak.
+func IsLeftName(n string) bool     { return leftName.MatchString(n) }
+func IsChildrenName(n string) bool { return childName.MatchString(n) }
+
+// LabelFields: field yang dipakai sebagai label simpul, urut prioritas.
+func LabelFields() []string { return labelName }

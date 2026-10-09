@@ -81,6 +81,7 @@ type Trace struct {
 	Collection *Collection `json:"collection,omitempty"`
 	Graph      *Graph      `json:"graph,omitempty"` // graf yang ditelusuri DFS/BFS di blok fokus
 	Grid       *Grid       `json:"grid,omitempty"`  // grid labirin yang ditelusuri BFS/DFS di blok fokus
+	Tree       *Tree       `json:"tree,omitempty"`  // pohon yang ditelusuri rekursi node.left/node.right di blok fokus
 	Class      *ClassInfo  `json:"class,omitempty"` // cetak biru class (blok fokus class, atau class pemilik method fokus)
 	Files      []string    `json:"files,omitempty"` // file program yang ikut berjalan: file fokus dulu, lalu modul (relatif), bila lebih dari satu
 	Entry      string      `json:"entry,omitempty"` // file tempat program dimulai bila bukan file fokus (file yang meng-import-nya)
@@ -141,6 +142,7 @@ type Step struct {
 	Chans     []ChanState       `json:"chans,omitempty"`    // potret semua channel
 	Graph     *GraphState       `json:"graph,omitempty"`    // keadaan penelusuran graf (bila Trace.Graph ada)
 	Cells     *GridState        `json:"cells,omitempty"`    // keadaan penelusuran grid (bila Trace.Grid ada)
+	Node      *TreeState        `json:"node,omitempty"`     // simpul pohon yang dipegang parameter (bila Trace.Tree ada)
 	Objs      []ObjState        `json:"objs,omitempty"`     // potret object class fokus (trace class) atau object self (trace method)
 	Self      string            `json:"self,omitempty"`     // ID object yang menjadi this/self di langkah ini
 	SelfCopy  bool              `json:"selfCopy,omitempty"` // Go: method value receiver bekerja pada salinan object Self
@@ -191,6 +193,29 @@ type GridState struct {
 	Cur      []int    `json:"cur,omitempty"`      // sel yang sedang diproses
 	Visited  [][2]int `json:"visited,omitempty"`  // sel yang sudah ditandai (penanda kunjungan / jarak / isi grid yang diubah)
 	Frontier [][2]int `json:"frontier,omitempty"` // isi antrian/tumpukan (depan/bawah dulu)
+}
+
+// Tree adalah pohon yang ditelusuri fungsi rekursif (node.left / node.right / node.children).
+type Tree struct {
+	Var   string     `json:"var"`  // parameter simpul, mis. "node"
+	Root  string     `json:"root"` // ID simpul akar
+	Nodes []TreeNode `json:"nodes"`
+}
+
+// TreeNode adalah satu simpul pohon; ID stabil sepanjang trace ("n1", "n2", ...).
+type TreeNode struct {
+	ID    string   `json:"id"`
+	Label string   `json:"label"`
+	Left  string   `json:"left,omitempty"`
+	Right string   `json:"right,omitempty"`
+	Kids  []string `json:"kids,omitempty"` // pohon umum: anak-anak berurutan (bukan left/right)
+}
+
+// TreeState: simpul yang dipegang parameter pada langkah ini; Null = parameter berisi
+// None/null/nil (pemanggilan untuk anak yang kosong).
+type TreeState struct {
+	Cur  string `json:"cur,omitempty"`
+	Null bool   `json:"null,omitempty"`
 }
 
 // GraphState adalah keadaan penelusuran graf pada satu langkah.

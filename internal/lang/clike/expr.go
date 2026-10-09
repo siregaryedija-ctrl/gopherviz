@@ -247,13 +247,19 @@ func (p *parser) unary() ir.Expr {
 				if p.is("(") {
 					save := p.i
 					p.next()
-					if typ, ok := p.typeText(true); ok && p.is(")") {
-						for p.is("*") {
+					kw := "" // sizeof(struct Node) / sizeof(union U) / sizeof(enum E)
+					if p.is("struct") || p.is("union") || p.is("enum") {
+						kw = p.next().text + " "
+					}
+					if typ, ok := p.typeText(true); ok {
+						for p.is("*") { // sizeof(int*)
 							typ += "*"
 							p.next()
 						}
-						p.next()
-						return &ir.Unary{S: p.span(start), Op: "sizeof", X: &ir.TypeRef{S: p.span(start), Name: typ}}
+						if p.is(")") {
+							p.next()
+							return &ir.Unary{S: p.span(start), Op: "sizeof", X: &ir.TypeRef{S: p.span(start), Name: kw + typ}}
+						}
 					}
 					p.i = save
 				}

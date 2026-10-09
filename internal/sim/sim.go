@@ -92,10 +92,11 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	tr.Block.Names = blockNames(node)
 	coll, collKind := findCollection(p, node)
 	grid := findGrid(node)
+	tree := findTree(node)
 	var obj objects
 	switch x := node.(type) {
 	case *ast.TypeSpec: // trace class: struct beserta method-methodnya
-		coll, collKind, grid = "", "", nil
+		coll, collKind, grid, tree = "", "", nil, nil
 		obj.typ, obj.className = x.Name.Name, x.Name.Name
 		obj.methods = focusMethods(p.Files(), x.Name.Name)
 		tr.Class = classInfo(p.Files(), x.Name.Name)
@@ -113,7 +114,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		rng:     rand.New(rand.NewSource(opt.Seed)),
 		input:   userinput.New(opt.Input, opt.InputSeed),
 		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
-			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: graphUnlessGrid(node, grid), gridSpec: grid, obj: obj},
+			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: graphUnlessGrid(node, grid), gridSpec: grid, treeSpec: tree, obj: obj},
 	}
 	reason := it.run(node)
 	r := it.rec
@@ -137,7 +138,13 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	tr.Truncated = r.truncated
 	tr.Graph = r.graph
 	tr.Grid = r.grid
-	if r.grid != nil {
+	tr.Tree = r.tree
+	if r.tree == nil {
+		for i := range tr.Steps {
+			tr.Steps[i].Node = nil
+		}
+	}
+	if r.grid != nil || r.tree != nil {
 		coll = ""
 	}
 	if r.graph == nil {

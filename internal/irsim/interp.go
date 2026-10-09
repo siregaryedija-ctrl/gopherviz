@@ -134,6 +134,7 @@ func (it *interp) add(s trace.Step, e *Env) {
 			it.detectCollKind(e)
 			s.Graph = it.graphStep(e)
 			s.Cells = it.gridStep(e)
+			s.Node = it.treeStep(e)
 		}
 		if it.rec.objMode() {
 			s.Objs, s.Self = it.objSnapshot(e)

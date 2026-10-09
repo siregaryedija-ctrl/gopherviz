@@ -915,3 +915,38 @@ func main() {
 		})
 	}
 }
+
+// TestTreeTraversal: rekursi n.Left/n.Right pada struct pointer Go.
+func TestTreeTraversal(t *testing.T) {
+	p := analyzer.Load("t.go", []byte(`package main
+
+import "fmt"
+
+type Node struct {
+	Val         int
+	Left, Right *Node
+}
+
+func inorder(n *Node) {
+	if n == nil {
+		return
+	}
+	inorder(n.Left)
+	fmt.Print(n.Val, " ")
+	inorder(n.Right)
+}
+
+func main() {
+	root := &Node{Val: 4, Left: &Node{Val: 2, Left: &Node{Val: 1}, Right: &Node{Val: 3}}, Right: &Node{Val: 6}}
+	inorder(root)
+	fmt.Println()
+}
+`))
+	tr := Trace(p, "F1", Options{})
+	if tr.Mode != trace.ModeSimulated || tr.Tree == nil || len(tr.Tree.Nodes) != 5 || output(tr) != "1 2 3 4 6 " {
+		t.Fatalf("mode %s, pohon %+v, output %q, warnings %v", tr.Mode, tr.Tree, output(tr), tr.Warnings)
+	}
+	if n := tr.Tree.Nodes[0]; n.Label != "4" || n.Left == "" || n.Right == "" {
+		t.Errorf("akar %+v", n)
+	}
+}
