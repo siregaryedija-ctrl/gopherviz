@@ -112,8 +112,11 @@
         for (let c = to; c && !same(c, from); c = prev.get(key(c[0], c[1]))) out.unshift(c);
         return out;
       };
+      let probeDepth = null; // kedalaman panggilan yang sedang "mengintip" (seluruh isinya tidak menggerakkan Gopher)
       steps.forEach((s, i) => {
         const st = s.cells || {};
+        const d = s.depth || 0;
+        if (probeDepth != null && d < probeDepth) probeDepth = null; // panggilan intip sudah kembali
         const seen = new Set((st.visited || []).map(([r, c]) => key(r, c)));
         if (st.cur && !this.wall(st.cur[0], st.cur[1])) seen.add(key(st.cur[0], st.cur[1]));
         const fresh = [...seen].filter(k => !prevSeen.has(k));
@@ -124,12 +127,26 @@
         const raw = st.cur ? [st.cur[0], st.cur[1]] : null;
         let peek = null, cur = prevCur;
         if (raw) {
-          if (this.wall(raw[0], raw[1]) || s.phase === 'call' && prevSeen.has(key(raw[0], raw[1])) && !same(raw, prevCur)) peek = raw;
-          else cur = raw;
+          if (probeDepth != null) {
+            peek = same(raw, prevCur) ? null : raw; // masih di dalam panggilan intip (cek if, return False)
+          } else if (this.wall(raw[0], raw[1]) || s.phase === 'call' && prevSeen.has(key(raw[0], raw[1])) && !same(raw, prevCur)) {
+            peek = raw;
+            if (s.phase === 'call') probeDepth = d;
+          } else cur = raw;
         }
+        // tujuan sudah ketemu: rekursi yang kembali membawa hasil (return True berantai) tidak
+        // membuat Gopher berjalan mundur ke awal; ia tetap di tujuan
+        if (found && raw && !peek && trail.some(c => same(c, raw)) && !same(raw, prevCur)) cur = prevCur;
         let route = [], back = 0;
         const top = () => trail[trail.length - 1];
-        if (cur && raw && !peek && !same(cur, prevCur)) {
+        if (cur && raw && !peek && !same(cur, prevCur) && g.kind !== 'dfs' && prevCur) {
+          // BFS: pindah antar cabang lewat rute terpendek di sel yang sudah dikunjungi (bukan
+          // menyusuri jejak kembali ke awal); mundur cepat, langkah terakhir maju
+          route = adj(prevCur, cur) ? [cur] : via(prevCur, cur, seen);
+          back = route.length - 1;
+          trail.length = 0;
+          trail.push(...route.slice(-2));
+        } else if (cur && raw && !peek && !same(cur, prevCur)) {
           const j = trail.findIndex(c => same(c, cur));
           if (j >= 0) { // kembali ke sel di jejak (rekursi kembali): mundur
             while (trail.length > j + 1) {
@@ -217,6 +234,7 @@
       const v = this.snaps[i], last = i === this.snaps.length - 1;
       if (last) return 1800 + (this.path ? this.path.length * 160 : 0);
       if (v.step.reason === 'panic') return 2000;
+      if (v.peek && !v.route.length && !v.fresh.size) return 200; // hanya mengintip: cepat
       return (v.fresh.size ? 450 : 320) + this.walkMs(v);
     }
 
