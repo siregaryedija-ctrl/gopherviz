@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/explain"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -78,6 +79,8 @@ func (e *env) define(name string, v value) *value {
 }
 
 type interp struct {
+	errCtx   *explain.Ctx // keterangan untuk panic berikutnya (indeks, panjang)
+	lastErr  *lastErr     // panic/fatal terakhir (langkah penutup bila tidak terekam)
 	p        *analyzer.Program
 	curFile  string // file yang sedang berjalan ("" = file fokus); lihat enterFile
 	globals  *env
@@ -140,11 +143,12 @@ func (it *interp) panicf(at ast.Node, format string, args ...any) {
 // raise memulai panic. Bila ada defer yang memanggil recover(), panic-nya mungkin
 // tertangkap; bila tidak, langkah ini adalah akhir program (reason panic).
 func (it *interp) raise(at ast.Node, val value, msg string) {
+	err := it.panicInfo(at, msg)
 	if it.recording() {
 		if it.recoverPending() {
 			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: msg + " → mencari recover() di defer"}, nil)
 		} else {
-			it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg}, nil)
+			it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg, Err: err}, nil)
 		}
 	}
 	panic(goPanic{val: val, msg: msg})
@@ -1299,6 +1303,7 @@ func (it *interp) index(at ast.Node, i value, length int) int {
 		it.structural(fmt.Sprintf("indeks pada %q belum disimulasikan", it.text(at)))
 	}
 	if i.i < 0 || i.i >= int64(length) {
+		it.errCtx = &explain.Ctx{Value: fmt.Sprint(i.i), Len: length}
 		it.panicf(at, "runtime error: index out of range [%d] with length %d", i.i, length)
 	}
 	return int(i.i)

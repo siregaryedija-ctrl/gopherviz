@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"gopherviz/internal/explain"
 	"gopherviz/internal/ir"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
@@ -376,13 +377,18 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	it.depth++
 	defer func() { it.depth-- }()
 	if it.depth > maxDepth {
+		it.errCtx = &explain.Ctx{Len: explain.NoLen, Depth: maxDepth}
 		switch it.lang {
 		case "python":
 			it.throw(at, "RecursionError", "maximum recursion depth exceeded")
 		case "javascript", "typescript":
 			it.throw(at, "RangeError", "Maximum call stack size exceeded")
+		case "java":
+			it.throw(at, "StackOverflowError", "")
+		case "php":
+			it.fatal(at, "Error", "Maximum function nesting level of '200' reached")
 		}
-		it.structural("rekursi terlalu dalam untuk disimulasikan")
+		it.fatal(at, "SegmentationFault", "stack overflow (rekursi terlalu dalam)")
 	}
 	if fn.this != nil {
 		this = *fn.this
@@ -941,6 +947,7 @@ func (it *interp) index(base, idx Value, at ir.Node) Value {
 			}
 			return undef()
 		case "python":
+			it.errCtx = &explain.Ctx{Value: it.sem.show(it, idx), Len: explain.NoLen}
 			it.throw(at, "KeyError", it.sem.show(it, idx))
 		case "php":
 			it.warn("Warning: Undefined array key " + it.sem.show(it, key))
@@ -981,6 +988,7 @@ func (it *interp) index(base, idx Value, at ir.Node) Value {
 		}
 		if i < 0 || i >= len(rs) {
 			if it.lang == "python" {
+				it.indexCtx(base, i, len(rs))
 				it.throw(at, "IndexError", "string index out of range")
 			}
 			return undef()
@@ -1047,9 +1055,8 @@ func (it *interp) intIndex(v Value) (int, bool) {
 }
 
 func (it *interp) outOfRange(base Value, i, n int, at ir.Node) Value {
+	it.indexCtx(base, i, n)
 	switch it.lang {
-	case "javascript", "typescript":
-		return undef()
 	case "python":
 		what := "list"
 		if base.k == kList && base.l.kind == "tuple" {
@@ -1059,10 +1066,14 @@ func (it *interp) outOfRange(base Value, i, n int, at ir.Node) Value {
 	case "java":
 		it.throw(at, "ArrayIndexOutOfBoundsException", fmt.Sprintf("Index %d out of bounds for length %d", i, n))
 	case "php":
+		it.errCtx = nil
 		it.warn(fmt.Sprintf("Warning: Undefined array key %d", i))
 		return null()
+	case "javascript", "typescript":
+		it.errCtx = nil
+		return undef()
 	}
-	it.structural(fmt.Sprintf("akses indeks %d di luar batas (panjang %d) di baris %d: perilaku tidak terdefinisi di %s", i, n, it.line(at), map[string]string{"c": "C", "cpp": "C++"}[it.lang]))
+	it.fatal(at, "UndefinedBehavior", fmt.Sprintf("indeks %d di luar batas (panjang %d)", i, n))
 	return Value{}
 }
 
@@ -1133,6 +1144,7 @@ func (it *interp) setIndex(n *ir.Index, e *Env, v Value) {
 		}
 		if i < 0 || i >= size {
 			if it.lang == "python" {
+				it.indexCtx(base, i, size)
 				it.throw(n, "IndexError", "list assignment index out of range")
 			}
 			it.outOfRange(base, i, size, n)

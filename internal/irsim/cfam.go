@@ -438,7 +438,7 @@ func (it *interp) cCrash(at ir.Node, msg string) {
 	it.ids++
 	o := &Object{class: c, fields: it.newDict("fields"), id: it.ids}
 	o.fields.set(strV("message"), strV(msg))
-	panic(thrown{v: Value{k: kObj, o: o}, msg: msg, at: at})
+	panic(thrown{v: Value{k: kObj, o: o}, msg: msg, at: at, depth: it.rec.depth + 1})
 }
 
 func (it *interp) cListEq(a, b Value) bool {

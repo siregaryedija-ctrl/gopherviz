@@ -38,9 +38,12 @@ export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
     <button id="tNext" class="icon-btn" title="Langkah berikutnya" aria-label="Langkah berikutnya">${icon('M11 2h2v12h-2zM2 2v12l8-6z')}</button>
     <button id="tRestart" class="icon-btn" title="Ulang dari awal" aria-label="Ulang dari awal">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
     <button id="tRec" class="icon-btn" title="Rekam animasi (GIF / MP4 / WebM)" aria-label="Rekam animasi">${icon('M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z')}</button>
+    <button id="tQuiz" class="icon-btn" aria-pressed="false" title="Mode tebak: berhenti di titik penting dan tebak apa yang terjadi" aria-label="Mode tebak">${icon('M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z')}</button>
     <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Posisi langkah">
     <span id="tLabel" class="tlabel"></span>
   </div>
+  <div id="quizCard" class="qcard" hidden></div>
+  <div id="errCard" class="errcard" hidden></div>
   <div id="inputbar" class="inputbar" hidden>
     <label for="inputBox">Input</label>
     <input id="inputBox" type="text" placeholder="isi nilai input, pisahkan dengan koma (contoh: 25, Budi)" spellcheck="false" autocomplete="off">
@@ -254,7 +257,7 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'recorder.js', 'memory.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'recorder.js', 'errorfx.js', 'quiz.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>

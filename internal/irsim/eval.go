@@ -702,7 +702,7 @@ func (it *interp) evalUnary(n *ir.Unary, e *Env) Value {
 		return v
 	case "throw":
 		v := it.eval(n.X, e)
-		panic(thrown{v: v, msg: it.exceptionText(v), at: n})
+		panic(thrown{v: v, msg: it.exceptionText(v), at: n, depth: it.rec.depth + 1})
 	case "new":
 		return it.eval(n.X, e)
 	case "$":
@@ -785,6 +785,7 @@ func (it *interp) deleteTarget(x ir.Expr, e *Env) {
 				i += len(base.l.elems)
 			}
 			if i < 0 || i >= len(base.l.elems) {
+				it.indexCtx(base, i, len(base.l.elems))
 				it.throw(t, "IndexError", "list assignment index out of range")
 			}
 			if it.lang == "javascript" || it.lang == "typescript" {

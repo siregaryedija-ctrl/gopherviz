@@ -19,7 +19,7 @@ const common = {
 };
 
 if (test) {
-  await esbuild.build({ ...common, entryPoints: ['test/server.test.ts'], outdir: 'out/test' });
+  await esbuild.build({ ...common, entryPoints: ['test/server.test.ts', 'test/media.test.ts'], outdir: 'out/test' });
 } else {
   const ctx = await esbuild.context({
     ...common,

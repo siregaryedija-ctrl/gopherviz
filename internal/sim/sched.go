@@ -253,8 +253,9 @@ func (it *interp) gosched() {
 
 func (it *interp) deadlock() fatal {
 	msg := "fatal error: all goroutines are asleep - deadlock!"
+	err := it.panicInfo(nil, msg)
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseExit, Reason: trace.ReasonPanic, Note: msg}, nil)
+		it.add(trace.Step{Phase: trace.PhaseExit, Reason: trace.ReasonPanic, Note: msg, Err: err}, nil)
 	}
 	return fatal{msg: msg}
 }

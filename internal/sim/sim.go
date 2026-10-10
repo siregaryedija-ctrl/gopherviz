@@ -176,6 +176,7 @@ func (it *interp) run(node ast.Node) (structural string) {
 				structural = "program berhenti sebelum sampai ke blok ini: " + ft.msg
 			} else {
 				it.rec.warn("program berhenti: " + ft.msg)
+				it.closeWithError(ft.msg)
 			}
 			return
 		}
@@ -185,6 +186,7 @@ func (it *interp) run(node ast.Node) (structural string) {
 				structural = "program akan panic sebelum sampai ke blok ini: " + gp.msg
 			} else {
 				it.rec.warn("program berhenti karena " + gp.msg)
+				it.closeWithError(gp.msg)
 			}
 			return
 		}

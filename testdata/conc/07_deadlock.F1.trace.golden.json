@@ -156,7 +156,15 @@
           ],
           "senders": 1
         }
-      ]
+      ],
+      "err": {
+        "kind": "deadlock",
+        "name": "fatal error",
+        "msg": "all goroutines are asleep - deadlock!",
+        "title": "Deadlock: semua menunggu",
+        "text": "Semua goroutine sedang menunggu satu sama lain (kirim/terima channel, Wait, Lock), jadi tidak ada yang bisa jalan lagi.",
+        "hint": "Pastikan setiap kirim ke channel punya penerima (atau channel-nya ber-buffer), dan channel ditutup sebelum di-range."
+      }
     }
   ],
   "truncated": false,

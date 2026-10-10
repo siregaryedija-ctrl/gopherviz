@@ -321,3 +321,50 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .rec-actions { display: flex; gap: 8px; justify-content: flex-end; }
 .btn.primary { background: var(--vscode-button-background); color: var(--vscode-button-foreground); }
 #tRec svg { fill: #e5534b; }
+
+/* Fase 12b: mode tebak + kartu penjelasan error */
+.icon-btn[aria-pressed="true"] { background: var(--vscode-button-background); color: var(--vscode-button-foreground); }
+.qcard, .errcard {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.1));
+  display: flex; flex-direction: column; gap: 8px;
+}
+.qcard { border-left: 4px solid var(--vscode-button-background); }
+.q-head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.08em; }
+.q-head span { color: #d4a72c; font-weight: 700; }
+.q-prompt { margin: 0; font-weight: 600; }
+.q-code {
+  font-family: var(--vscode-editor-font-family); font-size: var(--vscode-editor-font-size);
+  padding: 4px 8px; border-radius: 6px; overflow-wrap: anywhere;
+  background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.15));
+}
+.q-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 6px; }
+.q-opt {
+  display: flex; align-items: center; gap: 8px; text-align: left;
+  padding: 6px 10px; border-radius: 6px; cursor: pointer; font: inherit;
+  border: 1px solid var(--border); color: inherit;
+  background: var(--vscode-button-secondaryBackground, rgba(128, 128, 128, 0.12));
+}
+.q-opt b {
+  flex: none; width: 20px; height: 20px; border-radius: 4px; display: grid; place-items: center; font-size: 11px;
+  background: var(--vscode-badge-background, #4d4d4d); color: var(--vscode-badge-foreground, #fff);
+}
+.q-opt span { font-family: var(--vscode-editor-font-family); overflow-wrap: anywhere; }
+.q-opt:hover:not(:disabled) { background: var(--vscode-button-secondaryHoverBackground); }
+.q-opt:disabled { cursor: default; opacity: 0.6; }
+.q-opt.right { opacity: 1; border-color: #3fb950; background: rgba(63, 185, 80, 0.18); }
+.q-opt.wrong { opacity: 1; border-color: #e5534b; background: rgba(229, 83, 75, 0.18); }
+.q-fb { margin: 0; }
+.q-fb.ok { color: #3fb950; }
+.q-fb.no { color: #e5534b; }
+.q-fb span { color: var(--vscode-descriptionForeground); font-family: var(--vscode-editor-font-family); font-size: 12px; }
+.q-actions { display: flex; gap: 6px; }
+.q-stars { margin: 0; font-size: 22px; letter-spacing: 4px; color: #d4a72c; }
+.errcard { border-left: 4px solid #e5534b; }
+.errcard h3 { margin: 0; font-size: 13px; color: #e5534b; }
+.errcard p { margin: 0; }
+.errcard .hint { color: var(--vscode-foreground); }
+.errcard .src { font-family: var(--vscode-editor-font-family); font-size: 11px; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere; }

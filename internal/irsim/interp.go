@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strings"
 
+	"gopherviz/internal/explain"
 	"gopherviz/internal/ir"
 	"gopherviz/internal/lang"
 	"gopherviz/internal/project"
@@ -44,6 +45,7 @@ type interp struct {
 	budget    int
 	depth     int
 	quiet     int
+	errCtx    *explain.Ctx // keterangan untuk exception berikutnya (indeks, panjang, isi koleksi)
 	ids       int
 	kwargs    map[string]Value // argumen bernama Python untuk builtin yang sedang dipanggil
 	funcs     map[string][]*Fn // fungsi tingkat atas C/C++ (overload per jumlah argumen)
@@ -116,8 +118,9 @@ func (it *interp) insideFocus(n ir.Node) bool {
 
 // throw memulai exception program dengan kelas error bawaan bahasa ini.
 func (it *interp) throw(at ir.Node, class, msg string) {
+	ctx := it.takeErrCtx(at)
 	v := it.sem.newError(it, class, msg)
-	panic(thrown{v: v, msg: class + ": " + msg, at: at})
+	panic(thrown{v: v, msg: class + ": " + msg, at: at, ctx: ctx, depth: it.rec.depth + 1})
 }
 
 // ---------- perekaman ----------
@@ -673,7 +676,7 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 		}
 		msg := it.exceptionText(v)
 		it.step(n, e, it.text(n)+" → lempar "+msg)
-		panic(thrown{v: v, msg: msg, at: n})
+		panic(thrown{v: v, msg: msg, at: n, depth: it.rec.depth + 1})
 	case *ir.Try:
 		return it.execTry(n, e)
 	case *ir.Func:
@@ -1238,7 +1241,7 @@ func (it *interp) execTry(n *ir.Try, e *Env) (out flow) {
 		defer func() {
 			if r := recover(); r != nil {
 				t, ok := r.(thrown)
-				if !ok {
+				if !ok || t.fatal {
 					panic(r)
 				}
 				caught = &t

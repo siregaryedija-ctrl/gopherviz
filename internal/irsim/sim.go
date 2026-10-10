@@ -242,7 +242,13 @@ func (it *interp) finalStep(x thrown, msg string) {
 		line = it.line(x.at)
 	}
 	note := it.uncaughtNote(msg)
-	it.rec.add(trace.Step{Phase: trace.PhaseExit, Line: line, Reason: trace.ReasonPanic, Note: note}, nil, func() ([]string, []string) { return nil, nil })
+	if x.fatal {
+		note = msg + " → program crash"
+	}
+	if x.depth > 0 { // tumpukan panggilan sudah terurai: catat di lantai tempat error terjadi
+		it.rec.depth = x.depth - 1
+	}
+	it.rec.add(trace.Step{Phase: trace.PhaseExit, Line: line, Reason: trace.ReasonPanic, Note: note, Err: it.errInfo(x, msg)}, nil, func() ([]string, []string) { return nil, nil })
 }
 
 func (it *interp) uncaughtNote(msg string) string {

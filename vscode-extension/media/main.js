@@ -386,6 +386,7 @@
     const islands = kind === 'func' && tr.files && tr.files.length > 1;
     if (islands) $('explain').textContent = BLOCK_EXPLAIN.islands;
     tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.tree ? treeR : tr.grid ? gridR : tr.graph ? graphR : islands ? islandR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    tp.p = withErrFx(tp.r);
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
     tp.view = tp.r.prepare(tr);
@@ -399,6 +400,35 @@
     goto(0, false);
     syncPlay();
     renderNote([]);
+    if (quiz.on) quizStart();
+  }
+
+  /** Error di langkah view ke-i (Step.err), bila ada. */
+  const errOf = i => { const v = tp.view[i]; return v ? (v.group || [v.step]).map(s => s.err).find(Boolean) : null; };
+
+  /**
+   * Pemutar memakai adapter ini: sama dengan renderer panggung, tetapi langkah error diperpanjang
+   * dengan adegan penjelasan (errorfx.js) yang digambar di atas panggung setelah animasi langkahnya.
+   */
+  function withErrFx(base) {
+    const FX = G.errorfx, cv = $('stage'), ctx = cv.getContext('2d');
+    return {
+      duration: i => base.duration(i) + (errOf(i) ? FX.DUR : 0),
+      cues: i => {
+        const e = errOf(i);
+        if (!e) return base.cues(i);
+        const d = base.duration(i), T = d + FX.DUR;
+        return base.cues(i).map(c => Object.assign({}, c, { t: (c.t * d) / T }))
+          .concat(FX.cues(e).map(c => Object.assign({}, c, { t: (d + c.t * FX.DUR) / T })));
+      },
+      render: (i, t) => {
+        const e = errOf(i);
+        if (!e) return base.render(i, t);
+        const d = base.duration(i), el = t * (d + FX.DUR);
+        base.render(i, Math.min(1, el / d));
+        if (el > d) FX.draw(ctx, cv, e, (el - d) / FX.DUR);
+      },
+    };
   }
 
   /**
@@ -430,7 +460,8 @@
     tp.active = false;
     tp.trace = null;
     traceNote = '';
-    for (const id of ['tracebar', 'stepNote', 'varsSection', 'memSection', 'outSection']) $(id).hidden = true;
+    for (const id of ['tracebar', 'stepNote', 'varsSection', 'memSection', 'outSection', 'errCard', 'quizCard']) $(id).hidden = true;
+    quiz.open = null;
     tp.outLen = 0;
     vscode.postMessage({ type: 'step', line: 0 }); // hapus sorotan baris di editor
     highlightPart(null);
@@ -441,7 +472,7 @@
     tp.i = Math.max(0, Math.min(i, tp.view.length - 1));
     tp.el = 0;
     tp.hold = 0;
-    tp.cues = tp.r.cues(tp.i).sort((a, b) => a.t - b.t);
+    tp.cues = tp.p.cues(tp.i).sort((a, b) => a.t - b.t);
     tp.ci = silent ? tp.cues.length : 0;
     stepUI();
   }
@@ -473,6 +504,7 @@
     const floor = tp.r === laneR ? (s.g && !(s.note || '').startsWith(`G${s.g} `) ? `G${s.g} · ` : '') : s.depth ? `lantai ${s.depth} · ` : '';
     $('stepNote').textContent = (s.file ? `${s.file}:${s.line || '?'} · ` : '') + floor + group + (s.note || '');
     $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
+    renderErrCard(errOf(tp.i), s);
 
     // variabel: diagram memori bila program memakai struct/pointer, selain itu chip biasa.
     // Perubahan dibanding langkah sebelumnya disorot.
@@ -527,36 +559,42 @@
   }
 
   function tickTrace(dt) {
-    const d = tp.r.duration(tp.i);
-    if (tp.playing || tp.once) {
+    const d = tp.p.duration(tp.i);
+    if ((tp.playing || tp.once) && !quiz.open) {
       if (tp.el < d) {
         tp.el = Math.min(d, tp.el + dt * config.speed * (tp.boost[tp.i] || 1));
         fireCues(tp.el / d);
       } else if (tp.i < tp.view.length - 1) {
-        if (tp.once) { tp.once = false; } else goto(tp.i + 1, false);
+        if (tp.once) { tp.once = false; } else if (!quizAsk(tp.i + 1)) goto(tp.i + 1, false);
       } else if (tp.playing) {
-        tp.hold += dt; // jeda sebentar di akhir, lalu putar ulang
-        if (tp.hold > 2500) goto(0, false);
+        if (quiz.on && quiz.qs.length) quizSummary(); // mode tebak: berhenti di akhir dan tampilkan skor
+        else {
+          tp.hold += dt; // jeda sebentar di akhir, lalu putar ulang
+          if (tp.hold > 2500) goto(0, false);
+        }
       } else tp.once = false;
     }
-    tp.r.render(tp.i, Math.min(1, tp.el / d));
+    tp.p.render(tp.i, Math.min(1, tp.el / d));
   }
 
   $('tPlay').addEventListener('click', () => { tp.playing = !tp.playing; tp.once = false; syncPlay(); });
   $('tPrev').addEventListener('click', () => {
     tp.playing = false; tp.once = false; syncPlay();
     goto(tp.i - 1, true);
-    tp.el = tp.r.duration(tp.i);
+    tp.el = tp.p.duration(tp.i);
+    quizSeek();
   });
   $('tNext').addEventListener('click', () => {
+    if (quiz.open) return;
     tp.playing = false; syncPlay();
-    if (tp.i < tp.view.length - 1) { goto(tp.i + 1, false); tp.once = true; }
+    if (tp.i < tp.view.length - 1 && !quizAsk(tp.i + 1)) { goto(tp.i + 1, false); tp.once = true; }
   });
-  $('tRestart').addEventListener('click', () => { goto(0, false); tp.playing = true; syncPlay(); });
+  $('tRestart').addEventListener('click', () => { goto(0, false); tp.playing = true; syncPlay(); if (quiz.on) quizStart(); });
   $('tScrub').addEventListener('input', () => {
     tp.playing = false; tp.once = false; syncPlay();
     goto(+$('tScrub').value, true);
-    tp.el = tp.r.duration(tp.i);
+    tp.el = tp.p.duration(tp.i);
+    quizSeek();
   });
 
   // ---------- interaksi ----------
@@ -650,6 +688,136 @@
     });
   }
 
+  // ---------- penjelasan error + mode tebak (Fase 12b) ----------
+
+  /** Kartu penjelasan di bawah panggung saat langkahnya adalah error yang menghentikan program. */
+  function renderErrCard(e, s) {
+    const card = $('errCard');
+    card.hidden = !e;
+    if (!e) return;
+    const src = [s.line ? `baris ${s.line}` : '', e.name && e.msg ? `${e.name}: ${e.msg}` : e.msg || e.name || ''].filter(Boolean).join(' · ');
+    card.innerHTML = `<h3>⚠ ${esc(e.title)}</h3><p>${esc(e.text)}</p>` +
+      (e.hint ? `<p class="hint"><b>Saran:</b> ${esc(e.hint)}</p>` : '') +
+      (src ? `<p class="src">${esc(src)}</p>` : '');
+  }
+
+  const quiz = { on: false, qs: [], k: 0, score: 0, open: null, done: false };
+
+  function quizStart() {
+    quiz.qs = tp.active ? G.quiz.build(tp.view, { lang: sceneLang(), block: currentBlock, code: tp.code }) : [];
+    quiz.k = 0; quiz.score = 0; quiz.open = null; quiz.done = false;
+    $('quizCard').hidden = true;
+    if (!tp.active) return;
+    if (!quiz.qs.length) {
+      quizCard(`<p class="q-prompt">Belum ada titik yang bisa ditebak di trace ini (tidak ada kondisi, output, return, atau error).</p>` +
+        `<div class="q-actions"><button class="btn" data-qact="off">Tutup</button></div>`);
+      return;
+    }
+    goto(0, false);
+    tp.playing = true;
+    syncPlay();
+  }
+
+  function quizCard(html) {
+    $('quizCard').innerHTML = html;
+    $('quizCard').hidden = false;
+  }
+
+  /** Bila langkah i adalah titik tebakan berikutnya: hentikan pemutar dan tampilkan pertanyaannya. */
+  function quizAsk(i) {
+    const q = quiz.on && !quiz.open && quiz.qs[quiz.k];
+    if (!q || q.at !== i) return false;
+    quiz.open = q;
+    q.picked = null;
+    const vars = (q.vars || []).map(([k, v]) => `<span class="var"><b>${esc(k)}</b> = ${esc(v)}</span>`).join('');
+    quizCard(`<div class="q-head"><b>TEBAK ${quiz.k + 1}/${quiz.qs.length}</b><span>★ ${quiz.score}</span></div>` +
+      `<p class="q-prompt">${esc(q.prompt)}</p>` +
+      (q.code ? `<code class="q-code">${esc(q.code)}</code>` : '') +
+      (vars ? `<div class="vars q-vars">${vars}</div>` : '') +
+      `<div class="q-opts">${q.options.map((o, j) => `<button class="q-opt" data-qopt="${j}"><b>${G.quiz.LETTERS[j]}</b><span>${esc(o)}</span></button>`).join('')}</div>` +
+      `<p class="q-fb" hidden></p><div class="q-actions" hidden><button class="btn primary" data-qact="next">Lanjut ▶</button></div>`);
+    snd.play('think');
+    return true;
+  }
+
+  function quizAnswer(j) {
+    const q = quiz.open;
+    if (!q || q.picked != null || !q.options[j]) return;
+    q.picked = j;
+    const ok = j === q.answer;
+    if (ok) quiz.score++;
+    snd.play(ok ? 'yes' : 'no');
+    const card = $('quizCard');
+    card.querySelectorAll('.q-opt').forEach((b, k) => {
+      b.disabled = true;
+      b.classList.toggle('right', k === q.answer);
+      b.classList.toggle('wrong', k === j && !ok);
+    });
+    const fb = card.querySelector('.q-fb');
+    fb.hidden = false;
+    fb.className = 'q-fb ' + (ok ? 'ok' : 'no');
+    fb.innerHTML = (ok ? '✓ Benar!' : `✗ Belum tepat. Jawabannya: <b>${esc(q.options[q.answer])}</b>`) + (q.explain ? `<br><span>${esc(q.explain)}</span>` : '');
+    card.querySelector('.q-head span').textContent = `★ ${quiz.score}`;
+    card.querySelector('.q-actions').hidden = false;
+  }
+
+  /** Lanjut setelah menjawab: langkah yang ditanyakan diputar. */
+  function quizNext() {
+    const q = quiz.open;
+    if (!q || q.picked == null) return;
+    quiz.open = null;
+    quiz.k++;
+    $('quizCard').hidden = true;
+    goto(q.at, false);
+    tp.playing = true;
+    syncPlay();
+  }
+
+  /** Setelah menggeser slider/mundur: pertanyaan yang sudah dilewati tidak ditanyakan lagi. */
+  function quizSeek() {
+    if (!quiz.on) return;
+    quiz.open = null;
+    quiz.done = false;
+    $('quizCard').hidden = true;
+    quiz.k = quiz.qs.findIndex(q => q.at > tp.i);
+    if (quiz.k < 0) quiz.k = quiz.qs.length;
+  }
+
+  function quizSummary() {
+    if (quiz.done) return;
+    quiz.done = true;
+    const n = quiz.qs.length, s = quiz.score;
+    const stars = '★'.repeat(s) + '☆'.repeat(Math.max(0, n - s));
+    const msg = s === n ? 'Sempurna! Kamu paham alurnya.' : s * 2 >= n ? 'Bagus! Coba ulangi untuk skor penuh.' : 'Tidak apa-apa, tonton lagi alurnya lalu coba lagi.';
+    quizCard(`<div class="q-head"><b>SELESAI</b><span>${s}/${n}</span></div><p class="q-stars">${stars}</p><p class="q-prompt">${msg}</p>` +
+      `<div class="q-actions"><button class="btn primary" data-qact="again">Ulangi</button><button class="btn" data-qact="off">Selesai</button></div>`);
+    snd.play(s === n ? 'jingle' : 'coin');
+  }
+
+  function setQuiz(on) {
+    quiz.on = on;
+    $('tQuiz').setAttribute('aria-pressed', String(on));
+    if (on) quizStart();
+    else { quiz.open = null; $('quizCard').hidden = true; }
+  }
+
+  $('tQuiz').addEventListener('click', () => setQuiz(!quiz.on));
+  $('quizCard').addEventListener('click', e => {
+    const opt = e.target.closest('[data-qopt]');
+    if (opt) { quizAnswer(+opt.dataset.qopt); return; }
+    const act = e.target.closest('[data-qact]');
+    if (!act) return;
+    if (act.dataset.qact === 'next') quizNext();
+    else if (act.dataset.qact === 'again') quizStart();
+    else setQuiz(false);
+  });
+  document.addEventListener('keydown', e => {
+    if (!quiz.open || e.target.tagName === 'INPUT') return;
+    const k = '1234'.indexOf(e.key) >= 0 ? '1234'.indexOf(e.key) : 'abcd'.indexOf(e.key.toLowerCase());
+    if (k >= 0 && quiz.open.picked == null) { quizAnswer(k); e.preventDefault(); }
+    else if (e.key === 'Enter' && quiz.open.picked != null) { quizNext(); e.preventDefault(); }
+  });
+
   // ---------- rekam animasi (Fase 12a) ----------
 
   const REC = G.recorder;
@@ -674,7 +842,7 @@
 
   /** Perkiraan lama rekaman (detik) dengan percepatan otomatis, maks 60 detik. */
   function recPlan() {
-    const durs = tp.view.map((_, i) => tp.r.duration(i));
+    const durs = tp.view.map((_, i) => tp.p.duration(i));
     const real = durs.reduce((a, d, i) => a + d / (tp.boost[i] || 1), 0) + 1500;
     return { durs, total: real, speed: Math.max(1, real / 60000) };
   }
@@ -717,7 +885,7 @@
       const { durs, total, speed } = recPlan();
       const nFrames = Math.ceil(total / speed / frameMs);
       const stageCv = $('stage');
-      tp.r.render(0, 0);
+      tp.p.render(0, 0);
       const { w, h } = REC.frameSize(frame, format, stageCv.width, stageCv.height);
       const out = document.createElement('canvas');
       out.width = w; out.height = h;
@@ -734,7 +902,7 @@
         rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
         rec.start(250);
       }
-      let i = 0, el = 0, cues = tp.r.cues(0).sort((a, b) => a.t - b.t), ci = 0;
+      let i = 0, el = 0, cues = tp.p.cues(0).sort((a, b) => a.t - b.t), ci = 0;
       let output = tp.view[0].step.output || '';
       const fire = t => { while (ci < cues.length && cues[ci].t <= t) { const c = cues[ci++]; if (c.fx) c.fx(); } };
       const t0 = performance.now();
@@ -748,11 +916,11 @@
           el = d; left -= need; fire(1);
           if (i < tp.view.length - 1) {
             i++; el = 0; ci = 0;
-            cues = tp.r.cues(i).sort((a, b) => a.t - b.t);
+            cues = tp.p.cues(i).sort((a, b) => a.t - b.t);
             output += tp.view[i].step.output || '';
           } else left = 0;
         }
-        tp.r.render(i, Math.min(1, el / durs[i]));
+        tp.p.render(i, Math.min(1, el / durs[i]));
         const st = tp.view[i].step;
         REC.compose(octx, w, h, frame, stageCv, { title, sub, code: tp.code, line: st.line, file: st.file, output, startLine: currentBlock ? currentBlock.line : 1 });
         if (gif) {
@@ -782,7 +950,7 @@
     } finally {
       recording = false;
       goto(wasI, true);
-      tp.el = tp.r.duration(tp.i);
+      tp.el = tp.p.duration(tp.i);
       tp.playing = wasPlaying;
     }
   }
@@ -816,7 +984,7 @@
     requestAnimationFrame(frame);
   }
 
-  G.app = { level, data, branch, func, tp, tickTrace, goto }; // untuk dev/harness.html
+  G.app = { level, data, branch, func, tp, tickTrace, goto, quiz, setQuiz, quizAnswer, quizNext }; // untuk dev/harness.html
   snd.unlock(); // di VS Code suara kadang boleh langsung; kalau tidak, menunggu klik
   applyConfig(config);
   overlay('Menyiapkan…');

@@ -146,6 +146,22 @@ type Step struct {
 	Objs      []ObjState        `json:"objs,omitempty"`     // potret object class fokus (trace class) atau object self (trace method)
 	Self      string            `json:"self,omitempty"`     // ID object yang menjadi this/self di langkah ini
 	SelfCopy  bool              `json:"selfCopy,omitempty"` // Go: method value receiver bekerja pada salinan object Self
+	Err       *ErrInfo          `json:"err,omitempty"`      // penjelasan error (hanya pada langkah exit reason panic)
+}
+
+// ErrInfo menjelaskan error yang menghentikan program dengan bahasa sederhana, beserta nilai
+// penyebabnya, untuk animasi khusus dan kartu penjelasan di panel (Fase 12b).
+type ErrInfo struct {
+	Kind  string   `json:"kind"`            // index | empty | zero | null | key | depth | type | value | deadlock | other
+	Name  string   `json:"name,omitempty"`  // nama error asli: IndexError, ArithmeticException, panic, ...
+	Msg   string   `json:"msg,omitempty"`   // pesan error asli dari bahasa itu
+	Title string   `json:"title"`           // judul singkat, mis. "Indeks di luar batas"
+	Text  string   `json:"text"`            // penjelasan sederhana dengan nilai penyebab
+	Hint  string   `json:"hint,omitempty"`  // saran perbaikan
+	Expr  string   `json:"expr,omitempty"`  // potongan kode penyebab, mis. "arr[i]"
+	Value string   `json:"value,omitempty"` // nilai penyebab: indeks, key, pembagi
+	Len   *int     `json:"len,omitempty"`   // index: panjang koleksi
+	Items []string `json:"items,omitempty"` // index/key: isi koleksi (maks 12) untuk animasi
 }
 
 // ClassInfo adalah "cetak biru" class fokus: field dan method yang dideklarasikan.

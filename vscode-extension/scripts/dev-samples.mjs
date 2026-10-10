@@ -85,6 +85,15 @@ const samples = {
   tree_umum: ['@/pohon_umum.py', 6],
   tree_go: ['@/pohongo/main.go', 10],
   js_class: ['@/kelas.js', 1],
+  // Fase 12b: error yang menghentikan program (adegan + kartu penjelasan)
+  err_idx: ['@/err/idx.py', 1],
+  err_zero: ['@/err/zero.py', 1],
+  err_key: ['@/err/key.py', 1],
+  err_none: ['@/err/none.py', 6],
+  err_depth: ['@/err/depth.py', 1],
+  err_type: ['@/err/tipe.py', 1],
+  err_empty: ['@/err/kosong.py', 1],
+  err_c: ['@/err/idx.c', 3],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

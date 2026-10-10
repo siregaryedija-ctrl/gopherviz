@@ -10,6 +10,9 @@
 
   const TOP = 16;     // ruang HUD
   const FLOOR = 36;   // jarak antar lantai
+  // Rekursi dalam (mis. tanpa base case sampai 200 lantai): yang digambar hanya jendela MAXF lantai
+  // di sekitar lantai aktif, lantai di atasnya diringkas menjadi "+N LANTAI DI ATAS".
+  const MAXF = 10;
   const X_PIPE = 12;  // pipa masuk di kiri setiap lantai
   const X_TILES = 40; // tengah ubin pertama (ubin berlabel nama perintahnya, selebar labelnya)
 
@@ -28,9 +31,17 @@
       this.blocks = [];
       this.wall = null;
       this.top = TOP;
+      this.off = 0; // lantai teratas yang digambar (jendela rekursi dalam)
+      this.floorsAll = 1;
     }
 
-    groundY(d) { return this.top + 30 + d * FLOOR; }
+    groundY(d) { return this.top + 30 + (d - this.off) * FLOOR; }
+
+    /** Lantai teratas jendela untuk langkah v: lantai aktif (dan asalnya) selalu terlihat. */
+    offFor(v) {
+      if (this.floorsAll <= MAXF || !v) return 0;
+      return Math.max(0, Math.max(v.d || 0, (v.from && v.from.d) || 0) - (MAXF - 1));
+    }
 
     /** block = fungsi fokus; blocks = semua blok di file (untuk mencari isi fungsi lain). */
     setBlock(block, blocks) {
@@ -124,9 +135,12 @@
       // hanya untuk fungsi yang memanggil dirinya sendiri (lebih dari satu pemanggilan)
       const labels = calls.map(P.wallLabel);
       this.wallLabels = labels.every(l => l != null) ? labels : calls.map((_, k) => String(k + 1));
-      this.layout(maxDepth + 1, [...used]); // lebar dunia dulu, lalu tembok mengikuti lebar itu
+      this.floorsAll = maxDepth + 1;
+      this.off = 0;
+      const shown = Math.min(maxDepth + 1, MAXF);
+      this.layout(shown, [...used]); // lebar dunia dulu, lalu tembok mengikuti lebar itu
       this.wall = calls.length > 1 ? P.wallLayout(calls.length, this.wallLabels, this.W, this.truncated) : null;
-      if (this.wall) this.layout(maxDepth + 1, [...used], this.wall.h);
+      if (this.wall) this.layout(shown, [...used], this.wall.h);
       this.snaps = views;
       return views;
     }
@@ -167,12 +181,14 @@
 
     renderIdle() {
       const v = { act: 'idle', d: 0, x: X_PIPE + 10, tile: -1, step: {}, wallCount: 0, stack: [{ fn: this.block.name, args: (this.block.params || []).join(', '), block: this.block }] };
+      this.off = 0;
       this.draw(v, { x: X_PIPE + 10, y: this.groundY(0) }, 1, false, 1, 'idle');
     }
 
     render(i, t) {
       const v = this.snaps[i];
       if (!v) return;
+      this.off = this.offFor(v);
       let pos = { x: v.x, y: this.groundY(v.d) }, a = 1, walking = false, alpha = 1;
       const from = { x: v.from.x, y: this.groundY(v.from.d) };
       if (v.act === 'call') {
@@ -228,7 +244,9 @@
       w.drawImage(this.bg, 0, 0);
       const floors = v.stack && v.stack.length ? v.stack : [{ fn: this.block.name, block: this.block }];
 
+      if (this.off > 0) P.text(w, `+${this.off} LANTAI DI ATAS`, X_TILES - 8, this.top + 2, '#b090c8');
       floors.forEach((f, d) => {
+        if (d < this.off) return;
         const gy = this.groundY(d);
         const active = d === v.d;
         w.globalAlpha = active ? 1 : 0.45;
@@ -236,7 +254,7 @@
         P.rect(w, 2, gy, this.exitX + 12, 2, '#d7a2c9');
         P.rect(w, 2, gy + 2, this.exitX + 12, 2, '#efd3ea');
         // pipa masuk dari langit-langit
-        const pipeTop = d === 0 ? this.top + 2 : this.groundY(d - 1) + 4;
+        const pipeTop = d === this.off ? this.top + 2 + (this.off ? 8 : 0) : this.groundY(d - 1) + 4;
         P.rect(w, X_PIPE - 5, pipeTop, 10, gy - 22 - pipeTop, '#5a43a0');
         P.rect(w, X_PIPE - 4, pipeTop, 8, gy - 22 - pipeTop, '#b8a2ee');
         P.rect(w, X_PIPE - 6, gy - 24, 12, 3, '#5a43a0');

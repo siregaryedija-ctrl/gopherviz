@@ -850,6 +850,7 @@ func (s *cSem) member(it *interp, x Value, name string, at ir.Node) (Value, bool
 			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 				i := int(intOf(arg(args, 0)))
 				if i < 0 || i >= len(str) {
+					it.indexCtx(this, i, len(str))
 					it.throw(at, "out_of_range", fmt.Sprintf("basic_string::at: __n (which is %d) >= this->size() (which is %d)", i, len(str)))
 				}
 				return typedInt(int64(int8(str[i])), "char")
@@ -1052,6 +1053,7 @@ func (it *interp) cppListMember(x Value, name string, at ir.Node) (Value, bool) 
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 			i := int(intOf(arg(args, 0)))
 			if i < 0 || i >= len(l.elems) {
+				it.indexCtx(this, i, len(l.elems))
 				it.throw(at, "out_of_range", fmt.Sprintf("vector::_M_range_check: __n (which is %d) >= this->size() (which is %d)", i, len(l.elems)))
 			}
 			return l.elems[i]

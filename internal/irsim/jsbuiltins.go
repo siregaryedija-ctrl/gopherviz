@@ -607,7 +607,7 @@ func (it *interp) then(p Value, onOk, onErr Value, at ir.Node) Value {
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
-					if t, ok := r.(thrown); ok {
+					if t, ok := r.(thrown); ok && !t.fatal {
 						it.settle(next, t.v, true)
 						return
 					}
@@ -657,7 +657,7 @@ func (it *interp) awaitValue(v Value, at ir.Node) Value {
 		case "fulfilled":
 			return val
 		case "rejected":
-			panic(thrown{v: val, msg: it.exceptionText(val), at: at})
+			panic(thrown{v: val, msg: it.exceptionText(val), at: at, depth: it.rec.depth + 1})
 		}
 		if len(it.tasks) == 0 && len(it.timers) == 0 {
 			break

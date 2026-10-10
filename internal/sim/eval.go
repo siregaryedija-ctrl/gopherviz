@@ -554,7 +554,7 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	it.depth++
 	defer func() { it.depth-- }()
 	if it.depth > maxDepth {
-		it.structural("rekursi terlalu dalam untuk disimulasikan")
+		it.stackOverflow(at)
 	}
 	var ft *ast.FuncType
 	var body *ast.BlockStmt

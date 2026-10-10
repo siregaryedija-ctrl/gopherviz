@@ -45,9 +45,12 @@
     <button id="tNext" class="icon-btn" title="Langkah berikutnya"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
     <button id="tRestart" class="icon-btn" title="Ulang dari awal"><svg viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z"/></svg></button>
     <button id="tRec" class="icon-btn" title="Rekam animasi"><svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z"/></svg></button>
+    <button id="tQuiz" class="icon-btn" aria-pressed="false" title="Mode tebak"><svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg></button>
     <input type="range" id="tScrub" min="0" max="0" value="0">
     <span id="tLabel" class="tlabel"></span>
   </div>
+  <div id="quizCard" class="qcard" hidden></div>
+  <div id="errCard" class="errcard" hidden></div>
   <div id="inputbar" class="inputbar" hidden>
     <label for="inputBox">Input</label>
     <input id="inputBox" type="text" placeholder="isi nilai input, pisahkan dengan koma (contoh: 25, Budi)" spellcheck="false" autocomplete="off">
@@ -120,6 +123,8 @@
 <script src="../media/treestage.js"></script>
 <script src="../media/memory.js"></script>
 <script src="../media/recorder.js"></script>
+<script src="../media/errorfx.js"></script>
+<script src="../media/quiz.js"></script>
 <script src="../media/main.js"></script>
 <script>
   const q = new URLSearchParams(location.search);
@@ -131,6 +136,22 @@
     const s = window.SAMPLES[q.get('sample')];
     post({ type: 'state', file: s.file, focusBlock: s.focusBlock, server: { ok: true }, result: { scene: s.scene.scene, diagnostics: [] } });
     if (q.get('struct') === null) post({ type: 'trace', blockId: s.focusBlock, trace: s.trace, code: s.code });
+    // ?quiz[=n]: mode tebak, putar sampai pertanyaan ke-n (bawaan 1); &qans=k menjawab pilihan k
+    if (q.get('quiz') !== null) setTimeout(() => {
+      const app = GV.app;
+      app.setQuiz(true);
+      const want = +(q.get('quiz') || 1);
+      for (let guard = 0; guard < 200000; guard++) {
+        app.tickTrace(16);
+        if (app.quiz.open) {
+          if (app.quiz.k + 1 >= want) break;
+          app.quizAnswer(app.quiz.open.answer);
+          app.quizNext();
+        }
+        if (app.quiz.done) break;
+      }
+      if (q.get('qans') !== null && app.quiz.open) app.quizAnswer(+q.get('qans'));
+    }, 80);
     if (q.get('recdialog') !== null) setTimeout(() => document.getElementById('tRec').click(), 120);
     if (q.get('rec')) setTimeout(() => { // ?rec=gif|webm&frame=stage|reel: rekam lalu hasilnya ke <pre id="exported">
       document.querySelector(`input[name="recFrame"][value="${q.get('frame') || 'stage'}"]`).checked = true;
@@ -142,7 +163,7 @@
       const app = GV.app, tp = app.tp;
       tp.playing = false;
       app.goto(+q.get('at'), false);
-      tp.el = tp.r.duration(tp.i) * +(q.get('t') || 0.6);
+      tp.el = tp.p.duration(tp.i) * +(q.get('t') || 0.6);
       for (let k = 0; k < 90; k++) app.tickTrace(16); // kamera mencapai posisinya
     }, 80);
   } else {

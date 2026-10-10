@@ -3,6 +3,7 @@ package irsim
 import (
 	"strings"
 
+	"gopherviz/internal/explain"
 	"gopherviz/internal/graphs"
 	"gopherviz/internal/ir"
 	"gopherviz/internal/scene"
@@ -323,6 +324,11 @@ type thrown struct {
 	v   Value
 	msg string // teks untuk catatan: "ZeroDivisionError: division by zero"
 	at  ir.Node
+	ctx *explain.Ctx // keterangan penyebab untuk penjelasan error (boleh nil)
+	// fatal: crash yang tidak bisa ditangkap try/catch (C/C++ perilaku tak terdefinisi,
+	// stack overflow di bahasa tanpa exception rekursi)
+	fatal bool
+	depth int // kedalaman lantai rekaman + 1 saat dilempar (0 = tidak diketahui)
 }
 
 type flowKind int
