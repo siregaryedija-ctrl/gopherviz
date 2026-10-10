@@ -46,6 +46,7 @@
     'range-unknown': 'Mengunjungi setiap elemen. Tipe datanya belum diketahui (berasal dari package lain).',
   };
   const BLOCK_EXPLAIN = {
+    'evloop': 'JavaScript menjalankan satu hal pada satu waktu (call stack). setTimeout menaruh tiket di antrian timer, Promise.then dan lanjutan await di antrian microtask. Saat call stack kosong, event loop mengambil tiket: semua microtask dulu, baru timer.',
     'if': 'Kondisi dicek satu per satu dari atas. Cabang pertama yang true dijalankan, sisanya dilewati.',
     'switch': 'Nilainya dicocokkan dengan setiap case dari atas. Case pertama yang cocok dijalankan.',
     'func': 'Setiap pemanggilan fungsi = Gopher masuk pipa ke lantai baru membawa argumen; return = naik lagi membawa koin berisi nilai. Rekursi = lantai bertumpuk ke bawah.',
@@ -79,6 +80,8 @@
   const maze = new G.GridStage($('stage'), {});
   const pohon = new G.TreeStage($('stage'), {});
   const belah = new G.MergeStage($('stage'));
+  const menara = new G.SQStage($('stage'));
+  const loket = new G.EvStage($('stage'));
 
   // ---------- state dari ekstensi ----------
 
@@ -337,6 +340,9 @@
   const classR = { prepare: tr => cls.prepare(tr), duration: i => cls.duration(i), cues: i => cls.cues(i), render: (i, t) => cls.render(i, t) };
   const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
   const mergeR = { prepare: tr => belah.prepare(tr), duration: i => belah.duration(i), cues: i => belah.cues(i), render: (i, t) => belah.render(i, t) };
+  const evR = { prepare: tr => loket.prepare(tr), duration: i => loket.duration(i), cues: i => loket.cues(i), render: (i, t) => loket.render(i, t) };
+  let sqInfo = null;
+  const sqR = { prepare: tr => menara.prepare(tr, sqInfo), duration: i => menara.duration(i), cues: i => menara.cues(i), render: (i, t) => menara.render(i, t) };
 
   /** Langkah call/return hanya berarti di mode fungsi; di renderer lain digabung ke langkah berikutnya. */
   function foldCalls(tr) {
@@ -391,7 +397,12 @@
     // merge sort (atau quick sort) yang mengembalikan list baru di setiap rekursi: panggung belah-gabung
     const sortInfo = kind === 'func' && G.sorts ? G.sorts.detect(tr) : null;
     const mergeMode = !!(sortInfo && sortInfo.lists) && !laneMode && !islands;
-    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.tree ? treeR : tr.grid ? gridR : tr.graph ? graphR : islands ? islandR : mergeMode ? mergeR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    // koleksi yang diisi lalu diambil satu per satu: tumpukan (menara) / antrian (ban berjalan)
+    sqInfo = !mergeMode && !laneMode && !islands && kind !== 'class' && G.sq ? G.sq.detect(tr) : null;
+    // JavaScript async: event loop tiga jalur (call stack, microtask, timer)
+    const evMode = tr.steps.some(s => s.evloop && (s.evloop.micro.length || s.evloop.macro.length));
+    if (evMode) $('explain').textContent = BLOCK_EXPLAIN.evloop;
+    tp.r = kind === 'class' ? classR : laneMode ? laneR : evMode ? evR : tr.tree ? treeR : tr.grid ? gridR : tr.graph ? graphR : islands ? islandR : mergeMode ? mergeR : sqInfo ? sqR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     tp.p = withErrFx(tp.r);
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
@@ -924,7 +935,7 @@
 
   const REC = G.recorder;
   let recording = false, recCancel = false;
-  const allStages = () => [level, data, branch, func, lanes, graph, cls, isles, maze, pohon, belah];
+  const allStages = () => [level, data, branch, func, lanes, graph, cls, isles, maze, pohon, belah, menara, loket];
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const radio = name => (document.querySelector(`input[name="${name}"]:checked`) || {}).value;
 
@@ -939,6 +950,8 @@
     if (tr.class) return `Class ${tr.class.name}`;
     if (tp.r === dataR && data.elim) return 'Pencarian';
     if (tp.r === mergeR) return titleCase(belah.title);
+    if (tp.r === sqR) return sqInfo.kind === 'stack' ? 'Tumpukan (Stack)' : 'Antrian (Queue)';
+    if (tp.r === evR) return 'Event Loop';
     if (tp.r === dataR && data.sort) return titleCase(data.sort.title);
     const b = currentBlock;
     if (!b) return 'GopherViz';
@@ -1078,6 +1091,8 @@
     maze.update(dt);
     pohon.update(dt);
     belah.update(dt);
+    menara.update(dt);
+    loket.update(dt);
     if (recording) { requestAnimationFrame(frame); return; } // perekam yang menggambar panggung
     if (raceView.active) { // lomba menggantikan panggung biasa sampai user keluar
       raceView.update(dt, config.speed);

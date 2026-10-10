@@ -664,7 +664,9 @@ func (it *interp) evalUnary(n *ir.Unary, e *Env) Value {
 		return boolV(true)
 	case "await":
 		v := it.eval(n.X, e)
-		it.warn("await disimulasikan secara langsung (sinkron); urutan output program async bisa berbeda dengan aslinya")
+		if it.curCoro == nil {
+			it.warn("await di luar fungsi async disimulasikan secara langsung (sinkron)")
+		}
 		return it.awaitValue(v, n)
 	case "yield", "yield*", "yield from":
 		it.structural("generator (yield) belum disimulasikan")

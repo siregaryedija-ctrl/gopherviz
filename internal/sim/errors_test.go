@@ -158,3 +158,26 @@ func main() {
 		t.Fatalf("operasi n=10: %d, n=40: %d", w10, w40)
 	}
 }
+
+// TestPopOps: s = s[:len(s)-1] (tumpukan) dan s = s[1:] (antrian) menjadi op pop.
+func TestPopOps(t *testing.T) {
+	for _, c := range []struct {
+		expr  string
+		front bool
+	}{{"s[:len(s)-1]", false}, {"s[1:]", true}} {
+		src := "package main\n\nfunc f() {\n\tvar s []int\n\ts = append(s, 1)\n\ts = append(s, 2)\n\ts = " + c.expr + "\n}\n\nfunc main() { f() }\n"
+		p := analyzer.Load("t.go", []byte(src))
+		tr := Trace(p, "F1", Options{})
+		var pops []trace.Op
+		for _, s := range tr.Steps {
+			for _, o := range s.Ops {
+				if o.Op == trace.OpPop {
+					pops = append(pops, o)
+				}
+			}
+		}
+		if len(pops) != 1 || (pops[0].A == 0) != c.front {
+			t.Fatalf("%s: pop %v (koleksi %+v)", c.expr, pops, tr.Collection)
+		}
+	}
+}

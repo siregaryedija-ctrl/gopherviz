@@ -1168,6 +1168,16 @@ func (it *interp) detectOps(n *ast.AssignStmt, e *env, rhs []value) {
 		if !ok || id.Name != it.rec.coll || i >= len(n.Rhs) {
 			continue
 		}
+		if sx, ok := n.Rhs[i].(*ast.SliceExpr); ok && rhs[i].k == kSlice { // s = s[:len(s)-1] / s = s[1:]: pop
+			if x, ok := sx.X.(*ast.Ident); ok && x.Name == id.Name {
+				if cell := e.lookup(id.Name); cell != nil && cell.k == kSlice {
+					if op, ok := popOp(cell.sl.elems(), rhs[i].sl.elems()); ok {
+						it.rec.op(op)
+						continue
+					}
+				}
+			}
+		}
 		if call, ok := n.Rhs[i].(*ast.CallExpr); ok {
 			if fn, ok := call.Fun.(*ast.Ident); ok && fn.Name == "append" && rhs[i].k == kSlice && rhs[i].sl.elemsLen() > 0 {
 				elems := rhs[i].sl.elems()
@@ -1488,4 +1498,26 @@ func (it *interp) recoverValue(at ast.Node) value {
 func (it *interp) isBuiltin(id *ast.Ident) bool {
 	_, ok := it.p.Info.Uses[id].(*types.Builtin)
 	return ok
+}
+
+// popOp mengenali satu elemen yang keluar dari depan (antrian) atau belakang (tumpukan) slice.
+func popOp(before, after []value) (trace.Op, bool) {
+	if len(after) != len(before)-1 || len(before) == 0 {
+		return trace.Op{}, false
+	}
+	same := func(a, b []value) bool {
+		for i := range a {
+			if format(a[i]) != format(b[i]) {
+				return false
+			}
+		}
+		return true
+	}
+	if same(after, before[:len(before)-1]) {
+		return trace.Op{Op: trace.OpPop, A: len(before) - 1, Value: format(before[len(before)-1])}, true
+	}
+	if same(after, before[1:]) {
+		return trace.Op{Op: trace.OpPop, A: 0, Value: format(before[0])}, true
+	}
+	return trace.Op{}, false
 }

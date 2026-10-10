@@ -254,10 +254,10 @@ func (it *interp) evalCall(c *ir.Call, e *Env) Value {
 		return undef()
 	}
 	args := it.evalArgsFor(fv, c.Args, e)
-	before := 0
+	var before []Value
 	if collCall != "" {
 		if v := it.collValue(e); v.k == kList {
-			before = len(v.l.elems)
+			before = append([]Value(nil), v.l.elems...)
 		}
 	}
 	unbind := it.searchProbe(c, args, e)
@@ -302,22 +302,53 @@ func (it *interp) collValue(e *Env) Value {
 	return Value{}
 }
 
-// collMutation mencatat operasi koleksi lewat method: push/append/add → append; lainnya → isi berubah.
-func (it *interp) collMutation(name string, e *Env, before int) {
+// collMutation mencatat operasi koleksi lewat method: push/append/add → append; satu elemen keluar
+// dari depan atau belakang (pop, shift, popleft, poll, ...) → pop (Fase 12d: tumpukan/antrian);
+// lainnya → isi berubah.
+func (it *interp) collMutation(name string, e *Env, before []Value) {
 	v := it.collValue(e)
 	switch name {
 	case "push", "append", "push_back", "add", "emplace_back", "unshift", "insert", "extend",
-		"pop", "shift", "remove", "erase", "splice", "sort", "reverse", "clear", "pop_back", "fill", "set", "put", "delete", "discard":
+		"pop", "shift", "remove", "erase", "splice", "sort", "reverse", "clear", "pop_back", "fill", "set", "put", "delete", "discard",
+		"popleft", "appendleft", "pop_front", "push_front", "emplace_front", "poll", "pollFirst", "pollLast", "offer", "offerFirst",
+		"offerLast", "addFirst", "addLast", "removeFirst", "removeLast", "dequeue", "enqueue", "array_pop", "array_shift":
 	default:
 		return
 	}
-	if v.k == kList && (name == "push" || name == "append" || name == "push_back" || name == "add" || name == "emplace_back") &&
-		len(v.l.elems) == before+1 {
-		last := len(v.l.elems) - 1
-		it.rec.op(trace.Op{Op: trace.OpAppend, A: last, Value: it.format(v.l.elems[last])})
+	if v.k != kList {
+		it.rec.dirty = true
 		return
 	}
+	after := v.l.elems
+	if len(after) == len(before)+1 && sameVals(it, after[:len(before)], before) {
+		last := len(after) - 1
+		it.rec.op(trace.Op{Op: trace.OpAppend, A: last, Value: it.format(after[last])})
+		return
+	}
+	if len(after) == len(before)-1 && len(before) > 0 {
+		switch {
+		case sameVals(it, after, before[:len(before)-1]):
+			it.rec.op(trace.Op{Op: trace.OpPop, A: len(before) - 1, Value: it.format(before[len(before)-1])})
+			return
+		case sameVals(it, after, before[1:]):
+			it.rec.op(trace.Op{Op: trace.OpPop, A: 0, Value: it.format(before[0])})
+			return
+		}
+	}
 	it.rec.dirty = true
+}
+
+// sameVals: isi dua daftar sama (dibandingkan lewat teks tampilannya).
+func sameVals(it *interp, a, b []Value) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] && it.format(a[i]) != it.format(b[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 func (it *interp) callValueArgs(fv, this Value, args argList, at ir.Node) Value {
@@ -455,6 +486,18 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		name = "(anonim)"
 	}
 	it.nameFromCall(at, this)
+	frameName := name
+	if it.lang == "javascript" || it.lang == "typescript" { // call stack untuk panggung event loop
+		if decl.Name == "" { // callback anonim: potongan kodenya, mis. "() => console.log(…"
+			frameName = clipLabel(it.text(decl), 20)
+		}
+		it.jsStack = append(it.jsStack, frameName)
+		defer func() {
+			if n := len(it.jsStack); n > 0 {
+				it.jsStack = it.jsStack[:n-1]
+			}
+		}()
+	}
 	if recordCall && it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: name, Args: argText,
 			Note: fmt.Sprintf("panggil %s(%s)", name, argText)}, scope)
@@ -470,7 +513,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		it.quiet++
 	}
 	var ret Value
-	func() {
+	body := func() {
 		defer func() {
 			if quietBody {
 				it.quiet--
@@ -492,12 +535,22 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		default:
 			ret = it.defaultReturn()
 		}
-	}()
-	if decl.Ret != "" && it.isTyped() && decl.Ret != "void" && decl.Ret != "auto" {
-		ret = it.sem.convert(it, ret, decl.Ret)
 	}
-	if decl.Async {
-		ret = it.resolvedPromise(ret)
+	if decl.Async && (it.lang == "javascript" || it.lang == "typescript") {
+		// fungsi async: isinya berjalan sebagai coroutine; yang dikembalikan langsung adalah promise
+		// (masih pending bila isinya tertunda di await)
+		ret = it.runAsync(frameName, body, func() Value { return ret })
+		if quietBody { // konteks pemanggil dipulihkan dengan quiet yang ditambah di atas
+			it.quiet--
+		}
+	} else {
+		body()
+		if decl.Ret != "" && it.isTyped() && decl.Ret != "void" && decl.Ret != "auto" {
+			ret = it.sem.convert(it, ret, decl.Ret)
+		}
+		if decl.Async {
+			ret = it.resolvedPromise(ret)
+		}
 	}
 	if recordCall && it.recording() {
 		rs := it.sem.show(it, ret)

@@ -322,9 +322,24 @@ func findCollection(p *analyzer.Program, node ast.Node) (name, kind string) {
 				consider(x.Args[0], 3)
 			}
 		case *ast.AssignStmt: // koleksi yang diubah lebih menarik daripada yang hanya dibaca
-			for _, l := range x.Lhs {
+			for i, l := range x.Lhs {
 				if ix, ok := l.(*ast.IndexExpr); ok {
 					consider(ix.X, 3)
+				}
+				// s = append(s, x) / s = s[:len(s)-1] / s = s[1:]: slice yang tumbuh/menyusut (tumpukan, antrian)
+				if id, ok := l.(*ast.Ident); ok && i < len(x.Rhs) && len(x.Lhs) == len(x.Rhs) {
+					switch r := x.Rhs[i].(type) {
+					case *ast.CallExpr:
+						if fn, ok := r.Fun.(*ast.Ident); ok && fn.Name == "append" && len(r.Args) > 0 {
+							if a, ok := r.Args[0].(*ast.Ident); ok && a.Name == id.Name {
+								consider(id, 3)
+							}
+						}
+					case *ast.SliceExpr:
+						if a, ok := r.X.(*ast.Ident); ok && a.Name == id.Name {
+							consider(id, 3)
+						}
+					}
 				}
 			}
 		case *ast.IncDecStmt:

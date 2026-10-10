@@ -1,0 +1,123 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "javascript",
+    "file": "05_async.js",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 2,
+        "endLine": 4,
+        "state": "complete",
+        "name": "tunggu",
+        "header": "function tunggu(ms, nilai)",
+        "params": [
+          "ms",
+          "nilai"
+        ],
+        "body": [
+          {
+            "kind": "return",
+            "line": 3,
+            "text": "return new Promise(resolve => setTimeout(() => resolve(nila…"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 6,
+        "endLine": 11,
+        "state": "complete",
+        "name": "ambil",
+        "header": "async function ambil(nama)",
+        "params": [
+          "nama"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "console.log(\"mulai \" + nama);"
+          },
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "await null;"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "console.log(\"lanjut \" + nama);"
+          },
+          {
+            "kind": "return",
+            "line": 10,
+            "text": "return nama.length;"
+          }
+        ]
+      },
+      {
+        "id": "F3",
+        "kind": "func",
+        "line": 13,
+        "endLine": 23,
+        "state": "complete",
+        "name": "berurutan",
+        "header": "async function berurutan()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "const a = await tunggu(20, \"a\")"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "const b = await tunggu(10, \"b\")"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "console.log(\"berurutan\", a + b);"
+          },
+          {
+            "kind": "stmt",
+            "line": 17,
+            "endLine": 21,
+            "text": "try { …"
+          },
+          {
+            "kind": "return",
+            "line": 22,
+            "text": "return \"selesai\";"
+          }
+        ]
+      },
+      {
+        "id": "F4",
+        "kind": "func",
+        "line": 25,
+        "endLine": 28,
+        "state": "complete",
+        "name": "bertingkat",
+        "header": "async function bertingkat()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "const n = await ambil(\"dalam\")"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "console.log(\"bertingkat dapat\", n);"
+          }
+        ]
+      }
+    ],
+    "loops": []
+  },
+  "diagnostics": null
+}

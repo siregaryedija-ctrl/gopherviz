@@ -446,6 +446,11 @@ func (it *interp) setupJS(s *jsSem) {
 	promClass.statics.set(strV("resolve"), bf("resolve", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		return it.resolvedPromise(arg(args, 0))
 	}))
+	promClass.statics.set(strV("reject"), bf("reject", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		p := it.newPromise()
+		it.settle(p, arg(args, 0), true)
+		return p
+	}))
 	g["Promise"] = Value{k: kClass, c: promClass}
 	seq := 0
 	g["setTimeout"] = bf("setTimeout", func(it *interp, this Value, args []Value, at ir.Node) Value {
@@ -456,10 +461,16 @@ func (it *interp) setupJS(s *jsSem) {
 		}
 		extra := append([]Value(nil), args[min(2, len(args)):]...)
 		seq++
-		it.timers = append(it.timers, timerTask{at: delay, seq: seq, fn: func() { it.call(f, undef(), extra, at) }})
+		it.timers = append(it.timers, timerTask{at: delay, seq: seq, fn: func() { it.call(f, undef(), extra, at) },
+			label: it.timerLabel(f, delay), rec: it.recording() || it.rec.on() && it.rec.reached})
 		return num(float64(seq))
 	})
 	g["clearTimeout"] = bf("clearTimeout", func(it *interp, this Value, args []Value, at ir.Node) Value { return undef() })
+	g["queueMicrotask"] = bf("queueMicrotask", func(it *interp, this Value, args []Value, at ir.Node) Value {
+		f := arg(args, 0)
+		it.queueTask("queueMicrotask: "+it.fnLabel(f), func() { it.call(f, undef(), nil, at) })
+		return undef()
+	})
 	g["globalThis"] = it.dictV("object")
 }
 
@@ -585,13 +596,22 @@ func (it *interp) settle(p Value, v Value, rejected bool) {
 	if cbs, ok := p.d.get(strV("cbs")); ok && cbs.k == kList {
 		for _, cb := range cbs.l.elems {
 			fn := cb.fn
-			it.tasks = append(it.tasks, func() { fn.builtin(it, undef(), nil, nil) })
+			it.queueTask(fn.name, func() { fn.builtin(it, undef(), nil, nil) })
 		}
 	}
 }
 
 // then mendaftarkan callback yang dijalankan sebagai microtask setelah promise selesai.
 func (it *interp) then(p Value, onOk, onErr Value, at ir.Node) Value {
+	h := onOk
+	if h.k != kFunc {
+		h = onErr
+	}
+	return it.thenLabeled(p, onOk, onErr, at, "then: "+it.fnLabel(h))
+}
+
+// thenLabeled: then dengan label tiket sendiri (lanjutan await).
+func (it *interp) thenLabeled(p Value, onOk, onErr Value, at ir.Node, label string) Value {
 	next := it.newPromise()
 	run := func() {
 		st, _ := p.d.get(strV("state"))
@@ -629,14 +649,14 @@ func (it *interp) then(p Value, onOk, onErr Value, at ir.Node) Value {
 		}()
 	}
 	if st, _ := p.d.get(strV("state")); st.s != "pending" {
-		it.tasks = append(it.tasks, run)
+		it.queueTask(label, run)
 	} else {
 		cbs, ok := p.d.get(strV("cbs"))
 		if !ok {
 			cbs = it.newList("array", nil)
 			p.d.set(strV("cbs"), cbs)
 		}
-		cbs.l.elems = append(cbs.l.elems, Value{k: kFunc, fn: &Func{builtin: func(it *interp, this Value, args []Value, at nodeRef) Value {
+		cbs.l.elems = append(cbs.l.elems, Value{k: kFunc, fn: &Func{name: label, builtin: func(it *interp, this Value, args []Value, at nodeRef) Value {
 			run()
 			return undef()
 		}}})
@@ -647,6 +667,9 @@ func (it *interp) then(p Value, onOk, onErr Value, at ir.Node) Value {
 // awaitValue: await dijalankan sinkron. Promise yang sudah selesai langsung memberi nilainya;
 // microtask yang tertunda dijalankan dulu supaya promise sempat selesai.
 func (it *interp) awaitValue(v Value, at ir.Node) Value {
+	if c := it.curCoro; c != nil { // di dalam fungsi async: benar-benar tertunda (async.go)
+		return it.awaitCoro(c, v, at)
+	}
 	if v.k != kDict || v.d.kind != "promise" {
 		return v
 	}
@@ -671,7 +694,7 @@ func (it *interp) runOneTask() {
 	if len(it.tasks) > 0 {
 		t := it.tasks[0]
 		it.tasks = it.tasks[1:]
-		t()
+		it.runTask(t.fn, t.label, t.rec, "microtask")
 		return
 	}
 	if len(it.timers) > 0 {
@@ -683,7 +706,7 @@ func (it *interp) runOneTask() {
 		}
 		t := it.timers[best]
 		it.timers = append(it.timers[:best:best], it.timers[best+1:]...)
-		t.fn()
+		it.runTask(t.fn, t.label, t.rec, "timer")
 	}
 }
 

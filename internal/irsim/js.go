@@ -680,8 +680,15 @@ func (c *inspectCtx) format(v Value, recurse int, top bool) string {
 			}
 		case "regex":
 			return it.sem.str(it, v)
-		case "promise":
+		case "promise": // seperti Node: Promise { <pending> } / Promise { 5 } / Promise { <rejected> err }
+			state, _ := v.d.get(strV("state"))
 			st, _ := v.d.get(strV("value"))
+			switch state.s {
+			case "pending":
+				return "Promise { <pending> }"
+			case "rejected":
+				return "Promise { <rejected> " + c.child(st, recurse) + " }"
+			}
 			return "Promise { " + c.child(st, recurse) + " }"
 		default:
 			for _, k := range jsKeyOrder(v.d) {

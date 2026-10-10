@@ -99,6 +99,15 @@ const samples = {
   sort_ins: ['@/sort/sorts.py', 12],
   sort_quick: ['@/sort/sorts.py', 23],
   sort_merge: ['@/sort/sorts.py', 37],
+  // Fase 12d: tumpukan, antrian, async JS
+  sq_stack_py: ['@/sq/stack.py', 1],
+  sq_queue_py: ['@/sq/queue.py', 3],
+  sq_queue_js: ['@/sq/queue.js', 1],
+  sq_stack_java: ['@/sq/Antri.java', 6],
+  sq_queue_cpp: ['@/sq/stack.cpp', 4],
+  sq_stack_go: ['@/sq/sqgo/main.go', 5],
+  ev_await: ['@/sq/await.js', 9],
+  ev_basic: ['@/sq/async.js', 2],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

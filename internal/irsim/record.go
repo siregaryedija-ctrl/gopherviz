@@ -268,7 +268,7 @@ func (r *recorder) loopFrame() *frame {
 func (r *recorder) op(o trace.Op) {
 	r.ops = append(r.ops, o)
 	switch o.Op {
-	case trace.OpSwap, trace.OpSet, trace.OpAppend, trace.OpDelete:
+	case trace.OpSwap, trace.OpSet, trace.OpAppend, trace.OpDelete, trace.OpPop:
 		r.dirty = true
 	}
 }

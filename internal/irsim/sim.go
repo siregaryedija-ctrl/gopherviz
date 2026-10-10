@@ -119,6 +119,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		it.globals.global = true
 		it.newModules(opt.Files)
 		it.budget0 = opt.Budget
+		it.asyncUsed = usesAsync(res.Scene.Language, res.Src)
 		if _, isFn := node.(*ir.Func); isFn && opt.Call != nil {
 			it.raceSpec = opt.Call
 		}
@@ -203,6 +204,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 // run menjalankan program dari titik masuknya dan mengembalikan alasan bila simulasi
 // harus beralih ke mode struktur.
 func (it *interp) run(node ir.Node, unknownArgs bool) (structural string) {
+	defer it.killCoros() // setelah panic program ditangani: coroutine async yang tertunda dihentikan
 	defer func() {
 		r := recover()
 		if r == nil {
@@ -424,7 +426,7 @@ func (it *interp) runTasks() {
 		if len(it.tasks) > 0 {
 			t := it.tasks[0]
 			it.tasks = it.tasks[1:]
-			t()
+			it.runTask(t.fn, t.label, t.rec, "microtask")
 			continue
 		}
 		if len(it.timers) > 0 {
@@ -436,7 +438,7 @@ func (it *interp) runTasks() {
 			}
 			t := it.timers[best]
 			it.timers = append(it.timers[:best:best], it.timers[best+1:]...)
-			t.fn()
+			it.runTask(t.fn, t.label, t.rec, "timer")
 			continue
 		}
 		return
@@ -642,6 +644,7 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 	it.globals.global = true
 	it.newModules(opt.Files)
 	func() {
+		defer it.killCoros()
 		defer func() {
 			if r := recover(); r != nil {
 				switch x := r.(type) {

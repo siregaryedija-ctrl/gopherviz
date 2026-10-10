@@ -61,7 +61,12 @@ type interp struct {
 	phpGlobal map[*Env]map[string]bool
 	statics   map[*ir.VarSpec]*Cell // PHP: static $x di fungsi
 	handling  *Value                // exception yang sedang ditangani (raise tanpa argumen)
-	tasks     []func()              // JS: microtask (Promise.then) dan timer, dijalankan setelah skrip utama
+	tasks     []task                // JS: antrian microtask (Promise.then, lanjutan await), dijalankan setelah skrip utama
+	coros     []*coro               // JS: fungsi async yang sedang tertunda di await (async.go)
+	curCoro   *coro                 // coroutine yang sedang berjalan (nil = skrip utama / tiket biasa)
+	jsStack   []string              // JS: nama fungsi di call stack (panggung event loop)
+	curTask   string                // tiket event loop yang sedang dijalankan
+	asyncUsed bool                  // program JS/TS memakai setTimeout/Promise/async: langkah membawa potret event loop
 	timers    []timerTask
 	input     *userinput.Source // angka pengganti input user (dibuat saat pertama dipakai)
 	stdinBuf  string            // sisa baris input untuk getchar
@@ -78,9 +83,11 @@ type interp struct {
 }
 
 type timerTask struct {
-	at  float64
-	seq int
-	fn  func()
+	at    float64
+	seq   int
+	fn    func()
+	label string // tiket di panggung event loop
+	rec   bool   // dibuat saat blok fokus direkam
 }
 
 const maxDepth = 200
@@ -151,6 +158,7 @@ func (it *interp) add(s trace.Step, e *Env) {
 	if it.cur != nil {
 		s.File = it.cur.name // "" = file fokus
 	}
+	s.EvLoop = it.evLoop()
 	it.rec.add(s, vars, func() ([]string, []string) { return it.collItems(e) })
 }
 

@@ -1,0 +1,34 @@
+2: func tunggu(ms, nilai)
+  2: block
+    3: return new Promise(fn =>(resolve) setTimeout(fn =>() resolve(nilai), ms))
+6: func ambil(nama)
+  6: block
+    7: expr console.log(("mulai " + nama))
+    8: expr (await null)
+    9: expr console.log(("lanjut " + nama))
+    10: return nama.length
+13: func berurutan()
+  13: block
+    14: var(const) a = (await tunggu(20, "a"))
+    15: var(const) b = (await tunggu(10, "b"))
+    16: expr console.log("berurutan", (a + b))
+    17: try
+      17: block
+        18: expr (await Promise.reject(new Error("gagal")))
+      catch [] e
+      19: block
+        20: expr console.log("tertangkap", e.message)
+    22: return "selesai"
+25: func bertingkat()
+  25: block
+    26: var(const) n = (await ambil("dalam"))
+    27: expr console.log("bertingkat dapat", n)
+30: expr console.log("1 sinkron")
+31: expr ambil("A").then(fn =>(n) console.log("panjang", n))
+32: expr setTimeout(fn =>() console.log("timer 0"), 0)
+33: expr setTimeout(fn =>() console.log("timer 5"), 5)
+34: expr Promise.resolve(1).then(fn =>(x) (x + 1)).then(fn =>(x) console.log("rantai", x))
+35: expr queueMicrotask(fn =>() console.log("microtask"))
+36: expr berurutan().then(fn =>(s) console.log(s))
+37: expr bertingkat()
+38: expr console.log("2 sinkron")

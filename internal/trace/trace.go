@@ -67,6 +67,7 @@ const (
 	OpDelete  OpKind = "delete" // key dihapus dari map
 	OpSend    OpKind = "send"   // nilai masuk ke channel Key (ID channel) di slot A
 	OpRecv    OpKind = "recv"   // nilai diambil dari slot A channel Key
+	OpPop     OpKind = "pop"    // elemen ke-A (Value) diambil keluar: A = 0 dari depan (antrian), A = terakhir dari belakang (tumpukan)
 )
 
 // Trace adalah hasil eksekusi satu blok.
@@ -148,6 +149,15 @@ type Step struct {
 	Self      string            `json:"self,omitempty"`     // ID object yang menjadi this/self di langkah ini
 	SelfCopy  bool              `json:"selfCopy,omitempty"` // Go: method value receiver bekerja pada salinan object Self
 	Err       *ErrInfo          `json:"err,omitempty"`      // penjelasan error (hanya pada langkah exit reason panic)
+	EvLoop    *EventLoop        `json:"evloop,omitempty"`   // JS async: call stack + antrian microtask + antrian timer
+}
+
+// EventLoop adalah keadaan event loop JavaScript pada satu langkah (Fase 12d): tiga jalur tiket.
+type EventLoop struct {
+	Stack []string `json:"stack"`          // call stack: fungsi yang sedang berjalan (bawah dulu)
+	Micro []string `json:"micro"`          // antrian microtask (Promise.then, lanjutan await), depan dulu
+	Macro []string `json:"macro"`          // antrian timer (setTimeout), urut waktu jalan
+	Task  string   `json:"task,omitempty"` // tiket yang sedang dijalankan event loop
 }
 
 // ErrInfo menjelaskan error yang menghentikan program dengan bahasa sederhana, beserta nilai

@@ -111,3 +111,29 @@ test('race: tebakan Big-O dari jumlah operasi', () => {
   const r = ws.SAMPLES.race_sel_merge.race;
   assert.deepEqual([...r.runs.map((x: Any) => O(r.sizes, x.work))], ['n²', 'n log n']);
 });
+
+const wq = load('dev/samples.js', 'media/sqstage.js');
+
+test('sq: tumpukan dan antrian dikenali dari perubahan isi koleksi', () => {
+  const D = (name: string) => wq.GV.sq.detect(wq.SAMPLES[name].trace);
+  const want: Record<string, [string, string]> = {
+    sq_stack_py: ['stack', 'back'], sq_queue_py: ['queue', 'back'], sq_queue_js: ['queue', 'back'],
+    sq_stack_java: ['stack', 'front'], sq_queue_cpp: ['queue', 'back'], sq_stack_go: ['stack', 'back'],
+  };
+  for (const [name, [kind, end]] of Object.entries(want)) {
+    const r = D(name);
+    assert.ok(r, `${name}: tidak dikenali`);
+    assert.deepEqual([r.kind, r.pushEnd], [kind, end], name);
+    assert.equal(r.lists.length, wq.SAMPLES[name].trace.steps.length);
+  }
+  for (const name of ['bubble', 'sort_sel', 'py_bfs', 'js_for', 'ev_await']) assert.equal(D(name), null, name);
+});
+
+test('event loop: setiap langkah sampel async membawa potret evloop', () => {
+  const steps = wq.SAMPLES.ev_await.trace.steps;
+  assert.ok(steps.every((s: Any) => s.evloop), 'langkah tanpa evloop');
+  assert.ok(steps.some((s: Any) => s.evloop.micro.length && s.evloop.macro.length));
+  let out = '';
+  for (const s of steps) out += s.output || '';
+  assert.equal(out, 'mulai A\nsinkron selesai\nlanjut A\npromise\npanjang 1\ntimer\n');
+});
