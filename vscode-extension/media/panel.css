@@ -368,3 +368,22 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .errcard p { margin: 0; }
 .errcard .hint { color: var(--vscode-foreground); }
 .errcard .src { font-family: var(--vscode-editor-font-family); font-size: 11px; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere; }
+
+/* Fase 12c: lomba algoritma */
+.racecard {
+  margin: 0; padding: 10px 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;
+  border: 1px solid var(--border); border-left: 4px solid #3b82c4;
+  background: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.1));
+}
+.race-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; }
+.race-btns { display: flex; flex-wrap: wrap; gap: 4px; }
+.race-input { margin: 0; font-family: var(--vscode-editor-font-family); font-size: 12px; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere; }
+.race-result { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; }
+.race-lane { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; }
+.race-lane b { display: block; font-family: var(--vscode-editor-font-family); }
+.race-lane.win { border-color: #3fb950; background: rgba(63, 185, 80, 0.12); }
+.racecard canvas { width: 100%; max-width: 560px; height: auto; }
+.race-note { margin: 0; font-size: 11px; color: var(--vscode-descriptionForeground); }
+.race-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow: auto; font-size: 12px; }
+.race-list label { display: flex; gap: 6px; align-items: center; font-family: var(--vscode-editor-font-family); }
+.race-lesson { grid-column: 1 / -1; font-size: 12px; color: var(--vscode-foreground); }

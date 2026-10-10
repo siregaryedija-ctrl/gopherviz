@@ -197,3 +197,73 @@ func TestOtherLanguage(t *testing.T) {
 		t.Errorf("trace %+v", tr.Trace)
 	}
 }
+
+// TestRace: dua fungsi sort dilombakan dengan list acak yang sama; bubble sort butuh operasi jauh
+// lebih banyak daripada merge sort untuk n = 40.
+func TestRace(t *testing.T) {
+	src := `package main
+
+func bubble(a []int) {
+	for i := range a {
+		for j := 0; j+1 < len(a)-i; j++ {
+			if a[j] > a[j+1] {
+				a[j], a[j+1] = a[j+1], a[j]
+			}
+		}
+	}
+}
+
+func merge(a []int) []int {
+	if len(a) <= 1 {
+		return a
+	}
+	m := len(a) / 2
+	l, r := merge(a[:m]), merge(a[m:])
+	out := make([]int, 0, len(a))
+	i, j := 0, 0
+	for i < len(l) && j < len(r) {
+		if l[i] <= r[j] {
+			out = append(out, l[i])
+			i++
+		} else {
+			out = append(out, r[j])
+			j++
+		}
+	}
+	out = append(out, l[i:]...)
+	return append(out, r[j:]...)
+}
+
+func main() {}
+`
+	resps := session(t, update(1, src, 3), `{"id":2,"method":"race","params":{"file":"main.go","blocks":["F1","F2"],"n":6,"seed":4}}`)
+	var res struct {
+		Input []int `json:"input"`
+		Sizes []int `json:"sizes"`
+		Runs  []struct {
+			Block string `json:"block"`
+			Trace struct {
+				Mode  string `json:"mode"`
+				Steps []any  `json:"steps"`
+			} `json:"trace"`
+			Work []int `json:"work"`
+		} `json:"runs"`
+	}
+	if resps[1].Error != nil {
+		t.Fatal(resps[1].Error.Message)
+	}
+	if err := json.Unmarshal(resps[1].Result, &res); err != nil {
+		t.Fatalf("%v: %s", err, resps[1].Result)
+	}
+	if len(res.Input) != 6 || len(res.Runs) != 2 || len(res.Sizes) != 4 {
+		t.Fatalf("hasil %s", resps[1].Result)
+	}
+	for _, r := range res.Runs {
+		if r.Trace.Mode != "simulated" || len(r.Trace.Steps) == 0 || len(r.Work) != 4 || r.Work[0] <= 0 {
+			t.Fatalf("%s: mode %s langkah %d operasi %v", r.Block, r.Trace.Mode, len(r.Trace.Steps), r.Work)
+		}
+	}
+	if b, m := res.Runs[0].Work[3], res.Runs[1].Work[3]; b <= m {
+		t.Errorf("n=40: bubble %d operasi, merge %d", b, m)
+	}
+}

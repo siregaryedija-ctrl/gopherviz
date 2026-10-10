@@ -2,7 +2,7 @@
   "name": "gopherviz",
   "displayName": "GopherViz",
   "description": "Visual pixel-art dan animasi cara kerja kode, realtime saat kamu mengetik. Go: nilai asli (loop, if, switch, fungsi, struct, pointer, map, goroutine, channel). JavaScript, TypeScript, Python, PHP, C++, C, Java: alur struktur.",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "publisher": "gopherviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",

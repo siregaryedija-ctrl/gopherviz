@@ -78,6 +78,7 @@
   const isles = new G.IslandStage($('stage'), {});
   const maze = new G.GridStage($('stage'), {});
   const pohon = new G.TreeStage($('stage'), {});
+  const belah = new G.MergeStage($('stage'));
 
   // ---------- state dari ekstensi ----------
 
@@ -86,6 +87,7 @@
     if (m.type === 'config') applyConfig(m);
     else if (m.type === 'state') applyState(m);
     else if (m.type === 'trace') applyTrace(m);
+    else if (m.type === 'race') applyRace(m);
   });
 
   function applyConfig(m) {
@@ -334,6 +336,7 @@
   const islandR = { prepare: tr => isles.prepare(tr), duration: i => isles.duration(i), cues: i => isles.cues(i), render: (i, t) => isles.render(i, t) };
   const classR = { prepare: tr => cls.prepare(tr), duration: i => cls.duration(i), cues: i => cls.cues(i), render: (i, t) => cls.render(i, t) };
   const laneR = { prepare: tr => lanes.prepare(tr), duration: i => lanes.duration(i), cues: i => lanes.cues(i), render: (i, t) => lanes.render(i, t) };
+  const mergeR = { prepare: tr => belah.prepare(tr), duration: i => belah.duration(i), cues: i => belah.cues(i), render: (i, t) => belah.render(i, t) };
 
   /** Langkah call/return hanya berarti di mode fungsi; di renderer lain digabung ke langkah berikutnya. */
   function foldCalls(tr) {
@@ -385,7 +388,10 @@
     // fungsi yang memanggil (atau dipanggil dari) file lain: pulau + jembatan
     const islands = kind === 'func' && tr.files && tr.files.length > 1;
     if (islands) $('explain').textContent = BLOCK_EXPLAIN.islands;
-    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.tree ? treeR : tr.grid ? gridR : tr.graph ? graphR : islands ? islandR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
+    // merge sort (atau quick sort) yang mengembalikan list baru di setiap rekursi: panggung belah-gabung
+    const sortInfo = kind === 'func' && G.sorts ? G.sorts.detect(tr) : null;
+    const mergeMode = !!(sortInfo && sortInfo.lists) && !laneMode && !islands;
+    tp.r = kind === 'class' ? classR : laneMode ? laneR : tr.tree ? treeR : tr.grid ? gridR : tr.graph ? graphR : islands ? islandR : mergeMode ? mergeR : dataMode ? dataR : { loop: levelR, if: branchR, switch: branchR, func: funcR }[kind];
     tp.p = withErrFx(tp.r);
     level.mode = 'trace'; // hentikan animasi struktur (dan suaranya) di belakang layar
     tp.trace = tr;
@@ -460,8 +466,9 @@
     tp.active = false;
     tp.trace = null;
     traceNote = '';
-    for (const id of ['tracebar', 'stepNote', 'varsSection', 'memSection', 'outSection', 'errCard', 'quizCard']) $(id).hidden = true;
+    for (const id of ['tracebar', 'stepNote', 'varsSection', 'memSection', 'outSection', 'errCard', 'quizCard', 'raceCard']) $(id).hidden = true;
     quiz.open = null;
+    raceView.stop(); // kode berubah: hasil lomba lama tidak berlaku
     tp.outLen = 0;
     vscode.postMessage({ type: 'step', line: 0 }); // hapus sorotan baris di editor
     highlightPart(null);
@@ -818,13 +825,110 @@
     else if (e.key === 'Enter' && quiz.open.picked != null) { quizNext(); e.preventDefault(); }
   });
 
+  // ---------- lomba algoritma (Fase 12c) ----------
+
+  const raceView = new G.race.RaceView($('stage'));
+  let raceSel = [], raceN = 8, raceShown = false;
+  const funcBlocks = () => blocks.filter(b => b.kind === 'func' && b.name && b.name !== 'main' && b.state !== 'incomplete');
+
+  $('tRace').addEventListener('click', () => {
+    const fs = funcBlocks();
+    const cur = currentBlock && currentBlock.kind === 'func' && currentBlock.name !== 'main' ? currentBlock.id : null;
+    const sorty = b => /sort|urut|search|cari/i.test(b.name || '');
+    const first = cur || (fs.find(sorty) || fs[0] || {}).id;
+    const second = (fs.find(b => b.id !== first && sorty(b)) || fs.find(b => b.id !== first) || {}).id;
+    raceSel = [first, second].filter(Boolean);
+    $('raceList').innerHTML = fs.length
+      ? fs.map(b => `<label><input type="checkbox" value="${esc(b.id)}"${raceSel.includes(b.id) ? ' checked' : ''}> ${esc(b.header || b.name)} <small>· baris ${b.line}</small></label>`).join('')
+      : '<p>Belum ada fungsi di file ini.</p>';
+    $('raceGo').disabled = false;
+    syncRaceDialog();
+    $('raceDialog').hidden = false;
+  });
+  $('raceList').addEventListener('change', e => {
+    const id = e.target.value;
+    if (e.target.checked) { raceSel.push(id); if (raceSel.length > 2) raceSel.shift(); }
+    else raceSel = raceSel.filter(x => x !== id);
+    $('raceList').querySelectorAll('input').forEach(el => { el.checked = raceSel.includes(el.value); });
+    syncRaceDialog();
+  });
+  function syncRaceDialog() {
+    $('raceGo').disabled = raceSel.length !== 2;
+    $('raceNote').textContent = raceSel.length === 2 ? '' : 'Pilih tepat 2 fungsi.';
+  }
+  $('raceCancel').addEventListener('click', () => { $('raceDialog').hidden = true; });
+  $('raceGo').addEventListener('click', () => {
+    if (raceSel.length !== 2) return;
+    raceN = +(radio('raceN') || 8);
+    $('raceGo').disabled = true;
+    $('raceNote').textContent = 'Menyiapkan lomba… (setiap fungsi juga diukur untuk n = 5, 10, 20, 40)';
+    vscode.postMessage({ type: 'race', blocks: raceSel, n: raceN });
+  });
+
+  /** Hasil lomba dari server: mulai lomba di panggung, isi kartu grafik. */
+  function applyRace(m) {
+    $('raceGo').disabled = false;
+    if (m.error || !m.result) { $('raceNote').textContent = `Lomba gagal: ${m.error || 'tidak ada hasil'}`; return; }
+    const res = m.result;
+    $('raceDialog').hidden = true;
+    if (quiz.on) setQuiz(false);
+    raceView.start(res, blocks, loops);
+    raceShown = false;
+    for (const id of ['tracebar', 'errCard', 'quizCard', 'stepNote']) $(id).hidden = true;
+    const names = raceView.lanes.map(l => l.name);
+    $('raceTitle').textContent = `LOMBA · ${names.join(' vs ')}`;
+    $('raceInput').textContent = `Input sama untuk keduanya (n = ${res.input.length}): [${res.input.join(', ')}]`;
+    $('racePlay').textContent = 'Jeda';
+    $('raceResult').innerHTML = '';
+    $('raceCard').hidden = false;
+    G.race.drawChart($('raceChart'), res.sizes, res.runs, names);
+  }
+
+  /** Setelah kedua lajur finis: langkah, pemenang, dan tebakan Big-O tiap fungsi. */
+  function raceSummary() {
+    const res = raceView.res, win = raceView.winner();
+    $('raceResult').innerHTML = raceView.lanes.map((l, k) => {
+      const w = res.runs[k].work, o = G.race.bigO(res.sizes, w);
+      const ops = w.map((x, j) => `n=${res.sizes[j]}: ${x > 0 ? x : '—'}`).join(' · ');
+      return `<div class="race-lane${win === k ? ' win' : ''}"><b>${esc(l.name)}${win === k ? ' 🏆' : ''}</b>` +
+        (l.st ? `${l.steps} langkah · kira-kira O(${esc(o)})<br><small>${esc(ops)}</small>` : esc('gagal: ' + l.failed)) + '</div>';
+    }).join('') + raceLesson(res, win);
+    snd.play(win != null && win >= 0 ? 'jingle' : 'coin');
+  }
+
+  /** Kalimat pelajaran: pemenang di n kecil belum tentu paling hemat untuk input besar. */
+  function raceLesson(res, win) {
+    if (win == null || win < 0 || raceView.lanes.length !== 2) return '';
+    const RANK = { '1': 0, 'n': 1, 'n log n': 2, 'n²': 3, 'n³': 4 };
+    const lose = 1 - win, o = res.runs.map(r => G.race.bigO(res.sizes, r.work));
+    const nw = raceView.lanes[win].name, nl = raceView.lanes[lose].name;
+    if (!(o[win] in RANK) || !(o[lose] in RANK)) return '';
+    let msg;
+    if (RANK[o[win]] > RANK[o[lose]]) msg = `${nw} menang karena list-nya masih pendek (n = ${res.input.length}). Tapi lihat grafik: untuk input besar, ${nl} (O(${o[lose]})) jauh lebih hemat daripada ${nw} (O(${o[win]})).`;
+    else if (RANK[o[win]] < RANK[o[lose]]) msg = `${nw} menang, dan grafiknya juga tumbuh paling lambat (O(${o[win]})): makin besar input, makin jauh selisihnya.`;
+    else msg = `Keduanya tumbuh dengan laju yang mirip (O(${o[win]})); bedanya hanya di jumlah langkah per elemen.`;
+    return `<p class="race-note race-lesson">${esc(msg)}</p>`;
+  }
+
+  function exitRace() {
+    raceView.stop();
+    $('raceCard').hidden = true;
+    if (tp.active) { $('tracebar').hidden = false; $('stepNote').hidden = false; goto(tp.i, true); tp.el = tp.p.duration(tp.i); }
+  }
+  $('racePlay').addEventListener('click', () => { raceView.playing = !raceView.playing; $('racePlay').textContent = raceView.playing ? 'Jeda' : 'Putar'; });
+  $('raceAgain').addEventListener('click', () => { raceView.restart(); raceShown = false; $('raceResult').innerHTML = ''; $('racePlay').textContent = 'Jeda'; });
+  $('raceReroll').addEventListener('click', () => vscode.postMessage({ type: 'race', blocks: raceView.res.runs.map(r => r.block), n: raceN, reroll: true }));
+  $('raceExit').addEventListener('click', exitRace);
+
   // ---------- rekam animasi (Fase 12a) ----------
 
   const REC = G.recorder;
   let recording = false, recCancel = false;
-  const allStages = () => [level, data, branch, func, lanes, graph, cls, isles, maze, pohon];
+  const allStages = () => [level, data, branch, func, lanes, graph, cls, isles, maze, pohon, belah];
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const radio = name => (document.querySelector(`input[name="${name}"]:checked`) || {}).value;
+
+  const titleCase = s => s.toLowerCase().replace(/(^|\s)\S/g, m => m.toUpperCase());
 
   /** Judul otomatis: jenis panggung + nama blok. */
   function autoTitle() {
@@ -834,6 +938,8 @@
     if (tr.graph) return `${(tr.graph.kind || 'DFS').toUpperCase()} Graf`;
     if (tr.class) return `Class ${tr.class.name}`;
     if (tp.r === dataR && data.elim) return 'Pencarian';
+    if (tp.r === mergeR) return titleCase(belah.title);
+    if (tp.r === dataR && data.sort) return titleCase(data.sort.title);
     const b = currentBlock;
     if (!b) return 'GopherViz';
     if (b.kind === 'func') return `Fungsi ${b.name || ''}`.trim();
@@ -971,7 +1077,17 @@
     isles.update(dt);
     maze.update(dt);
     pohon.update(dt);
+    belah.update(dt);
     if (recording) { requestAnimationFrame(frame); return; } // perekam yang menggambar panggung
+    if (raceView.active) { // lomba menggantikan panggung biasa sampai user keluar
+      raceView.update(dt, config.speed);
+      raceView.render();
+      if (!raceShown && raceView.finished()) { raceShown = true; raceSummary(); }
+      snd.music(config.music && raceView.playing && document.visibilityState === 'visible');
+      fitStage();
+      requestAnimationFrame(frame);
+      return;
+    }
     if (tp.active) tickTrace(dt);
     else if (currentBlock && (currentBlock.kind === 'if' || currentBlock.kind === 'switch')) branch.renderIdle();
     else if (currentBlock && currentBlock.kind === 'func') func.renderIdle();
@@ -984,7 +1100,7 @@
     requestAnimationFrame(frame);
   }
 
-  G.app = { level, data, branch, func, tp, tickTrace, goto, quiz, setQuiz, quizAnswer, quizNext }; // untuk dev/harness.html
+  G.app = { level, data, branch, func, tp, tickTrace, goto, quiz, setQuiz, quizAnswer, quizNext, raceView, applyRace }; // untuk dev/harness.html
   snd.unlock(); // di VS Code suara kadang boleh langsung; kalau tidak, menunggu klik
   applyConfig(config);
   overlay('Menyiapkan…');

@@ -54,6 +54,7 @@
     /** Map: setiap key = satu loker berlabel; snapshot key/nilai per langkah. */
     prepareMap(trace) {
       this.mapMode = true;
+      this.sort = null;
       let keys = (trace.collection.keys || []).slice();
       const vals = {};
       keys.forEach((k, i) => { vals[k] = trace.collection.items[i]; });
@@ -174,7 +175,7 @@
       };
       addVars(loop);
 
-      let cmp = 0, swp = 0, maxN = ids.length;
+      let cmp = 0, swp = 0, wr = 0, maxN = ids.length;
       this.snaps = expandProbes(trace.steps).map(s => {
         const snap = { step: s, prevOrder: null, cmp: null, swap: null, read: -1, set: -1, appended: -1 };
         for (const o of s.ops || []) {
@@ -183,7 +184,7 @@
             snap.prevOrder = ids.slice();
             [ids[o.a], ids[o.b]] = [ids[o.b], ids[o.a]];
             snap.swap = o; swp++;
-          } else if (o.op === 'set' && o.a < ids.length) { vals[ids[o.a]] = o.value; snap.set = o.a; seen.add(o.value); }
+          } else if (o.op === 'set' && o.a < ids.length) { vals[ids[o.a]] = o.value; snap.set = o.a; seen.add(o.value); wr++; }
           else if (o.op === 'append') { ids.push(next); vals[next++] = o.value; snap.appended = ids.length - 1; seen.add(o.value); }
           else if (o.op === 'read') snap.read = o.a;
         }
@@ -197,6 +198,7 @@
         snap.vals = Object.assign({}, vals);
         snap.cmpCount = cmp;
         snap.swpCount = swp;
+        snap.setCount = wr;
         snap.ptr = [];
         for (const name of ptrNames) {
           const raw = s.vars && s.vars[name];
@@ -216,6 +218,7 @@
       }
       if (elemVars.size) for (const s of this.snaps) s.ptr = s.ptr.filter(p => !elemVars.has(p.name));
       this.prepareSearch(trace);
+      this.prepareSort(trace);
 
       // Tinggi gopher = peringkat nilai (1..9), supaya angka besar maupun string tetap terbaca.
       const list = [...seen];
@@ -294,6 +297,51 @@
         if (s.target == null || (s.checks === 0 && ahead != null)) s.target = ahead; else ahead = s.target;
       }
       this.prepareElimination(trace);
+    }
+
+    /**
+     * Sorting (Fase 12c): penanda sesuai algoritma yang dikenali sorts.js. Per langkah:
+     * minK (selection: indeks nilai terkecil sementara), sortedTo (selection: indeks < i sudah final),
+     * pivotK + range (quick: pivot dan rentang partisi lo..hi), key + keyAt (insertion: nilai yang
+     * sedang disisipkan melayang di atas celahnya).
+     */
+    prepareSort(trace) {
+      this.sort = !this.search && G.sorts ? G.sorts.detect(trace) : null;
+      const so = this.sort;
+      if (!so) return;
+      const idx = (s, name) => {
+        const v = name && s.step.vars ? s.step.vars[name] : null;
+        return v != null && /^-?\d+$/.test(v) ? +v : null;
+      };
+      const marker = new Set([so.min, so.lo, so.hi, so.key, so.pivot].filter(Boolean));
+      for (const s of this.snaps) {
+        const n = s.order.length, inRange = k => k != null && k >= 0 && k < n;
+        s.ptr = s.ptr.filter(p => !marker.has(p.name)); // nama yang sudah punya penanda khusus
+        if (so.kind === 'selection') {
+          const m = idx(s, so.min), i = idx(s, so.outer);
+          s.minK = inRange(m) ? m : null;
+          s.sortedTo = i != null ? Math.max(0, Math.min(n, i)) : 0;
+        }
+        if (so.kind === 'quick' || so.kind === 'merge') {
+          const lo = idx(s, so.lo), hi = idx(s, so.hi);
+          s.part = lo != null && hi != null && hi >= lo ? { lo: Math.max(0, lo), hi: Math.min(n - 1, hi) } : null;
+        }
+        if (so.kind === 'quick' && s.step.vars && s.step.vars[so.pivot] != null) {
+          const pv = s.step.vars[so.pivot], val = k => String(s.vals[s.order[k]]);
+          const lo = s.part ? s.part.lo : 0, hi = s.part ? s.part.hi : n - 1;
+          let at = null;
+          if (inRange(hi) && val(hi) === pv) at = hi; // Lomuto: pivot di ujung kanan
+          else if (inRange(lo) && val(lo) === pv) at = lo; // Hoare: pivot di ujung kiri
+          else for (let k = lo; k <= hi; k++) if (val(k) === pv) { at = k; break; }
+          s.pivotV = pv;
+          s.pivotK = at;
+        }
+        if (so.kind === 'insertion' && s.step.vars && s.step.vars[so.key] != null) {
+          const j = idx(s, 'j');
+          s.keyV = s.step.vars[so.key];
+          s.keyAt = j != null ? Math.max(0, Math.min(n - 1, j + 1)) : idx(s, so.outer);
+        }
+      }
     }
 
     /**
@@ -475,6 +523,7 @@
       const matchNow = this.search && s.cmp && s.cmp.result === '=' && s.cmp.b == null && (!s.cmp.cmp || s.cmp.cmp === '==' || s.cmp.cmp === '!=') && t >= 0.45 ? s.cmp.a : -1;
       const foundSlot = matchNow >= 0 ? matchNow : this.search ? s.foundBefore : -1;
       const dim = g => {
+        if (this.sort && s.part) return g.slot < s.part.lo || g.slot > s.part.hi ? 0.35 : 1; // quick: di luar partisi
         if (!this.search || g.slot === foundSlot) return 1;
         if (s.range) return g.slot < s.range.lo || g.slot > s.range.hi ? 0.3 : 1;
         return s.checked.has(g.slot) && !(s.cmp && s.cmp.a === g.slot) ? 0.45 : 1;
@@ -494,12 +543,15 @@
         const lift = cmpSlot(g) ? Math.round(2 * P.clamp(t / 0.15, 0, 1)) : 0;
         const x = Math.round(g.x - (cs + d) / 2), y = Math.round(GY + 1 - cs + g.y) - lift;
         w.globalAlpha = dim(g);
-        P.cube(w, x, y, cs, cs, flash ? '#f3c75a' : P.VCOL[lv], d, cmpSlot(g) || g.slot === foundSlot ? '#d9467c' : null);
+        const ring = cmpSlot(g) || g.slot === foundSlot ? '#d9467c' : g.slot === s.pivotK ? '#e0a22a' : g.slot === s.minK ? '#2f8a5c' : null;
+        P.cube(w, x, y, cs, cs, flash ? '#f3c75a' : P.VCOL[lv], d, ring);
         P.textCenter(w, String(g.v).slice(0, Math.max(1, Math.floor(cs / 4))), x + cs / 2, y + Math.floor((cs - 5) / 2), P.INK);
         w.globalAlpha = 1;
         g.top = y - d;
         if (g.slot === foundSlot) this.star(w, g.x, g.top - 9 - (Math.floor(now / 250) % 2));
       }
+
+      if (this.sort) this.drawSortMarks(w, s, L, cs, d, now);
 
       // Gopher berdiri di atas kubus yang sedang dikerjakan; melompat dari kubus sebelumnya
       const hopT = P.clamp(t / 0.3, 0, 1), moving = Math.abs(s.gx - s.gxFrom) > 1 && hopT < 1;
@@ -543,6 +595,12 @@
         w.drawImage(img, Math.round(this.camX() - (img.width * k) / 2), Math.round(30 - (img.height * k) / 2), img.width * k, img.height * k);
       }
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), p.s, p.s, p.col);
+      if (this.sort) { // HUD: nama algoritma + jumlah perbandingan dan pertukaran
+        P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
+        P.text(w, this.sort.title, 4, 3, P.INK);
+        const moves = this.sort.kind === 'insertion' ? `GESER ${s.setCount}` : this.sort.kind === 'merge' ? `TULIS ${s.setCount}` : `TUKAR ${s.swpCount}`;
+        P.text(w, `BANDING ${s.cmpCount}  ${moves}`, 4, 10, '#c2457a');
+      }
       if (this.search) { // HUD: nilai yang dicari dan jumlah elemen yang sudah dicek
         P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
         P.text(w, s.target != null ? `CARI ${String(s.target).slice(0, 10)}` : 'CARI', 4, 3, P.INK);
@@ -550,6 +608,35 @@
       }
 
       this.present(s);
+    }
+
+    /** Penanda sorting: MIN, PIVOT, KEY melayang, kurung partisi, dan alas hijau bagian yang sudah final. */
+    drawSortMarks(w, s, L, cs, d, now) {
+      const at = slot => L.find(g => g.slot === slot);
+      const tag = (g, label, col) => {
+        if (!g) return;
+        const y = g.top - 8 - (Math.floor(now / 300) % 2);
+        P.box(w, Math.round(g.x - P.textW(label) / 2 - 2), y - 1, P.textW(label) + 4, 7, '#fff8fb', col);
+        P.textCenter(w, label, g.x, y, col);
+      };
+      if (s.sortedTo) { // selection: indeks < i sudah di posisi akhirnya
+        const x0 = Math.round(this.slotX(0) - this.slot / 2 + 1), x1 = Math.round(this.slotX(s.sortedTo - 1) + this.slot / 2 - 2);
+        if (x1 > x0) P.rect(w, x0, GY + 1, x1 - x0 + 1, 2, '#7cc68b');
+      }
+      if (s.part) { // quick/merge: kurung siku rentang lo..hi
+        const x0 = Math.round(this.slotX(s.part.lo) - this.slot / 2 + 1), x1 = Math.round(this.slotX(s.part.hi) + this.slot / 2 - 2);
+        if (x1 > x0) { P.rect(w, x0, GY + 2, x1 - x0 + 1, 1, '#c2457a'); P.rect(w, x0, GY, 1, 3, '#c2457a'); P.rect(w, x1, GY, 1, 3, '#c2457a'); }
+      }
+      if (s.minK != null) tag(at(s.minK), 'MIN', '#2f8a5c');
+      if (s.pivotK != null) tag(at(s.pivotK), 'PIVOT', '#c27a12');
+      else if (s.pivotV != null) P.text(w, `PIVOT ${String(s.pivotV).slice(0, 4)}`, this.worldW - 44, 3, '#c27a12');
+      if (s.keyV != null && s.keyAt != null) { // insertion: nilai key melayang di atas celahnya
+        const ks = Math.max(9, Math.round(cs * 0.65)), kd = Math.max(1, d - 1);
+        const x = Math.round(this.slotX(s.keyAt) - (ks + kd) / 2), y = Math.max(26, Math.round(GY + 1 - cs - ks - 10 + Math.sin(now / 260) * 2));
+        P.cube(w, x, y, ks, ks, '#fff3a8', kd, '#c27a12');
+        P.textCenter(w, String(s.keyV).slice(0, Math.max(1, Math.floor(ks / 4))), x + ks / 2, y + Math.floor((ks - 5) / 2), P.INK);
+        P.textCenter(w, 'KEY', x + ks / 2, y - kd - 7, '#c27a12');
+      }
     }
 
     /**

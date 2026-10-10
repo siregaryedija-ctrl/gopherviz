@@ -11,6 +11,7 @@ import (
 
 // recorder mengumpulkan langkah-langkah selama blok fokus (dan blok di dalamnya) berjalan.
 type recorder struct {
+	hold     int      // > 0: blok fokus tidak mulai direkam (lomba: variabel global / mode hitung)
 	focus    ast.Node // *ast.ForStmt, *ast.RangeStmt, *ast.IfStmt, *ast.SwitchStmt, *ast.FuncDecl, *ast.FuncLit
 	maxSteps int
 	maxIter  int

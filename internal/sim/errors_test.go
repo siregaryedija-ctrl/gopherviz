@@ -1,9 +1,11 @@
 package sim
 
 import (
+	"fmt"
 	"testing"
 
 	"gopherviz/internal/analyzer"
+	"gopherviz/internal/race"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 )
@@ -101,5 +103,58 @@ func main() {
 				t.Fatalf("penjelasan kosong: %+v", e)
 			}
 		})
+	}
+}
+
+// TestRace: fungsi fokus Go dipanggil langsung dengan list acak; main tidak dijalankan.
+func TestRace(t *testing.T) {
+	src := `package main
+
+import "fmt"
+
+func quick(a []int, lo, hi int) {
+	if lo >= hi {
+		return
+	}
+	p, i := a[hi], lo
+	for j := lo; j < hi; j++ {
+		if a[j] < p {
+			a[i], a[j] = a[j], a[i]
+			i++
+		}
+	}
+	a[i], a[hi] = a[hi], a[i]
+	quick(a, lo, i-1)
+	quick(a, i+1, hi)
+}
+
+func main() {
+	a := []int{3, 1, 2}
+	quick(a, 0, len(a)-1)
+	fmt.Println(a)
+}
+`
+	p := analyzer.Load("t.go", []byte(src))
+	id := ""
+	for _, b := range p.Result.Scene.Blocks {
+		if b.Kind == scene.BlockFunc && b.Name == "quick" {
+			id = b.ID
+		}
+	}
+	tr := Trace(p, id, Options{Call: &race.Spec{N: 7, Seed: 5}})
+	if tr.Mode != trace.ModeSimulated || tr.Collection == nil || len(tr.Collection.Items) != 7 {
+		t.Fatalf("mode %s koleksi %+v peringatan %v", tr.Mode, tr.Collection, tr.Warnings)
+	}
+	if want := fmt.Sprint(race.List(7, 5)[0]); tr.Collection.Items[0] != want {
+		t.Fatalf("items %v, mau mulai %s", tr.Collection.Items, want)
+	}
+	for _, s := range tr.Steps {
+		if s.Output != "" {
+			t.Fatalf("main ikut berjalan: output %q", s.Output)
+		}
+	}
+	w := func(n int) int { return Trace(p, id, Options{Call: &race.Spec{N: n, Seed: 5, Count: true}}).Work }
+	if w10, w40 := w(10), w(40); w10 <= 0 || w40 <= w10*3 {
+		t.Fatalf("operasi n=10: %d, n=40: %d", w10, w40)
 	}
 }

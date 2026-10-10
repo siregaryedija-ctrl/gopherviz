@@ -22,6 +22,7 @@ const (
 	MethodFocus  = "focus"  // kursor pindah tanpa perubahan teks
 	MethodClose  = "close"  // file ditutup, buang cache-nya
 	MethodTrace  = "trace"  // editor meminta trace satu loop
+	MethodRace   = "race"   // panel meminta lomba beberapa fungsi dengan input acak yang sama (Fase 12c)
 )
 
 // HelloParams adalah parameter MethodHello.
@@ -114,4 +115,28 @@ type TraceParams struct {
 // TraceResult adalah hasil MethodTrace.
 type TraceResult struct {
 	Trace trace.Trace `json:"trace"`
+}
+
+// RaceParams adalah parameter MethodRace: fungsi-fungsi (ID blok) dipanggil langsung dengan list
+// acak sepanjang N yang sama, lalu diukur jumlah operasinya untuk setiap ukuran di Sizes.
+type RaceParams struct {
+	File   string   `json:"file"`
+	Blocks []string `json:"blocks"`
+	N      int      `json:"n,omitempty"`     // panjang list untuk animasi (bawaan 8)
+	Sizes  []int    `json:"sizes,omitempty"` // ukuran untuk grafik (bawaan 5, 10, 20, 40)
+	Seed   int64    `json:"seed,omitempty"`
+}
+
+// RaceResult adalah hasil MethodRace.
+type RaceResult struct {
+	Input []int     `json:"input"` // list yang diberikan ke setiap fungsi (ukuran N)
+	Sizes []int     `json:"sizes"`
+	Runs  []RaceRun `json:"runs"`
+}
+
+// RaceRun adalah satu peserta lomba.
+type RaceRun struct {
+	Block string      `json:"block"`
+	Trace trace.Trace `json:"trace"` // trace dengan input N
+	Work  []int       `json:"work"`  // jumlah operasi untuk Sizes[k]; -1 = gagal (error / terlalu panjang)
 }

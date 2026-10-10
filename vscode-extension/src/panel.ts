@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as crypto from 'node:crypto';
-import type { Trace, UpdateResult } from './server';
+import type { RaceResult, Trace, UpdateResult } from './server';
 
 /** Pesan dari ekstensi ke webview. */
 export type ToPanel =
@@ -14,7 +14,9 @@ export type ToPanel =
       input?: string;
     }
   | { type: 'trace'; blockId: string; trace: Trace; /** Isi file (untuk potongan kode di rekaman reel). */ code?: { lines: string[] } }
-  | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean; size: number };
+  | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean; size: number }
+  /** Hasil lomba algoritma (Fase 12c), atau pesan error. */
+  | { type: 'race'; result?: RaceResult; error?: string };
 
 /** Pesan dari webview ke ekstensi. */
 export type FromPanel =
@@ -24,6 +26,8 @@ export type FromPanel =
   | { type: 'restart' }
   | { type: 'input'; text: string }
   | { type: 'reroll' }
+  /** Lomba algoritma: fungsi-fungsi (ID blok) dengan list acak sepanjang n; reroll = input acak baru. */
+  | { type: 'race'; blocks: string[]; n: number; reroll?: boolean }
   /** Hasil rekaman animasi (MP4 dikirim sebagai WebM lalu diubah ffmpeg). */
   | { type: 'export'; format: 'gif' | 'mp4' | 'webm'; name: string; data: Uint8Array | number[] | Record<string, number> }
   /** Baris (1-based) langkah trace yang sedang tampil; 0 = tidak ada (sorotan di editor dihapus). */
@@ -39,11 +43,20 @@ export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
     <button id="tRestart" class="icon-btn" title="Ulang dari awal" aria-label="Ulang dari awal">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
     <button id="tRec" class="icon-btn" title="Rekam animasi (GIF / MP4 / WebM)" aria-label="Rekam animasi">${icon('M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z')}</button>
     <button id="tQuiz" class="icon-btn" aria-pressed="false" title="Mode tebak: berhenti di titik penting dan tebak apa yang terjadi" aria-label="Mode tebak">${icon('M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z')}</button>
+    <button id="tRace" class="icon-btn" title="Lomba algoritma: dua fungsi dengan input yang sama" aria-label="Lomba algoritma">${icon('M3 1h1v14H3zM5 2h8l-2 3 2 3H5z')}</button>
     <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Posisi langkah">
     <span id="tLabel" class="tlabel"></span>
   </div>
   <div id="quizCard" class="qcard" hidden></div>
   <div id="errCard" class="errcard" hidden></div>
+  <div id="raceCard" class="racecard" hidden>
+    <div class="race-head"><b id="raceTitle">LOMBA</b>
+      <span class="race-btns"><button id="racePlay" class="btn">Jeda</button><button id="raceAgain" class="btn">Ulangi</button><button id="raceReroll" class="btn">Acak input</button><button id="raceExit" class="btn">Keluar</button></span></div>
+    <p id="raceInput" class="race-input"></p>
+    <div id="raceResult" class="race-result"></div>
+    <canvas id="raceChart" width="560" height="200" aria-label="Grafik jumlah operasi terhadap ukuran input"></canvas>
+    <p class="race-note">Grafik: jumlah operasi simulator saat fungsi diberi list acak berukuran n. Garis yang menanjak tajam = makin lambat untuk input besar.</p>
+  </div>
   <div id="inputbar" class="inputbar" hidden>
     <label for="inputBox">Input</label>
     <input id="inputBox" type="text" placeholder="isi nilai input, pisahkan dengan koma (contoh: 25, Budi)" spellcheck="false" autocomplete="off">
@@ -257,7 +270,7 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'recorder.js', 'errorfx.js', 'quiz.js', 'memory.js', 'main.js']
+    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'sorts.js', 'mergestage.js', 'race.js', 'recorder.js', 'errorfx.js', 'quiz.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
@@ -309,6 +322,24 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       <div class="rec-actions">
         <button id="recGo" class="btn primary">Rekam</button>
         <button id="recCancel" class="btn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="raceDialog" class="rec-dialog" hidden>
+    <div class="rec-box" role="dialog" aria-label="Lomba algoritma">
+      <h2>Lomba algoritma</h2>
+      <p class="rec-note">Pilih 2 fungsi. Keduanya diberi list acak yang sama, lalu dijalankan berdampingan.</p>
+      <div id="raceList" class="race-list"></div>
+      <div class="rec-row"><span>Panjang list</span>
+        <label><input type="radio" name="raceN" value="6"> 6</label>
+        <label><input type="radio" name="raceN" value="8" checked> 8</label>
+        <label><input type="radio" name="raceN" value="10"> 10</label>
+      </div>
+      <p id="raceNote" class="rec-note"></p>
+      <div class="rec-actions">
+        <button id="raceGo" class="btn primary">Mulai lomba</button>
+        <button id="raceCancel" class="btn">Batal</button>
       </div>
     </div>
   </div>

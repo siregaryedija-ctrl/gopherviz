@@ -46,11 +46,20 @@
     <button id="tRestart" class="icon-btn" title="Ulang dari awal"><svg viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z"/></svg></button>
     <button id="tRec" class="icon-btn" title="Rekam animasi"><svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z"/></svg></button>
     <button id="tQuiz" class="icon-btn" aria-pressed="false" title="Mode tebak"><svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg></button>
+    <button id="tRace" class="icon-btn" title="Lomba algoritma"><svg viewBox="0 0 16 16"><path d="M3 1h1v14H3zM5 2h8l-2 3 2 3H5z"/></svg></button>
     <input type="range" id="tScrub" min="0" max="0" value="0">
     <span id="tLabel" class="tlabel"></span>
   </div>
   <div id="quizCard" class="qcard" hidden></div>
   <div id="errCard" class="errcard" hidden></div>
+  <div id="raceCard" class="racecard" hidden>
+    <div class="race-head"><b id="raceTitle">LOMBA</b>
+      <span class="race-btns"><button id="racePlay" class="btn">Jeda</button><button id="raceAgain" class="btn">Ulangi</button><button id="raceReroll" class="btn">Acak input</button><button id="raceExit" class="btn">Keluar</button></span></div>
+    <p id="raceInput" class="race-input"></p>
+    <div id="raceResult" class="race-result"></div>
+    <canvas id="raceChart" width="560" height="200" aria-label="Grafik jumlah operasi terhadap ukuran input"></canvas>
+    <p class="race-note">Grafik: jumlah operasi simulator saat fungsi diberi list acak berukuran n. Garis yang menanjak tajam = makin lambat untuk input besar.</p>
+  </div>
   <div id="inputbar" class="inputbar" hidden>
     <label for="inputBox">Input</label>
     <input id="inputBox" type="text" placeholder="isi nilai input, pisahkan dengan koma (contoh: 25, Budi)" spellcheck="false" autocomplete="off">
@@ -82,6 +91,23 @@
   <section id="partsSection"><h2 id="partsTitle">Isi loop</h2><ol id="parts" class="parts"></ol></section>
   <section id="varsSection" hidden><h2>Variabel</h2><div id="vars" class="vars"></div></section>
   <section id="memSection" hidden><h2>Memori</h2><div id="mem" class="mem"></div><p class="mem-legend">Peti cokelat = variabel, peti ungu = data di heap, tali = pointer (menunjuk ke data lain).</p></section>
+  <div id="raceDialog" class="rec-dialog" hidden>
+    <div class="rec-box" role="dialog" aria-label="Lomba algoritma">
+      <h2>Lomba algoritma</h2>
+      <p class="rec-note">Pilih 2 fungsi. Keduanya diberi list acak yang sama, lalu dijalankan berdampingan.</p>
+      <div id="raceList" class="race-list"></div>
+      <div class="rec-row"><span>Panjang list</span>
+        <label><input type="radio" name="raceN" value="6"> 6</label>
+        <label><input type="radio" name="raceN" value="8" checked> 8</label>
+        <label><input type="radio" name="raceN" value="10"> 10</label>
+      </div>
+      <p id="raceNote" class="rec-note"></p>
+      <div class="rec-actions">
+        <button id="raceGo" class="btn primary">Mulai lomba</button>
+        <button id="raceCancel" class="btn">Batal</button>
+      </div>
+    </div>
+  </div>
   <section id="outSection" hidden><h2>Output</h2><pre id="out" class="out"></pre></section>
   <section id="navSection"><h2 id="navTitle">Blok di file ini</h2><div id="nav" class="nav"></div></section>
   <footer class="controls">
@@ -121,6 +147,9 @@
 <script src="../media/islandstage.js"></script>
 <script src="../media/gridstage.js"></script>
 <script src="../media/treestage.js"></script>
+<script src="../media/sorts.js"></script>
+<script src="../media/mergestage.js"></script>
+<script src="../media/race.js"></script>
 <script src="../media/memory.js"></script>
 <script src="../media/recorder.js"></script>
 <script src="../media/errorfx.js"></script>
@@ -152,6 +181,14 @@
       }
       if (q.get('qans') !== null && app.quiz.open) app.quizAnswer(+q.get('qans'));
     }, 80);
+    // ?race: sampel lomba (race_*); &rt=ms = waktu lomba yang sudah berjalan
+    if (s.race) setTimeout(() => {
+      GV.app.applyRace({ type: 'race', result: s.race });
+      const rv = GV.app.raceView, ms = +(q.get('rt') || 0);
+      rv.playing = ms > 0;
+      for (let k = 0; k < ms / 16; k++) rv.update(16, 1);
+      rv.playing = q.get('play') !== null;
+    }, 100);
     if (q.get('recdialog') !== null) setTimeout(() => document.getElementById('tRec').click(), 120);
     if (q.get('rec')) setTimeout(() => { // ?rec=gif|webm&frame=stage|reel: rekam lalu hasilnya ke <pre id="exported">
       document.querySelector(`input[name="recFrame"][value="${q.get('frame') || 'stage'}"]`).checked = true;

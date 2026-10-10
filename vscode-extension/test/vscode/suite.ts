@@ -162,6 +162,23 @@ test('multi-file: fungsi di modul dijalankan dari file yang meng-import-nya', as
   assert.equal(tr.steps[0].file, 'main.py');
 });
 
+test('lomba: dua fungsi sort dengan input yang sama, operasi diukur per ukuran', async api => {
+  const sorts = path.resolve(__dirname, '..', '..', '..', 'dev', 'fixtures', 'sort', 'sorts.py');
+  const doc = await vscode.workspace.openTextDocument(sorts);
+  await vscode.window.showTextDocument(doc);
+  const res = await waitFor('scene sorts.py', () => api.result(doc.uri.toString()));
+  const id = (name: string) => res.scene.blocks.find(b => b.kind === 'func' && b.name === name)!.id;
+  api.panelMessage({ type: 'race', blocks: [id('selection_sort'), id('merge_sort')], n: 6 });
+  const race = await waitFor('hasil lomba', () => api.lastRace(), 20_000);
+  assert.equal(race.input.length, 6);
+  assert.equal(race.runs.length, 2);
+  for (const r of race.runs) {
+    assert.equal(r.trace.mode, 'simulated');
+    assert.equal(r.work.length, race.sizes.length);
+    assert.ok(r.work.every(w => w > 0), String(r.work));
+  }
+});
+
 test('panel bisa dipindah: panel bawah, sidebar, lalu kembali ke tab editor', async api => {
   const doc = vscode.window.activeTextEditor!.document;
   const cfg = () => vscode.workspace.getConfiguration('gopherviz');

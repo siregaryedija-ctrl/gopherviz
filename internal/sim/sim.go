@@ -17,6 +17,7 @@ import (
 	"gopherviz/internal/graphs"
 	"gopherviz/internal/irsim"
 	"gopherviz/internal/project"
+	"gopherviz/internal/race"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -33,6 +34,9 @@ type Options struct {
 	InputSeed int64    // benih angka acak input (0 = bawaan)
 
 	Files project.Files // akses baca file lain (modul, file lain di package yang sama); nil = hanya file ini
+
+	// Call: fungsi fokus dipanggil langsung dengan list acak (lomba algoritma, Fase 12c).
+	Call *race.Spec
 }
 
 func (o Options) withDefaults() Options {
@@ -69,7 +73,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		return tr
 	}
 	if p.Lang != "" && p.Lang != "go" {
-		return irsim.Trace(p.Other, blockID, irsim.Options{MaxSteps: opt.MaxSteps, MaxIter: opt.MaxIter, Budget: opt.Budget, Seed: opt.Seed, Input: opt.Input, InputSeed: opt.InputSeed, Files: opt.Files})
+		return irsim.Trace(p.Other, blockID, irsim.Options{MaxSteps: opt.MaxSteps, MaxIter: opt.MaxIter, Budget: opt.Budget, Seed: opt.Seed, Input: opt.Input, InputSeed: opt.InputSeed, Files: opt.Files, Call: opt.Call})
 	}
 	if opt.Files != nil {
 		p = analyzer.WithPackage(p, opt.Files) // file lain di package yang sama (Fase 10b)
@@ -116,8 +120,19 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		rec: &recorder{focus: node, maxSteps: opt.MaxSteps, maxIter: opt.MaxIter, coll: coll, collKind: collKind,
 			mem: usesMemory(infoTypes{p.Info}, node), objIDs: map[*value]string{}, graphSpec: graphUnlessGrid(node, grid), gridSpec: grid, treeSpec: tree, obj: obj},
 	}
+	it.budget0 = opt.Budget
+	if _, isFn := node.(*ast.FuncDecl); isFn && opt.Call != nil {
+		it.raceSpec = opt.Call
+	}
 	reason := it.run(node)
 	r := it.rec
+	tr.Work = it.work
+	if it.raceSpec != nil && it.raceSpec.Count {
+		if reason != "" { // error atau terlalu panjang: jumlah operasinya tidak berarti
+			tr.Warnings = append(tr.Warnings, reason)
+		}
+		return tr
+	}
 
 	tr.Warnings = append(tr.Warnings, r.warnings...)
 	tr.ReadsInput = it.input.Reads() > 0
@@ -213,6 +228,12 @@ func (it *interp) run(node ast.Node) (structural string) {
 	}()
 	// Program (init global + main) berjalan sebagai goroutine main di penjadwal; panic atau
 	// abort dari goroutine mana pun diteruskan ke sini.
+	if fd, ok := node.(*ast.FuncDecl); ok && it.raceSpec != nil {
+		if r := it.runProgram(func() { it.runRace(fd) }); r != nil {
+			panic(r)
+		}
+		return ""
+	}
 	if r := it.runProgram(func() {
 		it.initGlobals()
 		if main, ok := it.funcs["main"]; ok && main.Body != nil {

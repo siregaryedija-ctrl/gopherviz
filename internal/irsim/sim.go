@@ -9,6 +9,7 @@ import (
 	"gopherviz/internal/ir"
 	"gopherviz/internal/lang"
 	"gopherviz/internal/project"
+	"gopherviz/internal/race"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -25,6 +26,9 @@ type Options struct {
 	InputSeed int64    // benih angka acak input (0 = bawaan)
 
 	Files project.Files // akses baca file lain (modul yang di-import); nil = hanya file ini
+
+	// Call: fungsi fokus dipanggil langsung dengan list acak (lomba algoritma, Fase 12c).
+	Call *race.Spec
 }
 
 func (o Options) withDefaults() Options {
@@ -114,11 +118,22 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		}
 		it.globals.global = true
 		it.newModules(opt.Files)
+		it.budget0 = opt.Budget
+		if _, isFn := node.(*ir.Func); isFn && opt.Call != nil {
+			it.raceSpec = opt.Call
+		}
 		return it
 	}
 	it := mk()
 	reason := it.run(node, false)
-	if !it.rec.reached && opt.Files != nil {
+	tr.Work = it.work
+	if it.raceSpec != nil && it.raceSpec.Count {
+		if reason != "" { // error atau terlalu panjang: jumlah operasinya tidak berarti
+			tr.Warnings = append(tr.Warnings, reason)
+		}
+		return tr
+	}
+	if !it.rec.reached && opt.Files != nil && it.raceSpec == nil {
 		// blok fokus tidak tercapai dari file ini sendiri (mis. modul yang hanya berisi fungsi):
 		// jalankan program dari file yang meng-import-nya
 		for _, p := range importers(res, opt.Files) {
@@ -135,7 +150,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 			}
 		}
 	}
-	if !it.rec.reached && reason == "" {
+	if !it.rec.reached && reason == "" && it.raceSpec == nil {
 		it = mk()
 		reason = it.run(node, true) // fungsi yang tidak dipanggil: parameter tidak diketahui
 	}
@@ -224,6 +239,10 @@ func (it *interp) run(node ir.Node, unknownArgs bool) (structural string) {
 		}
 	}()
 	it.sem.setup(it)
+	if fn, ok := node.(*ir.Func); ok && it.raceSpec != nil {
+		it.runRace(fn)
+		return ""
+	}
 	it.runProgram()
 	it.classFinish()
 	if !it.rec.reached && unknownArgs {

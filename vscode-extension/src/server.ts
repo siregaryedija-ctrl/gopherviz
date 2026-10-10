@@ -189,6 +189,22 @@ export interface TraceStep {
   node?: { cur?: string; null?: boolean };
   /** Keadaan penelusuran grid/labirin: sel [baris, kolom]. */
   cells?: { cur?: [number, number]; visited?: [number, number][]; frontier?: [number, number][] };
+  /** Penjelasan error yang menghentikan program (langkah exit reason panic). */
+  err?: ErrInfo;
+}
+
+/** Penjelasan error (cermin dari trace.ErrInfo). */
+export interface ErrInfo {
+  kind: 'index' | 'empty' | 'zero' | 'null' | 'key' | 'depth' | 'type' | 'value' | 'deadlock' | 'other';
+  name?: string;
+  msg?: string;
+  title: string;
+  text: string;
+  hint?: string;
+  expr?: string;
+  value?: string;
+  len?: number;
+  items?: string[];
 }
 
 /** Satu object (rumah) pada satu langkah. */
@@ -233,10 +249,19 @@ export interface Trace {
   warnings: string[];
   /** Program membaca input user: panel menampilkan kotak Input. */
   readsInput?: boolean;
+  /** Lomba: jumlah operasi simulator selama fungsi fokus berjalan. */
+  work?: number;
 }
 
 export interface TraceResult {
   trace: Trace;
+}
+
+/** Hasil method race (Fase 12c): setiap fungsi dengan list acak yang sama. */
+export interface RaceResult {
+  input: number[];
+  sizes: number[];
+  runs: { block: string; trace: Trace; /** Operasi untuk sizes[k]; -1 = gagal. */ work: number[] }[];
 }
 
 // ---------- klien ----------

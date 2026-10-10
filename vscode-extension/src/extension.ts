@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type Trace, type TraceResult, type UpdateResult } from './server';
+import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type RaceResult, type Trace, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
 import { LoopPanel, VIEW_IDS, type FromPanel, type PanelLocation } from './panel';
 import { LoopCodeLens } from './codelens';
@@ -334,6 +334,27 @@ class Controller implements vscode.Disposable {
     }
   }
 
+  /** Lomba algoritma (Fase 12c): seed sama untuk semua peserta; "Acak input" memilih seed baru. */
+  private raceSeed = 0;
+  private lastRace?: RaceResult;
+  private async runRace(blocks: string[], n: number, reroll: boolean): Promise<void> {
+    const doc = this.editor?.document;
+    if (!doc || !this.client?.running) {
+      this.panel.post({ type: 'race', error: 'server gopherviz belum siap' });
+      return;
+    }
+    if (reroll || !this.raceSeed) {
+      this.raceSeed = reroll ? 1 + Math.floor(Math.random() * 2_000_000_000) : this.inputs[doc.uri.toString()]?.seed || 1;
+    }
+    try {
+      const result = await this.client.request<RaceResult>('race', { file: doc.fileName, blocks, n, seed: this.raceSeed });
+      this.lastRace = result;
+      this.panel.post({ type: 'race', result });
+    } catch (e) {
+      this.panel.post({ type: 'race', error: errMsg(e) });
+    }
+  }
+
   private forget(doc: vscode.TextDocument): void {
     const uri = doc.uri.toString();
     if (!this.results.delete(uri)) {
@@ -448,6 +469,9 @@ class Controller implements vscode.Disposable {
       case 'restart':
         void this.restart();
         break;
+      case 'race':
+        void this.runRace(m.blocks, m.n, !!m.reroll);
+        break;
       case 'input':
       case 'reroll': {
         const uri = this.editor?.document.uri.toString();
@@ -522,6 +546,7 @@ class Controller implements vscode.Disposable {
       panelPlace: () => this.panel.place,
       panelMessage: (m: FromPanel) => this.onPanelMessage(m),
       stepLine: () => this.stepLine,
+      lastRace: () => this.lastRace,
     };
   }
 

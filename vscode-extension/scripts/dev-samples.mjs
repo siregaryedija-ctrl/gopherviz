@@ -94,6 +94,11 @@ const samples = {
   err_type: ['@/err/tipe.py', 1],
   err_empty: ['@/err/kosong.py', 1],
   err_c: ['@/err/idx.c', 3],
+  // Fase 12c: sorting
+  sort_sel: ['@/sort/sorts.py', 1],
+  sort_ins: ['@/sort/sorts.py', 12],
+  sort_quick: ['@/sort/sorts.py', 23],
+  sort_merge: ['@/sort/sorts.py', 37],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));
@@ -105,5 +110,24 @@ for (const [name, [file, line]] of Object.entries(samples)) {
   const lines = readFileSync(f, 'utf8').split(/\r?\n/); // potongan kode untuk rekaman reel
   out[name] = { file: path.basename(file), scene, focusBlock: trace.block.id, trace, code: { lines } };
 }
+// Lomba algoritma (Fase 12c): lewat `gopherviz serve` (update lalu race), seperti panel.
+const races = {
+  race_sel_merge: ['@/sort/sorts.py', 'selection_sort', 'merge_sort'],
+  race_ins_quick: ['@/sort/sorts.py', 'insertion_sort', 'quick_sort'],
+};
+for (const [name, [file, a, b]] of Object.entries(races)) {
+  const f = path.join(root, 'dev', 'fixtures', file.slice(2));
+  const text = readFileSync(f, 'utf8');
+  const scene = run('list', '--json', f);
+  const id = fn => scene.scene.blocks.find(x => x.kind === 'func' && x.name === fn).id;
+  const reqs = [
+    { id: 1, method: 'update', params: { file: f, text, cursor: { line: 1, col: 1 } } },
+    { id: 2, method: 'race', params: { file: f, blocks: [id(a), id(b)], n: 8, seed: 7 } },
+  ].map(r => JSON.stringify(r) + '\n').join('');
+  const resp = execFileSync(exe, ['serve'], { input: reqs, encoding: 'utf8' }).trim().split('\n').map(l => JSON.parse(l));
+  const race = resp.find(r => r.id === 2).result;
+  out[name] = { file: path.basename(file), scene, focusBlock: id(a), trace: race.runs[0].trace, code: { lines: text.split(/\r?\n/) }, race };
+}
+
 writeFileSync(path.join(root, 'dev', 'samples.js'), `// Dibuat oleh scripts/dev-samples.mjs, jangan diedit manual.\nwindow.SAMPLES = ${JSON.stringify(out)};\n`);
 console.log(`dev/samples.js: ${Object.keys(out).join(', ')}`);

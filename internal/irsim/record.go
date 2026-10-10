@@ -171,6 +171,7 @@ func (e *Env) owner() *Class {
 
 // recorder mengumpulkan langkah selama blok fokus (dan blok di dalamnya) berjalan.
 type recorder struct {
+	hold     int // > 0: blok fokus tidak mulai direkam (lomba: definisi program / mode hitung)
 	focus    ir.Node
 	maxSteps int
 	maxIter  int

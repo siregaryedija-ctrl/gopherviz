@@ -76,3 +76,38 @@ test('parseCond', () => {
   assert.equal(Q.parseCond('elif x > 2 → 3 > 2 → True').result, true);
   assert.equal(Q.parseCond('jumlah += 1 → jumlah = 2'), null);
 });
+
+const ws = load('dev/samples.js', 'media/sorts.js', 'media/race.js');
+
+test('sorts: jenis sort dan variabel perannya dikenali', () => {
+  const D = (name: string) => ws.GV.sorts.detect(ws.SAMPLES[name].trace);
+  const sel = D('sort_sel');
+  assert.equal(sel.kind, 'selection');
+  assert.equal(sel.min, 'm');
+  const ins = D('sort_ins');
+  assert.equal(ins.kind, 'insertion');
+  assert.equal(ins.key, 'key');
+  const q = D('sort_quick');
+  assert.equal(q.kind, 'quick');
+  assert.deepEqual([q.pivot, q.lo, q.hi], ['pivot', 'lo', 'hi']);
+  const m = D('sort_merge');
+  assert.equal(m.kind, 'merge');
+  assert.equal(m.lists, true);
+  assert.equal(D('bubble').kind, 'bubble');
+  assert.equal(D('py_linear'), null); // pencarian bukan sorting
+  assert.deepEqual([...ws.GV.sorts.parseList('[5, 2, 8]')], ['5', '2', '8']);
+  assert.deepEqual([...ws.GV.sorts.parseList('[5 2 8]')], ['5', '2', '8']);
+  assert.equal(ws.GV.sorts.parseList('5'), null);
+});
+
+test('race: tebakan Big-O dari jumlah operasi', () => {
+  const O = ws.GV.race.bigO;
+  const sizes = [5, 10, 20, 40];
+  assert.equal(O(sizes, sizes.map(n => 3 * n + 4)), 'n');
+  assert.equal(O(sizes, sizes.map(n => n * Math.log2(n) * 5)), 'n log n');
+  assert.equal(O(sizes, sizes.map(n => n * n)), 'n²');
+  assert.equal(O(sizes, [-1, -1, -1, -1]), '?');
+  // sampel lomba: selection O(n²), merge O(n log n)
+  const r = ws.SAMPLES.race_sel_merge.race;
+  assert.deepEqual([...r.runs.map((x: Any) => O(r.sizes, x.work))], ['n²', 'n log n']);
+});

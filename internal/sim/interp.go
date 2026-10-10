@@ -11,6 +11,7 @@ import (
 
 	"gopherviz/internal/analyzer"
 	"gopherviz/internal/explain"
+	"gopherviz/internal/race"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -79,6 +80,9 @@ func (e *env) define(name string, v value) *value {
 }
 
 type interp struct {
+	raceSpec *race.Spec   // lomba: fungsi fokus dipanggil langsung dengan list acak (race.go)
+	budget0  int          // budget awal (lomba: jumlah evaluasi = budget0 - budget)
+	work     int          // lomba: jumlah evaluasi selama pemanggilan fungsi fokus
 	errCtx   *explain.Ctx // keterangan untuk panic berikutnya (indeks, panjang)
 	lastErr  *lastErr     // panic/fatal terakhir (langkah penutup bila tidak terekam)
 	p        *analyzer.Program
@@ -751,7 +755,7 @@ func (it *interp) decl(d ast.Decl, e *env) {
 // tidak menambah Run, tetapi tetap tercatat lewat Depth.
 func (it *interp) enterBlock(n ast.Node, kind scene.BlockKind) (*frame, func()) {
 	r := it.rec
-	isFocus := n == r.focus || it.focusMethod(n) // trace class: setiap method struct fokus
+	isFocus := (n == r.focus || it.focusMethod(n)) && r.hold == 0 // trace class: setiap method struct fokus
 	if isFocus {
 		if r.active == 0 {
 			r.runs++

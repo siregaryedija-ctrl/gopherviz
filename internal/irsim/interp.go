@@ -9,6 +9,7 @@ import (
 	"gopherviz/internal/ir"
 	"gopherviz/internal/lang"
 	"gopherviz/internal/project"
+	"gopherviz/internal/race"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/trace"
 	"gopherviz/internal/userinput"
@@ -46,6 +47,9 @@ type interp struct {
 	depth     int
 	quiet     int
 	errCtx    *explain.Ctx // keterangan untuk exception berikutnya (indeks, panjang, isi koleksi)
+	raceSpec  *race.Spec   // lomba: fungsi fokus dipanggil langsung dengan list acak (race.go)
+	budget0   int          // budget awal (lomba: jumlah evaluasi = budget0 - budget)
+	work      int          // lomba: jumlah evaluasi selama pemanggilan fungsi fokus
 	ids       int
 	kwargs    map[string]Value // argumen bernama Python untuk builtin yang sedang dipanggil
 	funcs     map[string][]*Fn // fungsi tingkat atas C/C++ (overload per jumlah argumen)
@@ -525,7 +529,7 @@ func patternIdents(x ir.Expr) []ir.Expr {
 
 func (it *interp) enterBlock(n ir.Node, kind scene.BlockKind) (*frame, func()) {
 	r := it.rec
-	isFocus := n == r.focus || it.focusMethod(n) // trace class: setiap method class fokus
+	isFocus := (n == r.focus || it.focusMethod(n)) && r.hold == 0 // trace class: setiap method class fokus
 	if isFocus {
 		if r.active == 0 {
 			r.runs++

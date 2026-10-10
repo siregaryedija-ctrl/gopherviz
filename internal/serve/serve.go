@@ -13,6 +13,7 @@ import (
 	"gopherviz/internal/lang"
 	"gopherviz/internal/project"
 	"gopherviz/internal/protocol"
+	"gopherviz/internal/race"
 	"gopherviz/internal/scene"
 	"gopherviz/internal/sim"
 	"gopherviz/internal/trace"
@@ -127,6 +128,17 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		}
 		return ok(req.ID, protocol.TraceResult{Trace: sim.Trace(prog, id, sim.Options{Input: userinput.Split(p.Input), InputSeed: p.Seed, Files: project.Disk{Overlay: s.texts}})})
 
+	case protocol.MethodRace:
+		var p protocol.RaceParams
+		if err := decode(req.Params, &p); err != nil {
+			return fail(req.ID, err.Error())
+		}
+		prog, found := s.progs[p.File]
+		if !found {
+			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
+		}
+		return ok(req.ID, s.race(prog, p))
+
 	default:
 		return fail(req.ID, fmt.Sprintf("method tidak dikenal: %q", req.Method))
 	}
@@ -146,4 +158,35 @@ func ok(id int, result any) protocol.Response { return protocol.Response{ID: id,
 
 func fail(id int, msg string) protocol.Response {
 	return protocol.Response{ID: id, Error: &protocol.Error{Message: msg}}
+}
+
+// race menjalankan lomba algoritma (Fase 12c): setiap fungsi dipanggil dengan list acak yang sama.
+func (s *Server) race(prog *analyzer.Program, p protocol.RaceParams) protocol.RaceResult {
+	n := p.N
+	if n <= 0 {
+		n = 8
+	}
+	sizes := p.Sizes
+	if len(sizes) == 0 {
+		sizes = []int{5, 10, 20, 40}
+	}
+	seed := p.Seed
+	if seed == 0 {
+		seed = 1
+	}
+	files := project.Disk{Overlay: s.texts}
+	out := protocol.RaceResult{Input: race.List(n, seed), Sizes: sizes, Runs: []protocol.RaceRun{}}
+	for _, id := range p.Blocks {
+		run := protocol.RaceRun{Block: id, Trace: sim.Trace(prog, id, sim.Options{Call: &race.Spec{N: n, Seed: seed}, Files: files})}
+		for _, size := range sizes {
+			tr := sim.Trace(prog, id, sim.Options{Call: &race.Spec{N: size, Seed: seed, Count: true}, Files: files})
+			w := tr.Work
+			if len(tr.Warnings) > 0 || w <= 0 {
+				w = -1
+			}
+			run.Work = append(run.Work, w)
+		}
+		out.Runs = append(out.Runs, run)
+	}
+	return out
 }

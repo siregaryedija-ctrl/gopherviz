@@ -88,6 +88,7 @@ type Trace struct {
 	Truncated  bool        `json:"truncated"`
 	Warnings   []string    `json:"warnings"`
 	ReadsInput bool        `json:"readsInput,omitempty"` // program membaca input user (panel menampilkan kotak Input)
+	Work       int         `json:"work,omitempty"`       // lomba: jumlah operasi (evaluasi) simulator selama fungsi fokus berjalan
 }
 
 // BlockInfo merangkum blok yang di-trace.
