@@ -137,3 +137,25 @@ test('event loop: setiap langkah sampel async membawa potret evloop', () => {
   for (const s of steps) out += s.output || '';
   assert.equal(out, 'mulai A\nsinkron selesai\nlanjut A\npromise\npanjang 1\ntimer\n');
 });
+
+test('kuis: pilihan masuk akal (boolean hanya lawannya, tanpa FALSE / FalseFalse)', () => {
+  let bools = 0;
+  for (const name of Object.keys(S)) {
+    for (const q of quizOf(name).qs) {
+      const ans = q.options[q.answer];
+      if (/^(true|false)$/i.test(ans)) {
+        bools++;
+        assert.equal(q.options.length, 2, `${name}: ${q.options}`);
+        assert.ok(q.options.every((o: string) => /^(true|false)$/i.test(o)), `${name}: ${q.options}`);
+      }
+      for (const o of q.options) {
+        for (const p of q.options) {
+          if (o === p) continue;
+          assert.notEqual(o.toLowerCase(), p.toLowerCase(), `${name}: ${q.options}`);
+          assert.notEqual(o, p + p, `${name}: ${q.options}`);
+        }
+      }
+    }
+  }
+  assert.ok(bools > 0, 'tidak ada pertanyaan boolean di sampel');
+});

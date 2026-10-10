@@ -50,18 +50,25 @@
     return { options: out, answer: out.indexOf(correct) };
   }
 
-  /** Pengecoh untuk sebuah nilai: nilai lain di trace yang sejenis, lalu variasi angka. */
+  const BOOLS = [['True', 'False'], ['true', 'false']];
+
+  /**
+   * Pengecoh untuk sebuah nilai. Boolean: hanya lawannya (True ↔ False). Angka: nilai lain di trace
+   * lalu variasi angka. Lainnya (teks, list, None): hanya nilai lain yang benar-benar muncul di trace,
+   * tanpa variasi buatan (dulu "FALSE" / "FalseFalse" ikut muncul sebagai pilihan).
+   */
   function decoys(correct, others) {
-    const pool = others.filter(o => o !== correct);
+    for (const pair of BOOLS) if (pair.includes(correct)) return pair.filter(x => x !== correct);
+    const isBool = x => BOOLS.some(p => p.includes(x));
+    const pool = others.filter(o => o !== correct && !isBool(o));
     const n = Number(correct);
     if (correct !== '' && !isNaN(n) && isFinite(n)) {
       const isInt = Number.isInteger(n);
       const vary = isInt ? [n + 1, n - 1, n * 2, n + 2] : [n + 1, n / 2, n * 2];
       pool.push(...vary.map(String));
-    } else if (/^["'].*["']$/.test(correct)) {
-      pool.push(correct.slice(1, -1));
     } else {
-      pool.push(correct.toUpperCase() !== correct ? correct.toUpperCase() : correct.toLowerCase(), correct + correct);
+      const list = /^\[(.*)\]$/.exec(correct); // list: urutan terbalik sebagai pengecoh
+      if (list && list[1].includes(',')) pool.push('[' + list[1].split(/,\s*/).reverse().join(', ') + ']');
     }
     return pool;
   }
@@ -78,6 +85,7 @@
     const cands = [];
     const seen = new Set();
     const push = (q, key) => {
+      if (q.options.length < 2) return; // tanpa pengecoh yang masuk akal: bukan pertanyaan
       if (key && seen.has(key)) return;
       if (key) seen.add(key);
       cands.push(q);
@@ -166,7 +174,7 @@
         const correct = String(s.return);
         const o = options(correct, decoys(correct, allRet.map(String)), i);
         push({
-          at: i, type: 'return', weight: 3, prompt: `${call} mengembalikan nilai berapa?`, code: call, vars: [], ...o,
+          at: i, type: 'return', weight: 3, prompt: `${call} mengembalikan ${isNaN(Number(correct)) ? "apa" : "nilai berapa"}?`, code: call, vars: [], ...o,
           explain: s.note || '',
         }, `ret:${call}`);
       }
