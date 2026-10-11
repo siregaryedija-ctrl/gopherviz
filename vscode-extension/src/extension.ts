@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
+import * as os from 'node:os';
 import { GophervizClient, type BlockKind, type FocusResult, type LoopKind, type RaceResult, type Trace, type TraceResult, type UpdateResult } from './server';
 import { resolveBinary } from './binary';
 import { LoopPanel, VIEW_IDS, type FromPanel, type PanelLocation } from './panel';
@@ -392,7 +393,28 @@ class Controller implements vscode.Disposable {
       music: c.get('music', true),
       details: c.get('details', false),
       size: c.get('size', 100),
+      theme: c.get('theme', 'auto'),
+      pixelBg: c.get('pixelBg', true),
+      musicFiles: Object.fromEntries(Object.entries(c.get<Record<string, string>>('musicFiles', {})).map(([k, v]) => [k, !!v && !!v.trim()])),
     });
+  }
+
+  /** Fase 13: kirim isi file musik sendiri untuk satu tema (panel memutarnya sebagai blob). */
+  private async sendMusicFile(theme: string): Promise<void> {
+    const raw = (config().get<Record<string, string>>('musicFiles', {})[theme] ?? '').trim();
+    if (!raw) {
+      return;
+    }
+    const file = raw.startsWith('~') ? path.join(os.homedir(), raw.slice(1)) : raw;
+    const ext = path.extname(file).toLowerCase();
+    const mime = { '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.oga': 'audio/ogg', '.wav': 'audio/wav', '.m4a': 'audio/mp4', '.webm': 'audio/webm' }[ext] ?? 'audio/mpeg';
+    try {
+      const data = await vscode.workspace.fs.readFile(vscode.Uri.file(file));
+      this.panel.post({ type: 'musicFile', theme, data, mime });
+    } catch (e) {
+      this.panel.post({ type: 'musicFile', theme, error: errMsg(e) });
+      void vscode.window.showWarningMessage(`GopherViz: file musik tema ${theme} tidak bisa dibaca (${file}). Chiptune bawaan dipakai.`);
+    }
   }
 
   /** Pilih tempat panel: tab editor, bawah Explorer, atau panel bawah sebelah Terminal. */
@@ -468,6 +490,9 @@ class Controller implements vscode.Disposable {
         break;
       case 'restart':
         void this.restart();
+        break;
+      case 'musicFile':
+        void this.sendMusicFile(m.theme);
         break;
       case 'race':
         void this.runRace(m.blocks, m.n, !!m.reroll);

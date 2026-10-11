@@ -241,7 +241,7 @@
 
     draw(v, pos, a, walking, alpha, face) {
       const w = this.wx, now = this.clock;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const floors = v.stack && v.stack.length ? v.stack : [{ fn: this.block.name, block: this.block }];
 
       if (this.off > 0) P.text(w, `+${this.off} LANTAI DI ATAS`, X_TILES - 8, this.top + 2, '#b090c8');

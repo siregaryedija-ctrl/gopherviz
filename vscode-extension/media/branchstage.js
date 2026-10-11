@@ -215,7 +215,7 @@
 
     draw(v, pos, a, walking, alpha, face) {
       const w = this.wx, now = this.clock;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
 
       // tangga di kiri
       const y0 = this.groundY(0) - 20, y1 = this.groundY(this.lanes.length - 1);

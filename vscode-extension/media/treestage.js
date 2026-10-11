@@ -175,7 +175,7 @@
       if (!v) return;
       const w = this.wx, now = this.clock, s = v.step;
       const last = i === this.snaps.length - 1;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const onPath = new Set(v.path);
       // sisi: jalur akar → simpul aktif menyala
       for (const n of this.t.nodes) {

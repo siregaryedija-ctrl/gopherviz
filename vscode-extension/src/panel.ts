@@ -14,7 +14,13 @@ export type ToPanel =
       input?: string;
     }
   | { type: 'trace'; blockId: string; trace: Trace; /** Isi file (untuk potongan kode di rekaman reel). */ code?: { lines: string[] } }
-  | { type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean; size: number }
+  | {
+      type: 'config'; speed: number; sound: boolean; music: boolean; details: boolean; size: number;
+      /** Fase 13: tema latar (auto = ikut VS Code), latar pixel, tema yang punya file musik sendiri. */
+      theme: string; pixelBg: boolean; musicFiles: Record<string, boolean>;
+    }
+  /** Isi file musik sendiri untuk satu tema (diminta panel lewat musicFile). */
+  | { type: 'musicFile'; theme: string; data?: Uint8Array; mime?: string; error?: string }
   /** Hasil lomba algoritma (Fase 12c), atau pesan error. */
   | { type: 'race'; result?: RaceResult; error?: string };
 
@@ -22,7 +28,9 @@ export type ToPanel =
 export type FromPanel =
   | { type: 'ready' }
   | { type: 'reveal'; line: number }
-  | { type: 'setConfig'; key: 'speed' | 'sound' | 'music' | 'size'; value: number | boolean }
+  | { type: 'setConfig'; key: 'speed' | 'sound' | 'music' | 'size' | 'theme' | 'pixelBg'; value: number | boolean | string }
+  /** Panel meminta isi file musik sendiri untuk tema ini. */
+  | { type: 'musicFile'; theme: string }
   | { type: 'restart' }
   | { type: 'input'; text: string }
   | { type: 'reroll' }
@@ -249,9 +257,9 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       this.lastState = msg;
     } else if (msg.type === 'trace') {
       this.lastTrace = msg;
-    } else {
+    } else if (msg.type === 'config') {
       this.lastConfig = msg;
-    }
+    } // race / musicFile: sekali kirim, tidak dikirim ulang saat panel dimuat ulang
     if (this.host && this.ready) {
       void this.host.postMessage(msg);
     }
@@ -268,9 +276,10 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       "default-src 'none'",
       `img-src ${webview.cspSource} data:`,
       `style-src ${webview.cspSource}`,
+      'media-src blob:',
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
-    const scripts = ['pixel.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'sorts.js', 'mergestage.js', 'sqstage.js', 'evstage.js', 'race.js', 'recorder.js', 'errorfx.js', 'quiz.js', 'memory.js', 'main.js']
+    const scripts = ['pixel.js', 'theme.js', 'sound.js', 'level.js', 'datastage.js', 'branchstage.js', 'funcstage.js', 'lanestage.js', 'graphstage.js', 'classstage.js', 'islandstage.js', 'gridstage.js', 'treestage.js', 'sorts.js', 'mergestage.js', 'sqstage.js', 'evstage.js', 'race.js', 'recorder.js', 'errorfx.js', 'quiz.js', 'memory.js', 'main.js']
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
@@ -373,6 +382,11 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
     </div>
     <button id="btnFx" class="btn tog" aria-pressed="true" title="Efek suara">Efek</button>
     <button id="btnMus" class="btn tog" aria-pressed="true" title="Musik latar">Musik</button>
+    <label class="theme-pick" title="Tema latar (musiknya ikut berganti)">🎨
+      <select id="themeSel" aria-label="Tema latar">
+        <option value="auto">Ikut VS Code</option><option value="siang">Siang</option><option value="malam">Malam</option><option value="gua">Gua</option><option value="pantai">Pantai</option>
+      </select></label>
+    <label class="pixel-pick" title="Latar bergaya pixel art (matikan untuk latar halus)"><input type="checkbox" id="pixelChk" checked> Pixel</label>
     <span id="sndHint" class="hint" hidden>Klik panel untuk menyalakan suara.</span>
   </footer>
 </main>

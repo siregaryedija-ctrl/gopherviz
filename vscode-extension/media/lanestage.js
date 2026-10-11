@@ -118,7 +118,7 @@
       const v = this.snaps[i];
       if (!v) return;
       const w = this.wx, now = this.clock;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const gIdx = id => v.gs.findIndex(g => g.id === id);
       const lane = Math.max(0, gIdx(v.g));
       const gopherAt = k => ({ x: X_GOPHER, y: this.laneY(k) });

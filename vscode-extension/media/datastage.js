@@ -114,7 +114,7 @@
     renderMap(i, t) {
       const s = this.snaps[i];
       const w = this.wx, now = this.clock;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const target = s.op ? s.keys.indexOf(s.op.key) : -1;
       const prev = this.snaps[i - 1];
       const fromK = prev && prev.op ? prev.keys.indexOf(prev.op.key) : -1;
@@ -482,7 +482,7 @@
       const w = this.wx, now = this.clock, st = s.step;
       const last = i === this.snaps.length - 1;
       const done = last && st.phase === 'exit' && st.reason !== 'panic';
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
 
       for (let k = 0; k < s.order.length; k++) P.textCenter(w, String(k), this.slotX(k), GY + 4, '#d9a0b6');
       // penunjuk indeks (I, J, ...) di bawah nomor indeks
@@ -650,7 +650,7 @@
       const s = this.snaps[i], st = s.step, w = this.wx, now = this.clock, W = this.worldW;
       const last = i === this.snaps.length - 1;
       const done = last && (st.phase === 'exit' || st.phase === 'return') && st.reason !== 'panic';
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const A = this.gridLayout(s.aliveBefore.length), B = this.gridLayout(s.alive.length);
       const keep = new Set(s.alive), rankB = new Map(s.alive.map((k, r) => [k, r]));
       const lo = s.alive.length ? s.alive[0] : Infinity, hi = s.alive.length ? s.alive[s.alive.length - 1] : -Infinity;

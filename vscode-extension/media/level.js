@@ -585,7 +585,7 @@
       const now = this.clock;
       const w = this.wx;
       w.globalAlpha = 1;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       if (this.loop) {
         w.globalAlpha = this.waiting ? 0.45 : 1;
         this.drawArrow(w, now);

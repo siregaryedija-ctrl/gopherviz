@@ -114,6 +114,11 @@
     <div class="speed" role="group"><button data-speed="0.5">0.5×</button><button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button></div>
     <button id="btnFx" class="btn tog" aria-pressed="true">Efek</button>
     <button id="btnMus" class="btn tog" aria-pressed="true">Musik</button>
+    <label class="theme-pick" title="Tema latar (musiknya ikut berganti)">🎨
+      <select id="themeSel" aria-label="Tema latar">
+        <option value="auto">Ikut VS Code</option><option value="siang">Siang</option><option value="malam">Malam</option><option value="gua">Gua</option><option value="pantai">Pantai</option>
+      </select></label>
+    <label class="pixel-pick" title="Latar bergaya pixel art (matikan untuk latar halus)"><input type="checkbox" id="pixelChk" checked> Pixel</label>
     <span id="sndHint" class="hint" hidden>Klik panel untuk menyalakan suara.</span>
   </footer>
 </main>
@@ -136,6 +141,7 @@
 </script>
 <script src="samples.js"></script>
 <script src="../media/pixel.js"></script>
+<script src="../media/theme.js"></script>
 <script src="../media/sound.js"></script>
 <script src="../media/level.js"></script>
 <script src="../media/datastage.js"></script>
@@ -161,7 +167,8 @@
   const q = new URLSearchParams(location.search);
   const post = m => window.postMessage(m, '*');
   // ?details = tampilan lama dengan teks penjelasan (setting gopherviz.details); bawaan hanya gambar.
-  post({ type: 'config', speed: 1, sound: false, music: false, details: q.get('details') !== null });
+  post({ type: 'config', speed: 1, sound: false, music: false, details: q.get('details') !== null,
+    theme: q.get('theme') || 'siang', pixelBg: q.get('smooth') === null, musicFiles: {} });
 
   if (q.get('sample')) {
     const s = window.SAMPLES[q.get('sample')];

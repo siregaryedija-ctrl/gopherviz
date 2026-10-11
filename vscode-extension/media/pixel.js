@@ -201,29 +201,21 @@
     return (stamps[key] = c);
   }
 
-  /** Latar dunia pastel: langit bergradasi berdither, awan, pohon lolipop, tanah berkerikil. */
+  /**
+   * Latar dunia (langit + tanah di garis GY) dan latar langit saja. Gambarnya milik tema aktif
+   * (theme.js, Fase 13): di sini canvas latar panggung hanya ditandai jenisnya dan dikosongkan,
+   * panggung boleh menggambar isinya sendiri di atasnya (lantai, kotak). P.drawBg menggabungkan
+   * tema + isi itu setiap frame.
+   */
   function paintWorld(c, W, H, GY) {
-    const bands = ['#fcd3e1', '#fddbe6', '#fde3eb', '#feeaf0', '#fff1f4'];
-    const bh = Math.ceil(GY / bands.length);
-    bands.forEach((col, k) => rect(c, 0, k * bh, W, bh + 1, col));
-    for (let k = 1; k < bands.length; k++) {
-      c.fillStyle = bands[k - 1];
-      for (let x = 0; x < W; x += 2) c.fillRect(x, k * bh, 1, 1);
-      for (let x = 1; x < W; x += 4) c.fillRect(x, k * bh + 1, 1, 1);
-    }
-    for (let x = 20; x < W; x += 64) {
-      const y = 8 + ((x * 7) % 14);
-      ell(c, x, y, 8, 3, '#fff8fb'); ell(c, x - 6, y + 1, 5, 2, '#fff8fb'); ell(c, x + 7, y + 1, 6, 2, '#fff8fb');
-    }
-    for (let x = 30, k = 0; x < W; x += 58, k++) {
-      const col = k % 2 ? '#dcefb8' : '#fbe7a6', r = 10 + (k % 3) * 2, cy = GY - 38 + (k % 2) * 8;
-      rect(c, x - 1, cy + r - 2, 3, GY - (cy + r - 2), '#efcab9');
-      disc(c, x, cy, r, mix(col, '#fde3eb', 0.35));
-    }
-    rect(c, 0, GY, W, H - GY, '#fbe3e8');
-    rect(c, 0, GY, W, 1, '#f2c4d2');
-    rect(c, 0, GY + 1, W, 1, '#f7d3dd');
-    for (let x = 3; x < W; x += 8) ell(c, x, H - 4, 2, 1, '#f5b3c7');
+    c.clearRect(0, 0, W, H);
+    c.canvas.__theme = { kind: 'world', GY };
+  }
+
+  /** Gambar latar panggung setiap frame: tema (bergerak) di bawah isi canvas latar. */
+  function drawBg(w, bg) {
+    if (G.theme) G.theme.drawBg(w, bg);
+    else w.drawImage(bg, 0, 0);
   }
 
   /** Posisi pada jalur berbelok (daftar titik) di t = 0..1, menurut panjang lintasan. */
@@ -264,8 +256,11 @@
     canvas.__k = k;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = '#fde3eb';
-    ctx.fillRect(0, 0, cw, ch);
+    // tema mode halus: latar beresolusi penuh di bawah dunia (dunia transparan di bagian latar)
+    if (!(G.theme && G.theme.underlay(ctx, world, worldW, worldH, k))) {
+      ctx.fillStyle = '#fde3eb';
+      ctx.fillRect(0, 0, cw, ch);
+    }
     ctx.drawImage(world, 0, 0, worldW, worldH, 0, 0, cw, ch);
     return k;
   }
@@ -279,19 +274,10 @@
     return Math.round(groundY + 2 - spr.height);
   }
 
-  /** Langit + awan saja (dunia yang tingginya bervariasi menggambar lantainya sendiri). */
+  /** Langit saja (dunia yang tingginya bervariasi menggambar lantainya sendiri). */
   function paintSky(c, W, H) {
-    const bands = ['#fcd3e1', '#fddbe6', '#fde3eb', '#feeaf0', '#fff1f4'];
-    const bh = Math.ceil(H / bands.length);
-    bands.forEach((col, k) => rect(c, 0, k * bh, W, bh + 1, col));
-    for (let k = 1; k < bands.length; k++) {
-      c.fillStyle = bands[k - 1];
-      for (let x = 0; x < W; x += 2) c.fillRect(x, k * bh, 1, 1);
-    }
-    for (let x = 20; x < W; x += 64) {
-      const y = 6 + ((x * 7) % 10);
-      ell(c, x, y, 8, 3, '#fff8fb'); ell(c, x - 6, y + 1, 5, 2, '#fff8fb'); ell(c, x + 7, y + 1, 6, 2, '#fff8fb');
-    }
+    c.clearRect(0, 0, W, H);
+    c.canvas.__theme = { kind: 'sky' };
   }
 
   // Warna ubin per jenis bagian body, sama dengan ikon di daftar "Isi" panel.
@@ -417,6 +403,6 @@
   G.pixel = {
     INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
-    along, present, drawGopher, paintSky, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth, stmtLabel, tileRow, labelTile,
+    along, present, drawGopher, paintSky, drawBg, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth, stmtLabel, tileRow, labelTile,
   };
 })(window.GV = window.GV || {});

@@ -4,7 +4,7 @@
   'use strict';
 
   G.createSound = function (onState) {
-    const FX_VOL = 0.3, MUS_VOL = 0.08, STEP = 0.24;
+    const FX_VOL = 0.3, MUS_VOL = 0.08;
     let ac = null, fx, mus, noiseBuf, timer = 0, nextT = 0, stepN = 0;
     let fxOn = true, musOn = true;
     const hz = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -81,18 +81,43 @@
       },
     };
 
-    const BASS = [48, 48, 55, 55, 57, 57, 53, 55];
-    const MEL = [76, 0, 79, 76, 72, 0, 74, 0, 76, 0, 79, 81, 79, 0, 76, 74, 72, 0, 74, 76, 79, 0, 76, 0, 74, 0, 72, 74, 67, 0, 72, 0];
+    // Musik latar per tema (Fase 13): 32 langkah; bass per 4 langkah (0 = diam), melodi per langkah.
+    const SONGS = {
+      siang: { step: 0.24, bass: [48, 48, 55, 55, 57, 57, 53, 55], bassType: 'triangle', melType: 'square', melVol: 0.16, hat: true,
+        mel: [76, 0, 79, 76, 72, 0, 74, 0, 76, 0, 79, 81, 79, 0, 76, 74, 72, 0, 74, 76, 79, 0, 76, 0, 74, 0, 72, 74, 67, 0, 72, 0] },
+      // nina bobo pelan: segitiga lembut, tanpa ketukan
+      malam: { step: 0.36, bass: [45, 45, 41, 41, 43, 43, 40, 40], bassType: 'sine', melType: 'triangle', melVol: 0.22, hat: false,
+        mel: [69, 0, 72, 0, 76, 0, 74, 72, 71, 0, 72, 0, 69, 0, 0, 0, 67, 0, 69, 0, 72, 0, 71, 69, 67, 0, 64, 0, 65, 0, 0, 0] },
+      // misterius: minor, nada rendah, tetes air
+      gua: { step: 0.3, bass: [38, 38, 41, 41, 36, 36, 37, 37], bassType: 'square', melType: 'triangle', melVol: 0.2, hat: false, drip: true,
+        mel: [62, 0, 0, 65, 0, 0, 64, 0, 62, 0, 0, 0, 57, 0, 60, 0, 62, 0, 0, 65, 0, 69, 0, 68, 0, 0, 65, 0, 64, 0, 0, 0] },
+      // calypso ceria: cepat, nada tinggi, ketukan
+      pantai: { step: 0.19, bass: [43, 43, 48, 48, 50, 50, 43, 47], bassType: 'triangle', melType: 'sine', melVol: 0.24, hat: true,
+        mel: [79, 0, 81, 83, 0, 79, 0, 76, 78, 0, 79, 0, 81, 0, 0, 0, 79, 0, 81, 83, 0, 86, 0, 83, 81, 0, 79, 0, 76, 0, 0, 0] },
+    };
+    let song = SONGS.siang;
     function schedule() {
       if (!ready()) return;
       if (nextT < ac.currentTime - 0.1) nextT = ac.currentTime + 0.05;
+      const STEP = song.step;
       while (nextT < ac.currentTime + 0.25) {
         const s = stepN % 32;
-        if (s % 2 === 0) tone(hz(BASS[Math.floor(s / 4)]), { when: nextT, dur: STEP * 1.6, type: 'triangle', vol: 0.5, dest: mus });
-        if (MEL[s]) tone(hz(MEL[s]), { when: nextT, dur: STEP * 0.8, vol: 0.16, dest: mus });
-        if (s % 2 === 1) noise({ when: nextT, dur: 0.03, ft: 'highpass', cut: 6000, vol: 0.12, dest: mus });
+        const b = song.bass[Math.floor(s / 4)];
+        if (s % 2 === 0 && b) tone(hz(b), { when: nextT, dur: STEP * 1.6, type: song.bassType, vol: 0.5, dest: mus });
+        if (song.mel[s]) tone(hz(song.mel[s]), { when: nextT, dur: STEP * 0.8, type: song.melType, vol: song.melVol, dest: mus });
+        if (song.hat && s % 2 === 1) noise({ when: nextT, dur: 0.03, ft: 'highpass', cut: 6000, vol: 0.12, dest: mus });
+        if (song.drip && s % 8 === 5) tone(hz(91 + (stepN % 3)), { when: nextT, dur: 0.05, type: 'sine', vol: 0.12, dest: mus });
         nextT += STEP; stepN++;
       }
+    }
+
+    // File musik sendiri per tema (setting gopherviz.musicFiles): diputar berulang menggantikan chiptune.
+    let audio = null, wantOn = false;
+    function syncAudio() {
+      if (!audio) return;
+      audio.volume = musOn ? 0.35 : 0;
+      if (wantOn && musOn) { if (audio.paused) audio.play().catch(() => {}); }
+      else if (!audio.paused) audio.pause();
     }
 
     return {
@@ -100,11 +125,23 @@
       ready,
       play(name) { if (fxOn && ready() && S[name]) S[name](); },
       music(on) {
-        if (on && !timer) { nextT = 0; timer = setInterval(schedule, 60); }
-        else if (!on && timer) { clearInterval(timer); timer = 0; }
+        wantOn = on;
+        const chip = on && !audio;
+        if (chip && !timer) { nextT = 0; timer = setInterval(schedule, 60); }
+        else if (!chip && timer) { clearInterval(timer); timer = 0; }
+        syncAudio();
+      },
+      /** Lagu chiptune tema (siang/malam/gua/pantai). */
+      setSong(name) { const next = SONGS[name] || SONGS.siang; if (next !== song) { song = next; stepN = 0; } },
+      /** File musik sendiri (URL blob) untuk tema aktif; null = kembali ke chiptune. */
+      setFile(url) {
+        if (audio && audio.src === url) return;
+        if (audio) { audio.pause(); audio = null; }
+        if (url) { audio = new Audio(url); audio.loop = true; }
+        this.music(wantOn);
       },
       setFx(v) { fxOn = v; if (fx) fx.gain.value = v ? FX_VOL : 0; },
-      setMus(v) { musOn = v; if (mus) mus.gain.value = v ? MUS_VOL : 0; },
+      setMus(v) { musOn = v; if (mus) mus.gain.value = v ? MUS_VOL : 0; syncAudio(); },
     };
   };
 })(window.GV = window.GV || {});

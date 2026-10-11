@@ -154,7 +154,7 @@
       const v = this.snaps[i];
       if (!v) return;
       const w = this.wx, now = this.clock;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const moving = new Set((v.moves || []).map(m => `${m.to}:${m.k}`));
       const leaving = new Set((v.moves || []).filter(m => m.from >= 0).map(m => `${m.from}:${m.fk}`));
       const mt = P.clamp((t - 0.15) / 0.7, 0, 1);

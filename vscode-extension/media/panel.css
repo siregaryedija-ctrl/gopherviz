@@ -387,3 +387,11 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .race-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow: auto; font-size: 12px; }
 .race-list label { display: flex; gap: 6px; align-items: center; font-family: var(--vscode-editor-font-family); }
 .race-lesson { grid-column: 1 / -1; font-size: 12px; color: var(--vscode-foreground); }
+
+/* Fase 13: pilihan tema latar */
+.theme-pick, .pixel-pick { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
+.theme-pick select {
+  font: inherit; padding: 2px 4px; border-radius: 6px;
+  background: var(--vscode-dropdown-background); color: var(--vscode-dropdown-foreground);
+  border: 1px solid var(--vscode-dropdown-border, var(--border));
+}

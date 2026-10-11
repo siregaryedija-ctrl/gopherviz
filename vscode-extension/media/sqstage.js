@@ -120,7 +120,7 @@
       const v = this.snaps[i];
       if (!v) return;
       const w = this.wx, now = this.clock;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       if (this.stack) this.renderStack(w, v, t, now); else this.renderQueue(w, v, t, now);
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), 1, 1, p.col);
       P.rect(w, 0, 0, this.W, 16, 'rgba(255,248,251,0.75)');

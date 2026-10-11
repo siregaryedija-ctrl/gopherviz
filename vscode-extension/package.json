@@ -2,7 +2,7 @@
   "name": "gopherviz",
   "displayName": "GopherViz",
   "description": "Visual pixel-art dan animasi cara kerja kode, realtime saat kamu mengetik. Go: nilai asli (loop, if, switch, fungsi, struct, pointer, map, goroutine, channel). JavaScript, TypeScript, Python, PHP, C++, C, Java: alur struktur.",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "publisher": "gopherviz",
   "private": true,
   "license": "SEE LICENSE IN README.md",
@@ -161,7 +161,37 @@
         "gopherviz.music": {
           "type": "boolean",
           "default": true,
-          "description": "Musik latar chiptune."
+          "description": "Musik latar (chiptune tema, atau file musik sendiri bila diatur)."
+        },
+        "gopherviz.theme": {
+          "type": "string",
+          "enum": ["auto", "siang", "malam", "gua", "pantai"],
+          "enumDescriptions": [
+            "Ikut tema VS Code: terang = Siang, gelap = Malam",
+            "Padang rumput pastel, awan berjalan",
+            "Langit senja berbintang, bulan, kunang-kunang",
+            "Gua batu dengan obor berkedip dan kristal",
+            "Senja di pantai: laut berombak, kelapa, camar"
+          ],
+          "default": "auto",
+          "description": "Tema latar panggung (musiknya ikut berganti)."
+        },
+        "gopherviz.pixelBg": {
+          "type": "boolean",
+          "default": true,
+          "description": "Latar bergaya pixel art. Matikan untuk latar halus (kubus, Gopher, dan teks tetap pixel)."
+        },
+        "gopherviz.musicFiles": {
+          "type": "object",
+          "default": {},
+          "properties": {
+            "siang": { "type": "string", "description": "File musik (mp3/ogg/wav) untuk tema Siang" },
+            "malam": { "type": "string", "description": "File musik untuk tema Malam" },
+            "gua": { "type": "string", "description": "File musik untuk tema Gua" },
+            "pantai": { "type": "string", "description": "File musik untuk tema Pantai" }
+          },
+          "additionalProperties": false,
+          "markdownDescription": "File musik sendiri per tema (path lengkap, mis. `C:\\Musik\\lofi.mp3`). Tema yang tidak diisi memakai chiptune bawaannya."
         },
         "gopherviz.binaryPath": {
           "type": "string",

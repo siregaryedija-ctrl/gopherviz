@@ -63,7 +63,7 @@
   const BRANCH = { 'if': 'if', 'else-if': 'else if', 'else': 'else', 'case': 'case', 'default': 'default' };
 
   let state = null;
-  let config = { speed: 1, sound: true, music: true, details: false, size: 100 };
+  let config = { speed: 1, sound: true, music: true, details: false, size: 100, theme: 'auto', pixelBg: true, musicFiles: {} };
   let blocks = [], loops = [];
   let currentBlock = null, currentLoop = null, blockKey = '';
   let traceNote = ''; // peringatan dari trace mode struktur
@@ -91,10 +91,15 @@
     else if (m.type === 'state') applyState(m);
     else if (m.type === 'trace') applyTrace(m);
     else if (m.type === 'race') applyRace(m);
+    else if (m.type === 'musicFile') applyMusicFile(m);
   });
 
   function applyConfig(m) {
-    config = { speed: m.speed, sound: m.sound, music: m.music, details: !!m.details, size: m.size || 100 };
+    config = {
+      speed: m.speed, sound: m.sound, music: m.music, details: !!m.details, size: m.size || 100,
+      theme: m.theme || 'auto', pixelBg: m.pixelBg !== false, musicFiles: m.musicFiles || {},
+    };
+    applyTheme();
     stageScale = P_clamp(config.size / 100, 0.25, 1);
     // Bawaan: panel hanya gambar (keputusan user 2026-10-07); teks penjelasan lewat setting gopherviz.details.
     document.body.classList.toggle('pic', !config.details);
@@ -106,6 +111,50 @@
     $('btnMus').setAttribute('aria-pressed', String(config.music));
     $('sndHint').hidden = snd.ready() || (!config.sound && !config.music);
   }
+
+  // ---------- tema latar + musik (Fase 13) ----------
+
+  /** Tema yang berlaku: "auto" mengikuti VS Code (gelap/kontras tinggi = Malam, terang = Siang). */
+  function themeName() {
+    if (config.theme && config.theme !== 'auto') return config.theme;
+    const dark = document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast');
+    return dark ? 'malam' : 'siang';
+  }
+
+  const musicUrls = {}; // tema → URL blob file musik sendiri
+  function applyTheme() {
+    const name = themeName();
+    G.theme.set(name, config.pixelBg);
+    snd.setSong(name);
+    $('themeSel').value = config.theme || 'auto';
+    $('pixelChk').checked = config.pixelBg;
+    if (config.musicFiles[name]) {
+      if (musicUrls[name]) snd.setFile(musicUrls[name]);
+      else { snd.setFile(null); vscode.postMessage({ type: 'musicFile', theme: name }); }
+    } else snd.setFile(null);
+  }
+
+  function applyMusicFile(m) {
+    if (!m.data || m.error) return; // chiptune bawaan tetap dipakai
+    const bytes = m.data instanceof Uint8Array ? m.data : Uint8Array.from(Object.values(m.data));
+    if (musicUrls[m.theme]) URL.revokeObjectURL(musicUrls[m.theme]);
+    musicUrls[m.theme] = URL.createObjectURL(new Blob([bytes], { type: m.mime || 'audio/mpeg' }));
+    if (themeName() === m.theme) snd.setFile(musicUrls[m.theme]);
+  }
+
+  $('themeSel').addEventListener('change', () => {
+    config.theme = $('themeSel').value;
+    applyTheme();
+    vscode.postMessage({ type: 'setConfig', key: 'theme', value: config.theme });
+  });
+  $('pixelChk').addEventListener('change', () => {
+    config.pixelBg = $('pixelChk').checked;
+    applyTheme();
+    vscode.postMessage({ type: 'setConfig', key: 'pixelBg', value: config.pixelBg });
+  });
+  // VS Code berganti tema terang/gelap: tema "auto" ikut berganti
+  new MutationObserver(() => { if (config.theme === 'auto' && G.theme.name !== themeName()) applyTheme(); })
+    .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
   function applyState(m) {
     state = m;
@@ -935,7 +984,7 @@
 
   const REC = G.recorder;
   let recording = false, recCancel = false;
-  const allStages = () => [level, data, branch, func, lanes, graph, cls, isles, maze, pohon, belah, menara, loket];
+  const allStages = () => [G.theme, level, data, branch, func, lanes, graph, cls, isles, maze, pohon, belah, menara, loket];
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const radio = name => (document.querySelector(`input[name="${name}"]:checked`) || {}).value;
 
@@ -1093,6 +1142,7 @@
     belah.update(dt);
     menara.update(dt);
     loket.update(dt);
+    G.theme.update(dt); // latar bergerak (awan, bintang, obor, ombak)
     if (recording) { requestAnimationFrame(frame); return; } // perekam yang menggambar panggung
     if (raceView.active) { // lomba menggantikan panggung biasa sampai user keluar
       raceView.update(dt, config.speed);

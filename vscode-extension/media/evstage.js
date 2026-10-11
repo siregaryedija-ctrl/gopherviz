@@ -115,7 +115,7 @@
       const v = this.snaps[i];
       if (!v) return;
       const w = this.wx, now = this.clock, ev = v.ev, pv = v.prev;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
 
       // jalur tiket: tiket yang baru masuk meluncur dari kanan; tiket yang diambil terbang ke call stack
       const lane = (key, y, col) => {

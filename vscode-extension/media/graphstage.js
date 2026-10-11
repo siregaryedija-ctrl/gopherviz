@@ -129,7 +129,7 @@
       if (!v) return;
       const w = this.wx, now = this.clock, g = this.g, prev = this.views[i - 1];
       const last = i === this.views.length - 1;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
 
       // sisi; sisi yang sedang dilewati Gopher berwarna merah muda
       const moving = prev && prev.cur && v.cur && prev.cur !== v.cur ? [prev.cur, v.cur] : null;

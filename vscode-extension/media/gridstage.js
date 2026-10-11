@@ -268,7 +268,7 @@
       if (!v) return;
       const w = this.wx, now = this.clock, g = this.g, p = this.p, d = this.d;
       const last = i === this.snaps.length - 1;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const bfs = g.kind !== 'dfs';
       const pathOn = last && this.path;
       const pathSet = new Set(pathOn ? this.path.map(([r, c]) => key(r, c)) : []);

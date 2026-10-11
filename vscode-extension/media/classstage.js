@@ -291,7 +291,7 @@
 
     draw(v, t) {
       const w = this.wx, now = this.clock, s = v.step;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       this.drawBlueprint(w, v);
 
       // rumah-rumah

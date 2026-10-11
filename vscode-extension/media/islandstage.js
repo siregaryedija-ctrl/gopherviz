@@ -207,7 +207,7 @@
       const v = this.snaps[i];
       if (!v) return;
       const w = this.wx, now = this.clock, s = v.step;
-      w.drawImage(this.bg, 0, 0);
+      P.drawBg(w, this.bg);
       const curFile = v.cur.file;
 
       // papan nama pulau + pondok fungsi
