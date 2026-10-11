@@ -569,6 +569,7 @@ class Controller implements vscode.Disposable {
       lastTrace: () => this.lastTrace,
       panelOpen: () => this.panel.isOpen,
       panelPlace: () => this.panel.place,
+      panelClosedByUser: () => this.panel.wasClosedByUser,
       panelMessage: (m: FromPanel) => this.onPanelMessage(m),
       stepLine: () => this.stepLine,
       lastRace: () => this.lastRace,

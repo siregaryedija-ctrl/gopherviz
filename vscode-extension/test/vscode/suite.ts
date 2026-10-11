@@ -194,6 +194,16 @@ test('panel bisa dipindah: panel bawah, sidebar, lalu kembali ke tab editor', as
   await vscode.window.showTextDocument(doc);
 });
 
+test('panel ditutup user: tercatat tertutup dan tidak dibuka otomatis lagi', async api => {
+  const tab = vscode.window.tabGroups.all
+    .flatMap(g => g.tabs)
+    .find(t => t.input instanceof vscode.TabInputWebview && t.input.viewType.endsWith('gopherviz.panel'));
+  assert.ok(tab, 'tab panel GopherViz tidak ditemukan');
+  await vscode.window.tabGroups.close(tab);
+  await waitFor('panel tertutup', () => !api.panelOpen());
+  assert.ok(api.panelClosedByUser(), 'penutupan oleh user tidak tercatat');
+});
+
 export async function run(): Promise<void> {
   const ext = vscode.extensions.getExtension<TestApi>('gopherviz.gopherviz');
   assert.ok(ext, 'ekstensi gopherviz tidak ditemukan');

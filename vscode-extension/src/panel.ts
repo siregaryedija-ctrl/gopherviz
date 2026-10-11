@@ -192,13 +192,14 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [media] },
     );
     panel.iconPath = vscode.Uri.joinPath(media, 'icon.svg');
-    this.attach(panel.webview, media);
+    const webview = panel.webview; // sesudah dispose, panel.webview melempar error
+    this.attach(webview, media);
     panel.onDidChangeViewState(e => this.onView(e.webviewPanel.visible));
     panel.onDidDispose(() => {
       if (this.panel === panel) {
         this.panel = undefined;
       }
-      this.detach(panel.webview);
+      this.detach(webview);
       if (!this.moving) {
         this.closedByUser = true;
       }
@@ -212,13 +213,14 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
     const media = vscode.Uri.joinPath(this.extensionUri, 'media');
     view.webview.options = { enableScripts: true, localResourceRoots: [media] };
     this.view = view;
-    this.attach(view.webview, media);
+    const webview = view.webview; // sesudah dispose, view.webview melempar error
+    this.attach(webview, media);
     view.onDidChangeVisibility(() => this.onView(view.visible));
     view.onDidDispose(() => {
       if (this.view === view) {
         this.view = undefined;
       }
-      this.detach(view.webview);
+      this.detach(webview);
       this.onView(false);
     });
     this.onView(view.visible);
