@@ -73,7 +73,7 @@
     drawGopher(c, gx, gy, face, step);
     c.restore();
     if (fall >= 1) textCenter(c, 'AAA!', ghostX, top - 20 + Math.round(Math.sin(ms / 90)), RED);
-    return n === 0 ? 'KOLEKSI KOSONG' : `INDEKS ${isNaN(v) ? '?' : v} · ADA 0..${n - 1}`;
+    return n === 0 ? 'EMPTY COLLECTION' : `INDEX ${isNaN(v) ? '?' : v} · VALID 0..${n - 1}`;
   }
 
   function chest(x, open, label, col) {
@@ -110,14 +110,14 @@
     const face = ms > 2200 ? 'shock' : 'idle';
     const hy = drawGopher(c, gx, GY, face, ms > 200 && ms < 1400 ? walkStep(ms) : 0);
     if (ms > 2400) bubble(c, gx, hy - 15, '?', RED);
-    return e.kind === 'empty' ? 'ISINYA SUDAH HABIS' : `ISINYA ${fit(e.value || 'NULL', 10)}: TIDAK ADA DATA`;
+    return e.kind === 'empty' ? 'ALREADY EMPTY' : `IT HOLDS ${fit(e.value || 'NULL', 10)}: NO DATA`;
   }
 
   function sceneZero(e, ms) {
     const gx = 34, zx = 128;
     cube(c, zx - 11, GY - 22, 22, 22, '#e9e0e6', 3);
     textCenter(c, '0', zx, GY - 14, RED);
-    textCenter(c, 'KOTAK', zx, GY + 4, INK);
+    textCenter(c, 'BOX', zx, GY + 4, INK);
     const hy = drawGopher(c, gx, GY, ms > 2900 ? 'shock' : 'idle', 0);
     for (let k = 0; k < 4; k++) { // koin terbang satu per satu ke kotak 0
       const p = seg(ms, 600 + k * 450, 1300 + k * 450);
@@ -134,7 +134,7 @@
       }
     }
     if (ms > 2900) textCenter(c, 'BOOM!', zx, GY - 40, RED);
-    return `${fit(e.expr || 'A / B', 18)} : PEMBAGINYA 0`;
+    return `${fit(e.expr || 'A / B', 18)} : DIVISOR IS 0`;
   }
 
   function sceneKey(e, ms) {
@@ -156,7 +156,7 @@
     rect(c, gx - textW(tag) / 2 - 3, hy - 11, textW(tag) + 6, 9, INK);
     rect(c, gx - textW(tag) / 2 - 2, hy - 10, textW(tag) + 4, 7, '#f1d064');
     textCenter(c, tag, gx, hy - 9, INK);
-    return `KEY ${tag} TIDAK ADA`;
+    return `KEY ${tag} IS MISSING`;
   }
 
   function sceneDepth(e, ms) {
@@ -174,9 +174,9 @@
       rect(c, Math.round(W / 2 - 24 + drift), Math.round(y + fh - 2), 48, 1, P.mix(col, INK, 0.4));
     }
     const count = Math.round(grow * (parseInt(e.value, 10) || 200));
-    textCenter(c, `LANTAI ${count}`, W / 2 + 50, 12, INK);
+    textCenter(c, `FLOOR ${count}`, W / 2 + 50, 12, INK);
     drawGopher(c, W / 2 - 40, GY, ms > 2600 ? 'shock' : 'idle', 0);
-    return 'TIDAK ADA BASE CASE?';
+    return 'NO BASE CASE?';
   }
 
   function sceneType(e, ms, value) {
@@ -187,14 +187,14 @@
     cube(c, rx, GY - 18, 18, 18, '#f5a3bf', 3);
     textCenter(c, value ? '"AB"' : '5', lx + 9, GY - 11, INK);
     textCenter(c, value ? 'INT' : '"A"', rx + 9, GY - 11, INK);
-    textCenter(c, value ? 'TEKS' : 'ANGKA', lx + 9, GY + 4, INK);
-    textCenter(c, value ? 'ANGKA?' : 'TEKS', rx + 9, GY + 4, INK);
+    textCenter(c, value ? 'TEXT' : 'NUMBER', lx + 9, GY + 4, INK);
+    textCenter(c, value ? 'NUMBER?' : 'TEXT', rx + 9, GY + 4, INK);
     if (ms > 1250) {
       textCenter(c, 'X', W / 2, GY - 30, RED);
       puff(W / 2, GY - 10, seg(ms, 1300, 2200), value ? '#bdb2b8' : '#f4a3a0');
     }
     drawGopher(c, 20, GY, ms > 1300 ? 'shock' : 'think', 0);
-    return value ? 'NILAINYA TIDAK BISA DIUBAH' : 'TIPENYA TIDAK COCOK';
+    return value ? 'CANNOT CONVERT IT' : 'TYPES DO NOT MATCH';
   }
 
   function sceneDeadlock(e, ms) {
@@ -207,8 +207,8 @@
       text(c, 'Z', Math.round(36 + p * 10), Math.round(GY - 30 - p * 24), P.mix(INK, '#ffffff', p));
       text(c, 'Z', Math.round(W - 30 + p * 10), Math.round(GY - 30 - p * 24), P.mix(INK, '#ffffff', p));
     }
-    textCenter(c, 'MENUNGGU..', W / 2, GY - 30, INK);
-    return 'SEMUA MENUNGGU';
+    textCenter(c, 'WAITING..', W / 2, GY - 30, INK);
+    return 'EVERYONE WAITS';
   }
 
   function sceneOther(e, ms) {
@@ -220,7 +220,7 @@
       rect(c, Math.round(W / 2 + Math.cos(a) * 14), Math.round(GY - 52 + Math.sin(a) * 12), 2, 2, RED);
     }
     drawGopher(c, W / 2, GY, 'shock', 0);
-    return fit(e.name && e.name !== 'panic' ? e.name : 'PROGRAM BERHENTI', 30);
+    return fit(e.name && e.name !== 'panic' ? e.name : 'PROGRAM STOPPED', 30);
   }
 
   // ---------- bingkai ----------
@@ -232,7 +232,7 @@
     let caption;
     switch (e.kind) {
       case 'index': caption = sceneIndex(e, ms); break;
-      case 'empty': caption = sceneChest(e, ms, 'KOSONG'); break;
+      case 'empty': caption = sceneChest(e, ms, 'EMPTY'); break;
       case 'null': caption = sceneChest(e, ms, e.value || 'NULL'); break;
       case 'zero': caption = sceneZero(e, ms); break;
       case 'key': caption = sceneKey(e, ms); break;

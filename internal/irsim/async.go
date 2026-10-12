@@ -116,7 +116,7 @@ func (it *interp) runTask(fn func(), label string, rec bool, kind string) {
 	it.curTask = label
 	defer func() { r.active--; r.depth = prevDepth; it.curTask = prevTask }()
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseBody, Note: fmt.Sprintf("call stack empty → the event loop takes %s ticket: %s", kind, label)}, nil)
+		it.add(trace.Step{Phase: trace.PhaseBody, Note: fmt.Sprintf("call stack empty → the event loop takes a %s ticket: %s", kind, label)}, nil)
 	}
 	fn()
 }

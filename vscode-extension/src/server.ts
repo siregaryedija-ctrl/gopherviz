@@ -300,14 +300,14 @@ export class GophervizClient {
       this.stderrTail = (this.stderrTail + chunk).slice(-4000);
     });
     readline.createInterface({ input: proc.stdout }).on('line', line => this.onLine(line));
-    proc.on('error', err => this.stop(`gagal menjalankan ${this.command}: ${err.message}`));
-    proc.on('exit', code => this.stop(`gopherviz berhenti (kode ${code ?? '?'})${this.stderrTail ? ': ' + this.stderrTail.trim() : ''}`));
+    proc.on('error', err => this.stop(`failed to start ${this.command}: ${err.message}`));
+    proc.on('exit', code => this.stop(`gopherviz stopped (code ${code ?? '?'})${this.stderrTail ? ': ' + this.stderrTail.trim() : ''}`));
 
     const hello = await this.request<HelloResult>('hello', { client: 'vscode', protocol: PROTOCOL_VERSION });
     if (hello.protocol !== PROTOCOL_VERSION) {
       this.dispose();
       throw new ServerError(
-        `versi protokol gopherviz ${hello.protocol} tidak cocok dengan ekstensi (${PROTOCOL_VERSION}); perbarui binary atau ekstensinya`,
+        `gopherviz protocol version ${hello.protocol} does not match the extension (${PROTOCOL_VERSION}); update the binary or the extension`,
       );
     }
     return hello;
@@ -320,13 +320,13 @@ export class GophervizClient {
   request<T>(method: string, params: unknown, timeoutMs = 5000): Promise<T> {
     const proc = this.proc;
     if (!proc) {
-      return Promise.reject(new ServerError('server gopherviz tidak berjalan'));
+      return Promise.reject(new ServerError('the gopherviz server is not running'));
     }
     const id = this.nextId++;
     return new Promise<T>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(id);
-        reject(new ServerError(`gopherviz tidak menjawab "${method}" dalam ${timeoutMs} ms`));
+        reject(new ServerError(`gopherviz did not answer "${method}" within ${timeoutMs} ms`));
       }, timeoutMs);
       this.pending.set(id, { resolve: resolve as (v: unknown) => void, reject, timer });
       proc.stdin.write(JSON.stringify({ id, method, params }) + '\n');
@@ -337,7 +337,7 @@ export class GophervizClient {
   dispose(): void {
     const proc = this.proc;
     this.proc = undefined;
-    this.rejectAll('server gopherviz dihentikan');
+    this.rejectAll('the gopherviz server was stopped');
     proc?.kill();
   }
 

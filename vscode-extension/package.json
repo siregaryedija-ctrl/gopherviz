@@ -1,11 +1,23 @@
 {
   "name": "gopherviz",
   "displayName": "GopherViz",
-  "description": "Visual pixel-art dan animasi cara kerja kode, realtime saat kamu mengetik. Go: nilai asli (loop, if, switch, fungsi, struct, pointer, map, goroutine, channel). JavaScript, TypeScript, Python, PHP, C++, C, Java: alur struktur.",
-  "version": "0.17.1",
+  "description": "See how your code runs as a pixel-art game, live while you type. Loops, if/switch, functions, recursion, classes, sorting, searching, stacks, queues, goroutines and the JS event loop in Go, JavaScript, TypeScript, Python, PHP, C++, C and Java. Your code is simulated, never executed.",
+  "version": "1.0.0",
   "publisher": "gopherviz",
-  "private": true,
-  "license": "SEE LICENSE IN README.md",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/siregaryedija/gopherviz.git"
+  },
+  "homepage": "https://github.com/siregaryedija/gopherviz/tree/main/vscode-extension#readme",
+  "bugs": {
+    "url": "https://github.com/siregaryedija/gopherviz/issues"
+  },
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#2b2140",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -24,8 +36,13 @@
     "c",
     "java",
     "loop",
-    "belajar",
-    "visualisasi"
+    "recursion",
+    "algorithm",
+    "sorting",
+    "visualization",
+    "learning",
+    "education",
+    "pixel art"
   ],
   "activationEvents": [
     "onLanguage:go",
@@ -44,22 +61,22 @@
     "commands": [
       {
         "command": "gopherviz.showPanel",
-        "title": "Tampilkan panel",
+        "title": "Show panel",
         "category": "GopherViz"
       },
       {
         "command": "gopherviz.visualizeAtCursor",
-        "title": "Visualisasikan blok di kursor",
+        "title": "Visualize block at cursor",
         "category": "GopherViz"
       },
       {
         "command": "gopherviz.restartServer",
-        "title": "Mulai ulang server gopherviz",
+        "title": "Restart gopherviz server",
         "category": "GopherViz"
       },
       {
         "command": "gopherviz.moveTo",
-        "title": "Pindahkan panel…",
+        "title": "Move panel…",
         "category": "GopherViz",
         "icon": "$(layout)"
       }
@@ -75,7 +92,7 @@
     "colors": [
       {
         "id": "gopherviz.stepLineBackground",
-        "description": "Latar baris yang sedang dijalankan Gopher di editor.",
+        "description": "Background of the line the Gopher is running in the editor.",
         "defaults": {
           "dark": "#264f7880",
           "light": "#add6ff80",
@@ -84,7 +101,7 @@
       },
       {
         "id": "gopherviz.stepLineBorder",
-        "description": "Garis kiri baris yang sedang dijalankan Gopher di editor.",
+        "description": "Left border of the line the Gopher is running in the editor.",
         "defaults": {
           "dark": "#4fc1ff",
           "light": "#0078d4",
@@ -98,12 +115,12 @@
         "gopherviz.realtime": {
           "type": "boolean",
           "default": true,
-          "description": "Perbarui visual di setiap ketikan, tanpa menunggu file disimpan."
+          "description": "Update the picture on every keystroke, without waiting for the file to be saved."
         },
         "gopherviz.autoOpen": {
           "type": "boolean",
           "default": true,
-          "description": "Buka panel otomatis saat kursor pertama kali masuk ke sebuah blok (loop, if, switch)."
+          "description": "Open the panel automatically when the cursor first enters a block (loop, if, switch)."
         },
         "gopherviz.location": {
           "type": "string",
@@ -114,33 +131,33 @@
           ],
           "default": "editor",
           "enumDescriptions": [
-            "Tab editor (bisa diseret ke samping atau bawah editor).",
-            "Sidebar kiri, di bawah Explorer.",
-            "Panel bawah, sebelah Terminal (tombol dan output di samping gambar)."
+            "Editor tab (can be dragged beside or below the editor).",
+            "Left sidebar, below the Explorer.",
+            "Bottom panel, next to the Terminal (buttons and output beside the picture)."
           ],
-          "description": "Tempat panel GopherViz. Bisa juga dipilih lewat perintah \"GopherViz: Pindahkan panel…\" atau tombol di judul panel."
+          "description": "Where the GopherViz panel lives. You can also pick it with the \"GopherViz: Move panel…\" command or the button in the panel title."
         },
         "gopherviz.size": {
           "type": "number",
           "default": 100,
           "minimum": 25,
           "maximum": 100,
-          "description": "Ukuran gambar dalam persen dari ruang yang tersedia. Bisa juga diatur dengan menyeret pojok kanan bawah gambar (klik dua kali: kembali penuh)."
+          "description": "Picture size as a percentage of the available space. You can also drag the bottom-right corner of the picture (double-click: back to full size)."
         },
         "gopherviz.details": {
           "type": "boolean",
           "default": false,
-          "description": "Tampilkan teks penjelasan di panel (kode blok, penjelasan, isi/cabang, variabel, output, daftar blok). Bawaan: panel hanya berisi gambar."
+          "description": "Show explanation text in the panel (block code, explanation, body/branches, variables, output, block list). By default the panel shows only the picture."
         },
         "gopherviz.highlightLine": {
           "type": "boolean",
           "default": true,
-          "description": "Sorot baris yang sedang dijalankan Gopher langsung di editor, mengikuti animasi di panel."
+          "description": "Highlight the line the Gopher is running right in the editor, in step with the panel animation."
         },
         "gopherviz.codeLens": {
           "type": "boolean",
           "default": true,
-          "description": "Tampilkan tombol \"▶ Visualisasikan\" di atas setiap blok (fungsi, loop, if, switch)."
+          "description": "Show a \"▶ Visualize\" button above every block (function, loop, if, switch)."
         },
         "gopherviz.speed": {
           "type": "number",
@@ -151,57 +168,57 @@
             2,
             4
           ],
-          "description": "Kecepatan animasi."
+          "description": "Animation speed."
         },
         "gopherviz.sound": {
           "type": "boolean",
           "default": true,
-          "description": "Efek suara 8-bit."
+          "description": "8-bit sound effects."
         },
         "gopherviz.music": {
           "type": "boolean",
           "default": true,
-          "description": "Musik latar (chiptune tema, atau file musik sendiri bila diatur)."
+          "description": "Background music (the theme chiptune, or your own music file if set)."
         },
         "gopherviz.theme": {
           "type": "string",
-          "enum": ["auto", "siang", "malam", "gua", "pantai"],
+          "enum": ["auto", "day", "night", "cave", "beach"],
           "enumDescriptions": [
-            "Ikut tema VS Code: terang = Siang, gelap = Malam",
-            "Padang rumput pastel, awan berjalan",
-            "Langit senja berbintang, bulan, kunang-kunang",
-            "Gua batu dengan obor berkedip dan kristal",
-            "Senja di pantai: laut berombak, kelapa, camar"
+            "Match the VS Code theme: light = Day, dark = Night",
+            "Pastel meadow with drifting clouds",
+            "Starry dusk sky, moon and fireflies",
+            "Stone cave with flickering torches and crystals",
+            "Sunset beach: rolling waves, palm trees and gulls"
           ],
           "default": "auto",
-          "description": "Tema latar panggung (musiknya ikut berganti)."
+          "description": "Stage background theme (the music changes with it)."
         },
         "gopherviz.pixelBg": {
           "type": "boolean",
           "default": true,
-          "description": "Latar bergaya pixel art. Matikan untuk latar halus (kubus, Gopher, dan teks tetap pixel)."
+          "description": "Pixel-art background. Turn off for a smooth background (cubes, the Gopher and text stay pixelated)."
         },
         "gopherviz.musicFiles": {
           "type": "object",
           "default": {},
           "properties": {
-            "siang": { "type": "string", "description": "File musik (mp3/ogg/wav) untuk tema Siang" },
-            "malam": { "type": "string", "description": "File musik untuk tema Malam" },
-            "gua": { "type": "string", "description": "File musik untuk tema Gua" },
-            "pantai": { "type": "string", "description": "File musik untuk tema Pantai" }
+            "day": { "type": "string", "description": "Music file (mp3/ogg/wav) for the Day theme" },
+            "night": { "type": "string", "description": "Music file for the Night theme" },
+            "cave": { "type": "string", "description": "Music file for the Cave theme" },
+            "beach": { "type": "string", "description": "Music file for the Beach theme" }
           },
           "additionalProperties": false,
-          "markdownDescription": "File musik sendiri per tema (path lengkap, mis. `C:\\Musik\\lofi.mp3`). Tema yang tidak diisi memakai chiptune bawaannya."
+          "markdownDescription": "Your own music file per theme (full path, e.g. `C:\\Music\\lofi.mp3`). Themes left empty use their built-in chiptune."
         },
         "gopherviz.binaryPath": {
           "type": "string",
           "default": "",
-          "description": "Path ke binary gopherviz. Kosongkan untuk memakai binary bawaan ekstensi."
+          "description": "Path to the gopherviz binary. Leave empty to use the one bundled with the extension."
         },
         "gopherviz.ffmpegPath": {
           "type": "string",
           "default": "",
-          "description": "Lokasi ffmpeg (mis. C:\\ffmpeg\\bin\\ffmpeg.exe) untuk menyimpan rekaman animasi sebagai MP4. Kosongkan bila ffmpeg sudah ada di PATH."
+          "description": "Location of ffmpeg (e.g. C:\\ffmpeg\\bin\\ffmpeg.exe) for saving recordings as MP4. Leave empty if ffmpeg is already on your PATH."
         }
       }
     },
@@ -259,7 +276,7 @@
     "build:bin:all": "node scripts/build-bin.mjs --all",
     "test": "npm run build:bin && node scripts/build.mjs --test && node --test out/test/*.test.js",
     "test:vscode": "npm run build:bin && npm run compile && node scripts/test-vscode.mjs",
-    "package": "npm run build:bin:all && npm run compile && vsce package --skip-license"
+    "package": "npm run build:bin:all && npm run compile && vsce package --baseContentUrl https://github.com/siregaryedija/gopherviz/blob/main/vscode-extension/ --baseImagesUrl https://raw.githubusercontent.com/siregaryedija/gopherviz/main/vscode-extension/"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

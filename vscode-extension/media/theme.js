@@ -11,7 +11,7 @@
 (function (G) {
   'use strict';
   const P = G.pixel;
-  const NAMES = ['siang', 'malam', 'gua', 'pantai'];
+  const NAMES = ['day', 'night', 'cave', 'beach'];
 
   // ---------- alat gambar: satu API untuk mode pixel dan halus ----------
 
@@ -99,8 +99,8 @@
   // ambient(D, W, H, hz, world, t): lapisan bergerak (setiap frame), t dalam milidetik.
 
   const THEMES = {
-    siang: {
-      label: 'Siang',
+    day: {
+      label: 'Day',
       static(D, W, H, hz, world) {
         D.grad(0, 0, W, hz, [[0, '#fcd3e1'], [1, '#fff1f4']]);
         if (!world) return;
@@ -124,8 +124,8 @@
       },
     },
 
-    malam: {
-      label: 'Malam',
+    night: {
+      label: 'Night',
       // langit senja keunguan (tidak terlalu gelap supaya teks pixel di panggung tetap terbaca)
       static(D, W, H, hz, world) {
         D.grad(0, 0, W, hz, [[0, '#7f83cf'], [0.6, '#a59fdc'], [1, '#c7bcec']]);
@@ -161,8 +161,8 @@
       },
     },
 
-    gua: {
-      label: 'Gua',
+    cave: {
+      label: 'Cave',
       torches: W => { const out = []; for (let x = 40; x < W - 20; x += 96) out.push(x); return out; },
       static(D, W, H, hz, world) {
         D.grad(0, 0, W, hz, [[0, '#a9918f'], [1, '#d7c2bb']]);
@@ -205,8 +205,8 @@
       },
     },
 
-    pantai: {
-      label: 'Pantai',
+    beach: {
+      label: 'Beach',
       static(D, W, H, hz, world) {
         const sea = world ? hz - 14 : Math.round(H * 0.82);
         D.grad(0, 0, W, sea, [[0, '#f48fb1'], [0.55, '#ffb59a'], [1, '#ffd9a0']]);
@@ -258,7 +258,7 @@
 
   // ---------- keadaan + cache ----------
 
-  const st = { name: 'siang', pixel: true, clock: 0 };
+  const st = { name: 'day', pixel: true, clock: 0 };
   const cache = new Map();
 
   function layer(spec, W, H, k, pixel) {
@@ -270,7 +270,7 @@
     cv.width = Math.max(1, Math.round(W * k)); cv.height = Math.max(1, Math.round(H * k));
     const c = cv.getContext('2d');
     const D = pixel ? pixelDraw(c) : smoothDraw(c, k);
-    const th = THEMES[st.name] || THEMES.siang, world = spec.kind === 'world';
+    const th = THEMES[st.name] || THEMES.day, world = spec.kind === 'world';
     th.static(D, W, H, world ? spec.GY : H, world);
     cache.set(key, cv);
     return cv;
@@ -284,7 +284,7 @@
     w.canvas.__bgSpec = spec;
     if (st.pixel) {
       w.drawImage(layer(spec, W, H, 1, true), 0, 0);
-      const th = THEMES[st.name] || THEMES.siang;
+      const th = THEMES[st.name] || THEMES.day;
       w.save();
       th.ambient(pixelDraw(w), W, H, world ? spec.GY : H, world, st.clock);
       w.restore();
@@ -298,7 +298,7 @@
   function underlay(ctx, world, W, H, k) {
     const spec = world.__bgSpec;
     if (st.pixel || !spec) return false;
-    const th = THEMES[st.name] || THEMES.siang, isWorld = spec.kind === 'world';
+    const th = THEMES[st.name] || THEMES.day, isWorld = spec.kind === 'world';
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(layer(spec, W, H, k, false), 0, 0);
     ctx.save();
@@ -311,11 +311,11 @@
 
   G.theme = {
     NAMES,
-    label: name => (THEMES[name] || THEMES.siang).label,
+    label: name => (THEMES[name] || THEMES.day).label,
     get name() { return st.name; },
     get pixel() { return st.pixel; },
     set(name, pixel) {
-      st.name = THEMES[name] ? name : 'siang';
+      st.name = THEMES[name] ? name : 'day';
       st.pixel = pixel !== false;
     },
     update(dt) { st.clock += dt; },

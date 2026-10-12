@@ -68,7 +68,7 @@ test('kuis: jawaban benar sesuai trace', () => {
   }
   // error: judul dari Step.err
   const e = quizOf('err_idx').qs.find((x: Any) => x.type === 'error');
-  assert.equal(e.options[e.answer], 'Indeks di luar batas');
+  assert.equal(e.options[e.answer], 'Index out of range');
 });
 
 test('parseCond', () => {

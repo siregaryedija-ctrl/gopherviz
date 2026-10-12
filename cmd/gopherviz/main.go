@@ -26,7 +26,8 @@ import (
 	"gopherviz/internal/trace"
 )
 
-const version = "0.13.0"
+// version diisi build-bin.mjs (-X main.version) dari versi ekstensi.
+var version = "dev"
 
 func main() {
 	os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr))

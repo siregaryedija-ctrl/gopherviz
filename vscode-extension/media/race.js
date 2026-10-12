@@ -37,7 +37,7 @@
     c.font = '11px var(--vscode-editor-font-family, monospace)';
     c.fillStyle = muted; c.textAlign = 'center';
     for (const n of sizes) c.fillText(`n=${n}`, X(n), H - B + 14);
-    c.fillText('ukuran input', (L + W - R) / 2, H - 4);
+    c.fillText('input size', (L + W - R) / 2, H - 4);
     c.textAlign = 'right';
     for (const f of [0, 0.5, 1]) c.fillText(String(Math.round(maxW * f)), L - 6, Y(maxW * f) + 4);
     runs.forEach((r, k) => {
@@ -98,7 +98,7 @@
       this.lanes = res.runs.map(r => {
         const b = blocks.find(x => x.id === r.block) || { id: r.block, name: r.block, kind: 'func', body: [] };
         const ok = r.trace.mode === 'simulated' && r.trace.steps.length;
-        return ok ? makeLane(r.trace, b, blocks, loops) : { failed: (r.trace.warnings || [])[0] || 'tidak bisa disimulasikan', name: b.name || b.id, steps: 0 };
+        return ok ? makeLane(r.trace, b, blocks, loops) : { failed: (r.trace.warnings || [])[0] || 'cannot be simulated', name: b.name || b.id, steps: 0 };
       });
       const max = Math.max(1, ...this.lanes.map(l => l.steps));
       this.stepMs = P.clamp(28000 / max, 90, 320); // lomba ±30 detik paling lama, durasi per langkah sama
@@ -158,10 +158,10 @@
         c.fillStyle = '#fff8fb'; c.fillRect(x0, 0, LW, HEAD - 4);
         c.fillStyle = COLS[k % COLS.length]; c.fillRect(x0, HEAD - 8, LW, 4);
         text(P.fit(l.name, 26), x0 + 12, 10, P.INK);
-        if (!l.st) { text(P.fit('GAGAL: ' + l.failed, 34), x0 + 12, 36, '#d9467c'); return; }
+        if (!l.st) { text(P.fit('FAILED: ' + l.failed, 34), x0 + 12, 36, '#d9467c'); return; }
         const i = Math.min(l.steps - 1, Math.floor(this.T / this.stepMs)), t = l.done ? 1 : (this.T / this.stepMs) % 1;
         l.st.render(i, t);
-        text(`LANGKAH ${l.done ? l.steps : i + 1}`, x0 + 12, 36, COLS[k % COLS.length]);
+        text(`STEPS ${l.done ? l.steps : i + 1}`, x0 + 12, 36, COLS[k % COLS.length]);
         const lh = Math.min(LH, Math.round((LW * l.cv.height) / l.cv.width)), lw = Math.round((lh * l.cv.width) / l.cv.height);
         c.drawImage(l.cv, x0 + Math.round((LW - lw) / 2), HEAD + Math.round((LH - lh) / 2), lw, lh);
         // kaki: bilah kemajuan + bendera finis
@@ -170,7 +170,7 @@
         c.fillStyle = COLS[k % COLS.length]; c.fillRect(x0, H - FOOT + 14, Math.round(LW * p), 12);
         if (l.done) {
           const place = this.finishOrder.indexOf(k) + 1;
-          const label = win === k ? 'MENANG!' : win === -1 ? 'SERI' : `FINIS #${place}`;
+          const label = win === k ? 'WINS!' : win === -1 ? 'TIE' : `FINISH #${place}`;
           const img = P.stamp(label, win === k ? '#2f8a5c' : '#c2457a'), S = 5;
           c.drawImage(img, x0 + Math.round(LW / 2 - (img.width * S) / 2), HEAD + 70, img.width * S, img.height * S);
         }

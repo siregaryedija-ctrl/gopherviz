@@ -75,7 +75,7 @@ test('CodeLens muncul di atas setiap blok', async () => {
   const ed = vscode.window.activeTextEditor!;
   const lenses = await vscode.commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', ed.document.uri);
   const titles = lenses.map(l => l.command?.title ?? '');
-  for (const want of ['▶ Visualisasikan loop L1', '▶ Visualisasikan fungsi F1', '▶ Visualisasikan if I1']) {
+  for (const want of ['▶ Visualize loop L1', '▶ Visualize function F1', '▶ Visualize if I1']) {
     assert.ok(titles.includes(want), titles.join(', '));
   }
   assert.equal(titles.filter(t => t.startsWith('▶')).length, 6); // main, 3 loop, 2 if
@@ -102,7 +102,7 @@ test('bahasa lain: JavaScript dan Python dianalisis dengan parsernya sendiri', a
     assert.equal(res.scene.loops.length, loops);
     assert.deepEqual(res.diagnostics, []);
     const lenses = await vscode.commands.executeCommand<vscode.CodeLens[]>('vscode.executeCodeLensProvider', doc.uri);
-    assert.ok(lenses.some(l => l.command?.title === '▶ Visualisasikan loop L1'), 'lens L1 tidak ada');
+    assert.ok(lenses.some(l => l.command?.title === '▶ Visualize loop L1'), 'lens L1 tidak ada');
   }
 });
 
@@ -115,13 +115,13 @@ test('kotak Input: nilai dari user dipakai simulasi', async api => {
     const t = api.lastTrace();
     return t && t.block.id === 'I1' && t.readsInput ? t : undefined;
   });
-  assert.ok(tr.warnings.some(w => w.includes('angka acak')), tr.warnings.join(' | '));
+  assert.ok(tr.warnings.some(w => w.includes('random numbers')), tr.warnings.join(' | '));
   api.panelMessage({ type: 'input', text: '15, 1, 2, 3' }); // program membaca 4 input
   const t2 = await waitFor('trace dengan usia = 15', () => {
     const t = api.lastTrace();
     return t && t.steps.some(s => s.vars && s.vars.usia === '15') ? t : undefined;
   });
-  assert.ok(!t2.warnings.some(w => w.includes('angka acak')), t2.warnings.join(' | '));
+  assert.ok(!t2.warnings.some(w => w.includes('random numbers')), t2.warnings.join(' | '));
   api.panelMessage({ type: 'input', text: '' });
 });
 

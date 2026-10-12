@@ -8,57 +8,57 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
   const KIND = {
-    'for3': 'for klasik', 'cond': 'for kondisi', 'do-while': 'do-while', 'infinite': 'for tanpa batas',
-    'range-int': 'range angka', 'range-slice': 'range slice', 'range-array': 'range array',
+    'for3': 'classic for', 'cond': 'condition for', 'do-while': 'do-while', 'infinite': 'endless for',
+    'range-int': 'range number', 'range-slice': 'range slice', 'range-array': 'range array',
     'range-string': 'range string', 'range-map': 'range map', 'range-keys': 'range key', 'range-chan': 'range channel',
     'range-func': 'range iterator', 'range-unknown': 'range',
   };
   // Bahasa selain Go: nama jenis loop mengikuti istilah umum (while, for-each, for...in).
   const KIND_OTHER = {
-    'cond': 'while', 'infinite': 'loop tanpa batas', 'range-int': 'for range()', 'range-slice': 'for-each',
-    'range-array': 'for-each', 'range-string': 'per karakter', 'range-map': 'for-each key-value',
+    'cond': 'while', 'infinite': 'endless loop', 'range-int': 'for range()', 'range-slice': 'for-each',
+    'range-array': 'for-each', 'range-string': 'per character', 'range-map': 'for-each key-value',
     'range-keys': 'for...in (key)', 'range-unknown': 'for-each',
   };
   const EXPLAIN_OTHER = {
-    'cond': 'Isi diulang selama kondisinya true; kondisi dicek sebelum setiap putaran.',
-    'range-int': 'Diulang untuk setiap angka dari range(); kalau tidak ditentukan, mulai dari 0.',
-    'range-slice': 'Mengunjungi setiap elemen secara berurutan.',
-    'range-array': 'Mengunjungi setiap elemen secara berurutan.',
-    'range-string': 'Mengunjungi setiap karakter string secara berurutan.',
-    'range-map': 'Mengunjungi setiap pasangan key dan value.',
-    'range-unknown': 'Mengunjungi setiap elemen dari koleksi itu.',
+    'cond': 'The body repeats while the condition is true; the condition is checked before every round.',
+    'range-int': 'Repeats for every number from range(); if no start is given, it starts at 0.',
+    'range-slice': 'Visits every element in order.',
+    'range-array': 'Visits every element in order.',
+    'range-string': 'Visits every character of the string in order.',
+    'range-map': 'Visits every key and value pair.',
+    'range-unknown': 'Visits every element of that collection.',
   };
   const LANG_NAME = { go: 'Go', javascript: 'JavaScript', typescript: 'TypeScript', python: 'Python', php: 'PHP', cpp: 'C++', c: 'C', java: 'Java' };
   const sceneLang = () => (state && state.result && state.result.scene && state.result.scene.language) || 'go';
   const EXPLAIN = {
-    'for3': 'Init jalan sekali. Lalu berulang: cek kondisi, jalankan isi, jalankan post.',
-    'cond': 'Isi diulang selama kondisinya true, seperti while di bahasa lain.',
-    'do-while': 'Isi dijalankan dulu sekali, baru kondisinya dicek; diulang selama kondisinya true.',
-    'infinite': 'Isi diulang terus sampai bertemu break atau return.',
-    'range-int': 'Diulang sebanyak angka itu; variabelnya mulai dari 0.',
-    'range-slice': 'Mengunjungi setiap elemen secara berurutan: indeks dan nilainya.',
-    'range-array': 'Mengunjungi setiap elemen array secara berurutan: indeks dan nilainya.',
-    'range-string': 'Mengunjungi setiap karakter. Di Go, indeksnya dihitung dalam byte.',
-    'range-map': 'Mengunjungi setiap pasangan key dan value. Urutannya tidak dijamin, bisa beda tiap dijalankan.',
-    'range-keys': 'Mengunjungi setiap key (nama properti) dari objek.',
-    'range-chan': 'Mengambil nilai dari channel satu per satu sampai channel ditutup.',
-    'range-func': 'Mengambil nilai dari fungsi iterator sampai iteratornya selesai.',
-    'range-unknown': 'Mengunjungi setiap elemen. Tipe datanya belum diketahui (berasal dari package lain).',
+    'for3': 'Init runs once. Then it repeats: check the condition, run the body, run post.',
+    'cond': 'The body repeats while the condition is true, like while in other languages.',
+    'do-while': 'The body runs once first, then the condition is checked; it repeats while the condition is true.',
+    'infinite': 'The body repeats until it hits break or return.',
+    'range-int': 'Repeats that many times; the variable starts at 0.',
+    'range-slice': 'Visits every element in order: its index and value.',
+    'range-array': 'Visits every array element in order: its index and value.',
+    'range-string': 'Visits every character. In Go, the index counts bytes.',
+    'range-map': 'Visits every key and value pair. The order is not guaranteed and may differ on every run.',
+    'range-keys': 'Visits every key (property name) of the object.',
+    'range-chan': 'Takes values from the channel one by one until the channel is closed.',
+    'range-func': 'Takes values from the iterator function until the iterator is done.',
+    'range-unknown': 'Visits every element. Its data type is unknown (it comes from another package).',
   };
   const BLOCK_EXPLAIN = {
-    'evloop': 'JavaScript menjalankan satu hal pada satu waktu (call stack). setTimeout menaruh tiket di antrian timer, Promise.then dan lanjutan await di antrian microtask. Saat call stack kosong, event loop mengambil tiket: semua microtask dulu, baru timer.',
-    'if': 'Kondisi dicek satu per satu dari atas. Cabang pertama yang true dijalankan, sisanya dilewati.',
-    'switch': 'Nilainya dicocokkan dengan setiap case dari atas. Case pertama yang cocok dijalankan.',
-    'func': 'Setiap pemanggilan fungsi = Gopher masuk pipa ke lantai baru membawa argumen; return = naik lagi membawa koin berisi nilai. Rekursi = lantai bertumpuk ke bawah.',
-    'main': 'Timeline seluruh program dari awal main. Setiap fungsi yang dipanggil turun ke lantai baru.',
-    'class': 'Class = cetak biru (daftar field dan method). Setiap object = rumah yang dibangun dari cetak biru itu; kamarnya = field. Memanggil method = Gopher masuk ke rumah object itu (self/this), jadi terlihat object mana yang berubah.',
-    'islands': 'Program ini terpecah ke beberapa file. Setiap file = pulau, fungsinya = pondok. Memanggil fungsi dari file lain = Gopher menyeberang jembatan ke pulau itu; return = koin hasilnya dibawa pulang.',
-    'lanes': 'Setiap goroutine = satu Gopher di jalurnya sendiri. Channel = pipa: kirim melempar bola masuk, terima mengambilnya. Gopher yang menunggu berhenti sampai pasangannya datang. Urutan di sini mengikuti penjadwal Go dengan satu prosesor; di komputer kamu urutannya bisa berbeda.',
+    'evloop': 'JavaScript does one thing at a time (the call stack). setTimeout puts a ticket in the timer queue; Promise.then and the rest of an await go to the microtask queue. When the call stack is empty, the event loop takes tickets: all microtasks first, then timers.',
+    'if': 'Conditions are checked one by one from the top. The first true branch runs; the rest are skipped.',
+    'switch': 'The value is matched against every case from the top. The first matching case runs.',
+    'func': 'Every function call = the Gopher drops through a pipe to a new floor carrying the arguments; return = climbing back up with a coin holding the value. Recursion = floors stacked downward.',
+    'main': 'A timeline of the whole program from the start of main. Every called function goes down to a new floor.',
+    'class': 'Class = a blueprint (its fields and methods). Every object = a house built from that blueprint; its rooms = fields. Calling a method = the Gopher walks into the house of that object (self/this), so you can see which object changes.',
+    'islands': 'This program is split over several files. Every file = an island, its functions = huts. Calling a function from another file = the Gopher crosses a bridge to that island; return = it carries the result coin home.',
+    'lanes': 'Every goroutine = one Gopher in its own lane. Channel = a pipe: send throws a ball in, receive takes it out. A waiting Gopher stops until its partner arrives. The order here follows the Go scheduler with one processor; on your computer the order may differ.',
   };
   const NODE = {
-    stmt: 'perintah', if: 'percabangan if', switch: 'switch', loop: 'loop', break: 'break: keluar dari loop',
-    continue: 'continue: langsung ke putaran berikutnya', return: 'return: keluar dari fungsi',
-    goto: 'goto', block: 'blok { }', bad: 'belum bisa dibaca (belum lengkap)',
+    stmt: 'statement', if: 'if branch', switch: 'switch', loop: 'loop', break: 'break: leave the loop',
+    continue: 'continue: jump to the next round', return: 'return: leave the function',
+    goto: 'goto', block: 'block { }', bad: 'cannot be read yet (incomplete)',
   };
   const BRANCH = { 'if': 'if', 'else-if': 'else if', 'else': 'else', 'case': 'case', 'default': 'default' };
 
@@ -97,7 +97,7 @@
   function applyConfig(m) {
     config = {
       speed: m.speed, sound: m.sound, music: m.music, details: !!m.details, size: m.size || 100,
-      theme: m.theme || 'auto', pixelBg: m.pixelBg !== false, musicFiles: m.musicFiles || {},
+      theme: m.theme || 'auto', pixelBg: m.pixelBg !== false, musicFiles: m.musicFiles || {}, // nama tema lama sudah dipetakan ekstensi
     };
     applyTheme();
     stageScale = P_clamp(config.size / 100, 0.25, 1);
@@ -118,7 +118,7 @@
   function themeName() {
     if (config.theme && config.theme !== 'auto') return config.theme;
     const dark = document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast');
-    return dark ? 'malam' : 'siang';
+    return dark ? 'night' : 'day';
   }
 
   const musicUrls = {}; // tema → URL blob file musik sendiri
@@ -164,11 +164,11 @@
     const block = blocks.find(b => b.id === m.focusBlock) || null;
     const loop = block && block.kind === 'loop' ? loops.find(l => l.id === block.id) || null : null;
 
-    if (!m.server.ok) overlay(m.server.message || 'Server gopherviz tidak berjalan.', true);
-    else if (!m.file) overlay('Buka file kode untuk mulai.');
-    else if (!res) overlay('Menganalisis…');
-    else if (!blocks.length) overlay('Belum ada fungsi atau loop di file ini.\nCoba ketik:  for i := 0; i < 3; i++ {}');
-    else if (!block) overlay('Taruh kursor di dalam fungsi, if, switch, atau loop,\natau pilih bloknya di bawah.');
+    if (!m.server.ok) overlay(m.server.message || 'The gopherviz server is not running.', true);
+    else if (!m.file) overlay('Open a code file to start.');
+    else if (!res) overlay('Analyzing…');
+    else if (!blocks.length) overlay('No function or loop in this file yet.\nTry typing:  for i := 0; i < 3; i++ {}');
+    else if (!block) overlay('Put the cursor inside a function, if, switch or loop,\nor pick a block below.');
     else overlay(null);
 
     // Renderer hanya diperbarui bila isi blok berubah, supaya animasi tidak tersendat.
@@ -244,10 +244,10 @@
       if (!l) return 'loop';
       return (sceneLang() !== 'go' && KIND_OTHER[l.kind]) || KIND[l.kind] || l.kind;
     }
-    if (b.kind === 'func') return `fungsi ${b.name || ''}`.trim();
+    if (b.kind === 'func') return `function ${b.name || ''}`.trim();
     if (b.kind === 'class') return `class ${b.name || ''}`.trim();
     const n = (b.branches || []).length;
-    return b.kind === 'if' ? `if · ${n} cabang` : `switch · ${n} case`;
+    return b.kind === 'if' ? `if · ${n} ${n === 1 ? 'branch' : 'branches'}` : `switch · ${n} case`;
   }
 
   function renderHeader() {
@@ -264,7 +264,7 @@
     $('explain').textContent = explain;
     const chip = $('stateChip');
     chip.hidden = !b || b.state !== 'incomplete';
-    chip.textContent = 'belum lengkap';
+    chip.textContent = 'incomplete';
   }
 
   function renderNote(diags) {
@@ -272,20 +272,20 @@
     if (!b) { note.textContent = ''; return; }
     if (b.state === 'incomplete') {
       const d = diags.find(x => x.line >= b.line && x.line <= b.endLine + 1) || diags[0];
-      note.textContent = 'Blok ini belum selesai diketik' + (d ? ` (baris ${d.line}: ${d.message})` : '') + '. Gopher menunggu sampai lengkap.';
+      note.textContent = 'This block is not finished yet' + (d ? ` (line ${d.line}: ${d.message})` : '') + '. The Gopher waits until it is complete.';
       note.className = 'note warn';
       return;
     }
     if (tp.active) {
       const warn = tp.trace.warnings.length ? tp.trace.warnings.join(' ') : '';
-      note.textContent = (tp.trace.truncated ? 'Trace dipotong. ' : '') + warn;
+      note.textContent = (tp.trace.truncated ? 'Trace cut short. ' : '') + warn;
       note.className = warn ? 'note warn' : 'note';
       return;
     }
     const idle = currentLoop
-      ? 'Mode struktur: Gopher menelusuri alur loop sebagai contoh 3 putaran. Nilai asli muncul setelah kamu berhenti mengetik sebentar.'
-      : 'Mode struktur: nilai asli muncul setelah kamu berhenti mengetik sebentar.';
-    note.textContent = traceNote ? 'Mode struktur: ' + traceNote : idle;
+      ? 'Structure mode: the Gopher walks the loop flow as a 3-round example. Real values appear once you stop typing for a moment.'
+      : 'Structure mode: real values appear once you stop typing for a moment.';
+    note.textContent = traceNote ? 'Structure mode: ' + traceNote : idle;
     note.className = traceNote ? 'note warn' : 'note';
   }
 
@@ -298,7 +298,7 @@
     let text = n.text || '';
     if (n.kind === 'if') {
       const parts = (n.then || []).length + (n.else || []).length;
-      if (parts) text += `  (${parts} bagian di dalamnya)`;
+      if (parts) text += `  (${parts} ${parts === 1 ? 'part' : 'parts'} inside)`;
     }
     return text;
   }
@@ -318,12 +318,12 @@
       const goRecv = new RegExp('^func\\s*\\(\\s*\\w*\\s*\\*?' + b.name + '\\s*\\)');
       const ms = blocks.filter(x => x.kind === 'func' && (x.parent === b.id || goRecv.test(x.header || '')));
       ol.innerHTML = ms.length
-        ? ms.map((m, i) => partRow(i + 1, 'stmt', m.header, `method · baris ${m.line}`, m.line)).join('')
-        : partRow('', 'empty', 'Belum ada method. Field-nya tetap terlihat di cetak biru.', '', 0);
+        ? ms.map((m, i) => partRow(i + 1, 'stmt', m.header, `method · line ${m.line}`, m.line)).join('')
+        : partRow('', 'empty', 'No methods yet. Its fields are still shown on the blueprint.', '', 0);
       return;
     }
     if (b.kind === 'if' || b.kind === 'switch') {
-      $('partsTitle').textContent = b.kind === 'if' ? 'Cabang' : 'Case';
+      $('partsTitle').textContent = b.kind === 'if' ? 'Branches' : 'Cases';
       const brs = b.branches || [];
       let rows = brs.map((br, i) => {
         let kw = BRANCH[br.kind];
@@ -331,33 +331,33 @@
         if (br.kind === 'default' && sceneLang() === 'python') kw = 'case _';
         const text = `${kw} ${br.label}`.trim();
         return partRow(i + 1, br.kind === 'else' || br.kind === 'default' ? 'block' : 'if', text,
-          `${br.body.length ? br.body.length + ' bagian' : 'kosong'} · baris ${br.line}`, br.line);
+          `${br.body.length ? br.body.length + (br.body.length === 1 ? ' part' : ' parts') : 'empty'} · line ${br.line}`, br.line);
       }).join('');
       if (!brs.some(br => br.kind === 'else' || br.kind === 'default')) {
-        rows += partRow(brs.length + 1, 'bad', b.kind === 'if' ? 'tidak ada else' : 'tidak ada default',
-          'kalau tidak ada yang cocok, blok ini dilewati', 0);
+        rows += partRow(brs.length + 1, 'bad', b.kind === 'if' ? 'no else' : 'no default',
+          'if nothing matches, this block is skipped', 0);
       }
       ol.innerHTML = rows;
       return;
     }
-    $('partsTitle').textContent = b.kind === 'func' ? 'Isi fungsi' : 'Isi loop';
+    $('partsTitle').textContent = b.kind === 'func' ? 'Function body' : 'Loop body';
     const body = currentLoop ? currentLoop.body : b.body || [];
     if (!body.length) {
-      ol.innerHTML = partRow('', 'empty', 'Isinya masih kosong. Setiap baris yang kamu tulis di antara { } akan muncul sebagai blok.', '', 0);
+      ol.innerHTML = partRow('', 'empty', 'The body is still empty. Every line you write between { } shows up as a block.', '', 0);
       return;
     }
-    ol.innerHTML = body.map((n, i) => partRow(i + 1, n.kind, nodeText(n), `${NODE[n.kind] || n.kind} · baris ${n.line || '?'}`, n.line || b.line)).join('');
+    ol.innerHTML = body.map((n, i) => partRow(i + 1, n.kind, nodeText(n), `${NODE[n.kind] || n.kind} · line ${n.line || '?'}`, n.line || b.line)).join('');
   }
 
   function renderNav(file) {
     $('navSection').hidden = blocks.length === 0;
-    $('navTitle').textContent = file ? `Blok di ${file}` : 'Blok di file ini';
+    $('navTitle').textContent = file ? `Blocks in ${file}` : 'Blocks in this file';
     const depth = b => { let d = 0, p = b.parent; while (p) { d++; const x = blocks.find(y => y.id === p); p = x && x.parent; } return d; };
     $('nav').innerHTML = blocks.map(b => {
       const cur = currentBlock && b.id === currentBlock.id ? ' aria-current="true"' : '';
       const indent = '  '.repeat(Math.min(depth(b), 4)) + (b.parent ? '└ ' : '');
       return `<button class="loop-chip${b.state === 'incomplete' ? ' ghost' : ''}" data-line="${b.line}"${cur}>` +
-        `${indent}<b>${esc(b.id)}</b> ${esc(kindLabel(b))} · baris ${b.line}</button>`;
+        `${indent}<b>${esc(b.id)}</b> ${esc(kindLabel(b))} · line ${b.line}</button>`;
     }).join('');
   }
 
@@ -567,8 +567,8 @@
 
   function stepUI() {
     const v = tp.view[tp.i], s = v.step;
-    const group = v.group && v.group.length > 1 ? `${s.loop} menjalankan ${v.group.length} langkah · ` : '';
-    const floor = tp.r === laneR ? (s.g && !(s.note || '').startsWith(`G${s.g} `) ? `G${s.g} · ` : '') : s.depth ? `lantai ${s.depth} · ` : '';
+    const group = v.group && v.group.length > 1 ? `${s.loop} runs ${v.group.length} steps · ` : '';
+    const floor = tp.r === laneR ? (s.g && !(s.note || '').startsWith(`G${s.g} `) ? `G${s.g} · ` : '') : s.depth ? `floor ${s.depth} · ` : '';
     $('stepNote').textContent = (s.file ? `${s.file}:${s.line || '?'} · ` : '') + floor + group + (s.note || '');
     $('stepNote').className = 'step-note' + (s.reason === 'panic' ? ' warn' : '');
     renderErrCard(errOf(tp.i), s);
@@ -586,7 +586,7 @@
       $('vars').innerHTML = Object.keys(vars).sort().map(k => {
         const changed = tp.i > 0 && prev[k] !== vars[k];
         return `<span class="var${changed ? ' changed' : ''}"><b>${esc(k)}</b> = ${esc(vars[k])}</span>`;
-      }).join('') || '<span class="muted">Belum ada variabel.</span>';
+      }).join('') || '<span class="muted">No variables yet.</span>';
     }
 
     // output kumulatif sampai langkah ini; kotak selalu tampil selama trace, garis hijau saat output bertambah
@@ -613,8 +613,8 @@
     highlightPart(partOf(s.line, s));
     highlightPhase(currentLoop && s.loop === currentLoop.id ? { init: 'init', cond: 'cond', post: 'post' }[s.phase] || null : null);
 
-    let label = `Langkah ${tp.i + 1}/${tp.view.length}`;
-    if (v.cmpCount != null && tp.stats) label += ` · banding ${v.cmpCount} · tukar ${v.swpCount}`;
+    let label = `Step ${tp.i + 1}/${tp.view.length}`;
+    if (v.cmpCount != null && tp.stats) label += ` · compares ${v.cmpCount} · swaps ${v.swpCount}`;
     $('tLabel').textContent = label;
     $('tScrub').value = String(tp.i);
   }
@@ -622,7 +622,7 @@
   function syncPlay() {
     const pause = 'M3 2h4v12H3zM9 2h4v12H9z', play = 'M3 1v14l11-7z';
     $('tPlay').innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${tp.playing ? pause : play}"/></svg>`;
-    $('tPlay').title = tp.playing ? 'Jeda' : 'Putar';
+    $('tPlay').title = tp.playing ? 'Pause' : 'Play';
   }
 
   function tickTrace(dt) {
@@ -762,9 +762,9 @@
     const card = $('errCard');
     card.hidden = !e;
     if (!e) return;
-    const src = [s.line ? `baris ${s.line}` : '', e.name && e.msg ? `${e.name}: ${e.msg}` : e.msg || e.name || ''].filter(Boolean).join(' · ');
+    const src = [s.line ? `line ${s.line}` : '', e.name && e.msg ? `${e.name}: ${e.msg}` : e.msg || e.name || ''].filter(Boolean).join(' · ');
     card.innerHTML = `<h3>⚠ ${esc(e.title)}</h3><p>${esc(e.text)}</p>` +
-      (e.hint ? `<p class="hint"><b>Saran:</b> ${esc(e.hint)}</p>` : '') +
+      (e.hint ? `<p class="hint"><b>Tip:</b> ${esc(e.hint)}</p>` : '') +
       (src ? `<p class="src">${esc(src)}</p>` : '');
   }
 
@@ -776,8 +776,8 @@
     $('quizCard').hidden = true;
     if (!tp.active) return;
     if (!quiz.qs.length) {
-      quizCard(`<p class="q-prompt">Belum ada titik yang bisa ditebak di trace ini (tidak ada kondisi, output, return, atau error).</p>` +
-        `<div class="q-actions"><button class="btn" data-qact="off">Tutup</button></div>`);
+      quizCard(`<p class="q-prompt">Nothing to guess in this trace yet (no condition, output, return or error).</p>` +
+        `<div class="q-actions"><button class="btn" data-qact="off">Close</button></div>`);
       return;
     }
     goto(0, false);
@@ -797,12 +797,12 @@
     quiz.open = q;
     q.picked = null;
     const vars = (q.vars || []).map(([k, v]) => `<span class="var"><b>${esc(k)}</b> = ${esc(v)}</span>`).join('');
-    quizCard(`<div class="q-head"><b>TEBAK ${quiz.k + 1}/${quiz.qs.length}</b><span>★ ${quiz.score}</span></div>` +
+    quizCard(`<div class="q-head"><b>GUESS ${quiz.k + 1}/${quiz.qs.length}</b><span>★ ${quiz.score}</span></div>` +
       `<p class="q-prompt">${esc(q.prompt)}</p>` +
       (q.code ? `<code class="q-code">${esc(q.code)}</code>` : '') +
       (vars ? `<div class="vars q-vars">${vars}</div>` : '') +
       `<div class="q-opts">${q.options.map((o, j) => `<button class="q-opt" data-qopt="${j}"><b>${G.quiz.LETTERS[j]}</b><span>${esc(o)}</span></button>`).join('')}</div>` +
-      `<p class="q-fb" hidden></p><div class="q-actions" hidden><button class="btn primary" data-qact="next">Lanjut ▶</button></div>`);
+      `<p class="q-fb" hidden></p><div class="q-actions" hidden><button class="btn primary" data-qact="next">Next ▶</button></div>`);
     snd.play('think');
     return true;
   }
@@ -823,7 +823,7 @@
     const fb = card.querySelector('.q-fb');
     fb.hidden = false;
     fb.className = 'q-fb ' + (ok ? 'ok' : 'no');
-    fb.innerHTML = (ok ? '✓ Benar!' : `✗ Belum tepat. Jawabannya: <b>${esc(q.options[q.answer])}</b>`) + (q.explain ? `<br><span>${esc(q.explain)}</span>` : '');
+    fb.innerHTML = (ok ? '✓ Correct!' : `✗ Not quite. The answer is: <b>${esc(q.options[q.answer])}</b>`) + (q.explain ? `<br><span>${esc(q.explain)}</span>` : '');
     card.querySelector('.q-head span').textContent = `★ ${quiz.score}`;
     card.querySelector('.q-actions').hidden = false;
   }
@@ -855,9 +855,9 @@
     quiz.done = true;
     const n = quiz.qs.length, s = quiz.score;
     const stars = '★'.repeat(s) + '☆'.repeat(Math.max(0, n - s));
-    const msg = s === n ? 'Sempurna! Kamu paham alurnya.' : s * 2 >= n ? 'Bagus! Coba ulangi untuk skor penuh.' : 'Tidak apa-apa, tonton lagi alurnya lalu coba lagi.';
-    quizCard(`<div class="q-head"><b>SELESAI</b><span>${s}/${n}</span></div><p class="q-stars">${stars}</p><p class="q-prompt">${msg}</p>` +
-      `<div class="q-actions"><button class="btn primary" data-qact="again">Ulangi</button><button class="btn" data-qact="off">Selesai</button></div>`);
+    const msg = s === n ? 'Perfect! You understand the flow.' : s * 2 >= n ? 'Nice! Try again for a full score.' : 'That is okay. Watch the flow again, then try once more.';
+    quizCard(`<div class="q-head"><b>DONE</b><span>${s}/${n}</span></div><p class="q-stars">${stars}</p><p class="q-prompt">${msg}</p>` +
+      `<div class="q-actions"><button class="btn primary" data-qact="again">Again</button><button class="btn" data-qact="off">Finish</button></div>`);
     snd.play(s === n ? 'jingle' : 'coin');
   }
 
@@ -899,8 +899,8 @@
     const second = (fs.find(b => b.id !== first && sorty(b)) || fs.find(b => b.id !== first) || {}).id;
     raceSel = [first, second].filter(Boolean);
     $('raceList').innerHTML = fs.length
-      ? fs.map(b => `<label><input type="checkbox" value="${esc(b.id)}"${raceSel.includes(b.id) ? ' checked' : ''}> ${esc(b.header || b.name)} <small>· baris ${b.line}</small></label>`).join('')
-      : '<p>Belum ada fungsi di file ini.</p>';
+      ? fs.map(b => `<label><input type="checkbox" value="${esc(b.id)}"${raceSel.includes(b.id) ? ' checked' : ''}> ${esc(b.header || b.name)} <small>· line ${b.line}</small></label>`).join('')
+      : '<p>No functions in this file yet.</p>';
     $('raceGo').disabled = false;
     syncRaceDialog();
     $('raceDialog').hidden = false;
@@ -914,21 +914,21 @@
   });
   function syncRaceDialog() {
     $('raceGo').disabled = raceSel.length !== 2;
-    $('raceNote').textContent = raceSel.length === 2 ? '' : 'Pilih tepat 2 fungsi.';
+    $('raceNote').textContent = raceSel.length === 2 ? '' : 'Pick exactly 2 functions.';
   }
   $('raceCancel').addEventListener('click', () => { $('raceDialog').hidden = true; });
   $('raceGo').addEventListener('click', () => {
     if (raceSel.length !== 2) return;
     raceN = +(radio('raceN') || 8);
     $('raceGo').disabled = true;
-    $('raceNote').textContent = 'Menyiapkan lomba… (setiap fungsi juga diukur untuk n = 5, 10, 20, 40)';
+    $('raceNote').textContent = 'Preparing the race… (each function is also measured for n = 5, 10, 20, 40)';
     vscode.postMessage({ type: 'race', blocks: raceSel, n: raceN });
   });
 
   /** Hasil lomba dari server: mulai lomba di panggung, isi kartu grafik. */
   function applyRace(m) {
     $('raceGo').disabled = false;
-    if (m.error || !m.result) { $('raceNote').textContent = `Lomba gagal: ${m.error || 'tidak ada hasil'}`; return; }
+    if (m.error || !m.result) { $('raceNote').textContent = `Race failed: ${m.error || 'no result'}`; return; }
     const res = m.result;
     $('raceDialog').hidden = true;
     if (quiz.on) setQuiz(false);
@@ -936,9 +936,9 @@
     raceShown = false;
     for (const id of ['tracebar', 'errCard', 'quizCard', 'stepNote']) $(id).hidden = true;
     const names = raceView.lanes.map(l => l.name);
-    $('raceTitle').textContent = `LOMBA · ${names.join(' vs ')}`;
-    $('raceInput').textContent = `Input sama untuk keduanya (n = ${res.input.length}): [${res.input.join(', ')}]`;
-    $('racePlay').textContent = 'Jeda';
+    $('raceTitle').textContent = `RACE · ${names.join(' vs ')}`;
+    $('raceInput').textContent = `Same input for both (n = ${res.input.length}): [${res.input.join(', ')}]`;
+    $('racePlay').textContent = 'Pause';
     $('raceResult').innerHTML = '';
     $('raceCard').hidden = false;
     G.race.drawChart($('raceChart'), res.sizes, res.runs, names);
@@ -951,7 +951,7 @@
       const w = res.runs[k].work, o = G.race.bigO(res.sizes, w);
       const ops = w.map((x, j) => `n=${res.sizes[j]}: ${x > 0 ? x : '—'}`).join(' · ');
       return `<div class="race-lane${win === k ? ' win' : ''}"><b>${esc(l.name)}${win === k ? ' 🏆' : ''}</b>` +
-        (l.st ? `${l.steps} langkah · kira-kira O(${esc(o)})<br><small>${esc(ops)}</small>` : esc('gagal: ' + l.failed)) + '</div>';
+        (l.st ? `${l.steps} steps · about O(${esc(o)})<br><small>${esc(ops)}</small>` : esc('failed: ' + l.failed)) + '</div>';
     }).join('') + raceLesson(res, win);
     snd.play(win != null && win >= 0 ? 'jingle' : 'coin');
   }
@@ -964,9 +964,9 @@
     const nw = raceView.lanes[win].name, nl = raceView.lanes[lose].name;
     if (!(o[win] in RANK) || !(o[lose] in RANK)) return '';
     let msg;
-    if (RANK[o[win]] > RANK[o[lose]]) msg = `${nw} menang karena list-nya masih pendek (n = ${res.input.length}). Tapi lihat grafik: untuk input besar, ${nl} (O(${o[lose]})) jauh lebih hemat daripada ${nw} (O(${o[win]})).`;
-    else if (RANK[o[win]] < RANK[o[lose]]) msg = `${nw} menang, dan grafiknya juga tumbuh paling lambat (O(${o[win]})): makin besar input, makin jauh selisihnya.`;
-    else msg = `Keduanya tumbuh dengan laju yang mirip (O(${o[win]})); bedanya hanya di jumlah langkah per elemen.`;
+    if (RANK[o[win]] > RANK[o[lose]]) msg = `${nw} wins because the list is still short (n = ${res.input.length}). But look at the chart: for large inputs, ${nl} (O(${o[lose]})) does far less work than ${nw} (O(${o[win]})).`;
+    else if (RANK[o[win]] < RANK[o[lose]]) msg = `${nw} wins, and its curve also grows the slowest (O(${o[win]})): the bigger the input, the bigger the gap.`;
+    else msg = `Both grow at a similar rate (O(${o[win]})); they only differ in steps per element.`;
     return `<p class="race-note race-lesson">${esc(msg)}</p>`;
   }
 
@@ -975,8 +975,8 @@
     $('raceCard').hidden = true;
     if (tp.active) { $('tracebar').hidden = false; $('stepNote').hidden = false; goto(tp.i, true); tp.el = tp.p.duration(tp.i); }
   }
-  $('racePlay').addEventListener('click', () => { raceView.playing = !raceView.playing; $('racePlay').textContent = raceView.playing ? 'Jeda' : 'Putar'; });
-  $('raceAgain').addEventListener('click', () => { raceView.restart(); raceShown = false; $('raceResult').innerHTML = ''; $('racePlay').textContent = 'Jeda'; });
+  $('racePlay').addEventListener('click', () => { raceView.playing = !raceView.playing; $('racePlay').textContent = raceView.playing ? 'Pause' : 'Play'; });
+  $('raceAgain').addEventListener('click', () => { raceView.restart(); raceShown = false; $('raceResult').innerHTML = ''; $('racePlay').textContent = 'Pause'; });
   $('raceReroll').addEventListener('click', () => vscode.postMessage({ type: 'race', blocks: raceView.res.runs.map(r => r.block), n: raceN, reroll: true }));
   $('raceExit').addEventListener('click', exitRace);
 
@@ -993,18 +993,18 @@
   /** Judul otomatis: jenis panggung + nama blok. */
   function autoTitle() {
     const tr = tp.trace || {};
-    if (tr.grid) return `${tr.grid.kind === 'dfs' ? 'DFS' : 'BFS'} Labirin`;
-    if (tr.tree) return 'DFS Pohon';
-    if (tr.graph) return `${(tr.graph.kind || 'DFS').toUpperCase()} Graf`;
+    if (tr.grid) return `${tr.grid.kind === 'dfs' ? 'DFS' : 'BFS'} Maze`;
+    if (tr.tree) return 'DFS Tree';
+    if (tr.graph) return `${(tr.graph.kind || 'DFS').toUpperCase()} Graph`;
     if (tr.class) return `Class ${tr.class.name}`;
-    if (tp.r === dataR && data.elim) return 'Pencarian';
+    if (tp.r === dataR && data.elim) return 'Search';
     if (tp.r === mergeR) return titleCase(belah.title);
-    if (tp.r === sqR) return sqInfo.kind === 'stack' ? 'Tumpukan (Stack)' : 'Antrian (Queue)';
+    if (tp.r === sqR) return sqInfo.kind === 'stack' ? 'Stack' : 'Queue';
     if (tp.r === evR) return 'Event Loop';
     if (tp.r === dataR && data.sort) return titleCase(data.sort.title);
     const b = currentBlock;
     if (!b) return 'GopherViz';
-    if (b.kind === 'func') return `Fungsi ${b.name || ''}`.trim();
+    if (b.kind === 'func') return `Function ${b.name || ''}`.trim();
     return kindLabel(b).replace(/ · .*$/, '');
   }
 
@@ -1021,7 +1021,7 @@
     $('recProgress').hidden = true;
     $('recGo').disabled = false;
     const sec = Math.round(Math.min(60000, recPlan().total) / 1000);
-    $('recNote').textContent = `Seluruh langkah direkam (±${sec} detik, bagian berulang dipercepat). MP4 memakai ffmpeg di komputermu (atur di setting "GopherViz: Ffmpeg Path").`;
+    $('recNote').textContent = `Every step is recorded (±${sec} seconds, repeated parts sped up). MP4 uses ffmpeg on your computer (set it in the "GopherViz: Ffmpeg Path" setting).`;
     syncRecDialog();
     $('recDialog').hidden = false;
   });
@@ -1065,7 +1065,7 @@
       if (format === 'gif') gif = new REC.GifWriter(w, h);
       else {
         const mime = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
-        if (!mime) throw new Error('perekam video tidak tersedia di VS Code ini; pilih GIF');
+        if (!mime) throw new Error('video recording is not available in this VS Code; choose GIF');
         rec = new MediaRecorder(out.captureStream(fps), { mimeType: mime, videoBitsPerSecond: 5_000_000 });
         rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
         rec.start(250);
@@ -1093,14 +1093,14 @@
         REC.compose(octx, w, h, frame, stageCv, { title, sub, code: tp.code, line: st.line, file: st.file, output, startLine: currentBlock ? currentBlock.line : 1 });
         if (gif) {
           gif.addFrame(octx.getImageData(0, 0, w, h), frameMs);
-          if (f % 3 === 0) { progress((f + 1) / nFrames, `Membuat GIF… ${Math.round(((f + 1) / nFrames) * 100)}%`); await sleep(0); }
+          if (f % 3 === 0) { progress((f + 1) / nFrames, `Making GIF… ${Math.round(((f + 1) / nFrames) * 100)}%`); await sleep(0); }
         } else {
-          progress((f + 1) / nFrames, `Merekam video… ${Math.round((f + 1) / fps)} / ${Math.round(nFrames / fps)} detik`);
+          progress((f + 1) / nFrames, `Recording video… ${Math.round((f + 1) / fps)} / ${Math.round(nFrames / fps)} seconds`);
           const wait = t0 + (f + 1) * frameMs - performance.now();
           if (wait > 0) await sleep(wait);
         }
       }
-      if (recCancel) throw new Error('dibatalkan');
+      if (recCancel) throw new Error('cancelled');
       let bytes;
       if (gif) bytes = gif.finish();
       else {
@@ -1108,11 +1108,11 @@
         bytes = new Uint8Array(await new Blob(chunks, { type: 'video/webm' }).arrayBuffer());
       }
       const name = title.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').toLowerCase() || 'gopherviz';
-      progress(1, 'Menyimpan…');
+      progress(1, 'Saving…');
       vscode.postMessage({ type: 'export', format, name, data: bytes });
       $('recDialog').hidden = true;
     } catch (err) {
-      $('recNote').textContent = `Rekaman gagal: ${err && err.message ? err.message : err}`;
+      $('recNote').textContent = `Recording failed: ${err && err.message ? err.message : err}`;
       $('recProgress').hidden = true;
       $('recGo').disabled = false;
     } finally {
@@ -1168,7 +1168,7 @@
   G.app = { level, data, branch, func, tp, tickTrace, goto, quiz, setQuiz, quizAnswer, quizNext, raceView, applyRace }; // untuk dev/harness.html
   snd.unlock(); // di VS Code suara kadang boleh langsung; kalau tidak, menunggu klik
   applyConfig(config);
-  overlay('Menyiapkan…');
+  overlay('Getting ready…');
   requestAnimationFrame(frame);
   vscode.postMessage({ type: 'ready' });
 })(window.GV = window.GV || {});

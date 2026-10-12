@@ -124,8 +124,8 @@
       if (this.stack) this.renderStack(w, v, t, now); else this.renderQueue(w, v, t, now);
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), 1, 1, p.col);
       P.rect(w, 0, 0, this.W, 16, 'rgba(255,248,251,0.75)');
-      P.text(w, this.stack ? 'TUMPUKAN (STACK) LIFO' : 'ANTRIAN (QUEUE) FIFO', 4, 3, P.INK);
-      P.text(w, `ISI ${v.list.length}`, 4, 10, '#c2457a');
+      P.text(w, this.stack ? 'STACK (LIFO)' : 'QUEUE (FIFO)', 4, 3, P.INK);
+      P.text(w, `SIZE ${v.list.length}`, 4, 10, '#c2457a');
       P.present(this.ctx, this.cv, this.world, this.W, this.H);
     }
 
@@ -171,8 +171,8 @@
       P.rect(w, x0 - 8, GY, bw, 5, '#8a7a92');
       const roll = (v.ev ? Math.floor(t * 12) : 0) + Math.floor(now / 400);
       for (let k = 0; k < bw; k += 6) P.rect(w, x0 - 8 + ((k + roll) % bw), GY + 2, 2, 1, '#cfc2d6');
-      P.text(w, 'DEPAN', x0 - 8, GY + 8, '#c2457a');
-      P.text(w, 'BELAKANG', x0 - 8 + bw - P.textW('BELAKANG'), GY + 8, '#c2457a');
+      P.text(w, 'FRONT', x0 - 8, GY + 8, '#c2457a');
+      P.text(w, 'BACK', x0 - 8 + bw - P.textW('BACK'), GY + 8, '#c2457a');
       const push = v.ev && v.ev.type === 'push', pop = v.ev && v.ev.type === 'pop';
       if (pop) {
         const e = P.ease(P.clamp(t / 0.7, 0, 1));

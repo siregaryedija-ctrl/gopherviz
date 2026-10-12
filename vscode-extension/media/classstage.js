@@ -114,7 +114,7 @@
       (c.fields.length ? c.fields : ['-']).slice(0, 10).forEach(f => lines.push({ t: P.fit(f, 14), kind: 'field', name: f }));
       lines.push({ t: 'METHOD', kind: 'head' });
       (c.methods.length ? c.methods : ['-']).slice(0, 10).forEach(m => lines.push({ t: P.fit(m, 12) + (m === '-' ? '' : '()'), kind: 'method', name: m }));
-      if (c.subs && c.subs.length) lines.push({ t: 'ANAK: ' + P.fit(c.subs.join(','), 12), kind: 'super' });
+      if (c.subs && c.subs.length) lines.push({ t: 'SUBCLASS: ' + P.fit(c.subs.join(','), 12), kind: 'super' });
       return lines;
     }
 
@@ -320,11 +320,11 @@
         // tanpa variabel: "baru" selama dibangun (belum disimpan ke variabel), "tanpa nama" bila sudah
         // tidak dipegang variabel lagi atau object sementara (mis. hasil a + b)
         const fresh = !(v.named && v.named.has(h.id)) && (born || v.self === h.id);
-        const label = P.fit(o.name || (fresh ? 'baru' : 'tanpa nama'), Math.floor((h.size.w + 10) / 4));
+        const label = P.fit(o.name || (fresh ? 'new' : 'unnamed'), Math.floor((h.size.w + 10) / 4));
         const lw = P.textW(label) + 6, ly = r.top - 11 + dy;
         P.box(w, Math.round(h.x + h.size.w / 2 - lw / 2), ly, lw, 9, v.self === h.id ? '#fff3a8' : '#ffffff', P.INK);
         P.textCenter(w, label, h.x + h.size.w / 2, ly + 2, P.INK);
-        if (v.copy && v.self === h.id) P.textCenter(w, 'SALINAN', h.x + h.size.w / 2, h.gy + 5, '#8a6ac8');
+        if (v.copy && v.self === h.id) P.textCenter(w, 'COPY', h.x + h.size.w / 2, h.gy + 5, '#8a6ac8');
       }
 
       // tali pointer: field berisi object lain
@@ -389,14 +389,14 @@
       const id = this.block ? this.block.id : '';
       P.text(w, `${id} CLASS ${P.fit(this.info.name, 16)}`, 4, 3, P.INK);
       const n = Object.keys(v.objs).length;
-      P.text(w, `OBJECT ${n}` + (v.self && v.act !== 'exit' ? `  SELF = ${P.fit((v.objs[v.self] || {}).name || 'baru', 10)}` : ''), 4, 10, '#c2457a');
+      P.text(w, `OBJECT ${n}` + (v.self && v.act !== 'exit' ? `  SELF = ${P.fit((v.objs[v.self] || {}).name || 'new', 10)}` : ''), 4, 10, '#c2457a');
       const code = (s.note || '').replace(/ → .*$/, '');
       if (code) {
         P.rect(w, 0, this.H - 10, this.W, 10, 'rgba(255,248,251,0.85)');
         P.text(w, P.fit('> ' + code, Math.floor((this.W - 8) / 4)), 4, this.H - 8, P.INK);
       }
       if (v.act === 'exit' && v.i === this.snaps.length - 1) {
-        const img = P.stamp('SELESAI!', '#2f8a5c');
+        const img = P.stamp('DONE!', '#2f8a5c');
         w.drawImage(img, Math.round(this.W - img.width * 2 - 4), 2, img.width * 2, img.height * 2);
       }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

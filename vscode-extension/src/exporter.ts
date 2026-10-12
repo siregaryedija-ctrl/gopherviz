@@ -28,7 +28,7 @@ function toBytes(d: ExportMessage['data']): Uint8Array {
 }
 
 const FILTERS: Record<ExportMessage['format'], Record<string, string[]>> = {
-  gif: { 'Animasi GIF': ['gif'] },
+  gif: { 'GIF animation': ['gif'] },
   mp4: { 'Video MP4': ['mp4'] },
   webm: { 'Video WebM': ['webm'] },
 };
@@ -44,7 +44,7 @@ function runFfmpeg(input: string, output: string): Promise<void> {
   return new Promise((resolve, reject) => {
     execFile(ffmpegPath(), args, { windowsHide: true, timeout: 180_000 }, (err, _out, stderr) => {
       if (err) {
-        reject(new Error((err as NodeJS.ErrnoException).code === 'ENOENT' ? 'ffmpeg tidak ditemukan' : stderr.split('\n').slice(-3).join(' ').trim() || err.message));
+        reject(new Error((err as NodeJS.ErrnoException).code === 'ENOENT' ? 'ffmpeg not found' : stderr.split('\n').slice(-3).join(' ').trim() || err.message));
         return;
       }
       resolve();
@@ -60,7 +60,7 @@ export async function saveExport(m: ExportMessage, baseDir: string | undefined):
     vscode.window.showSaveDialog({
       defaultUri: vscode.Uri.file(path.join(dir, `${m.name || 'gopherviz'}.${format}`)),
       filters: FILTERS[format],
-      saveLabel: 'Simpan rekaman',
+      saveLabel: 'Save recording',
     });
   if (m.format !== 'mp4') {
     const target = await ask(m.format);
@@ -78,20 +78,20 @@ export async function saveExport(m: ExportMessage, baseDir: string | undefined):
   await fs.writeFile(tmp, bytes);
   try {
     await vscode.window.withProgress(
-      { location: vscode.ProgressLocation.Notification, title: 'GopherViz: mengubah rekaman ke MP4 (ffmpeg)…' },
+      { location: vscode.ProgressLocation.Notification, title: 'GopherViz: converting the recording to MP4 (ffmpeg)…' },
       () => runFfmpeg(tmp, target.fsPath),
     );
     void showSaved(target);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     const pick = await vscode.window.showErrorMessage(
-      `GopherViz: gagal membuat MP4 (${msg}). Atur lokasi ffmpeg.exe di setting "GopherViz: Ffmpeg Path", atau simpan sebagai WebM.`,
-      'Atur ffmpeg',
-      'Simpan WebM',
+      `GopherViz: could not make the MP4 (${msg}). Set the ffmpeg location in the "GopherViz: Ffmpeg Path" setting, or save as WebM.`,
+      'Set ffmpeg',
+      'Save WebM',
     );
-    if (pick === 'Atur ffmpeg') {
+    if (pick === 'Set ffmpeg') {
       void vscode.commands.executeCommand('workbench.action.openSettings', 'gopherviz.ffmpegPath');
-    } else if (pick === 'Simpan WebM') {
+    } else if (pick === 'Save WebM') {
       const webm = await ask('webm');
       if (webm) {
         await vscode.workspace.fs.writeFile(webm, bytes);
@@ -104,8 +104,8 @@ export async function saveExport(m: ExportMessage, baseDir: string | undefined):
 }
 
 async function showSaved(target: vscode.Uri): Promise<void> {
-  const pick = await vscode.window.showInformationMessage(`GopherViz: rekaman disimpan ke ${path.basename(target.fsPath)}`, 'Buka folder');
-  if (pick === 'Buka folder') {
+  const pick = await vscode.window.showInformationMessage(`GopherViz: recording saved to ${path.basename(target.fsPath)}`, 'Open folder');
+  if (pick === 'Open folder') {
     void vscode.commands.executeCommand('revealFileInOS', target);
   }
 }

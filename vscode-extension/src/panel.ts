@@ -45,30 +45,30 @@ const icon = (d: string) => `<svg viewBox="0 0 16 16" aria-hidden="true"><path d
 
 /** Pemutar langkah trace: mundur, putar/jeda, maju, ulang, slider. Salinannya ada di dev/harness.html. */
 export const TRACE_MARKUP = `<div id="tracebar" class="tracebar" hidden>
-    <button id="tPrev" class="icon-btn" title="Langkah sebelumnya" aria-label="Langkah sebelumnya">${icon('M3 2h2v12H3zM14 2v12L6 8z')}</button>
-    <button id="tPlay" class="icon-btn primary" title="Putar / jeda" aria-label="Putar atau jeda">${icon('M3 2h4v12H3zM9 2h4v12H9z')}</button>
-    <button id="tNext" class="icon-btn" title="Langkah berikutnya" aria-label="Langkah berikutnya">${icon('M11 2h2v12h-2zM2 2v12l8-6z')}</button>
-    <button id="tRestart" class="icon-btn" title="Ulang dari awal" aria-label="Ulang dari awal">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
-    <button id="tRec" class="icon-btn" title="Rekam animasi (GIF / MP4 / WebM)" aria-label="Rekam animasi">${icon('M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z')}</button>
-    <button id="tQuiz" class="icon-btn" aria-pressed="false" title="Mode tebak: berhenti di titik penting dan tebak apa yang terjadi" aria-label="Mode tebak">${icon('M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z')}</button>
-    <button id="tRace" class="icon-btn" title="Lomba algoritma: dua fungsi dengan input yang sama" aria-label="Lomba algoritma">${icon('M3 1h1v14H3zM5 2h8l-2 3 2 3H5z')}</button>
-    <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Posisi langkah">
+    <button id="tPrev" class="icon-btn" title="Previous step" aria-label="Previous step">${icon('M3 2h2v12H3zM14 2v12L6 8z')}</button>
+    <button id="tPlay" class="icon-btn primary" title="Play / pause" aria-label="Play or pause">${icon('M3 2h4v12H3zM9 2h4v12H9z')}</button>
+    <button id="tNext" class="icon-btn" title="Next step" aria-label="Next step">${icon('M11 2h2v12h-2zM2 2v12l8-6z')}</button>
+    <button id="tRestart" class="icon-btn" title="Restart from the beginning" aria-label="Restart from the beginning">${icon('M8 2a6 6 0 1 1-5.6 8.1l1.9-.7A4 4 0 1 0 8 4v2.5L4.5 3.2 8 0z')}</button>
+    <button id="tRec" class="icon-btn" title="Record the animation (GIF / MP4 / WebM)" aria-label="Record the animation">${icon('M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z')}</button>
+    <button id="tQuiz" class="icon-btn" aria-pressed="false" title="Guess mode: pause at key moments and guess what happens" aria-label="Guess mode">${icon('M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z')}</button>
+    <button id="tRace" class="icon-btn" title="Algorithm race: two functions with the same input" aria-label="Algorithm race">${icon('M3 1h1v14H3zM5 2h8l-2 3 2 3H5z')}</button>
+    <input type="range" id="tScrub" min="0" max="0" value="0" aria-label="Step position">
     <span id="tLabel" class="tlabel"></span>
   </div>
   <div id="quizCard" class="qcard" hidden></div>
   <div id="errCard" class="errcard" hidden></div>
   <div id="raceCard" class="racecard" hidden>
-    <div class="race-head"><b id="raceTitle">LOMBA</b>
-      <span class="race-btns"><button id="racePlay" class="btn">Jeda</button><button id="raceAgain" class="btn">Ulangi</button><button id="raceReroll" class="btn">Acak input</button><button id="raceExit" class="btn">Keluar</button></span></div>
+    <div class="race-head"><b id="raceTitle">RACE</b>
+      <span class="race-btns"><button id="racePlay" class="btn">Pause</button><button id="raceAgain" class="btn">Again</button><button id="raceReroll" class="btn">New input</button><button id="raceExit" class="btn">Exit</button></span></div>
     <p id="raceInput" class="race-input"></p>
     <div id="raceResult" class="race-result"></div>
-    <canvas id="raceChart" width="560" height="200" aria-label="Grafik jumlah operasi terhadap ukuran input"></canvas>
-    <p class="race-note">Grafik: jumlah operasi simulator saat fungsi diberi list acak berukuran n. Garis yang menanjak tajam = makin lambat untuk input besar.</p>
+    <canvas id="raceChart" width="560" height="200" aria-label="Chart of operation count against input size"></canvas>
+    <p class="race-note">Chart: simulator operation count when each function gets a random list of size n. A steeply rising line = slower for large inputs.</p>
   </div>
   <div id="inputbar" class="inputbar" hidden>
     <label for="inputBox">Input</label>
-    <input id="inputBox" type="text" placeholder="isi nilai input, pisahkan dengan koma (contoh: 25, Budi)" spellcheck="false" autocomplete="off">
-    <button id="inReroll" class="icon-btn" title="Angka acak baru untuk input yang belum diisi" aria-label="Angka acak baru">${icon('M2 2h12v12H2zM5 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM8 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-3 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z')}</button>
+    <input id="inputBox" type="text" placeholder="input values, separated by commas (e.g. 25, Alice)" spellcheck="false" autocomplete="off">
+    <button id="inReroll" class="icon-btn" title="New random numbers for empty inputs" aria-label="New random numbers">${icon('M2 2h12v12H2zM5 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM8 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-3 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z')}</button>
   </div>
   <p id="stepNote" class="step-note" hidden></p>`;
 
@@ -285,7 +285,7 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
       .map(f => `<script nonce="${nonce}" src="${src(f)}"></script>`)
       .join('\n');
     return `<!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
@@ -306,67 +306,67 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
   </header>
 
   <div class="stage">
-    <canvas id="stage" width="768" height="384" aria-label="Panggung pixel: Gopher berjalan melewati setiap bagian loop"></canvas>
-    <div id="grip" class="grip" title="Seret untuk mengubah ukuran gambar (klik dua kali: ukuran penuh)" hidden></div>
+    <canvas id="stage" width="768" height="384" aria-label="Pixel stage: the Gopher walks through every part of the code"></canvas>
+    <div id="grip" class="grip" title="Drag to resize the picture (double-click: full size)" hidden></div>
     <div id="overlay" class="overlay" hidden>
       <p id="overlayText"></p>
-      <button id="btnRestart" class="btn" hidden>Mulai ulang server</button>
+      <button id="btnRestart" class="btn" hidden>Restart server</button>
     </div>
   </div>
   ${TRACE_MARKUP}
   <p id="note" class="note"></p>
   <div id="recDialog" class="rec-dialog" hidden>
-    <div class="rec-box" role="dialog" aria-label="Rekam animasi">
-      <h2>Rekam animasi</h2>
-      <div class="rec-row"><span>Bingkai</span>
-        <label><input type="radio" name="recFrame" value="stage" checked> Panggung saja</label>
-        <label><input type="radio" name="recFrame" value="reel"> Vertikal (reel 9:16)</label>
+    <div class="rec-box" role="dialog" aria-label="Record the animation">
+      <h2>Record the animation</h2>
+      <div class="rec-row"><span>Frame</span>
+        <label><input type="radio" name="recFrame" value="stage" checked> Stage only</label>
+        <label><input type="radio" name="recFrame" value="reel"> Vertical (9:16 reel)</label>
       </div>
       <div class="rec-row"><span>Format</span>
         <label><input type="radio" name="recFormat" value="gif" checked> GIF</label>
         <label><input type="radio" name="recFormat" value="mp4"> MP4</label>
         <label><input type="radio" name="recFormat" value="webm"> WebM</label>
       </div>
-      <div class="rec-row" id="recTitleRow"><span>Judul</span><input id="recTitle" type="text" maxlength="40" spellcheck="false"></div>
+      <div class="rec-row" id="recTitleRow"><span>Title</span><input id="recTitle" type="text" maxlength="40" spellcheck="false"></div>
       <p id="recNote" class="rec-note"></p>
       <div id="recProgress" class="rec-progress" hidden><div id="recBar"></div></div>
       <div class="rec-actions">
-        <button id="recGo" class="btn primary">Rekam</button>
-        <button id="recCancel" class="btn">Batal</button>
+        <button id="recGo" class="btn primary">Record</button>
+        <button id="recCancel" class="btn">Cancel</button>
       </div>
     </div>
   </div>
 
   <div id="raceDialog" class="rec-dialog" hidden>
-    <div class="rec-box" role="dialog" aria-label="Lomba algoritma">
-      <h2>Lomba algoritma</h2>
-      <p class="rec-note">Pilih 2 fungsi. Keduanya diberi list acak yang sama, lalu dijalankan berdampingan.</p>
+    <div class="rec-box" role="dialog" aria-label="Algorithm race">
+      <h2>Algorithm race</h2>
+      <p class="rec-note">Pick 2 functions. Both get the same random list and run side by side.</p>
       <div id="raceList" class="race-list"></div>
-      <div class="rec-row"><span>Panjang list</span>
+      <div class="rec-row"><span>List length</span>
         <label><input type="radio" name="raceN" value="6"> 6</label>
         <label><input type="radio" name="raceN" value="8" checked> 8</label>
         <label><input type="radio" name="raceN" value="10"> 10</label>
       </div>
       <p id="raceNote" class="rec-note"></p>
       <div class="rec-actions">
-        <button id="raceGo" class="btn primary">Mulai lomba</button>
-        <button id="raceCancel" class="btn">Batal</button>
+        <button id="raceGo" class="btn primary">Start race</button>
+        <button id="raceCancel" class="btn">Cancel</button>
       </div>
     </div>
   </div>
 
   <section id="partsSection">
-    <h2 id="partsTitle">Isi loop</h2>
+    <h2 id="partsTitle">Loop body</h2>
     <ol id="parts" class="parts"></ol>
   </section>
   <section id="varsSection" hidden>
-    <h2>Variabel</h2>
+    <h2>Variables</h2>
     <div id="vars" class="vars"></div>
   </section>
   <section id="memSection" hidden>
-    <h2>Memori</h2>
+    <h2>Memory</h2>
     <div id="mem" class="mem"></div>
-    <p class="mem-legend">Peti cokelat = variabel, peti ungu = data di heap, tali = pointer (menunjuk ke data lain).</p>
+    <p class="mem-legend">Brown chest = variable, purple chest = data on the heap, rope = pointer (points to other data).</p>
   </section>
   <section id="outSection" hidden>
     <h2>Output</h2>
@@ -374,22 +374,22 @@ export class LoopPanel implements vscode.Disposable, vscode.WebviewViewProvider 
   </section>
 
   <section id="navSection">
-    <h2 id="navTitle">Blok di file ini</h2>
+    <h2 id="navTitle">Blocks in this file</h2>
     <div id="nav" class="nav"></div>
   </section>
 
   <footer class="controls">
-    <div class="speed" role="group" aria-label="Kecepatan">
+    <div class="speed" role="group" aria-label="Speed">
       <button data-speed="0.5">0.5×</button><button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button>
     </div>
-    <button id="btnFx" class="btn tog" aria-pressed="true" title="Efek suara">Efek</button>
-    <button id="btnMus" class="btn tog" aria-pressed="true" title="Musik latar">Musik</button>
-    <label class="theme-pick" title="Tema latar (musiknya ikut berganti)">🎨
-      <select id="themeSel" aria-label="Tema latar">
-        <option value="auto">Ikut VS Code</option><option value="siang">Siang</option><option value="malam">Malam</option><option value="gua">Gua</option><option value="pantai">Pantai</option>
+    <button id="btnFx" class="btn tog" aria-pressed="true" title="Sound effects">Sound</button>
+    <button id="btnMus" class="btn tog" aria-pressed="true" title="Background music">Music</button>
+    <label class="theme-pick" title="Background theme (the music changes with it)">🎨
+      <select id="themeSel" aria-label="Background theme">
+        <option value="auto">Match VS Code</option><option value="day">Day</option><option value="night">Night</option><option value="cave">Cave</option><option value="beach">Beach</option>
       </select></label>
-    <label class="pixel-pick" title="Latar bergaya pixel art (matikan untuk latar halus)"><input type="checkbox" id="pixelChk" checked> Pixel</label>
-    <span id="sndHint" class="hint" hidden>Klik panel untuk menyalakan suara.</span>
+    <label class="pixel-pick" title="Pixel-art background (turn off for a smooth background)"><input type="checkbox" id="pixelChk" checked> Pixel</label>
+    <span id="sndHint" class="hint" hidden>Click the panel to turn on sound.</span>
   </footer>
 </main>
 ${scripts}

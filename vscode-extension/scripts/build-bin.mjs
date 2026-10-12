@@ -4,9 +4,12 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import fs from 'node:fs';
 
 const extRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(extRoot, '..');
+// versi binary = versi ekstensi (gopherviz version)
+const { version } = JSON.parse(fs.readFileSync(path.join(extRoot, 'package.json'), 'utf8'));
 
 // [GOOS, GOARCH, nama folder sesuai process.platform-process.arch milik Node]
 const targets = [
@@ -21,14 +24,14 @@ const targets = [
 const current = `${process.platform}-${process.arch}`;
 const selected = process.argv.includes('--all') ? targets : targets.filter(t => t[2] === current);
 if (selected.length === 0) {
-  console.error(`platform ${current} belum didukung`);
+  console.error(`platform ${current} is not supported`);
   process.exit(1);
 }
 
 for (const [goos, goarch, dir] of selected) {
   const out = path.join(extRoot, 'bin', dir, goos === 'windows' ? 'gopherviz.exe' : 'gopherviz');
   console.log(`go build ${goos}/${goarch} -> ${path.relative(extRoot, out)}`);
-  execFileSync('go', ['build', '-trimpath', '-ldflags=-s -w', '-o', out, './cmd/gopherviz'], {
+  execFileSync('go', ['build', '-trimpath', `-ldflags=-s -w -X main.version=${version}`, '-o', out, './cmd/gopherviz'], {
     cwd: repoRoot,
     stdio: 'inherit',
     env: { ...process.env, GOOS: goos, GOARCH: goarch, CGO_ENABLED: '0' },

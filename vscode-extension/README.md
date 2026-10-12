@@ -1,47 +1,119 @@
 # GopherViz
 
-Lihat cara kerja loop Go sebagai level game pixel-art, langsung saat kamu mengetik.
+**See how your code runs, as a pixel-art game, live while you type.**
 
-- **Realtime.** Ketik `for i := 0; i < 3; i++ {}` dan level-nya langsung muncul. Body kosong tampil sebagai blok bata
-  kosong; setiap baris yang kamu tulis di dalam `{ }` menjadi blok baru.
-- **Mengikuti kursor.** Panel selalu menampilkan loop tempat kursormu berada. Klik bagian di panel untuk melompat ke barisnya.
-- **Nilai asli dari kodemu.** Setelah kamu berhenti mengetik sebentar, `gopherviz` menghitung programmu langkah demi
-  langkah: nilai `i` di setiap putaran, hasil setiap kondisi (`i < 3 → 2 < 3 → true`), dan output `fmt.Println`.
-  Putar, jeda, maju/mundur per langkah, atau geser slider.
-- **Gopher menelusuri alurnya.** Init, gerbang kondisi (T/F), menyundul blok satu per satu, post, lalu kembali ke gerbang.
-  `break` digambar sebagai pipa, `continue` sebagai pegas, `return` sebagai pintu, loop di dalam loop sebagai pipa ungu.
-- **Mode data.** Loop yang mengolah slice atau array (sort, cari, jumlahkan) tampil sebagai barisan gopher setinggi
-  nilainya: lihat mereka dibandingkan, bertukar tempat, dan berubah nilai.
-- **Kode setengah jadi tidak apa-apa.** Loop yang belum lengkap tampil sebagai blok "hantu" sampai selesai diketik.
-- Efek suara dan musik chiptune 8-bit (bisa dimatikan).
+GopherViz turns loops, branches, function calls, recursion, sorting, searching, objects, goroutines and the JavaScript
+event loop into a little platformer. A Gopher walks through your code step by step: it hops over conditions, drops
+down a pipe into every function call, swaps the cubes of an array, explores a maze, and carries return values back up.
 
-Bila nilainya tidak bisa dihitung tanpa menjalankan program (input dari keyboard, package yang belum didukung,
-goroutine), panel kembali ke **mode struktur** dan menjelaskan alasannya.
+![Bubble sort in GopherViz](images/bubble.gif)
 
-## Pemakaian
+- **Live.** The picture updates on every keystroke. Half-written code shows up as a "ghost" block until it is complete.
+- **Real values.** After a short pause in typing, GopherViz simulates your program and shows the actual values of
+  every variable, every condition (`i < n → 2 < 5 → true`) and every line of output.
+- **Safe.** Your code is **simulated, never executed**. No compiler, interpreter or network is needed, and nothing
+  leaves your computer.
+- **8 languages.** Go, JavaScript, TypeScript, Python, PHP, C++, C and Java.
 
-1. Buka file `.go`. Ekstensi aktif otomatis.
-2. Taruh kursor di dalam sebuah `for`. Panel GopherViz terbuka di samping (bisa dimatikan lewat `gopherviz.autoOpen`).
-3. Atau klik **▶ Visualisasikan loop** di atas `for`, atau tekan `Ctrl+Alt+L`.
+## Getting started
 
-## Pengaturan
+1. Open a `.go`, `.js`, `.ts`, `.py`, `.php`, `.cpp`, `.c` or `.java` file.
+2. Put the cursor inside a function, loop, `if` or `switch`. The GopherViz panel opens beside your editor.
+3. Or click **▶ Visualize** above a block, or press `Ctrl+Alt+L` (`Cmd+Alt+L` on macOS).
 
-| Setting | Bawaan | Fungsi |
+Use the buttons under the picture to play, pause, step back and forth, or drag the slider. The line the Gopher is
+running is highlighted right in your editor.
+
+## What it shows
+
+| | |
+|---|---|
+| **Recursion**: every call is a new floor, and return values ride back up as coins. ![Recursion](images/fib.gif) | **Binary search**: the half that can be thrown away slides out of view. ![Binary search](images/search.gif) |
+| **Mazes and graphs**: BFS and DFS on grids, graphs and trees, with distances and the shortest path. ![Maze BFS](images/maze.gif) | **Trees**: the Gopher climbs the tree in the order your traversal visits it. ![Tree DFS](images/tree.gif) |
+| **Classes and objects**: a class is a blueprint, every object is a house, and a method call walks into its house. ![Classes](images/class.gif) | **if / else and switch**: one floor per branch, and the Gopher takes the first branch that is true. ![If/else](images/ifelse.gif) |
+| **Goroutines and channels**: one lane per goroutine, channels as pipes, and a clear picture of a deadlock. ![Goroutines](images/goroutines.gif) | **JavaScript event loop**: the call stack, the microtask queue and the timer queue, ticket by ticket. ![Event loop](images/events.gif) |
+
+Also: sorting algorithms (bubble, selection, insertion, quick, merge and more) with compare and swap counters, stacks
+and queues, pointers and memory diagrams, maps, and multi-file programs shown as islands joined by bridges.
+
+### Errors, explained
+
+When a program crashes (index out of range, division by zero, `None`/`null`, a missing key, endless recursion, type
+errors, deadlocks), GopherViz plays a short scene of what went wrong and explains it in plain words, with a tip on how
+to fix it.
+
+![Index out of range](images/error.gif)
+
+### Guess mode
+
+Press the target button and GopherViz pauses at key moments (up to 5 per run) and asks what happens next: which branch
+runs, what a condition evaluates to, what gets printed, what a function returns, or which error is coming.
+
+![Guess mode](images/quiz.png)
+
+### Algorithm race
+
+Press the flag button, pick two functions, and watch them sort the same random list side by side. A chart then shows
+how the work of each one grows as the input gets bigger, with a rough Big-O estimate.
+
+![Algorithm race](images/race.png)
+
+### Record and share
+
+The record button saves the whole animation as a **GIF**, **MP4** or **WebM**: either the stage alone, or a vertical
+9:16 reel with a title, your code and the output. MP4 needs [ffmpeg](https://ffmpeg.org/) on your computer.
+
+### Themes and music
+
+Pick a background from the 🎨 menu: **Day**, **Night**, **Cave** or **Beach**, each with its own moving scenery and
+chiptune. By default it follows your VS Code theme. Untick **Pixel** for a smooth background, or set your own music
+file for each theme.
+
+## Input from the user
+
+When a program reads input (`input()`, `fmt.Scan`, `Scanner`, `cin`, `prompt` and so on), an **Input** box appears in
+the panel. Type values separated by commas. Values you leave empty are filled with random numbers from 0 to 100, and
+the dice button picks new ones.
+
+## Settings
+
+| Setting | Default | What it does |
 |---|---|---|
-| `gopherviz.realtime` | `true` | Perbarui di setiap ketikan; `false` = hanya saat disimpan |
-| `gopherviz.autoOpen` | `true` | Buka panel otomatis saat kursor masuk ke loop |
-| `gopherviz.codeLens` | `true` | Tombol "Visualisasikan loop" di atas `for` |
-| `gopherviz.speed` | `1` | Kecepatan animasi: 0.5, 1, 2, 4 |
-| `gopherviz.sound` / `gopherviz.music` | `true` | Efek suara / musik latar |
-| `gopherviz.binaryPath` | kosong | Pakai binary `gopherviz` sendiri, bukan bawaan ekstensi |
+| `gopherviz.location` | `editor` | Where the panel lives: an editor tab, the sidebar, or the bottom panel |
+| `gopherviz.autoOpen` | `true` | Open the panel when the cursor enters a block |
+| `gopherviz.realtime` | `true` | Update on every keystroke instead of on save |
+| `gopherviz.details` | `false` | Show explanation text, variables, output and the block list next to the picture |
+| `gopherviz.highlightLine` | `true` | Highlight the running line in the editor |
+| `gopherviz.codeLens` | `true` | Show **▶ Visualize** above every block |
+| `gopherviz.speed` | `1` | Animation speed: 0.5, 1, 2 or 4 |
+| `gopherviz.size` | `100` | Picture size in percent (you can also drag its bottom-right corner) |
+| `gopherviz.sound` / `gopherviz.music` | `true` | Sound effects / background music |
+| `gopherviz.theme` | `auto` | `auto`, `day`, `night`, `cave` or `beach` |
+| `gopherviz.pixelBg` | `true` | Pixel-art background (off = smooth) |
+| `gopherviz.musicFiles` | `{}` | Your own music file per theme, e.g. `{ "night": "C:\\Music\\lofi.mp3" }` |
+| `gopherviz.ffmpegPath` | empty | Path to ffmpeg for MP4 recordings, if it is not on your PATH |
+| `gopherviz.binaryPath` | empty | Use your own `gopherviz` binary instead of the bundled one |
 
-## Cara kerja
+## How it works
 
-Ekstensi menjalankan `gopherviz serve` (ditulis dalam Go, ikut di dalam paket ekstensi) dan mengirim isi editor setiap kamu
-mengetik. `gopherviz` membaca kode dengan parser Go asli, lalu mensimulasikannya dengan aturan Go (pembagian integer,
-`append` yang berbagi array, urutan map yang acak, dan seterusnya). Kode kamu tidak pernah benar-benar dijalankan.
+The extension starts `gopherviz serve`, a small program written in Go that ships inside the extension for Windows,
+macOS and Linux (x64 and arm64). It parses your code and runs it in a simulator that follows the rules of each
+language (integer division, shared slices in Go, Python's `range`, the order of JavaScript's `await`, and so on). The
+panel then draws every step.
 
-## Atribusi
+## Limits
 
-Gopher pixel digambar ulang dari desain Go Gopher karya Renée French, lisensi Creative Commons Attribution 4.0.
-Semua suara dibangkitkan langsung dengan Web Audio, tanpa file audio.
+- GopherViz simulates a large, common subset of each language and its standard library, aimed at learning programs.
+  Code that depends on files, the network, the clock or libraries it does not know is shown in **structure mode**: the
+  flow without real values, together with the reason.
+- A trace stops after 1000 loop rounds or 5000 steps, so very long programs are cut short.
+- Goroutines are scheduled as if there were one processor, so the order you see is one possible order.
+
+## Credits
+
+The pixel Gopher is redrawn from the Go Gopher by Renée French, licensed under Creative Commons Attribution 4.0.
+All sounds and music are generated live with Web Audio.
+
+## License
+
+[MIT](LICENSE)

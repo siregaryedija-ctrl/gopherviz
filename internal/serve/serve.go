@@ -63,7 +63,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 	var req protocol.Request
 	defer func() {
 		if r := recover(); r != nil {
-			resp = fail(req.ID, fmt.Sprintf("kesalahan internal: %v", r))
+			resp = fail(req.ID, fmt.Sprintf("internal error: %v", r))
 		}
 	}()
 	if err := json.Unmarshal(line, &req); err != nil {

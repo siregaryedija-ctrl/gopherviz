@@ -90,7 +90,7 @@
         `<circle cx="${x1}" cy="${y1}" r="2.5" class="mem-knot"/>`;
     }).join('');
 
-    return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Diagram memori: variabel dan pointer">` +
+    return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Memory diagram: variables and pointers">` +
       `<defs><marker id="gv-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">` +
       `<path d="M0,0 L8,4 L0,8 z" class="mem-arrow"/></marker></defs>` +
       parts.join('') + ropeSvg + '</svg>';

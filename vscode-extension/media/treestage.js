@@ -230,18 +230,18 @@
 
       // HUD
       P.rect(w, 0, 0, this.W, 17, 'rgba(255,248,251,0.8)');
-      P.text(w, `DFS POHON  ${this.t.nodes.length} SIMPUL`, 4, 3, P.INK);
-      P.text(w, `DIKUNJUNGI ${v.order.size}/${this.t.nodes.length}  KEDALAMAN ${v.path.length}`, 4, 10, '#c2457a');
+      P.text(w, `DFS TREE  ${this.t.nodes.length} NODES`, 4, 3, P.INK);
+      P.text(w, `VISITED ${v.order.size}/${this.t.nodes.length}  DEPTH ${v.path.length}`, 4, 10, '#c2457a');
       // pita urutan: nilai yang dicetak (beda preorder/inorder/postorder), atau urutan kunjungan
       const printed = v.printed.trim().split(/\s+/).filter(Boolean);
-      const seq = printed.length ? 'CETAK: ' + printed.join(' ') : 'URUTAN: ' + [...v.order.keys()].map(id => this.byId[id].label).join(' ');
+      const seq = printed.length ? 'PRINT: ' + printed.join(' ') : 'ORDER: ' + [...v.order.keys()].map(id => this.byId[id].label).join(' ');
       P.rect(w, 0, this.H - 20, this.W, 10, 'rgba(255,248,251,0.85)');
       P.text(w, P.fit(seq, Math.floor((this.W - 8) / 4)), 4, this.H - 18, '#2f8a5c');
       const code = (s.note || '').replace(/ → .*$/, '');
       P.rect(w, 0, this.H - 10, this.W, 10, 'rgba(255,248,251,0.85)');
       if (code) P.text(w, P.fit('> ' + code, Math.floor((this.W - 8) / 4)), 4, this.H - 8, P.INK);
       if (last && s.reason !== 'panic') {
-        const img = P.stamp('SELESAI!', '#2f8a5c');
+        const img = P.stamp('DONE!', '#2f8a5c');
         w.drawImage(img, Math.round(this.W - img.width * 2 - 4), 2, img.width * 2, img.height * 2);
       }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

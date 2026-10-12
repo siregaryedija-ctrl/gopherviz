@@ -13,11 +13,11 @@ const TRACE_DELAY_MS = 300; // trace (nilai asli) menyusul setelah user berhenti
 const CRASH_LIMIT = 3; // berhenti mencoba bila server mati sebanyak ini dalam satu menit
 
 const KIND_NAMES: Record<LoopKind, string> = {
-  'for3': 'for klasik',
-  'cond': 'for kondisi',
+  'for3': 'classic for',
+  'cond': 'condition for',
   'do-while': 'do-while',
-  'infinite': 'for tanpa batas',
-  'range-int': 'range angka',
+  'infinite': 'endless for',
+  'range-int': 'range number',
   'range-slice': 'range slice',
   'range-array': 'range array',
   'range-string': 'range string',
@@ -28,13 +28,21 @@ const KIND_NAMES: Record<LoopKind, string> = {
   'range-unknown': 'range',
 };
 
-const BLOCK_NAMES: Record<BlockKind, string> = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop', class: 'class' };
+const BLOCK_NAMES: Record<BlockKind, string> = { func: 'function', if: 'if', switch: 'switch', loop: 'loop', class: 'class' };
 
 /** languageId editor yang didukung GopherViz (Go disimulasikan; bahasa lain mode struktur dulu). */
 export const LANGUAGES = ['go', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'python', 'php', 'cpp', 'c', 'java'];
 const isSupported = (doc: vscode.TextDocument) => LANGUAGES.includes(doc.languageId) && doc.uri.scheme !== 'output';
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const config = () => vscode.workspace.getConfiguration('gopherviz');
+
+/** Nama tema sebelum 1.0 (bahasa Indonesia) → nama sekarang, supaya setting lama tetap terbaca. */
+const OLD_THEMES: Record<string, string> = { siang: 'day', malam: 'night', gua: 'cave', pantai: 'beach' };
+const themeId = (name: string) => OLD_THEMES[name] ?? name;
+
+/** gopherviz.musicFiles dengan key tema yang sudah dinormalkan. */
+const musicFiles = (): Record<string, string> =>
+  Object.fromEntries(Object.entries(config().get<Record<string, string>>('musicFiles', {})).map(([k, v]) => [themeId(k), v]));
 const INPUTS_KEY = 'gopherviz.inputs';
 
 class Controller implements vscode.Disposable {
@@ -175,11 +183,11 @@ class Controller implements vscode.Disposable {
       try {
         const hello = await client.start();
         this.client = client;
-        this.output.appendLine(`gopherviz ${hello.version} siap (${bin.source}: ${bin.path})`);
+        this.output.appendLine(`gopherviz ${hello.version} ready (${bin.source}: ${bin.path})`);
         return client;
       } catch (e) {
         client.dispose();
-        this.setServerError(`server gopherviz tidak bisa dijalankan: ${errMsg(e)}`);
+        this.setServerError(`the gopherviz server cannot start: ${errMsg(e)}`);
         return undefined;
       } finally {
         this.starting = undefined;
@@ -194,7 +202,7 @@ class Controller implements vscode.Disposable {
     const now = Date.now();
     this.crashes = [...this.crashes.filter(t => now - t < 60_000), now];
     if (this.crashes.length >= CRASH_LIMIT) {
-      this.setServerError(`${reason} (berhenti ${CRASH_LIMIT} kali dalam satu menit)`);
+      this.setServerError(`${reason} (stopped ${CRASH_LIMIT} times within a minute)`);
     } else if (this.editor) {
       this.schedule(this.editor.document, 200);
     }
@@ -204,10 +212,10 @@ class Controller implements vscode.Disposable {
     this.serverError = message;
     this.output.appendLine(message);
     this.pushState();
-    void vscode.window.showErrorMessage(`GopherViz: ${message}`, 'Mulai ulang', 'Lihat log').then(choice => {
-      if (choice === 'Mulai ulang') {
+    void vscode.window.showErrorMessage(`GopherViz: ${message}`, 'Restart', 'Show log').then(choice => {
+      if (choice === 'Restart') {
         void this.restart();
-      } else if (choice === 'Lihat log') {
+      } else if (choice === 'Show log') {
         this.output.show();
       }
     });
@@ -270,7 +278,7 @@ class Controller implements vscode.Disposable {
       this.lens.sceneChanged(uri, res.scene);
       this.setFocus(uri, res.focusBlock);
     } catch (e) {
-      this.output.appendLine(`update gagal: ${errMsg(e)}`);
+      this.output.appendLine(`update failed: ${errMsg(e)}`);
     }
   }
 
@@ -291,7 +299,7 @@ class Controller implements vscode.Disposable {
       });
       this.setFocus(uri, res.focusBlock);
     } catch (e) {
-      this.output.appendLine(`focus gagal: ${errMsg(e)}`);
+      this.output.appendLine(`focus failed: ${errMsg(e)}`);
     }
   }
 
@@ -331,7 +339,7 @@ class Controller implements vscode.Disposable {
       this.lastTrace = res.trace;
       this.panel.post({ type: 'trace', blockId, trace: res.trace, code: { lines: doc.getText().split(/\r?\n/) } });
     } catch (e) {
-      this.output.appendLine(`trace gagal: ${errMsg(e)}`);
+      this.output.appendLine(`trace failed: ${errMsg(e)}`);
     }
   }
 
@@ -341,7 +349,7 @@ class Controller implements vscode.Disposable {
   private async runRace(blocks: string[], n: number, reroll: boolean): Promise<void> {
     const doc = this.editor?.document;
     if (!doc || !this.client?.running) {
-      this.panel.post({ type: 'race', error: 'server gopherviz belum siap' });
+      this.panel.post({ type: 'race', error: 'the gopherviz server is not ready yet' });
       return;
     }
     if (reroll || !this.raceSeed) {
@@ -393,15 +401,15 @@ class Controller implements vscode.Disposable {
       music: c.get('music', true),
       details: c.get('details', false),
       size: c.get('size', 100),
-      theme: c.get('theme', 'auto'),
+      theme: themeId(c.get('theme', 'auto')),
       pixelBg: c.get('pixelBg', true),
-      musicFiles: Object.fromEntries(Object.entries(c.get<Record<string, string>>('musicFiles', {})).map(([k, v]) => [k, !!v && !!v.trim()])),
+      musicFiles: Object.fromEntries(Object.entries(musicFiles()).map(([k, v]) => [k, !!v && !!v.trim()])),
     });
   }
 
   /** Fase 13: kirim isi file musik sendiri untuk satu tema (panel memutarnya sebagai blob). */
   private async sendMusicFile(theme: string): Promise<void> {
-    const raw = (config().get<Record<string, string>>('musicFiles', {})[theme] ?? '').trim();
+    const raw = (musicFiles()[theme] ?? '').trim();
     if (!raw) {
       return;
     }
@@ -413,7 +421,7 @@ class Controller implements vscode.Disposable {
       this.panel.post({ type: 'musicFile', theme, data, mime });
     } catch (e) {
       this.panel.post({ type: 'musicFile', theme, error: errMsg(e) });
-      void vscode.window.showWarningMessage(`GopherViz: file musik tema ${theme} tidak bisa dibaca (${file}). Chiptune bawaan dipakai.`);
+      void vscode.window.showWarningMessage(`GopherViz: the music file for the ${theme} theme cannot be read (${file}). Using the built-in chiptune.`);
     }
   }
 
@@ -421,16 +429,16 @@ class Controller implements vscode.Disposable {
   private async pickLocation(): Promise<void> {
     const cur = config().get<PanelLocation>('location', 'editor');
     const items: (vscode.QuickPickItem & { loc: PanelLocation })[] = [
-      { loc: 'editor', label: '$(window) Tab editor', description: 'seperti semula; tab bisa diseret ke samping/bawah editor' },
-      { loc: 'sidebar', label: '$(layout-sidebar-left) Sidebar kiri', description: 'di bawah Explorer' },
-      { loc: 'panel', label: '$(layout-panel) Panel bawah', description: 'sebelah Terminal; tombol & output di samping gambar' },
+      { loc: 'editor', label: '$(window) Tab editor', description: 'as before; the tab can be dragged beside or below the editor' },
+      { loc: 'sidebar', label: '$(layout-sidebar-left) Left sidebar', description: 'below the Explorer' },
+      { loc: 'panel', label: '$(layout-panel) Bottom panel', description: 'next to the Terminal; buttons and output beside the picture' },
     ];
     for (const it of items) {
       if (it.loc === cur) {
-        it.detail = 'tempat sekarang';
+        it.detail = 'current place';
       }
     }
-    const pick = await vscode.window.showQuickPick(items, { placeHolder: 'Tampilkan GopherViz di…' });
+    const pick = await vscode.window.showQuickPick(items, { placeHolder: 'Show GopherViz in…' });
     if (!pick) {
       return;
     }
@@ -458,10 +466,10 @@ class Controller implements vscode.Disposable {
       const loop = block.kind === 'loop' ? scene?.loops.find(l => l.id === block.id) : undefined;
       const name = loop ? KIND_NAMES[loop.kind] : `${BLOCK_NAMES[block.kind]}${block.name && (block.kind === 'func' || block.kind === 'class') ? ' ' + block.name : ''}`;
       this.status.text = `$(sync) ${block.id} · ${name}`;
-      this.status.tooltip = 'Buka panel GopherViz';
+      this.status.tooltip = 'Open the GopherViz panel';
     } else {
       this.status.text = '$(sync) GopherViz';
-      this.status.tooltip = 'Taruh kursor di dalam fungsi, if, switch, atau loop, lalu klik untuk membuka panel';
+      this.status.tooltip = 'Put the cursor inside a function, if, switch or loop, then click to open the panel';
     }
     this.status.show();
   }
@@ -485,7 +493,7 @@ class Controller implements vscode.Disposable {
         break;
       case 'export':
         void saveExport(m, this.editor ? path.dirname(this.editor.document.fileName) : undefined).catch(e =>
-          vscode.window.showErrorMessage(`GopherViz: rekaman gagal disimpan: ${errMsg(e)}`),
+          vscode.window.showErrorMessage(`GopherViz: the recording could not be saved: ${errMsg(e)}`),
         );
         break;
       case 'restart':

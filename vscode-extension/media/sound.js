@@ -83,19 +83,19 @@
 
     // Musik latar per tema (Fase 13): 32 langkah; bass per 4 langkah (0 = diam), melodi per langkah.
     const SONGS = {
-      siang: { step: 0.24, bass: [48, 48, 55, 55, 57, 57, 53, 55], bassType: 'triangle', melType: 'square', melVol: 0.16, hat: true,
+      day: { step: 0.24, bass: [48, 48, 55, 55, 57, 57, 53, 55], bassType: 'triangle', melType: 'square', melVol: 0.16, hat: true,
         mel: [76, 0, 79, 76, 72, 0, 74, 0, 76, 0, 79, 81, 79, 0, 76, 74, 72, 0, 74, 76, 79, 0, 76, 0, 74, 0, 72, 74, 67, 0, 72, 0] },
       // nina bobo pelan: segitiga lembut, tanpa ketukan
-      malam: { step: 0.36, bass: [45, 45, 41, 41, 43, 43, 40, 40], bassType: 'sine', melType: 'triangle', melVol: 0.22, hat: false,
+      night: { step: 0.36, bass: [45, 45, 41, 41, 43, 43, 40, 40], bassType: 'sine', melType: 'triangle', melVol: 0.22, hat: false,
         mel: [69, 0, 72, 0, 76, 0, 74, 72, 71, 0, 72, 0, 69, 0, 0, 0, 67, 0, 69, 0, 72, 0, 71, 69, 67, 0, 64, 0, 65, 0, 0, 0] },
       // misterius: minor, nada rendah, tetes air
-      gua: { step: 0.3, bass: [38, 38, 41, 41, 36, 36, 37, 37], bassType: 'square', melType: 'triangle', melVol: 0.2, hat: false, drip: true,
+      cave: { step: 0.3, bass: [38, 38, 41, 41, 36, 36, 37, 37], bassType: 'square', melType: 'triangle', melVol: 0.2, hat: false, drip: true,
         mel: [62, 0, 0, 65, 0, 0, 64, 0, 62, 0, 0, 0, 57, 0, 60, 0, 62, 0, 0, 65, 0, 69, 0, 68, 0, 0, 65, 0, 64, 0, 0, 0] },
       // calypso ceria: cepat, nada tinggi, ketukan
-      pantai: { step: 0.19, bass: [43, 43, 48, 48, 50, 50, 43, 47], bassType: 'triangle', melType: 'sine', melVol: 0.24, hat: true,
+      beach: { step: 0.19, bass: [43, 43, 48, 48, 50, 50, 43, 47], bassType: 'triangle', melType: 'sine', melVol: 0.24, hat: true,
         mel: [79, 0, 81, 83, 0, 79, 0, 76, 78, 0, 79, 0, 81, 0, 0, 0, 79, 0, 81, 83, 0, 86, 0, 83, 81, 0, 79, 0, 76, 0, 0, 0] },
     };
-    let song = SONGS.siang;
+    let song = SONGS.day;
     function schedule() {
       if (!ready()) return;
       if (nextT < ac.currentTime - 0.1) nextT = ac.currentTime + 0.05;
@@ -131,8 +131,8 @@
         else if (!chip && timer) { clearInterval(timer); timer = 0; }
         syncAudio();
       },
-      /** Lagu chiptune tema (siang/malam/gua/pantai). */
-      setSong(name) { const next = SONGS[name] || SONGS.siang; if (next !== song) { song = next; stepN = 0; } },
+      /** Lagu chiptune tema (day/night/cave/beach). */
+      setSong(name) { const next = SONGS[name] || SONGS.day; if (next !== song) { song = next; stepN = 0; } },
       /** File musik sendiri (URL blob) untuk tema aktif; null = kembali ke chiptune. */
       setFile(url) {
         if (audio && audio.src === url) return;

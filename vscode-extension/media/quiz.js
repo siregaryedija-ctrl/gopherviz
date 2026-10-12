@@ -8,7 +8,7 @@
   const MAX = 5;
   const LETTERS = ['A', 'B', 'C', 'D'];
   const BRANCH_KW = { 'if': 'if', 'else-if': 'else if', 'else': 'else', 'case': 'case', 'default': 'default' };
-  const ERR_TITLES = ['Indeks di luar batas', 'Membagi dengan nol', 'Nilai kosong', 'Key tidak ditemukan', 'Rekursi terlalu dalam', 'Tipe data tidak cocok'];
+  const ERR_TITLES = ['Index out of range', 'Division by zero', 'Empty value', 'Key not found', 'Recursion too deep', 'Type mismatch'];
 
   /** "if a[j] > a[j+1] → 3 > 1 → true" → { expr, subst, result } (null bila bukan catatan kondisi). */
   function parseCond(note) {
@@ -99,7 +99,7 @@
       const brs = block.branches || [];
       const labels = brs.map(b => `${BRANCH_KW[b.kind] || b.kind} ${b.label || ''}`.trim());
       const none = !brs.some(b => b.kind === 'else' || b.kind === 'default');
-      if (none) labels.push(block.kind === 'if' ? 'tidak ada (dilewati)' : 'tidak ada yang cocok');
+      if (none) labels.push(block.kind === 'if' ? 'none (skipped)' : 'nothing matches');
       let lastRun = null;
       view.forEach((v, i) => {
         const s = v.step;
@@ -112,7 +112,7 @@
         const others = labels.filter(l => l !== correct);
         const o = options(correct, others, i);
         push({
-          at: i, type: 'branch', weight: 4, prompt: `${block.kind === 'if' ? 'Cabang' : 'Case'} mana yang akan dijalankan?`,
+          at: i, type: 'branch', weight: 4, prompt: `Which ${block.kind === 'if' ? 'branch' : 'case'} will run?`,
           code: block.header || '', vars: Object.entries(s.vars || {}).slice(0, 6), ...o,
           explain: br.step.note || '',
         }, `branch:${correct}`);
@@ -129,15 +129,15 @@
         const prev = view[i - 1].step;
         const vars = varsIn(pc.expr, s.vars || prev.vars);
         if (s.phase === 'cond' && s.loop) {
-          const correct = pc.result ? 'Ya, putaran berikutnya' : 'Tidak, keluar dari loop';
+          const correct = pc.result ? 'Yes, another round' : 'No, leave the loop';
           push({
-            at: i, type: 'loop', weight: pc.result ? 1 : 3, prompt: 'Apakah loop masih lanjut?', code: pc.expr, vars,
-            options: ['Ya, putaran berikutnya', 'Tidak, keluar dari loop'], answer: pc.result ? 0 : 1, correct,
+            at: i, type: 'loop', weight: pc.result ? 1 : 3, prompt: 'Does the loop keep going?', code: pc.expr, vars,
+            options: ['Yes, another round', 'No, leave the loop'], answer: pc.result ? 0 : 1, correct,
             explain: `${pc.expr}${pc.subst ? ' → ' + pc.subst : ''} → ${boolText(lang, pc.result)}`,
           }, `loop:${s.line}:${pc.result}`);
         } else {
           push({
-            at: i, type: 'cond', weight: 2, prompt: 'Kondisi ini bernilai apa?', code: pc.expr, vars,
+            at: i, type: 'cond', weight: 2, prompt: 'What is this condition?', code: pc.expr, vars,
             options: [boolText(lang, true), boolText(lang, false)], answer: pc.result ? 0 : 1,
             explain: `${pc.expr}${pc.subst ? ' → ' + pc.subst : ''} → ${boolText(lang, pc.result)}`,
           }, `cond:${s.line}:${pc.result}`);
@@ -153,7 +153,7 @@
           const others = view.map(x => (x.step.vars || {})[name]).filter(x => x != null);
           const o = options(correct, decoys(correct, others), i);
           push({
-            at: i, type: 'assign', weight: 2, prompt: `Berapa nilai ${name} setelah baris ini?`, code: asg[1].trim(),
+            at: i, type: 'assign', weight: 2, prompt: `What is ${name} after this line?`, code: asg[1].trim(),
             vars: varsIn(asg[1], view[i - 1].step.vars), ...o, explain: s.note,
           });
         }
@@ -164,27 +164,27 @@
         const correct = show(out);
         const o = options(correct, decoys(correct, allOut), i);
         push({
-          at: i, type: 'output', weight: 3, prompt: 'Apa yang akan dicetak?', code: (lines[(s.line || 0) - 1] || s.note || '').trim(),
-          vars: Object.entries(s.vars || {}).slice(0, 6), ...o, explain: `Tercetak: ${correct}`,
+          at: i, type: 'output', weight: 3, prompt: 'What will be printed?', code: (lines[(s.line || 0) - 1] || s.note || '').trim(),
+          vars: Object.entries(s.vars || {}).slice(0, 6), ...o, explain: `Printed: ${correct}`,
         }, `out:${correct}`);
       }
       // return
       if (s.phase === 'return' && s.return != null && s.return !== '' && String(s.return).length <= 24) {
-        const call = (s.note || '').split(' mengembalikan')[0] || s.func || 'fungsi';
+        const call = (s.note || '').split(' returns')[0] || s.func || 'the function';
         const correct = String(s.return);
         const o = options(correct, decoys(correct, allRet.map(String)), i);
         push({
-          at: i, type: 'return', weight: 3, prompt: `${call} mengembalikan ${isNaN(Number(correct)) ? "apa" : "nilai berapa"}?`, code: call, vars: [], ...o,
+          at: i, type: 'return', weight: 3, prompt: `What does ${call} return?`, code: call, vars: [], ...o,
           explain: s.note || '',
         }, `ret:${call}`);
       }
       // error yang menghentikan program
       if (s.err) {
         const correct = s.err.title;
-        const pool = ['Tidak ada masalah, program lanjut', ...ERR_TITLES];
+        const pool = ['No problem, the program continues', ...ERR_TITLES];
         const o = options(correct, pool, i);
         push({
-          at: i, type: 'error', weight: 5, prompt: `Apa yang terjadi saat baris ${s.line || '?'} dijalankan?`,
+          at: i, type: 'error', weight: 5, prompt: `What happens when line ${s.line || '?'} runs?`,
           code: (lines[(s.line || 0) - 1] || '').trim(), vars: Object.entries(s.vars || (view[i - 1].step.vars) || {}).slice(0, 6), ...o,
           explain: s.err.text,
         }, 'err');

@@ -205,11 +205,11 @@
       // HUD: judul + fase
       P.rect(w, 0, 0, this.W, 16, 'rgba(255,248,251,0.75)');
       P.text(w, this.title, 4, 3, P.INK);
-      const phase = v.ev === 'call' ? 'BELAH' : v.ev === 'append' || v.ev === 'return' ? 'GABUNG' : '';
+      const phase = v.ev === 'call' ? 'SPLIT' : v.ev === 'append' || v.ev === 'return' ? 'MERGE' : '';
       const merges = v.done.filter(Boolean).length;
-      P.text(w, `${phase ? phase + '  ' : ''}SELESAI ${merges}/${this.nodes.length}`, 4, 10, '#c2457a');
+      P.text(w, `${phase ? phase + '  ' : ''}DONE ${merges}/${this.nodes.length}`, 4, 10, '#c2457a');
       if (i === this.snaps.length - 1 && v.done[0]) {
-        const img = P.stamp('URUT!', '#2f8a5c'), k = 2;
+        const img = P.stamp('SORTED!', '#2f8a5c'), k = 2;
         w.drawImage(img, Math.round(this.W / 2 - (img.width * k) / 2), Math.round(this.H - 24 - img.height), img.width * k, img.height * k);
       }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

@@ -58,7 +58,7 @@ test('error dari server menjadi ServerError', async () => {
   try {
     await client.start();
     await assert.rejects(client.request('trace', { file: 'belum-dikirim.go', loopId: 'L1' }), (e: unknown) => {
-      return e instanceof ServerError && /belum pernah dikirim/.test(e.message);
+      return e instanceof ServerError && /never sent/.test(e.message);
     });
   } finally {
     client.dispose();
@@ -67,7 +67,7 @@ test('error dari server menjadi ServerError', async () => {
 
 test('binary tidak ada: start gagal dengan pesan jelas', async () => {
   const client = new GophervizClient(path.join(extRoot, 'tidak-ada', 'gopherviz.exe'));
-  await assert.rejects(client.start(), /gagal menjalankan/);
+  await assert.rejects(client.start(), /failed to start/);
 });
 
 test('server mati di tengah jalan: onExit dipanggil dan request ditolak', async () => {
@@ -80,7 +80,7 @@ test('server mati di tengah jalan: onExit dipanggil dan request ditolak', async 
   (client as unknown as { proc: { kill(): void } }).proc.kill();
   await assert.rejects(pending, ServerError).catch(() => undefined); // bisa saja sudah terjawab sebelum mati
   await new Promise(r => setTimeout(r, 300));
-  assert.match(reason, /berhenti/);
+  assert.match(reason, /stopped/);
   assert.equal(client.running, false);
-  await assert.rejects(client.request('hello', {}), /tidak berjalan/);
+  await assert.rejects(client.request('hello', {}), /not running/);
 });

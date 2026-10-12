@@ -17,12 +17,12 @@
   function shortLabel(label) {
     const ms = /^setTimeout (\d+(?:\.\d+)?)ms: /i.exec(label);
     let s = label.replace(/^(then|queueMicrotask): /i, '').replace(/^setTimeout [\d.]+ms: /i, '');
-    s = s.replace(/^(async\s*)?\(?[\w\s,$]*\)?\s*=>\s*\{?\s*/, '').replace(/console\./, '').replace(/ setelah await$/, '');
+    s = s.replace(/^(async\s*)?\(?[\w\s,$]*\)?\s*=>\s*\{?\s*/, '').replace(/console\./, '').replace(/ after await$/, '');
     return (ms ? ms[1] + 'ms ' : '') + s;
   }
 
   const pickOf = s => {
-    const m = /event loop mengambil tiket (microtask|timer)/.exec(s.note || '');
+    const m = /event loop takes a (microtask|timer) ticket/.exec(s.note || '');
     return m ? (m[1] === 'timer' ? 'macro' : 'micro') : null;
   };
 
@@ -53,7 +53,7 @@
         P.rect(c, LX - 4, y + TH + 2, W - LX - 2, 3, '#8a7a92');
         for (let x = LX - 2; x < W - 6; x += 6) P.rect(c, x, y + TH + 3, 2, 1, '#cfc2d6');
       }
-      P.text(c, 'DEPAN', LX - 4, TY + TH + 8, '#b090c8');
+      P.text(c, 'FRONT', LX - 4, TY + TH + 8, '#b090c8');
     }
 
     prepare(trace) {
@@ -152,7 +152,7 @@
           this.frame(w, k, ps[k], 1 - t * 2, -t * 20); // keluar dari stack
         }
       }
-      if (!st.length) P.textCenter(w, 'KOSONG', SX + SW / 2, SY0 - 12, '#b090c8');
+      if (!st.length) P.textCenter(w, 'EMPTY', SX + SW / 2, SY0 - 12, '#b090c8');
 
       // Gopher = event loop: berdiri di antara call stack dan jalur tiket, ikut mengangkat tiket
       let gx = 96, gy = SY0;
@@ -170,7 +170,7 @@
       // HUD
       P.rect(w, 0, 0, W, 16, 'rgba(255,248,251,0.75)');
       P.text(w, 'EVENT LOOP', 4, 3, P.INK);
-      const now2 = ev.task ? `TIKET: ${P.fit(ev.task, 34)}` : st.length ? `JALAN: ${P.fit(st[st.length - 1], 30)}` : 'MENUNGGU TIKET';
+      const now2 = ev.task ? `TICKET: ${P.fit(ev.task, 34)}` : st.length ? `RUNNING: ${P.fit(st[st.length - 1], 30)}` : 'WAITING FOR A TICKET';
       P.text(w, now2, 4, 10, '#c2457a');
       P.present(this.ctx, this.cv, this.world, W, H);
     }

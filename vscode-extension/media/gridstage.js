@@ -372,12 +372,12 @@
       // HUD
       P.rect(w, 0, 0, this.W, 17, 'rgba(255,248,251,0.8)');
       const total = this.openCells;
-      P.text(w, `${bfs ? 'BFS' : 'DFS'} LABIRIN ${this.R}x${this.C}`, 4, 3, P.INK);
-      let info = `DIKUNJUNGI ${v.seen.size}/${total}`;
-      if (v.front.size) info += `  ${bfs ? 'ANTRIAN' : 'TUMPUKAN'} ${v.front.size}`;
-      if (v.back && !last) info += `  MUNDUR ${v.back}`;
-      else if (v.dead.size && !pathOn) info += `  BUNTU ${v.dead.size}`;
-      if (pathOn) info += `  JARAK ${this.path.length - 1}`;
+      P.text(w, `${bfs ? 'BFS' : 'DFS'} MAZE ${this.R}x${this.C}`, 4, 3, P.INK);
+      let info = `VISITED ${v.seen.size}/${total}`;
+      if (v.front.size) info += `  ${bfs ? 'QUEUE' : 'STACK'} ${v.front.size}`;
+      if (v.back && !last) info += `  BACKTRACK ${v.back}`;
+      else if (v.dead.size && !pathOn) info += `  DEAD END ${v.dead.size}`;
+      if (pathOn) info += `  DISTANCE ${this.path.length - 1}`;
       P.text(w, P.fit(info, Math.floor((this.W - 8) / 4)), 4, 10, '#c2457a');
       const code = (v.step.note || '').replace(/ → .*$/, '');
       if (code) {
@@ -385,7 +385,7 @@
         P.text(w, P.fit('> ' + code, Math.floor((this.W - 8) / 4)), 4, this.H - 8, P.INK);
       }
       if (last && v.step.reason !== 'panic') {
-        const img = P.stamp(pathOn ? 'KETEMU!' : 'SELESAI!', '#2f8a5c');
+        const img = P.stamp(pathOn ? 'FOUND!' : 'DONE!', '#2f8a5c');
         w.drawImage(img, Math.round(this.W - img.width * 2 - 4), 2, img.width * 2, img.height * 2);
       }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

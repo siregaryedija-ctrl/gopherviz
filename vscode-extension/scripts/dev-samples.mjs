@@ -108,6 +108,14 @@ const samples = {
   sq_stack_go: ['@/sq/sqgo/main.go', 5],
   ev_await: ['@/sq/await.js', 9],
   ev_basic: ['@/sq/async.js', 2],
+  // demo README / Marketplace (kode berbahasa Inggris)
+  demo_bubble: ['@/demo/bubble.py', 1],
+  demo_fib: ['@/demo/fib.js', 1],
+  demo_search: ['@/demo/search.go', 9],
+  demo_events: ['@/demo/events.js', 9],
+  demo_class: ['@/demo/account.py', 1],
+  demo_if: ['@/demo/grades.py', 3],
+  demo_error: ['@/demo/total.py', 1],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

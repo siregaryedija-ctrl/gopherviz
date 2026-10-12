@@ -121,16 +121,16 @@
       const items = [];
       let x = 0;
       const add = it => { it.x = x; items.push(it); x += SEG; };
-      add({ type: 'start', label: loop.kind === 'for3' ? 'INIT' : ranged ? 'RANGE' : 'MULAI' });
-      if (loop.kind !== 'infinite') add({ type: 'gate', label: ranged ? 'LAGI?' : 'COND' });
+      add({ type: 'start', label: loop.kind === 'for3' ? 'INIT' : ranged ? 'RANGE' : 'START' });
+      if (loop.kind !== 'infinite') add({ type: 'gate', label: ranged ? 'AGAIN?' : 'COND' });
       if (loop.body.length === 0) {
-        add({ type: 'node', idx: 0, kind: 'empty', air: true, label: 'KOSONG' });
+        add({ type: 'node', idx: 0, kind: 'empty', air: true, label: 'EMPTY' });
       } else {
         loop.body.forEach((n, i) => add({ type: 'node', idx: i, kind: n.kind, ref: n.ref, air: AIR.has(n.kind), label: String(i + 1) }));
       }
       if (loop.kind === 'for3' && loop.header.post) add({ type: 'post', label: 'POST' });
       x += 6;
-      add({ type: 'finish', label: 'KELUAR' });
+      add({ type: 'finish', label: 'EXIT' });
       // Level pendek diletakkan di tengah pandangan.
       const content = x - SEG + 24;
       const shift = Math.max(16, Math.round((VIEW - content) / 2) + 12);
@@ -521,7 +521,7 @@
       this.arrowActive = v.warp && v.act !== 'warp-exit' && t < 0.5;
       this.activeItem = a > 0 ? v.item : null;
       const vars = (this.trace.loop.vars || []).map(n => v.step.vars && v.step.vars[n] != null ? `${n}=${v.step.vars[n]}` : null).filter(Boolean);
-      this.hud = { left: v.act === 'panic' ? 'PANIC!' : `PUTARAN ${v.iter + 1}`, vars: vars.join(' ') };
+      this.hud = { left: v.act === 'panic' ? 'PANIC!' : `ROUND ${v.iter + 1}`, vars: vars.join(' ') };
       if (v.act === 'child') this.hud.vars = `${this.hud.vars}  ${v.item.ref || ''} X${v.group.length}`.trim();
       // balok putaran yang baru selesai jatuh ke tembok saat gopher kembali ke awal putaran
       const run = v.wallRun;
@@ -613,9 +613,9 @@
         P.text(w, this.hud.left, cx + 4, 3, P.INK);
         if (this.hud.vars) P.text(w, this.hud.vars, cx + 4, 10, '#c2457a');
       } else if (this.waiting) {
-        P.text(w, 'BELUM LENGKAP', cx + 4, 3, '#c2457a');
+        P.text(w, 'INCOMPLETE', cx + 4, 3, '#c2457a');
       } else {
-        const it = this.loop.kind === 'infinite' ? 'PUTARAN ' + this.iter : 'PUTARAN ' + Math.min(this.iter, ITER);
+        const it = this.loop.kind === 'infinite' ? 'ROUND ' + this.iter : 'ROUND ' + Math.min(this.iter, ITER);
         P.text(w, it, cx + 4, 3, P.INK);
       }
       P.text(w, this.loop.id, this.worldW - 4 - P.textW(this.loop.id), 3, P.INK);

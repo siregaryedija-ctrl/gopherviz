@@ -290,7 +290,7 @@
         P.text(w, P.fit(`> ${fileTag(s, this)}${code}`, Math.floor((this.W - 8) / 4)), 4, this.H - 8, P.INK);
       }
       if (v.act === 'exit' || (v.i === this.snaps.length - 1 && v.act !== 'panic')) {
-        const img = P.stamp('SELESAI!', '#2f8a5c');
+        const img = P.stamp('DONE!', '#2f8a5c');
         w.drawImage(img, Math.round(this.W - img.width * 2 - 4), 2, img.width * 2, img.height * 2);
       }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

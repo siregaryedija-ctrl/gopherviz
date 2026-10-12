@@ -182,7 +182,7 @@
       P.rect(w, 0, by - 3, this.W, 1, '#f2c4d2');
       const stack = g.kind === 'dfs';
       if (g.frontier) {
-        const label = stack ? 'TUMPUKAN' : 'ANTRIAN';
+        const label = stack ? 'STACK' : 'QUEUE';
         P.text(w, label, 4, by + 1, '#8a6a98');
         const sx = 4 + P.textW(label) + 6;
         v.frontier.forEach((n, k) => {
@@ -192,10 +192,10 @@
           P.box(w, x, by - 2, SLOT, 12, edge ? '#f3c75a' : '#fff8fb', P.INK);
           P.textCenter(w, String(n).slice(0, 3), x + SLOT / 2, by + 1, P.INK);
         });
-        if (!v.frontier.length) P.text(w, 'KOSONG', sx, by + 1, '#c58ba3');
-        P.text(w, stack ? 'ATAS DI KANAN' : 'DEPAN DI KIRI', 4, by + 13, '#c58ba3');
+        if (!v.frontier.length) P.text(w, 'EMPTY', sx, by + 1, '#c58ba3');
+        P.text(w, stack ? 'TOP ON THE RIGHT' : 'FRONT ON THE LEFT', 4, by + 13, '#c58ba3');
       } else if (g.kind === 'dfs') {
-        P.text(w, 'DFS REKURSIF', 4, by + 4, '#8a6a98');
+        P.text(w, 'RECURSIVE DFS', 4, by + 4, '#8a6a98');
       }
 
       for (const p of this.parts) P.rect(w, Math.round(p.x), Math.round(p.y), 1, 1, p.col);
@@ -203,9 +203,9 @@
       // HUD
       P.rect(w, 0, 0, this.W, 16, 'rgba(255,248,251,0.75)');
       P.text(w, g.kind ? g.kind.toUpperCase() + ' ' + g.var : g.var, 4, 3, P.INK);
-      P.text(w, `DIKUNJUNGI ${v.visited.size}/${g.nodes.length}`, 4, 10, '#c2457a');
+      P.text(w, `VISITED ${v.visited.size}/${g.nodes.length}`, 4, 10, '#c2457a');
       if (last) {
-        const img = P.stamp('SELESAI!', '#2f8a5c');
+        const img = P.stamp('DONE!', '#2f8a5c');
         w.drawImage(img, Math.round(this.W - img.width - 4), this.H - BAR + 2, img.width, img.height);
       }
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

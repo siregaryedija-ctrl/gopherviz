@@ -582,13 +582,13 @@
       }
       if (s.swap && t > 0.55) {
         const ga = at(s.swap.a), gb = at(s.swap.b);
-        if (ga && gb) P.textCenter(w, 'TUKAR!', (ga.x + gb.x) / 2, Math.max(1, head - 8 - Math.round((t - 0.55) * 16)), '#d9467c');
+        if (ga && gb) P.textCenter(w, 'SWAP!', (ga.x + gb.x) / 2, Math.max(1, head - 8 - Math.round((t - 0.55) * 16)), '#d9467c');
       }
       let label = null, col = '#d9467c';
       if (st.reason === 'panic') label = 'PANIC!';
-      else if (done && this.search && this.eqSearch) { label = s.found >= 0 ? 'KETEMU!' : 'TIDAK ADA'; col = s.found >= 0 ? '#2f8a5c' : '#d9467c'; }
-      else if (done) { label = 'SELESAI!'; col = '#2f8a5c'; }
-      else if (matchNow >= 0 && t > 0.55) { label = 'KETEMU!'; col = '#2f8a5c'; }
+      else if (done && this.search && this.eqSearch) { label = s.found >= 0 ? 'FOUND!' : 'NOT FOUND'; col = s.found >= 0 ? '#2f8a5c' : '#d9467c'; }
+      else if (done) { label = 'DONE!'; col = '#2f8a5c'; }
+      else if (matchNow >= 0 && t > 0.55) { label = 'FOUND!'; col = '#2f8a5c'; }
       else if (st.phase === 'break' && st.loop === this.snaps[0].step.loop) label = 'BREAK!';
       if (label) {
         const img = P.stamp(label, col), k = t < 0.06 ? 4 : t < 0.12 ? 3 : 2;
@@ -598,13 +598,13 @@
       if (this.sort) { // HUD: nama algoritma + jumlah perbandingan dan pertukaran
         P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
         P.text(w, this.sort.title, 4, 3, P.INK);
-        const moves = this.sort.kind === 'insertion' ? `GESER ${s.setCount}` : this.sort.kind === 'merge' ? `TULIS ${s.setCount}` : `TUKAR ${s.swpCount}`;
-        P.text(w, `BANDING ${s.cmpCount}  ${moves}`, 4, 10, '#c2457a');
+        const moves = this.sort.kind === 'insertion' ? `SHIFT ${s.setCount}` : this.sort.kind === 'merge' ? `WRITE ${s.setCount}` : `SWAP ${s.swpCount}`;
+        P.text(w, `COMPARE ${s.cmpCount}  ${moves}`, 4, 10, '#c2457a');
       }
       if (this.search) { // HUD: nilai yang dicari dan jumlah elemen yang sudah dicek
         P.rect(w, 0, 0, this.worldW, 16, 'rgba(255,248,251,0.75)');
-        P.text(w, s.target != null ? `CARI ${String(s.target).slice(0, 10)}` : 'CARI', 4, 3, P.INK);
-        P.text(w, `CEK ${s.checks}`, 4, 10, '#c2457a');
+        P.text(w, s.target != null ? `FIND ${String(s.target).slice(0, 10)}` : 'FIND', 4, 3, P.INK);
+        P.text(w, `CHECK ${s.checks}`, 4, 10, '#c2457a');
       }
 
       this.present(s);
@@ -748,14 +748,14 @@
 
       // HUD: target, jumlah cek, sisa kandidat, penunjuk (lo/mid/hi, i)
       P.rect(w, 0, 0, W, 17, 'rgba(255,248,251,0.8)');
-      P.text(w, s.target != null ? `CARI ${String(s.target).slice(0, 10)}` : 'CARI', 4, 3, P.INK);
-      let hud = `CEK ${s.checks}  SISA ${s.alive.length}`;
+      P.text(w, s.target != null ? `FIND ${String(s.target).slice(0, 10)}` : 'FIND', 4, 3, P.INK);
+      let hud = `CHECK ${s.checks}  LEFT ${s.alive.length}`;
       for (const q of s.ptr.slice(0, 4)) hud += `  ${q.name.slice(0, 4)} ${q.k}`;
       P.text(w, hud, 4, 10, '#c2457a');
       let label = null, col = '#2f8a5c';
       if (st.reason === 'panic') { label = 'PANIC!'; col = '#d9467c'; }
-      else if (done) { label = !this.eqSearch ? 'SELESAI!' : s.found >= 0 ? 'KETEMU!' : 'TIDAK ADA'; if (this.eqSearch && s.found < 0) col = '#d9467c'; }
-      else if (s.cmp && s.cmp.result === '=' && keep.size === 1 && t > 0.6) label = 'KETEMU!';
+      else if (done) { label = !this.eqSearch ? 'DONE!' : s.found >= 0 ? 'FOUND!' : 'NOT FOUND'; if (this.eqSearch && s.found < 0) col = '#d9467c'; }
+      else if (s.cmp && s.cmp.result === '=' && keep.size === 1 && t > 0.6) label = 'FOUND!';
       if (label) {
         const img = P.stamp(label, col);
         w.drawImage(img, Math.round(W - img.width * 2 - 4), 2, img.width * 2, img.height * 2);

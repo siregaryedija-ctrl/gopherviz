@@ -12,7 +12,7 @@
   const X_SIGN = 30;  // papan kondisi
   const X_DOOR = 76;  // pintu jalur
   const X_TILES = 86; // tepi kiri ubin pertama
-  const LABEL = { 'if': 'IF', 'else-if': 'ELSE IF', 'else': 'ELSE', 'case': 'CASE', 'default': 'DEFAULT', 'skip': 'LEWATI' };
+  const LABEL = { 'if': 'IF', 'else-if': 'ELSE IF', 'else': 'ELSE', 'case': 'CASE', 'default': 'DEFAULT', 'skip': 'SKIP' };
   class BranchStage {
     constructor(canvas, hooks) {
       this.cv = canvas;
@@ -47,7 +47,7 @@
           x += w + 3;
           return t;
         });
-        ln.empty = ln.body.length ? '' : ln.kind === 'skip' ? 'TIDAK ADA YANG COCOK' : 'KOSONG';
+        ln.empty = ln.body.length ? '' : ln.kind === 'skip' ? 'NOTHING MATCHES' : 'EMPTY';
         end = Math.max(end, ln.empty ? X_TILES + P.textW(ln.empty) + 4 : x + 1);
       }
       this.exitX = end;
@@ -277,7 +277,7 @@
       const ox = 0, oy = 0;
       const s = v.step;
       P.rect(w, 0, 0, this.W, this.top + 1, 'rgba(255,248,251,0.75)'); // latar HUD supaya awan tidak menimpa teks
-      P.text(w, `${this.block.id} ${this.block.kind === 'switch' ? 'SWITCH' : 'IF'}${s.run > 1 ? ' KE-' + s.run : ''}`, ox + 4, oy + 3, P.INK);
+      P.text(w, `${this.block.id} ${this.block.kind === 'switch' ? 'SWITCH' : 'IF'}${s.run > 1 ? ' #' + s.run : ''}`, ox + 4, oy + 3, P.INK);
       this.hudText(s).slice(0, this.hudLines).forEach((ln, j) => P.text(w, ln, ox + 4, oy + 10 + j * 7, '#c2457a'));
       // baris paling bawah: kode yang sedang dijalankan Gopher
       const code = this.codeOf(v);

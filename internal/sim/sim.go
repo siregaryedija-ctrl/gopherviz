@@ -207,7 +207,7 @@ func (it *interp) run(node ast.Node) (structural string) {
 		}
 		a, ok := r.(abort)
 		if !ok {
-			structural = fmt.Sprintf("kesalahan internal simulator: %v", r)
+			structural = fmt.Sprintf("internal simulator error: %v", r)
 			return
 		}
 		switch a.kind {

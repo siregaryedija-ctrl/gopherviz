@@ -37,7 +37,7 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
     if (!scene) {
       return [];
     }
-    const what = { func: 'fungsi', if: 'if', switch: 'switch', loop: 'loop', class: 'class' } as const;
+    const what = { func: 'function', if: 'if', switch: 'switch', loop: 'loop', class: 'class' } as const;
     // Satu tombol per baris: blok terluar yang mulai di baris itu (mis. fungsi satu baris berisi loop).
     const seen = new Set<number>();
     return scene.blocks
@@ -45,7 +45,7 @@ export class LoopCodeLens implements vscode.CodeLensProvider {
       .map(b => {
         const range = new vscode.Range(b.line - 1, 0, b.line - 1, 0);
         return new vscode.CodeLens(range, {
-          title: `▶ Visualisasikan ${what[b.kind]} ${b.id}`,
+          title: `▶ Visualize ${what[b.kind]} ${b.id}`,
           command: 'gopherviz.visualizeAtCursor',
           arguments: [doc.uri, b.line],
         });

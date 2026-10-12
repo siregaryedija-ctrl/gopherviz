@@ -235,7 +235,7 @@
       const label = P.fit(`SELF = ${o.name || o.id}`, 18), lw = P.textW(label) + 6;
       P.box(w, x, r.top - 11, lw, 9, '#fff3a8', P.INK);
       P.text(w, label, x + 3, r.top - 9, P.INK);
-      if (s.selfCopy) P.text(w, 'SALINAN', x + this.selfSize.w + 6, gy - 8, '#8a6ac8');
+      if (s.selfCopy) P.text(w, 'COPY', x + this.selfSize.w + 6, gy - 8, '#8a6ac8');
       P.rect(w, 2, gy + 3, this.W - 4, 1, '#e8c8d4');
     }
 
@@ -244,7 +244,7 @@
       P.drawBg(w, this.bg);
       const floors = v.stack && v.stack.length ? v.stack : [{ fn: this.block.name, block: this.block }];
 
-      if (this.off > 0) P.text(w, `+${this.off} LANTAI DI ATAS`, X_TILES - 8, this.top + 2, '#b090c8');
+      if (this.off > 0) P.text(w, `+${this.off} FLOORS ABOVE`, X_TILES - 8, this.top + 2, '#b090c8');
       floors.forEach((f, d) => {
         if (d < this.off) return;
         const gy = this.groundY(d);
@@ -263,7 +263,7 @@
         P.text(w, label, X_TILES - 8, gy - 21, active ? '#5a43a0' : '#b090c8');
         // ubin isi fungsi
         const body = f.block && f.block.body ? f.block.body : [];
-        if (!body.length) P.text(w, f.block ? 'KOSONG' : 'FUNGSI LUAR', X_TILES - 6, gy - 7, '#c58ba3');
+        if (!body.length) P.text(w, f.block ? 'EMPTY' : 'OUTER FUNCTION', X_TILES - 6, gy - 7, '#c58ba3');
         const row = this.rowOf(f.block);
         body.forEach((n, j) => {
           const hit = active && v.act === 'hit' && v.tile === j;
@@ -303,7 +303,7 @@
       const ox = 0, oy = 0;
       const s = v.step || {};
       P.rect(w, ox, oy, this.W, 16, 'rgba(255,248,251,0.75)');
-      P.text(w, `${this.block.id} ${(this.block.name || 'FUNGSI').toUpperCase()}`, ox + 4, oy + 3, P.INK);
+      P.text(w, `${this.block.id} ${(this.block.name || 'FUNCTION').toUpperCase()}`, ox + 4, oy + 3, P.INK);
       P.text(w, `CALL STACK ${floors.length}`, ox + 4, oy + 10, '#c2457a');
       if (s.return != null && v.act === 'return') P.text(w, `RETURN ${String(s.return).slice(0, 12)}`, ox + 80, oy + 10, '#2f8a5c');
       P.present(this.ctx, this.cv, this.world, this.W, this.H);

@@ -16,7 +16,7 @@
   const PIPE_GAP = 26; // jarak antar pipa
   // warna lencana per goroutine (berulang)
   const GCOL = ['#8ec4f0', '#f7b779', '#9fd88f', '#f5a3bf', '#b8a2ee', '#f1d064', '#86d6cb'];
-  const STATE = { jalan: 'JALAN', siap: 'SIAP', menunggu: 'MENUNGGU', tidur: 'TIDUR', selesai: 'SELESAI' };
+  const STATE = { jalan: 'RUNNING', siap: 'READY', menunggu: 'WAITING', tidur: 'SLEEPING', selesai: 'DONE' };
 
   const short = v => {
     const s = String(v).replace(/^"(.*)"$/, '$1');
