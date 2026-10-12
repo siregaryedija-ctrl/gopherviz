@@ -333,7 +333,7 @@ func (p *parser) tryDecl(start ir.Pos, inFor bool) ir.Stmt {
 			} else {
 				spec.Dims = append(spec.Dims, p.expr())
 			}
-			p.expect("]", "untuk menutup ukuran array")
+			p.expect("]", "to close the array size")
 		}
 		if p.is(":") && !inFor && p.peekTok(1).k == tNum { // bitfield
 			p.next()
@@ -473,7 +473,7 @@ func (p *parser) funcRest(start ir.Pos, cls, name, ret string) ir.Stmt {
 			case p.is("{"):
 				args = p.args("{", "}")
 			default:
-				p.errAt(p.tok().pos, "kurang \"(\" di daftar inisialisasi")
+				p.errAt(p.tok().pos, "missing \"(\" in the initializer list")
 			}
 			f.Inits = append(f.Inits, &ir.Call{S: p.span(is), Fun: &ir.Ident{S: name.spanOf(), Name: name.text}, Args: args})
 			if !p.accept(",") {
@@ -582,7 +582,7 @@ func (p *parser) classDecl(start ir.Pos, mods []string) *ir.Class {
 			p.next()
 		}
 		if !p.accept(";") {
-			p.errAt(p.prevEnd(), "kurang \";\" setelah definisi "+c.Kind)
+			p.errAt(p.prevEnd(), "missing \";\" after the "+c.Kind+" definition")
 		}
 	} else if p.d.TSTypes || p.d.ASI {
 		p.accept(";")
@@ -594,7 +594,7 @@ func (p *parser) classDecl(start ir.Pos, mods []string) *ir.Class {
 
 func (p *parser) classBody(c *ir.Class) {
 	open := p.tok().pos
-	if !p.expect("{", "untuk badan "+c.Kind) {
+	if !p.expect("{", "for the "+c.Kind+" body") {
 		return
 	}
 	prevCls := p.inCls
@@ -609,11 +609,11 @@ func (p *parser) classBody(c *ir.Class) {
 			c.Members = append(c.Members, m)
 		}
 		if p.i == before {
-			p.badSkip("tidak bisa dibaca di dalam " + c.Kind)
+			p.badSkip("cannot be read inside " + c.Kind)
 		}
 	}
 	if !p.accept("}") {
-		p.errAt(open, c.Kind+" belum ditutup dengan }")
+		p.errAt(open, c.Kind+" is not closed with }")
 	}
 }
 
@@ -734,7 +734,7 @@ func (p *parser) member(c *ir.Class) ir.Stmt {
 		}
 		return s
 	}
-	return p.badSkip("anggota " + c.Kind + " tidak bisa dibaca")
+	return p.badSkip("a " + c.Kind + " member cannot be read")
 }
 
 // jsMember: method, getter/setter, field (JavaScript/TypeScript).
@@ -865,7 +865,7 @@ func (p *parser) phpMember(c *ir.Class, start ir.Pos, static bool) ir.Stmt {
 		}
 	}
 	if len(d.Specs) == 0 {
-		return p.badSkip("anggota kelas tidak bisa dibaca")
+		return p.badSkip("a class member cannot be read")
 	}
 	p.semi()
 	d.S = p.span(start)

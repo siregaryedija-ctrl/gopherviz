@@ -45,7 +45,7 @@
       "vars": {
         "temp": "31"
       },
-      "note": "masuk case temp > 30"
+      "note": "take case temp > 30"
     },
     {
       "n": 2,
@@ -57,7 +57,7 @@
       "vars": {
         "temp": "31"
       },
-      "note": "fmt.Println(\"panas\") → cetak \"panas\"",
+      "note": "fmt.Println(\"panas\") → print \"panas\"",
       "output": "panas\n"
     },
     {
@@ -70,7 +70,7 @@
       "vars": {
         "temp": "31"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

@@ -36,7 +36,7 @@
       "vars": {
         "arr": "[a b c]"
       },
-      "note": "range arr (3 elemen)",
+      "note": "range arr (3 elements)",
       "items": [
         "a",
         "b",
@@ -56,7 +56,7 @@
         "s": "\"a\""
       },
       "result": true,
-      "note": "ambil elemen ke-1: s = \"a\"",
+      "note": "take element #1: s = \"a\"",
       "ops": [
         {
           "op": "read",
@@ -76,7 +76,7 @@
         "arr": "[a b c]",
         "s": "\"a\""
       },
-      "note": "fmt.Println(s) → cetak \"a\"",
+      "note": "fmt.Println(s) → print \"a\"",
       "output": "a\n"
     },
     {
@@ -92,7 +92,7 @@
         "s": "\"b\""
       },
       "result": true,
-      "note": "ambil elemen ke-2: s = \"b\"",
+      "note": "take element #2: s = \"b\"",
       "ops": [
         {
           "op": "read",
@@ -112,7 +112,7 @@
         "arr": "[a b c]",
         "s": "\"b\""
       },
-      "note": "fmt.Println(s) → cetak \"b\"",
+      "note": "fmt.Println(s) → print \"b\"",
       "output": "b\n"
     },
     {
@@ -128,7 +128,7 @@
         "s": "\"c\""
       },
       "result": true,
-      "note": "ambil elemen ke-3: s = \"c\"",
+      "note": "take element #3: s = \"c\"",
       "ops": [
         {
           "op": "read",
@@ -148,7 +148,7 @@
         "arr": "[a b c]",
         "s": "\"c\""
       },
-      "note": "fmt.Println(s) → cetak \"c\"",
+      "note": "fmt.Println(s) → print \"c\"",
       "output": "c\n"
     },
     {
@@ -163,7 +163,7 @@
         "arr": "[a b c]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 8,
@@ -176,7 +176,7 @@
       "vars": {
         "arr": "[a b c]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

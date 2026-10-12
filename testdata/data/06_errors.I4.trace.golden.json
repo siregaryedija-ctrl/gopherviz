@@ -53,7 +53,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 2,
@@ -67,7 +67,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -98,7 +98,7 @@
         "n": "0",
         "s": "\"\""
       },
-      "note": "masuk cabang ke-1 (if err != nil)"
+      "note": "take branch #1 (if err != nil)"
     },
     {
       "n": 5,
@@ -112,7 +112,7 @@
         "n": "0",
         "s": "\"\""
       },
-      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: input kosong true\"",
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → print \"error: input kosong true\"",
       "output": "error: input kosong true\n"
     },
     {
@@ -127,7 +127,7 @@
         "n": "0",
         "s": "\"\""
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 7,
@@ -141,7 +141,7 @@
         "n": "0",
         "s": "\"\""
       },
-      "note": "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya",
+      "note": "leave because of continue: the outer loop goes to its next round",
       "reason": "continue"
     },
     {
@@ -172,7 +172,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "masuk cabang ke-1 (if err != nil)"
+      "note": "take branch #1 (if err != nil)"
     },
     {
       "n": 10,
@@ -186,7 +186,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: parse \\\"abc\\\": strconv.Atoi: parsing \\\"abc\\\": invalid syntax false\"",
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → print \"error: parse \\\"abc\\\": strconv.Atoi: parsing \\\"abc\\\": invalid syntax false\"",
       "output": "error: parse \"abc\": strconv.Atoi: parsing \"abc\": invalid syntax false\n"
     },
     {
@@ -201,7 +201,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 12,
@@ -215,7 +215,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya",
+      "note": "leave because of continue: the outer loop goes to its next round",
       "reason": "continue"
     },
     {
@@ -246,7 +246,7 @@
         "n": "0",
         "s": "\"500\""
       },
-      "note": "masuk cabang ke-1 (if err != nil)"
+      "note": "take branch #1 (if err != nil)"
     },
     {
       "n": 15,
@@ -261,7 +261,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "panggil RangeError.Error(e = &{500})"
+      "note": "call RangeError.Error(e = &{500})"
     },
     {
       "n": 16,
@@ -276,7 +276,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\""
+      "note": "RangeError.Error(e = &{500}) returns \"nilai 500 di luar batas\""
     },
     {
       "n": 17,
@@ -290,7 +290,7 @@
         "n": "0",
         "s": "\"500\""
       },
-      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: nilai 500 di luar batas false\"",
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → print \"error: nilai 500 di luar batas false\"",
       "output": "error: nilai 500 di luar batas false\n"
     },
     {
@@ -305,7 +305,7 @@
         "n": "0",
         "s": "\"500\""
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 19,
@@ -319,7 +319,7 @@
         "n": "0",
         "s": "\"500\""
       },
-      "note": "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya",
+      "note": "leave because of continue: the outer loop goes to its next round",
       "reason": "continue"
     }
   ],

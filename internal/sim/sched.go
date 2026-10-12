@@ -221,7 +221,7 @@ func (it *interp) park(why string, at ast.Node) {
 	me := it.sch.cur
 	me.parked, me.why = true, why
 	if it.recording() && at != nil {
-		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: fmt.Sprintf("G%d menunggu: %s", me.id, why)}, nil)
+		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: fmt.Sprintf("G%d waits: %s", me.id, why)}, nil)
 	}
 	it.yield(me)
 }
@@ -232,10 +232,10 @@ func (it *interp) sleep(ns int64, at ast.Node) {
 	}
 	s := it.sch
 	me := s.cur
-	me.parked, me.sleeping, me.why = true, true, "tidur "+durText(ns)
+	me.parked, me.sleeping, me.why = true, true, "sleeping "+durText(ns)
 	recorded := it.recording()
 	if recorded {
-		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: fmt.Sprintf("G%d tidur %s (waktu simulasi t=%s, bangun di t=%s)", me.id, durText(ns), durText(s.now), durText(s.now+ns))}, nil)
+		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: fmt.Sprintf("G%d sleeps %s (simulated time t=%s, wakes at t=%s)", me.id, durText(ns), durText(s.now), durText(s.now+ns))}, nil)
 	}
 	s.addTimer(s.now+ns, func() { s.ready(me) })
 	it.yield(me)
@@ -283,7 +283,7 @@ func (it *interp) goStmt(n *ast.GoStmt, e *env) {
 		}
 	}
 	if run == nil {
-		it.structural(fmt.Sprintf("go %s belum disimulasikan (baris %d)", it.text(call), it.line(n)))
+		it.structural(fmt.Sprintf("go %s is not simulated yet (line %d)", it.text(call), it.line(n)))
 	}
 	s.used = true
 	g := s.newG(it.text(call))
@@ -298,7 +298,7 @@ func (it *interp) goStmt(n *ast.GoStmt, e *env) {
 	})
 	s.ready(g)
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Note: fmt.Sprintf("go %s → goroutine G%d dibuat (siap jalan)", it.text(call), g.id)}, e)
+		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Note: fmt.Sprintf("go %s → goroutine G%d created (ready to run)", it.text(call), g.id)}, e)
 	}
 }
 

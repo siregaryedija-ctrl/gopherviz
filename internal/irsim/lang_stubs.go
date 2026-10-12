@@ -62,6 +62,6 @@ func (it *interp) pyMatch(n *ir.Switch, e *Env, focus bool) flow {
 	if pyMatchImpl != nil {
 		return pyMatchImpl(it, n, e, focus)
 	}
-	it.structural("match belum disimulasikan")
+	it.structural("match is not simulated yet")
 	return flow{}
 }

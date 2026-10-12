@@ -49,11 +49,11 @@ func (s *Server) Run(r io.Reader, w io.Writer) error {
 			continue
 		}
 		if err := enc.Encode(s.Handle(line)); err != nil {
-			return fmt.Errorf("menulis response: %w", err)
+			return fmt.Errorf("writing response: %w", err)
 		}
 	}
 	if err := sc.Err(); err != nil {
-		return fmt.Errorf("membaca request: %w", err)
+		return fmt.Errorf("reading request: %w", err)
 	}
 	return nil
 }
@@ -67,7 +67,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		}
 	}()
 	if err := json.Unmarshal(line, &req); err != nil {
-		return fail(0, "request bukan JSON yang valid: "+err.Error())
+		return fail(0, "request is not valid JSON: "+err.Error())
 	}
 
 	switch req.Method {
@@ -98,7 +98,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		}
 		prog, found := s.progs[p.File]
 		if !found {
-			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
+			return fail(req.ID, "file was never sent with update: "+p.File)
 		}
 		loop, _ := prog.Result.Scene.LoopAt(p.Cursor.Line)
 		block, _ := prog.Result.Scene.BlockAt(p.Cursor.Line)
@@ -120,7 +120,7 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		}
 		prog, found := s.progs[p.File]
 		if !found {
-			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
+			return fail(req.ID, "file was never sent with update: "+p.File)
 		}
 		id := p.BlockID
 		if id == "" {
@@ -135,21 +135,21 @@ func (s *Server) Handle(line []byte) (resp protocol.Response) {
 		}
 		prog, found := s.progs[p.File]
 		if !found {
-			return fail(req.ID, "file belum pernah dikirim lewat update: "+p.File)
+			return fail(req.ID, "file was never sent with update: "+p.File)
 		}
 		return ok(req.ID, s.race(prog, p))
 
 	default:
-		return fail(req.ID, fmt.Sprintf("method tidak dikenal: %q", req.Method))
+		return fail(req.ID, fmt.Sprintf("unknown method: %q", req.Method))
 	}
 }
 
 func decode(raw json.RawMessage, v any) error {
 	if len(raw) == 0 {
-		return fmt.Errorf("params wajib diisi")
+		return fmt.Errorf("params are required")
 	}
 	if err := json.Unmarshal(raw, v); err != nil {
-		return fmt.Errorf("params tidak valid: %w", err)
+		return fmt.Errorf("invalid params: %w", err)
 	}
 	return nil
 }

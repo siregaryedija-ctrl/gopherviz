@@ -31,7 +31,7 @@
       "phase": "call",
       "line": 26,
       "func": "order",
-      "note": "panggil order()"
+      "note": "call order()"
     },
     {
       "n": 1,
@@ -71,7 +71,7 @@
       "vars": {
         "i": "1"
       },
-      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+      "note": "defer noted: fmt.Println(\"defer\", i) (runs when the function ends)"
     },
     {
       "n": 4,
@@ -111,7 +111,7 @@
       "vars": {
         "i": "2"
       },
-      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+      "note": "defer noted: fmt.Println(\"defer\", i) (runs when the function ends)"
     },
     {
       "n": 7,
@@ -151,7 +151,7 @@
       "vars": {
         "i": "3"
       },
-      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+      "note": "defer noted: fmt.Println(\"defer\", i) (runs when the function ends)"
     },
     {
       "n": 10,
@@ -191,7 +191,7 @@
       "vars": {
         "i": "4"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     },
     {
@@ -201,7 +201,7 @@
       "run": 1,
       "phase": "body",
       "line": 12,
-      "note": "fmt.Println(\"isi fungsi selesai\") → cetak \"isi fungsi selesai\"",
+      "note": "fmt.Println(\"isi fungsi selesai\") → print \"isi fungsi selesai\"",
       "output": "isi fungsi selesai\n"
     },
     {
@@ -211,7 +211,7 @@
       "run": 1,
       "phase": "body",
       "line": 10,
-      "note": "menjalankan defer: fmt.Println(\"defer\", i)"
+      "note": "running defer: fmt.Println(\"defer\", i)"
     },
     {
       "n": 15,
@@ -220,7 +220,7 @@
       "run": 1,
       "phase": "body",
       "line": 10,
-      "note": "menjalankan defer: fmt.Println(\"defer\", i)",
+      "note": "running defer: fmt.Println(\"defer\", i)",
       "output": "defer 3\n"
     },
     {
@@ -230,7 +230,7 @@
       "run": 1,
       "phase": "body",
       "line": 10,
-      "note": "menjalankan defer: fmt.Println(\"defer\", i)",
+      "note": "running defer: fmt.Println(\"defer\", i)",
       "output": "defer 2\n"
     },
     {
@@ -241,7 +241,7 @@
       "phase": "return",
       "line": 13,
       "func": "order",
-      "note": "order() selesai",
+      "note": "order() done",
       "output": "defer 1\n"
     }
   ],

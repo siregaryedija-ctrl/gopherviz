@@ -116,7 +116,7 @@ func (it *interp) runTask(fn func(), label string, rec bool, kind string) {
 	it.curTask = label
 	defer func() { r.active--; r.depth = prevDepth; it.curTask = prevTask }()
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseBody, Note: fmt.Sprintf("call stack kosong → event loop mengambil tiket %s: %s", kind, label)}, nil)
+		it.add(trace.Step{Phase: trace.PhaseBody, Note: fmt.Sprintf("call stack empty → the event loop takes %s ticket: %s", kind, label)}, nil)
 	}
 	fn()
 }
@@ -222,11 +222,11 @@ func (it *interp) awaitCoro(c *coro, v Value, at ir.Node) Value {
 		got, rejected = val, rej
 		it.enterCoro(c)
 	}
-	it.thenLabeled(v, bf("lanjut", func(it *interp, this Value, a []Value, at ir.Node) Value { resume(arg(a, 0), false); return undef() }),
-		bf("gagal", func(it *interp, this Value, a []Value, at ir.Node) Value { resume(arg(a, 0), true); return undef() }),
-		at, "lanjut "+c.name+"() setelah await")
+	it.thenLabeled(v, bf("resume", func(it *interp, this Value, a []Value, at ir.Node) Value { resume(arg(a, 0), false); return undef() }),
+		bf("fail", func(it *interp, this Value, a []Value, at ir.Node) Value { resume(arg(a, 0), true); return undef() }),
+		at, "resume "+c.name+"() after await")
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: fmt.Sprintf("await → %s() berhenti di sini; lanjutannya menunggu di antrian microtask", c.name)}, nil)
+		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(at), Note: fmt.Sprintf("await → %s() pauses here; the rest waits in the microtask queue", c.name)}, nil)
 	}
 	// tertunda: simpan keadaan coroutine (frame call stack JS miliknya saja), serahkan giliran
 	mine := it.saveCtx()

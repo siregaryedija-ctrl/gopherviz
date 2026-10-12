@@ -36,7 +36,7 @@
         "a": "→ 1",
         "b": "→ 2"
       },
-      "note": "panggil swap(a = → 1, b = → 2)",
+      "note": "call swap(a = → 1, b = → 2)",
       "mem": {
         "vars": [
           {
@@ -115,7 +115,7 @@
         "a": "→ 2",
         "b": "→ 1"
       },
-      "note": "swap(a = → 1, b = → 2) selesai",
+      "note": "swap(a = → 1, b = → 2) done",
       "mem": {
         "vars": [
           {

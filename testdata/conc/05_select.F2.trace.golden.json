@@ -31,14 +31,14 @@
       "phase": "call",
       "line": 10,
       "func": "func",
-      "note": "panggil func()",
+      "note": "call func()",
       "g": 2,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
@@ -70,20 +70,20 @@
       "run": 1,
       "phase": "body",
       "line": 11,
-      "note": "G2 tidur 45ms (waktu simulasi t=0s, bangun di t=45ms)",
+      "note": "G2 sleeps 45ms (simulated time t=0s, wakes at t=45ms)",
       "g": 2,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -110,7 +110,7 @@
       "run": 1,
       "phase": "body",
       "line": 12,
-      "note": "done <- \"beres\" → kirim \"beres\" ke done",
+      "note": "done <- \"beres\" → send \"beres\" to done",
       "ops": [
         {
           "op": "send",
@@ -163,7 +163,7 @@
       "phase": "return",
       "line": 13,
       "func": "func",
-      "note": "func() selesai",
+      "note": "func() done",
       "g": 2,
       "gs": [
         {

@@ -816,7 +816,7 @@
         "line": 113,
         "endLine": 113,
         "state": "complete",
-        "name": "(anonim)",
+        "name": "(anonymous)",
         "header": "[](int x, int y)",
         "params": [
           "x",

@@ -129,7 +129,7 @@ func (r *recorder) add(s trace.Step, vars map[string]string, items func() ([]str
 	r.steps = append(r.steps, s)
 	if len(r.steps) >= r.maxSteps {
 		r.truncated = true
-		r.warn("trace dipotong: terlalu banyak langkah untuk ditampilkan")
+		r.warn("trace cut short: too many steps to show")
 		panic(abort{kind: abortDone})
 	}
 }

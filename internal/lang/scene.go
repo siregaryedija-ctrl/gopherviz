@@ -26,7 +26,7 @@ func Analyze(language, filename, src string) (res *Result) {
 	res.Scene = scene.Scene{Version: scene.Version, Language: language, File: filename, Blocks: []scene.Block{}, Loops: []scene.Loop{}}
 	defer func() {
 		if r := recover(); r != nil {
-			res.Diagnostics = append(res.Diagnostics, scene.Diagnostic{Line: 1, Message: fmt.Sprintf("kesalahan internal analyzer: %v", r)})
+			res.Diagnostics = append(res.Diagnostics, scene.Diagnostic{Line: 1, Message: fmt.Sprintf("internal analyzer error: %v", r)})
 		}
 	}()
 	f := Parse(language, src)
@@ -255,7 +255,7 @@ func (b *builder) block(n ir.Node) scene.Block {
 		blk.Kind = scene.BlockFunc
 		blk.Name = x.Name
 		if x.Name == "" {
-			blk.Name = "(anonim)"
+			blk.Name = "(anonymous)"
 		}
 		if x.Class != "" {
 			blk.Name = x.Class + "." + x.Name

@@ -68,7 +68,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati",
+      "note": "all conditions false and no else → skip",
       "mem": {
         "vars": [
           {
@@ -101,7 +101,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done",
       "mem": {
         "vars": [
@@ -170,7 +170,7 @@
         "n": "500",
         "s": "\"500\""
       },
-      "note": "masuk cabang ke-1 (if n > 100)",
+      "note": "take branch #1 (if n > 100)",
       "mem": {
         "vars": [
           {
@@ -203,7 +203,7 @@
         "n": "500",
         "s": "\"500\""
       },
-      "note": "return 0, &RangeError{Value: n} → keluar dari fungsi",
+      "note": "return 0, &RangeError{Value: n} → leave the function",
       "mem": {
         "vars": [
           {
@@ -236,7 +236,7 @@
         "n": "500",
         "s": "\"500\""
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return",
       "mem": {
         "vars": [

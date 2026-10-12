@@ -45,7 +45,7 @@
       "vars": {
         "x": "7"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 2,
@@ -57,7 +57,7 @@
       "vars": {
         "x": "7"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

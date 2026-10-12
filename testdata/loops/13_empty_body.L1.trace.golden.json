@@ -141,7 +141,7 @@
       "vars": {
         "i": "3"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     }
   ],

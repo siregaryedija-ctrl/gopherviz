@@ -35,7 +35,7 @@
       "vars": {
         "p": "&{Ani 20}"
       },
-      "note": "panggil Person.Birthday(p = &{Ani 20})",
+      "note": "call Person.Birthday(p = &{Ani 20})",
       "mem": {
         "vars": [
           {
@@ -148,7 +148,7 @@
       "vars": {
         "p": "&{Ani 21}"
       },
-      "note": "Person.Birthday(p = &{Ani 20}) selesai",
+      "note": "Person.Birthday(p = &{Ani 20}) done",
       "mem": {
         "vars": [
           {
@@ -206,7 +206,7 @@
       "vars": {
         "p": "&{Budi 30}"
       },
-      "note": "panggil Person.Birthday(p = &{Budi 30})",
+      "note": "call Person.Birthday(p = &{Budi 30})",
       "mem": {
         "vars": [
           {
@@ -319,7 +319,7 @@
       "vars": {
         "p": "&{Budi 31}"
       },
-      "note": "Person.Birthday(p = &{Budi 30}) selesai",
+      "note": "Person.Birthday(p = &{Budi 30}) done",
       "mem": {
         "vars": [
           {
@@ -377,7 +377,7 @@
       "vars": {
         "p": "&{Citra 25}"
       },
-      "note": "panggil Person.Birthday(p = &{Citra 25})",
+      "note": "call Person.Birthday(p = &{Citra 25})",
       "mem": {
         "vars": [
           {
@@ -490,7 +490,7 @@
       "vars": {
         "p": "&{Citra 26}"
       },
-      "note": "Person.Birthday(p = &{Citra 25}) selesai",
+      "note": "Person.Birthday(p = &{Citra 25}) done",
       "mem": {
         "vars": [
           {

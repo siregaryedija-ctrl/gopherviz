@@ -44,7 +44,7 @@
         "a": "10",
         "b": "2"
       },
-      "note": "panggil safeDivide(a = 10, b = 2)"
+      "note": "call safeDivide(a = 10, b = 2)"
     },
     {
       "n": 1,
@@ -59,7 +59,7 @@
         "err": "<nil>",
         "result": "0"
       },
-      "note": "defer dicatat: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }() (dijalankan saat fungsi selesai)"
+      "note": "defer noted: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }() (runs when the function ends)"
     },
     {
       "n": 2,
@@ -89,7 +89,7 @@
         "err": "<nil>",
         "result": "5"
       },
-      "note": "return result, nil → keluar dari fungsi"
+      "note": "return result, nil → leave the function"
     },
     {
       "n": 4,
@@ -98,7 +98,7 @@
       "run": 1,
       "phase": "body",
       "line": 16,
-      "note": "menjalankan defer: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }()"
+      "note": "running defer: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }()"
     },
     {
       "n": 5,
@@ -109,7 +109,7 @@
       "phase": "call",
       "line": 16,
       "func": "func",
-      "note": "panggil func()"
+      "note": "call func()"
     },
     {
       "n": 6,
@@ -147,7 +147,7 @@
       "phase": "return",
       "line": 20,
       "func": "func",
-      "note": "func() selesai"
+      "note": "func() done"
     },
     {
       "n": 9,
@@ -164,7 +164,7 @@
         "err": "<nil>",
         "result": "5"
       },
-      "note": "safeDivide(a = 10, b = 2) mengembalikan 5, <nil>"
+      "note": "safeDivide(a = 10, b = 2) returns 5, <nil>"
     },
     {
       "n": 10,
@@ -179,7 +179,7 @@
         "a": "1",
         "b": "0"
       },
-      "note": "panggil safeDivide(a = 1, b = 0)"
+      "note": "call safeDivide(a = 1, b = 0)"
     },
     {
       "n": 11,
@@ -194,7 +194,7 @@
         "err": "<nil>",
         "result": "0"
       },
-      "note": "defer dicatat: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }() (dijalankan saat fungsi selesai)"
+      "note": "defer noted: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }() (runs when the function ends)"
     },
     {
       "n": 12,
@@ -203,7 +203,7 @@
       "run": 2,
       "phase": "body",
       "line": 21,
-      "note": "panic: runtime error: integer divide by zero → mencari recover() di defer"
+      "note": "panic: runtime error: integer divide by zero → looking for recover() in a defer"
     },
     {
       "n": 13,
@@ -212,7 +212,7 @@
       "run": 2,
       "phase": "body",
       "line": 16,
-      "note": "menjalankan defer: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }()"
+      "note": "running defer: func() { if r := recover(); r != nil { err = errors.New(\"pembagian gagal\") } }()"
     },
     {
       "n": 14,
@@ -223,7 +223,7 @@
       "phase": "call",
       "line": 16,
       "func": "func",
-      "note": "panggil func()"
+      "note": "call func()"
     },
     {
       "n": 15,
@@ -233,7 +233,7 @@
       "depth": 1,
       "phase": "body",
       "line": 17,
-      "note": "recover() menangkap panic: runtime error: integer divide by zero → program lanjut"
+      "note": "recover() catches panic: runtime error: integer divide by zero → the program continues"
     },
     {
       "n": 16,
@@ -284,7 +284,7 @@
       "phase": "return",
       "line": 20,
       "func": "func",
-      "note": "func() selesai"
+      "note": "func() done"
     },
     {
       "n": 20,
@@ -301,7 +301,7 @@
         "err": "error(\"pembagian gagal\")",
         "result": "0"
       },
-      "note": "safeDivide(a = 1, b = 0) mengembalikan 0, error(\"pembagian gagal\")"
+      "note": "safeDivide(a = 1, b = 0) returns 0, error(\"pembagian gagal\")"
     }
   ],
   "truncated": false,

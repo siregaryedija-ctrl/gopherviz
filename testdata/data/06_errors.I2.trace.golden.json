@@ -51,7 +51,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 2,
@@ -65,7 +65,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -96,7 +96,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "masuk cabang ke-1 (if err != nil)"
+      "note": "take branch #1 (if err != nil)"
     },
     {
       "n": 5,
@@ -110,7 +110,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "return 0, fmt.Errorf(\"parse %q: %w\", s, err) → keluar dari fungsi"
+      "note": "return 0, fmt.Errorf(\"parse %q: %w\", s, err) → leave the function"
     },
     {
       "n": 6,
@@ -124,7 +124,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -155,7 +155,7 @@
         "n": "500",
         "s": "\"500\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 9,
@@ -169,7 +169,7 @@
         "n": "500",
         "s": "\"500\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

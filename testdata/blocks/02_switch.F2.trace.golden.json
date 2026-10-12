@@ -32,7 +32,7 @@
       "phase": "call",
       "line": 16,
       "func": "main",
-      "note": "panggil main()"
+      "note": "call main()"
     },
     {
       "n": 1,
@@ -47,7 +47,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "panggil dayName(day = 3)"
+      "note": "call dayName(day = 3)"
     },
     {
       "n": 2,
@@ -62,7 +62,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "dayName(day = 3) mengembalikan \"hari kerja\""
+      "note": "dayName(day = 3) returns \"hari kerja\""
     },
     {
       "n": 3,
@@ -71,7 +71,7 @@
       "run": 1,
       "phase": "body",
       "line": 17,
-      "note": "fmt.Println(dayName(3)) → cetak \"hari kerja\"",
+      "note": "fmt.Println(dayName(3)) → print \"hari kerja\"",
       "output": "hari kerja\n"
     },
     {
@@ -87,7 +87,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "panggil dayName(day = 7)"
+      "note": "call dayName(day = 7)"
     },
     {
       "n": 5,
@@ -102,7 +102,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "dayName(day = 7) mengembalikan \"akhir pekan\""
+      "note": "dayName(day = 7) returns \"akhir pekan\""
     },
     {
       "n": 6,
@@ -111,7 +111,7 @@
       "run": 1,
       "phase": "body",
       "line": 18,
-      "note": "fmt.Println(dayName(7)) → cetak \"akhir pekan\"",
+      "note": "fmt.Println(dayName(7)) → print \"akhir pekan\"",
       "output": "akhir pekan\n"
     },
     {
@@ -127,7 +127,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "panggil dayName(day = 9)"
+      "note": "call dayName(day = 9)"
     },
     {
       "n": 8,
@@ -142,7 +142,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "dayName(day = 9) mengembalikan \"bukan hari\""
+      "note": "dayName(day = 9) returns \"bukan hari\""
     },
     {
       "n": 9,
@@ -151,7 +151,7 @@
       "run": 1,
       "phase": "body",
       "line": 19,
-      "note": "fmt.Println(dayName(9)) → cetak \"bukan hari\"",
+      "note": "fmt.Println(dayName(9)) → print \"bukan hari\"",
       "output": "bukan hari\n"
     },
     {
@@ -188,7 +188,7 @@
       "vars": {
         "temp": "31"
       },
-      "note": "fmt.Println(\"panas\") → cetak \"panas\"",
+      "note": "fmt.Println(\"panas\") → print \"panas\"",
       "output": "panas\n"
     },
     {
@@ -202,7 +202,7 @@
       "vars": {
         "temp": "31"
       },
-      "note": "main() selesai"
+      "note": "main() done"
     }
   ],
   "truncated": false,

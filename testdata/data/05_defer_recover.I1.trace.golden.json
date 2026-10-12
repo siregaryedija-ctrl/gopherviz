@@ -60,7 +60,7 @@
       "vars": {
         "r": "<nil>"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 3,
@@ -72,7 +72,7 @@
       "vars": {
         "r": "<nil>"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -82,7 +82,7 @@
       "run": 2,
       "phase": "body",
       "line": 17,
-      "note": "recover() menangkap panic: runtime error: integer divide by zero → program lanjut"
+      "note": "recover() catches panic: runtime error: integer divide by zero → the program continues"
     },
     {
       "n": 5,
@@ -120,7 +120,7 @@
       "vars": {
         "r": "error(\"runtime error: integer divide by…"
       },
-      "note": "masuk cabang ke-1 (if r != nil)"
+      "note": "take branch #1 (if r != nil)"
     },
     {
       "n": 8,
@@ -144,7 +144,7 @@
       "vars": {
         "r": "error(\"runtime error: integer divide by…"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

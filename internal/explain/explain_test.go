@@ -21,7 +21,7 @@ func TestClassify(t *testing.T) {
 		{"NullPointerException", "", "null"},
 		{"RecursionError", "maximum recursion depth exceeded", "depth"},
 		{"RangeError", "Maximum call stack size exceeded", "depth"},
-		{"SegmentationFault", "stack overflow (rekursi terlalu dalam)", "depth"},
+		{"SegmentationFault", "stack overflow (recursion too deep)", "depth"},
 		{"TypeError", "can only concatenate str (not \"int\") to str", "type"},
 		{"ValueError", "invalid literal for int() with base 10: 'a'", "value"},
 		{"fatal error", "all goroutines are asleep - deadlock!", "deadlock"},
@@ -40,7 +40,7 @@ func TestIndexFromMessage(t *testing.T) {
 	if e.Value != "5" || e.Len == nil || *e.Len != 5 {
 		t.Fatalf("%+v", e)
 	}
-	if want := "Program mengambil indeks 5 dari arr, padahal panjangnya 5: indeks yang ada hanya 0 sampai 4."; e.Text != want {
+	if want := "The program reads index 5 of arr, but its length is 5: the valid indexes are only 0 to 4."; e.Text != want {
 		t.Fatalf("text = %q", e.Text)
 	}
 }

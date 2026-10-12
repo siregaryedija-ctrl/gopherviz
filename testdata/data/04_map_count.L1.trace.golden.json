@@ -36,7 +36,7 @@
         "counts": "map[]",
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
-      "note": "range words (6 elemen)"
+      "note": "range words (6 elements)"
     },
     {
       "n": 1,
@@ -52,7 +52,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": true,
-      "note": "ambil elemen ke-1: w = \"apel\""
+      "note": "take element #1: w = \"apel\""
     },
     {
       "n": 2,
@@ -97,7 +97,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": true,
-      "note": "ambil elemen ke-2: w = \"jeruk\""
+      "note": "take element #2: w = \"jeruk\""
     },
     {
       "n": 4,
@@ -144,7 +144,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": true,
-      "note": "ambil elemen ke-3: w = \"apel\""
+      "note": "take element #3: w = \"apel\""
     },
     {
       "n": 6,
@@ -191,7 +191,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": true,
-      "note": "ambil elemen ke-4: w = \"mangga\""
+      "note": "take element #4: w = \"mangga\""
     },
     {
       "n": 8,
@@ -240,7 +240,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": true,
-      "note": "ambil elemen ke-5: w = \"apel\""
+      "note": "take element #5: w = \"apel\""
     },
     {
       "n": 10,
@@ -289,7 +289,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": true,
-      "note": "ambil elemen ke-6: w = \"jeruk\""
+      "note": "take element #6: w = \"jeruk\""
     },
     {
       "n": 12,
@@ -337,7 +337,7 @@
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 14,
@@ -351,7 +351,7 @@
         "counts": "map[apel:3 jeruk:2 mangga:1]",
         "words": "[apel jeruk apel mangga apel jeruk]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

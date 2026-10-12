@@ -101,7 +101,7 @@ func Load(filename string, src []byte) (p *Program) {
 				Result: Result{
 					Scene: scene.Scene{Version: scene.Version, Language: "go", File: filename,
 						Blocks: []scene.Block{}, Loops: []scene.Loop{}},
-					Diagnostics: []scene.Diagnostic{{Message: fmt.Sprintf("kesalahan internal analyzer: %v", r)}},
+					Diagnostics: []scene.Diagnostic{{Message: fmt.Sprintf("internal analyzer error: %v", r)}},
 				},
 			}
 		}

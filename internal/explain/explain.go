@@ -1,5 +1,5 @@
 // Package explain mengubah error program yang disimulasikan (panic Go, exception Python/JS/Java/PHP,
-// crash C/C++) menjadi penjelasan sederhana dalam Bahasa Indonesia untuk panel (Fase 12b):
+// crash C/C++) menjadi penjelasan sederhana (bahasa Inggris) untuk panel (Fase 12b):
 // jenis error (untuk memilih animasi), judul, kalimat dengan nilai penyebabnya, dan saran perbaikan.
 package explain
 
@@ -73,7 +73,7 @@ func classify(name, msg string) string {
 	case has("deadlock"):
 		return "deadlock"
 	case name == "RecursionError" || name == "StackOverflowError" ||
-		has("maximum call stack", "recursion depth", "stack overflow", "rekursi terlalu dalam", "nesting level"):
+		has("maximum call stack", "recursion depth", "stack overflow", "recursion too deep", "nesting level"):
 		return "depth"
 	case name == "ZeroDivisionError" || name == "DivisionByZeroError" ||
 		has("by zero", "divide by zero", "division by zero", "modulo by zero", "float modulo", "cannot be raised to a negative power"):
@@ -84,7 +84,7 @@ func classify(name, msg string) string {
 	case name == "KeyError" || m == "map::at" || name == "out_of_range" && strings.HasPrefix(m, "map::"):
 		return "key"
 	case name == "IndexError" || strings.HasSuffix(name, "IndexOutOfBoundsException") || name == "out_of_range" ||
-		has("index out of range", "out of bounds", "slice bounds out of range", "di luar batas"):
+		has("index out of range", "out of bounds", "slice bounds out of range"):
 		return "index"
 	case name == "NullPointerException" || name == "SegmentationFault" ||
 		has("nil pointer", "nil map", "of undefined", "of null", "nonetype", "is null", "because value is null", "null pointer", "pointer null"):
@@ -118,7 +118,7 @@ func nullWord(lang, msg string) string {
 
 func lenOf(lang, coll string) string {
 	if coll == "" {
-		coll = "koleksi"
+		coll = "collection"
 	}
 	switch lang {
 	case "go", "python":
@@ -128,7 +128,7 @@ func lenOf(lang, coll string) string {
 	case "php":
 		return "count($" + strings.TrimPrefix(coll, "$") + ")"
 	}
-	return "ukuran " + coll
+	return "size of " + coll
 }
 
 func collOf(c *Ctx) string {
@@ -149,114 +149,114 @@ func fill(e *trace.ErrInfo, lang string, c *Ctx) {
 	case "index":
 		fillIndex(e, lang, c)
 	case "empty":
-		e.Title = "Mengambil dari wadah kosong"
+		e.Title = "Taking from an empty container"
 		what := collOf(c)
 		if what == "" {
-			what = "list/antrian"
+			what = "the list/queue"
 		}
-		e.Text = fmt.Sprintf("Program mengambil isi dari %s, padahal isinya sudah habis (kosong).", what)
+		e.Text = fmt.Sprintf("The program takes an item from %s, but it is already empty.", what)
 		ex := map[string]string{
-			"python": "if " + orName(collOf(c), "antrian") + ":", "go": "if len(" + orName(collOf(c), "s") + ") > 0 {",
+			"python": "if " + orName(collOf(c), "queue") + ":", "go": "if len(" + orName(collOf(c), "s") + ") > 0 {",
 			"java": "if (!" + orName(collOf(c), "stack") + ".isEmpty())",
 		}[lang]
-		e.Hint = "Cek dulu apakah masih ada isinya sebelum mengambil (panjangnya > 0)."
+		e.Hint = "Check that it still has items before taking one (length > 0)."
 		if ex != "" {
-			e.Hint = "Cek dulu apakah masih ada isinya sebelum mengambil, mis. " + ex
+			e.Hint = "Check that it still has items before taking one, e.g. " + ex
 		}
 	case "zero":
-		e.Title = "Membagi dengan nol"
+		e.Title = "Division by zero"
 		e.Value = "0"
 		at := ""
 		if c.Expr != "" {
-			at = " pada " + e.Expr
+			at = " in " + e.Expr
 		}
-		e.Text = fmt.Sprintf("Pembaginya%s bernilai 0. Membagi dengan nol tidak punya hasil, jadi program berhenti.", at)
-		e.Hint = "Cek dulu pembaginya sebelum membagi, mis. " + ifNotZero(lang, divisor(c.Expr))
+		e.Text = fmt.Sprintf("The divisor%s is 0. Dividing by zero has no result, so the program stops.", at)
+		e.Hint = "Check the divisor before dividing, e.g. " + ifNotZero(lang, divisor(c.Expr))
 	case "null":
 		w := nullWord(lang, e.Msg)
-		e.Title = "Nilai kosong (" + w + ")"
+		e.Title = "Empty value (" + w + ")"
 		e.Value = w
-		what := "Sebuah variabel"
+		what := "A variable"
 		if m := reRecv.FindStringSubmatch(c.Expr); m != nil { // nama.upper(): yang kosong adalah nama
 			what = m[1]
 		} else if c.Expr != "" {
-			what = "Bagian " + e.Expr
+			what = "The part " + e.Expr
 		}
 		if strings.Contains(e.Msg, "nil map") {
-			e.Text = "Map-nya masih nil (belum dibuat dengan make), jadi belum bisa diisi."
-			e.Hint = "Buat map-nya dulu: m := make(map[string]int) atau map[string]int{}."
+			e.Text = "The map is still nil (not created with make yet), so nothing can be stored in it."
+			e.Hint = "Create the map first: m := make(map[string]int) or map[string]int{}."
 			return
 		}
-		e.Text = fmt.Sprintf("%s berisi %s, artinya tidak menunjuk ke data apa pun, lalu dipakai seolah-olah berisi data.", what, w)
-		e.Hint = "Pastikan nilainya sudah diisi, atau cek dulu sebelum dipakai: " + notNull(lang)
+		e.Text = fmt.Sprintf("%s holds %s, meaning it points to no data, but it is used as if it held data.", what, w)
+		e.Hint = "Make sure it has a value, or check before using it: " + notNull(lang)
 	case "key":
-		e.Title = "Key tidak ditemukan"
+		e.Title = "Key not found"
 		k := c.Value
 		if k == "" {
 			k = strings.TrimSpace(strings.TrimPrefix(e.Msg, "KeyError:"))
 		}
 		e.Value = clip(k, 30)
-		e.Text = fmt.Sprintf("Key %s tidak ada di %s. Mengambil key yang tidak ada membuat program berhenti.", e.Value, orName(collOf(c), "dictionary/map itu"))
+		e.Text = fmt.Sprintf("Key %s is not in %s. Reading a key that does not exist stops the program.", e.Value, orName(collOf(c), "that dictionary/map"))
 		e.Hint = map[string]string{
-			"python": "Pakai d.get(key) yang mengembalikan None, atau cek dulu: if key in d:",
-			"cpp":    "Pakai m.count(key) atau m.find(key) != m.end() sebelum m.at(key).",
+			"python": "Use d.get(key), which returns None, or check first: if key in d:",
+			"cpp":    "Use m.count(key) or m.find(key) != m.end() before m.at(key).",
 		}[lang]
 		if e.Hint == "" {
-			e.Hint = "Cek dulu apakah key-nya ada sebelum mengambil nilainya."
+			e.Hint = "Check that the key exists before reading its value."
 		}
 	case "depth":
-		e.Title = "Rekursi terlalu dalam"
+		e.Title = "Recursion too deep"
 		n := c.Depth
 		if n <= 0 {
 			n = 200
 		}
 		e.Value = strconv.Itoa(n)
-		e.Text = fmt.Sprintf("Fungsi sudah memanggil dirinya sendiri %d lantai bertumpuk dan belum juga berhenti. Biasanya ini tanda base case tidak pernah tercapai (rekursi tanpa akhir).", n)
-		e.Hint = "Pastikan ada base case (kondisi berhenti) yang pasti tercapai, dan setiap panggilan rekursif makin dekat ke base case itu."
+		e.Text = fmt.Sprintf("The function has called itself %d floors deep and still has not stopped. This usually means the base case is never reached (endless recursion).", n)
+		e.Hint = "Make sure there is a base case (stop condition) that is always reached, and that every recursive call gets closer to it."
 	case "type":
-		e.Title = "Tipe data tidak cocok"
-		e.Text = "Operasi ini dipakai pada tipe data yang tidak cocok (" + clip(e.Msg, 90) + ")."
-		e.Hint = "Ubah dulu tipenya supaya sama, mis. " + map[string]string{
-			"python": "str(angka) untuk teks atau int(teks) untuk angka", "javascript": "String(x) atau Number(x)",
-			"typescript": "String(x) atau Number(x)", "php": "(string)$x atau (int)$x", "java": "String.valueOf(x) atau Integer.parseInt(s)",
+		e.Title = "Type mismatch"
+		e.Text = "This operation is used on values of the wrong type (" + clip(e.Msg, 90) + ")."
+		e.Hint = "Convert the values to the same type first, e.g. " + map[string]string{
+			"python": "str(number) for text or int(text) for a number", "javascript": "String(x) or Number(x)",
+			"typescript": "String(x) or Number(x)", "php": "(string)$x or (int)$x", "java": "String.valueOf(x) or Integer.parseInt(s)",
 		}[lang] + "."
-		if strings.HasSuffix(e.Hint, "mis. .") {
-			e.Hint = "Periksa tipe setiap nilai yang dipakai di baris ini."
+		if strings.HasSuffix(e.Hint, "e.g. .") {
+			e.Hint = "Check the type of every value used on this line."
 		}
 		if strings.Contains(e.Msg, "is not a function") {
-			e.Text = "Nilai yang dipanggil seperti fungsi ternyata bukan fungsi (" + clip(e.Msg, 90) + ")."
-			e.Hint = "Periksa ejaan nama fungsinya dan pastikan isinya benar-benar fungsi."
+			e.Text = "The value called like a function is not a function (" + clip(e.Msg, 90) + ")."
+			e.Hint = "Check the spelling of the function name and make sure it really is a function."
 		}
 	case "value":
-		e.Title = "Nilai tidak bisa diubah"
-		e.Text = "Nilainya tidak bisa diubah ke bentuk yang diminta (" + clip(e.Msg, 90) + ")."
-		e.Hint = "Pastikan teks yang diubah ke angka memang berisi angka."
+		e.Title = "Value cannot be converted"
+		e.Text = "The value cannot be converted to the requested form (" + clip(e.Msg, 90) + ")."
+		e.Hint = "Make sure text converted to a number really contains a number."
 	case "deadlock":
-		e.Title = "Deadlock: semua menunggu"
-		e.Text = "Semua goroutine sedang menunggu satu sama lain (kirim/terima channel, Wait, Lock), jadi tidak ada yang bisa jalan lagi."
-		e.Hint = "Pastikan setiap kirim ke channel punya penerima (atau channel-nya ber-buffer), dan channel ditutup sebelum di-range."
+		e.Title = "Deadlock: everyone is waiting"
+		e.Text = "All goroutines are waiting for each other (channel send/receive, Wait, Lock), so none of them can run anymore."
+		e.Hint = "Make sure every channel send has a receiver (or the channel is buffered), and close a channel before ranging over it."
 	default:
-		e.Title = "Program berhenti karena error"
+		e.Title = "The program stopped with an error"
 		name := e.Name
 		if name == "" || name == "panic" {
-			e.Text = "Program sengaja dihentikan (" + clip(e.Msg, 90) + ") dan tidak ada yang menangkapnya."
+			e.Text = "The program was stopped on purpose (" + clip(e.Msg, 90) + ") and nothing caught it."
 		} else {
-			e.Text = fmt.Sprintf("Program melempar %s (%s) dan tidak ada yang menangkapnya.", name, clip(e.Msg, 80))
+			e.Text = fmt.Sprintf("The program threw %s (%s) and nothing caught it.", name, clip(e.Msg, 80))
 		}
 		e.Hint = map[string]string{
-			"go":     "Tangkap dengan defer + recover(), atau kembalikan error sebagai nilai kedua.",
-			"python": "Tangkap dengan try/except bila error itu memang bisa terjadi.",
-			"php":    "Tangkap dengan try/catch bila error itu memang bisa terjadi.",
-			"c":      "Periksa kondisi sebelum baris ini.",
+			"go":     "Catch it with defer + recover(), or return the error as a second value.",
+			"python": "Catch it with try/except if that error can really happen.",
+			"php":    "Catch it with try/catch if that error can really happen.",
+			"c":      "Check the condition before this line.",
 		}[lang]
 		if e.Hint == "" {
-			e.Hint = "Tangkap dengan try/catch bila error itu memang bisa terjadi."
+			e.Hint = "Catch it with try/catch if that error can really happen."
 		}
 	}
 }
 
 func fillIndex(e *trace.ErrInfo, lang string, c *Ctx) {
-	e.Title = "Indeks di luar batas"
+	e.Title = "Index out of range"
 	idx, n := c.Value, c.Len
 	for _, re := range []*regexp.Regexp{reGoIndex, reJavaIdx, reCppIdx} {
 		if m := re.FindStringSubmatch(e.Msg); m != nil {
@@ -273,24 +273,24 @@ func fillIndex(e *trace.ErrInfo, lang string, c *Ctx) {
 	}
 	e.Value = idx
 	coll := collOf(c)
-	what := orName(coll, "koleksi itu")
+	what := orName(coll, "that collection")
 	switch {
 	case idx != "" && n == 0:
-		e.Text = fmt.Sprintf("Program mengambil indeks %s dari %s, padahal %s masih kosong (panjangnya 0).", idx, what, what)
+		e.Text = fmt.Sprintf("The program reads index %s of %s, but %s is still empty (length 0).", idx, what, what)
 	case idx != "" && n > 0:
-		e.Text = fmt.Sprintf("Program mengambil indeks %s dari %s, padahal panjangnya %d: indeks yang ada hanya 0 sampai %d.", idx, what, n, n-1)
+		e.Text = fmt.Sprintf("The program reads index %s of %s, but its length is %d: the valid indexes are only 0 to %d.", idx, what, n, n-1)
 	case idx != "":
-		e.Text = fmt.Sprintf("Indeks %s tidak ada di %s.", idx, what)
+		e.Text = fmt.Sprintf("Index %s does not exist in %s.", idx, what)
 	default:
-		e.Text = "Program mengambil indeks yang tidak ada di " + what + "."
+		e.Text = "The program reads an index that does not exist in " + what + "."
 	}
 	if strings.HasPrefix(idx, "-") {
-		e.Hint = "Indeks tidak boleh negatif di sini; periksa perhitungan indeksnya."
+		e.Hint = "The index cannot be negative here; check how the index is calculated."
 	} else {
-		e.Hint = fmt.Sprintf("Pastikan indeks < %s. Di loop biasanya ini karena memakai <= padahal seharusnya <.", lenOf(lang, coll))
+		e.Hint = fmt.Sprintf("Make sure the index is < %s. In a loop this usually comes from using <= where it should be <.", lenOf(lang, coll))
 	}
 	if lang == "c" || lang == "cpp" {
-		e.Text += " Di C/C++ ini perilaku tak terdefinisi: program bisa membaca sampah memori atau crash."
+		e.Text += " In C/C++ this is undefined behavior: the program may read garbage memory or crash."
 	}
 }
 

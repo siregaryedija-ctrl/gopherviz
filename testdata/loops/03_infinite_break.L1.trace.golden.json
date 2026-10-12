@@ -59,7 +59,7 @@
       "vars": {
         "x": "3"
       },
-      "note": "fmt.Println(x) → cetak \"3\"",
+      "note": "fmt.Println(x) → print \"3\"",
       "output": "3\n"
     },
     {
@@ -100,7 +100,7 @@
       "vars": {
         "x": "6"
       },
-      "note": "fmt.Println(x) → cetak \"6\"",
+      "note": "fmt.Println(x) → print \"6\"",
       "output": "6\n"
     },
     {
@@ -141,7 +141,7 @@
       "vars": {
         "x": "9"
       },
-      "note": "fmt.Println(x) → cetak \"9\"",
+      "note": "fmt.Println(x) → print \"9\"",
       "output": "9\n"
     },
     {
@@ -182,7 +182,7 @@
       "vars": {
         "x": "12"
       },
-      "note": "break → keluar dari loop"
+      "note": "break → leave the loop"
     },
     {
       "n": 12,
@@ -195,7 +195,7 @@
       "vars": {
         "x": "12"
       },
-      "note": "keluar dari loop karena break",
+      "note": "leave the loop because of break",
       "reason": "break"
     }
   ],

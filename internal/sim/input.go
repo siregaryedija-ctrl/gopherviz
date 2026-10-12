@@ -86,8 +86,8 @@ func (it *interp) bufioCall(sel *ast.SelectorExpr, call *ast.CallExpr, e *env, t
 			return []value{strV(f.s)}
 		}
 	}
-	it.warn(fmt.Sprintf("bufio.%s.%s belum disimulasikan", typ, name))
-	return []value{unknown(it.text(call) + " belum disimulasikan")}
+	it.warn(fmt.Sprintf("bufio.%s.%s is not simulated yet", typ, name))
+	return []value{unknown(it.text(call) + " is not simulated yet")}
 }
 
 // stubType mengembalikan nama tipe dari package pkg (mis. "WaitGroup" untuk sync) bila sel

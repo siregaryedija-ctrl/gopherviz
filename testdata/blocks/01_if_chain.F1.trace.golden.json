@@ -35,7 +35,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "panggil grade(score = 95)"
+      "note": "call grade(score = 95)"
     },
     {
       "n": 1,
@@ -60,7 +60,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "return \"A\" → keluar dari fungsi"
+      "note": "return \"A\" → leave the function"
     },
     {
       "n": 3,
@@ -74,7 +74,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "grade(score = 95) mengembalikan \"A\""
+      "note": "grade(score = 95) returns \"A\""
     },
     {
       "n": 4,
@@ -88,7 +88,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "panggil grade(score = 80)"
+      "note": "call grade(score = 80)"
     },
     {
       "n": 5,
@@ -126,7 +126,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "return \"B\" → keluar dari fungsi"
+      "note": "return \"B\" → leave the function"
     },
     {
       "n": 8,
@@ -140,7 +140,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "grade(score = 80) mengembalikan \"B\""
+      "note": "grade(score = 80) returns \"B\""
     },
     {
       "n": 9,
@@ -154,7 +154,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "panggil grade(score = 40)"
+      "note": "call grade(score = 40)"
     },
     {
       "n": 10,
@@ -205,7 +205,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "return \"D\" → keluar dari fungsi"
+      "note": "return \"D\" → leave the function"
     },
     {
       "n": 14,
@@ -219,7 +219,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "grade(score = 40) mengembalikan \"D\""
+      "note": "grade(score = 40) returns \"D\""
     }
   ],
   "truncated": false,

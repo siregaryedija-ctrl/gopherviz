@@ -36,7 +36,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "panggil Person.Greet(p = {Ani 21})",
+      "note": "call Person.Greet(p = {Ani 21})",
       "mem": {
         "vars": [
           {
@@ -86,7 +86,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "return \"Halo, aku \" + p.Name → keluar dari fungsi",
+      "note": "return \"Halo, aku \" + p.Name → leave the function",
       "mem": {
         "vars": [
           {
@@ -138,7 +138,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "Person.Greet(p = {Ani 21}) mengembalikan \"Halo, aku Ani\"",
+      "note": "Person.Greet(p = {Ani 21}) returns \"Halo, aku Ani\"",
       "mem": {
         "vars": [
           {

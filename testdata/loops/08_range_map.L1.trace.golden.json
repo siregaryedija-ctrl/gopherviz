@@ -38,7 +38,7 @@
       "vars": {
         "ages": "map[ani:20 budi:25 citra:22]"
       },
-      "note": "range ages (3 pasangan)",
+      "note": "range ages (3 pairs)",
       "items": [
         "20",
         "25",
@@ -64,7 +64,7 @@
         "name": "\"ani\""
       },
       "result": true,
-      "note": "ambil elemen ke-1: name = \"ani\", age = 20",
+      "note": "take element #1: name = \"ani\", age = 20",
       "ops": [
         {
           "op": "read",
@@ -86,7 +86,7 @@
         "ages": "map[ani:20 budi:25 citra:22]",
         "name": "\"ani\""
       },
-      "note": "fmt.Println(name, age) → cetak \"ani 20\"",
+      "note": "fmt.Println(name, age) → print \"ani 20\"",
       "output": "ani 20\n"
     },
     {
@@ -103,7 +103,7 @@
         "name": "\"citra\""
       },
       "result": true,
-      "note": "ambil elemen ke-2: name = \"citra\", age = 22",
+      "note": "take element #2: name = \"citra\", age = 22",
       "ops": [
         {
           "op": "read",
@@ -125,7 +125,7 @@
         "ages": "map[ani:20 budi:25 citra:22]",
         "name": "\"citra\""
       },
-      "note": "fmt.Println(name, age) → cetak \"citra 22\"",
+      "note": "fmt.Println(name, age) → print \"citra 22\"",
       "output": "citra 22\n"
     },
     {
@@ -142,7 +142,7 @@
         "name": "\"budi\""
       },
       "result": true,
-      "note": "ambil elemen ke-3: name = \"budi\", age = 25",
+      "note": "take element #3: name = \"budi\", age = 25",
       "ops": [
         {
           "op": "read",
@@ -164,7 +164,7 @@
         "ages": "map[ani:20 budi:25 citra:22]",
         "name": "\"budi\""
       },
-      "note": "fmt.Println(name, age) → cetak \"budi 25\"",
+      "note": "fmt.Println(name, age) → print \"budi 25\"",
       "output": "budi 25\n"
     },
     {
@@ -179,7 +179,7 @@
         "ages": "map[ani:20 budi:25 citra:22]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 8,
@@ -192,7 +192,7 @@
       "vars": {
         "ages": "map[ani:20 budi:25 citra:22]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],
@@ -211,6 +211,6 @@
   },
   "truncated": false,
   "warnings": [
-    "urutan range atas map diacak: di Go urutannya tidak dijamin dan bisa berbeda setiap kali dijalankan"
+    "map range order is shuffled: Go does not guarantee the order and it may differ on every run"
   ]
 }

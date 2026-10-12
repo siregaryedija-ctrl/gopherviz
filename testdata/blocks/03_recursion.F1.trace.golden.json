@@ -34,7 +34,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil factorial(n = 4)"
+      "note": "call factorial(n = 4)"
     },
     {
       "n": 1,
@@ -62,7 +62,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "panggil factorial(n = 3)"
+      "note": "call factorial(n = 3)"
     },
     {
       "n": 3,
@@ -91,7 +91,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "panggil factorial(n = 2)"
+      "note": "call factorial(n = 2)"
     },
     {
       "n": 5,
@@ -120,7 +120,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil factorial(n = 1)"
+      "note": "call factorial(n = 1)"
     },
     {
       "n": 7,
@@ -147,7 +147,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return 1 → keluar dari fungsi"
+      "note": "return 1 → leave the function"
     },
     {
       "n": 9,
@@ -162,7 +162,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "factorial(n = 1) mengembalikan 1"
+      "note": "factorial(n = 1) returns 1"
     },
     {
       "n": 10,
@@ -175,7 +175,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "return n * factorial(n-1) → keluar dari fungsi"
+      "note": "return n * factorial(n-1) → leave the function"
     },
     {
       "n": 11,
@@ -190,7 +190,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "factorial(n = 2) mengembalikan 2"
+      "note": "factorial(n = 2) returns 2"
     },
     {
       "n": 12,
@@ -203,7 +203,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "return n * factorial(n-1) → keluar dari fungsi"
+      "note": "return n * factorial(n-1) → leave the function"
     },
     {
       "n": 13,
@@ -218,7 +218,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "factorial(n = 3) mengembalikan 6"
+      "note": "factorial(n = 3) returns 6"
     },
     {
       "n": 14,
@@ -230,7 +230,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "return n * factorial(n-1) → keluar dari fungsi"
+      "note": "return n * factorial(n-1) → leave the function"
     },
     {
       "n": 15,
@@ -244,7 +244,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "factorial(n = 4) mengembalikan 24"
+      "note": "factorial(n = 4) returns 24"
     }
   ],
   "truncated": false,

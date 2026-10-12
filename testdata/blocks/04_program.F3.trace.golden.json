@@ -34,7 +34,7 @@
       "phase": "call",
       "line": 19,
       "func": "main",
-      "note": "panggil main()"
+      "note": "call main()"
     },
     {
       "n": 1,
@@ -61,7 +61,7 @@
       "vars": {
         "nums": "[1 2 3 4]"
       },
-      "note": "panggil sumEven(nums = [1 2 3 4])"
+      "note": "call sumEven(nums = [1 2 3 4])"
     },
     {
       "n": 3,
@@ -77,7 +77,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "sumEven(nums = [1 2 3 4]) mengembalikan 6"
+      "note": "sumEven(nums = [1 2 3 4]) returns 6"
     },
     {
       "n": 4,
@@ -117,7 +117,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "fmt.Println(\"besar\", total) → cetak \"besar 6\"",
+      "note": "fmt.Println(\"besar\", total) → print \"besar 6\"",
       "output": "besar 6\n"
     },
     {
@@ -132,7 +132,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "main() selesai"
+      "note": "main() done"
     }
   ],
   "truncated": false,

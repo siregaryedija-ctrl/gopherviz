@@ -542,7 +542,7 @@
         "n": "6",
         "swapped": "true"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     },
     {
@@ -949,7 +949,7 @@
         "n": "6",
         "swapped": "true"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     },
     {
@@ -1196,7 +1196,7 @@
         "n": "6",
         "swapped": "false"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     }
   ],

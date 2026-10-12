@@ -37,7 +37,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "panggil Rect.Area(r = {2 3})",
+      "note": "call Rect.Area(r = {2 3})",
       "mem": {
         "vars": [
           {
@@ -87,7 +87,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "return r.W * r.H → keluar dari fungsi",
+      "note": "return r.W * r.H → leave the function",
       "mem": {
         "vars": [
           {
@@ -139,7 +139,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "Rect.Area(r = {2 3}) mengembalikan 6",
+      "note": "Rect.Area(r = {2 3}) returns 6",
       "mem": {
         "vars": [
           {
@@ -191,7 +191,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "panggil Rect.Area(r = {2 3})",
+      "note": "call Rect.Area(r = {2 3})",
       "mem": {
         "vars": [
           {
@@ -241,7 +241,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "return r.W * r.H → keluar dari fungsi",
+      "note": "return r.W * r.H → leave the function",
       "mem": {
         "vars": [
           {
@@ -293,7 +293,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "Rect.Area(r = {2 3}) mengembalikan 6",
+      "note": "Rect.Area(r = {2 3}) returns 6",
       "mem": {
         "vars": [
           {
@@ -345,7 +345,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "panggil Rect.Area(r = {1 1})",
+      "note": "call Rect.Area(r = {1 1})",
       "mem": {
         "vars": [
           {
@@ -395,7 +395,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "return r.W * r.H → keluar dari fungsi",
+      "note": "return r.W * r.H → leave the function",
       "mem": {
         "vars": [
           {
@@ -447,7 +447,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "Rect.Area(r = {1 1}) mengembalikan 1",
+      "note": "Rect.Area(r = {1 1}) returns 1",
       "mem": {
         "vars": [
           {
@@ -499,7 +499,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "panggil Rect.Area(r = {1 1})",
+      "note": "call Rect.Area(r = {1 1})",
       "mem": {
         "vars": [
           {
@@ -549,7 +549,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "return r.W * r.H → keluar dari fungsi",
+      "note": "return r.W * r.H → leave the function",
       "mem": {
         "vars": [
           {
@@ -601,7 +601,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "Rect.Area(r = {1 1}) mengembalikan 1",
+      "note": "Rect.Area(r = {1 1}) returns 1",
       "mem": {
         "vars": [
           {

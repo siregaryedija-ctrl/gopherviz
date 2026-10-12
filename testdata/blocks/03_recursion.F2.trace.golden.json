@@ -34,7 +34,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil fib(n = 4)"
+      "note": "call fib(n = 4)"
     },
     {
       "n": 1,
@@ -62,7 +62,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "panggil fib(n = 3)"
+      "note": "call fib(n = 3)"
     },
     {
       "n": 3,
@@ -91,7 +91,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "panggil fib(n = 2)"
+      "note": "call fib(n = 2)"
     },
     {
       "n": 5,
@@ -120,7 +120,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil fib(n = 1)"
+      "note": "call fib(n = 1)"
     },
     {
       "n": 7,
@@ -147,7 +147,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 9,
@@ -162,7 +162,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "fib(n = 1) mengembalikan 1"
+      "note": "fib(n = 1) returns 1"
     },
     {
       "n": 10,
@@ -177,7 +177,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "panggil fib(n = 0)"
+      "note": "call fib(n = 0)"
     },
     {
       "n": 11,
@@ -204,7 +204,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 13,
@@ -219,7 +219,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "fib(n = 0) mengembalikan 0"
+      "note": "fib(n = 0) returns 0"
     },
     {
       "n": 14,
@@ -232,7 +232,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "return fib(n-1) + fib(n-2) → keluar dari fungsi"
+      "note": "return fib(n-1) + fib(n-2) → leave the function"
     },
     {
       "n": 15,
@@ -247,7 +247,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "fib(n = 2) mengembalikan 1"
+      "note": "fib(n = 2) returns 1"
     },
     {
       "n": 16,
@@ -262,7 +262,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil fib(n = 1)"
+      "note": "call fib(n = 1)"
     },
     {
       "n": 17,
@@ -289,7 +289,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 19,
@@ -304,7 +304,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "fib(n = 1) mengembalikan 1"
+      "note": "fib(n = 1) returns 1"
     },
     {
       "n": 20,
@@ -317,7 +317,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "return fib(n-1) + fib(n-2) → keluar dari fungsi"
+      "note": "return fib(n-1) + fib(n-2) → leave the function"
     },
     {
       "n": 21,
@@ -332,7 +332,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "fib(n = 3) mengembalikan 2"
+      "note": "fib(n = 3) returns 2"
     },
     {
       "n": 22,
@@ -347,7 +347,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "panggil fib(n = 2)"
+      "note": "call fib(n = 2)"
     },
     {
       "n": 23,
@@ -376,7 +376,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil fib(n = 1)"
+      "note": "call fib(n = 1)"
     },
     {
       "n": 25,
@@ -403,7 +403,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 27,
@@ -418,7 +418,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "fib(n = 1) mengembalikan 1"
+      "note": "fib(n = 1) returns 1"
     },
     {
       "n": 28,
@@ -433,7 +433,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "panggil fib(n = 0)"
+      "note": "call fib(n = 0)"
     },
     {
       "n": 29,
@@ -460,7 +460,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 31,
@@ -475,7 +475,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "fib(n = 0) mengembalikan 0"
+      "note": "fib(n = 0) returns 0"
     },
     {
       "n": 32,
@@ -488,7 +488,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "return fib(n-1) + fib(n-2) → keluar dari fungsi"
+      "note": "return fib(n-1) + fib(n-2) → leave the function"
     },
     {
       "n": 33,
@@ -503,7 +503,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "fib(n = 2) mengembalikan 1"
+      "note": "fib(n = 2) returns 1"
     },
     {
       "n": 34,
@@ -515,7 +515,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "return fib(n-1) + fib(n-2) → keluar dari fungsi"
+      "note": "return fib(n-1) + fib(n-2) → leave the function"
     },
     {
       "n": 35,
@@ -529,7 +529,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "fib(n = 4) mengembalikan 3"
+      "note": "fib(n = 4) returns 3"
     }
   ],
   "truncated": false,

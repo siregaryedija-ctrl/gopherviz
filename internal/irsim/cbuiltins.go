@@ -83,16 +83,16 @@ func (it *interp) rangeOf(a, b Value, at ir.Node) (*List, int, int) {
 		case kList:
 			return &Ptr{list: v.l}
 		}
-		it.structural("rentang iterator ini belum disimulasikan")
+		it.structural("this iterator range is not simulated yet")
 		return nil
 	}
 	pa, pb := toPtr(a), toPtr(b)
 	if pa.list == nil || pa.list != pb.list {
-		it.structural("rentang iterator harus dari wadah yang sama")
+		it.structural("an iterator range must come from the same container")
 	}
 	lo, hi := pa.idx, pb.idx
 	if lo < 0 || hi > len(pa.list.elems) || lo > hi {
-		it.cCrash(at, "rentang iterator di luar batas")
+		it.cCrash(at, "iterator range out of bounds")
 	}
 	return pa.list, lo, hi
 }
@@ -163,10 +163,10 @@ func (it *interp) setupC(s *cSem) {
 			l, off = dst.p.list, dst.p.idx
 		}
 		if l == nil {
-			it.structural("tujuan string bukan array char")
+			it.structural("the string destination is not a char array")
 		}
 		if off+len(s)+1 > len(l.elems) {
-			it.cCrash(at, "buffer overflow: string lebih panjang dari array tujuan")
+			it.cCrash(at, "buffer overflow: the string is longer than the destination array")
 		}
 		for i := 0; i < len(s); i++ {
 			l.elems[off+i] = typedInt(int64(int8(s[i])), "char")
@@ -216,7 +216,7 @@ func (it *interp) setupC(s *cSem) {
 			case dst.k == kPtr:
 				it.storeInput(dst.p, s)
 			default:
-				it.structural("argumen scanf harus alamat variabel, misalnya &x")
+				it.structural("scanf arguments must be variable addresses, e.g. &x")
 			}
 			n++
 		}
@@ -252,7 +252,7 @@ func (it *interp) setupC(s *cSem) {
 	for _, name := range []string{"getline", "fscanf", "sscanf_s"} {
 		nm := name
 		fn(nm, func(it *interp, this Value, args []Value, at ir.Node) Value {
-			it.structural("membaca input dari user (" + nm + ") belum didukung simulator")
+			it.structural("reading user input (" + nm + ") is not supported by the simulator yet")
 			return Value{}
 		})
 	}
@@ -371,7 +371,7 @@ func (it *interp) setupC(s *cSem) {
 	})
 	g["labs"], g["llabs"] = g["abs"], g["abs"]
 	fn("rand", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("rand() disimulasikan dengan seed tetap; hasilnya berbeda dengan saat program dijalankan")
+		it.warn("rand() is simulated with a fixed seed; results differ from a real run")
 		return ci(it.rng.Int63n(32768))
 	})
 	fn("srand", func(it *interp, this Value, args []Value, at ir.Node) Value { return undef() })
@@ -381,7 +381,7 @@ func (it *interp) setupC(s *cSem) {
 	fn("malloc", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		n := intOf(arg(args, 0))
 		if n > 10_000_000 {
-			it.structural("alokasi memori terlalu besar")
+			it.structural("memory allocation too large")
 		}
 		it.ids++
 		return Value{k: kPtr, p: &Ptr{list: &List{kind: "carray", elem: "bytes:" + strconv.FormatInt(n, 10), id: it.ids}, name: "heap"}}
@@ -512,7 +512,7 @@ func (it *interp) setupC(s *cSem) {
 			case isNum(args[0]):
 				n := int(intOf(args[0]))
 				if n < 0 || n > 10_000_000 {
-					it.structural("ukuran wadah tidak valid")
+					it.structural("invalid container size")
 				}
 				fill := it.zeroOfType(elem, at)
 				if len(args) > 1 {
@@ -563,7 +563,7 @@ func (it *interp) setupC(s *cSem) {
 				}
 			}
 			if kind == "umap" || kind == "uset" {
-				it.warn("urutan unordered_map/unordered_set di simulator mengikuti urutan sisip; di C++ asli urutannya tidak ditentukan")
+				it.warn("unordered_map/unordered_set use insertion order in the simulator; in real C++ the order is unspecified")
 			}
 			if set {
 				return Value{k: kSet, d: d, t: t}
@@ -873,7 +873,7 @@ func (s *cSem) member(it *interp, x Value, name string, at ir.Node) (Value, bool
 			})
 		case "begin":
 			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
-				it.structural("iterator string belum disimulasikan")
+				it.structural("string iterators are not simulated yet")
 				return Value{}
 			})
 		}
@@ -987,7 +987,7 @@ func (it *interp) cppListMember(x Value, name string, at ir.Node) (Value, bool) 
 	}
 	empty := func(what string) {
 		if len(l.elems) == 0 {
-			it.cCrash(at, what+" pada wadah kosong (perilaku tidak terdefinisi)")
+			it.cCrash(at, what+" on an empty container (undefined behavior)")
 		}
 	}
 	switch name {
@@ -1075,7 +1075,7 @@ func (it *interp) cppListMember(x Value, name string, at ir.Node) (Value, bool) 
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 			pos := arg(args, 0)
 			if pos.k != kPtr || pos.p.list != l {
-				it.structural("insert dengan posisi ini belum disimulasikan")
+				it.structural("insert at this position is not simulated yet")
 			}
 			i := pos.p.idx
 			l.elems = append(l.elems[:i], append([]Value{copyFor(it, arg(args, 1))}, l.elems[i:]...)...)
@@ -1085,7 +1085,7 @@ func (it *interp) cppListMember(x Value, name string, at ir.Node) (Value, bool) 
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 			a := arg(args, 0)
 			if a.k != kPtr || a.p.list != l {
-				it.structural("erase dengan posisi ini belum disimulasikan")
+				it.structural("erase at this position is not simulated yet")
 			}
 			lo, hi := a.p.idx, a.p.idx+1
 			if b := arg(args, 1); b.k == kPtr {

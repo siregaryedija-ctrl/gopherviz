@@ -27,7 +27,7 @@ func (p *parser) expr() ir.Expr {
 	if p.depth > 300 {
 		start := p.tok().pos
 		p.next()
-		return &ir.BadExpr{S: p.span(start), Msg: "ekspresi terlalu dalam"}
+		return &ir.BadExpr{S: p.span(start), Msg: "expression nested too deep"}
 	}
 	return p.assign()
 }
@@ -81,8 +81,8 @@ func (p *parser) ternary() ir.Expr {
 		return &ir.Cond{S: p.span(start), C: c, T: c, F: f}
 	}
 	t := p.assign()
-	if !p.expect(":", "di operator ? :") {
-		return &ir.Cond{S: p.span(start), C: c, T: t, F: &ir.BadExpr{S: p.span(start), Msg: "kurang :"}}
+	if !p.expect(":", "in the ? : operator") {
+		return &ir.Cond{S: p.span(start), C: c, T: t, F: &ir.BadExpr{S: p.span(start), Msg: "missing :"}}
 	}
 	f := p.assign()
 	return &ir.Cond{S: p.span(start), C: c, T: t, F: f}
@@ -366,7 +366,7 @@ func (p *parser) postfix(x ir.Expr, start ir.Pos) ir.Expr {
 			}
 			nt := p.next()
 			if nt.k != tIdent {
-				p.errAt(nt.pos, "kurang nama setelah \".\"")
+				p.errAt(nt.pos, "missing name after \".\"")
 			}
 			x = &ir.Member{S: p.span(start), X: x, Name: nt.text, Op: "."}
 		case t.k == tPunct && (t.text == "?." || t.text == "?->"):
@@ -377,7 +377,7 @@ func (p *parser) postfix(x ir.Expr, start ir.Pos) ir.Expr {
 			case p.is("["):
 				p.next()
 				i := p.expr()
-				p.expect("]", "untuk menutup indeks")
+				p.expect("]", "to close the index")
 				x = &ir.Index{S: p.span(start), X: x, I: i, Opt: true}
 			default:
 				x = &ir.Member{S: p.span(start), X: x, Name: p.next().text, Op: t.text}
@@ -407,7 +407,7 @@ func (p *parser) postfix(x ir.Expr, start ir.Pos) ir.Expr {
 				continue
 			}
 			i := p.exprSeq()
-			p.expect("]", "untuk menutup indeks")
+			p.expect("]", "to close the index")
 			x = &ir.Index{S: p.span(start), X: x, I: i}
 		case t.k == tPunct && (t.text == "++" || t.text == "--"):
 			if p.d.ASI && t.nl {
@@ -498,7 +498,7 @@ func (p *parser) args(open, close string) []ir.Expr {
 			break
 		}
 	}
-	p.expect(close, "untuk menutup daftar argumen")
+	p.expect(close, "to close the argument list")
 	return out
 }
 
@@ -528,10 +528,10 @@ func (p *parser) primary() ir.Expr {
 			p.next()
 			if p.is(")") {
 				p.next()
-				return &ir.BadExpr{S: p.span(start), Msg: "kurung kosong"}
+				return &ir.BadExpr{S: p.span(start), Msg: "empty parentheses"}
 			}
 			x := p.exprSeq()
-			p.expect(")", "untuk menutup kurung")
+			p.expect(")", "to close the parenthesis")
 			return x
 		case "[":
 			if p.d.Lang == "cpp" {
@@ -565,14 +565,14 @@ func (p *parser) primary() ir.Expr {
 			}
 		}
 	case tEOF:
-		p.errAt(t.pos, "ekspresi belum selesai")
-		return &ir.BadExpr{S: t.spanOf(), Msg: "ekspresi belum selesai"}
+		p.errAt(t.pos, "unfinished expression")
+		return &ir.BadExpr{S: t.spanOf(), Msg: "unfinished expression"}
 	}
-	p.errAt(t.pos, "tidak bisa dibaca sebagai ekspresi: "+t.text)
+	p.errAt(t.pos, "cannot be read as an expression: "+t.text)
 	if !p.is(";") && !p.is("}") && !p.is(")") {
 		p.next()
 	}
-	return &ir.BadExpr{S: p.span(start), Msg: "ekspresi tidak valid"}
+	return &ir.BadExpr{S: p.span(start), Msg: "invalid expression"}
 }
 
 func numLit(t *token) *ir.Lit {
@@ -628,7 +628,7 @@ func (p *parser) identExpr() ir.Expr {
 			f.Ret, _ = p.typeText(false)
 		}
 		f.Header = p.span(start)
-		p.expect("=>", "di arrow function")
+		p.expect("=>", "in the arrow function")
 		f.ExprBody = p.assign()
 		f.S = p.span(start)
 		return f
@@ -734,7 +734,7 @@ func (p *parser) tryArrow() ir.Expr {
 			f.Ret = p.tsType(true)
 		}
 		f.Header = p.span(start)
-		p.expect(arrow, "di fungsi panah")
+		p.expect(arrow, "in the arrow function")
 		p.arrowBody(f)
 		f.S = p.span(start)
 		return f
@@ -819,7 +819,7 @@ func (p *parser) cppLambda() ir.Expr {
 	if p.is("{") {
 		f.Body = p.block()
 	} else {
-		p.errAt(p.tok().pos, "kurang badan lambda { }")
+		p.errAt(p.tok().pos, "missing lambda body { }")
 	}
 	f.S = p.span(start)
 	return f
@@ -872,7 +872,7 @@ func (p *parser) arrayLit(open, close string) ir.Expr {
 			break
 		}
 	}
-	p.expect(close, "untuk menutup array")
+	p.expect(close, "to close the array")
 	if keyed {
 		kind := "array"
 		if open == "{" {
@@ -959,7 +959,7 @@ func (p *parser) objectLit() ir.Expr {
 			break
 		}
 	}
-	p.expect("}", "untuk menutup objek")
+	p.expect("}", "to close the object")
 	obj.S = p.span(start)
 	return obj
 }
@@ -987,7 +987,7 @@ func (p *parser) template(t *token) *ir.Template {
 			base = p.posAt(r[0], t.pos)
 		}
 		if strings.TrimSpace(src) == "" {
-			tm.Exprs = append(tm.Exprs, &ir.BadExpr{S: t.spanOf(), Msg: "interpolasi kosong"})
+			tm.Exprs = append(tm.Exprs, &ir.BadExpr{S: t.spanOf(), Msg: "empty interpolation"})
 			continue
 		}
 		tm.Exprs = append(tm.Exprs, parseSub(p, src, base))
@@ -1111,7 +1111,7 @@ func (p *parser) phpMatch() ir.Expr {
 	p.expect("(", "")
 	subj := p.expr()
 	p.expect(")", "")
-	p.expect("{", "setelah match")
+	p.expect("{", "after match")
 	type arm struct {
 		conds []ir.Expr
 		val   ir.Expr
@@ -1130,7 +1130,7 @@ func (p *parser) phpMatch() ir.Expr {
 					break
 				}
 			}
-			p.expect("=>", "di match")
+			p.expect("=>", "in match")
 			a.val = p.expr()
 			arms = append(arms, a)
 		}
@@ -1138,7 +1138,7 @@ func (p *parser) phpMatch() ir.Expr {
 			break
 		}
 	}
-	p.expect("}", "untuk menutup match")
+	p.expect("}", "to close match")
 	sp := p.span(start)
 	var out ir.Expr = def
 	if out == nil {

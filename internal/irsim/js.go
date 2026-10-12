@@ -276,7 +276,7 @@ func (s *jsSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 	case ">>>":
 		return num(float64(uint32(toInt32(x)) >> (uint32(toInt32(y)) & 31)))
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -331,7 +331,7 @@ func (it *interp) jsBigBinary(op string, a, b Value, at ir.Node) Value {
 		c := a.big.Cmp(b.big)
 		return boolV(map[string]bool{"<": c < 0, ">": c > 0, "<=": c <= 0, ">=": c >= 0}[op])
 	default:
-		it.structural("operator BigInt " + op + " belum disimulasikan")
+		it.structural("BigInt operator " + op + " is not simulated yet")
 	}
 	return Value{k: kBig, big: r}
 }
@@ -432,7 +432,7 @@ func (s *jsSem) unary(it *interp, op string, v Value, at ir.Node) Value {
 		}
 		return strV("object")
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -609,7 +609,7 @@ func (c *inspectCtx) format(v Value, recurse int, top bool) string {
 	case kBool, kNull, kUndef:
 		return it.sem.str(it, v)
 	case kFunc:
-		if v.fn.name == "" || v.fn.name == "(anonim)" {
+		if v.fn.name == "" || v.fn.name == "(anonymous)" {
 			return "[Function (anonymous)]"
 		}
 		return "[Function: " + v.fn.name + "]"
@@ -1156,7 +1156,7 @@ func (it *interp) goRegex(v Value, at ir.Node) (*regexp.Regexp, bool) {
 	}
 	re, err := regexp.Compile(pat)
 	if err != nil {
-		it.structural("regex " + src.s + " belum didukung simulator")
+		it.structural("regex " + src.s + " is not supported by the simulator yet")
 	}
 	return re, strings.Contains(flags.s, "g")
 }

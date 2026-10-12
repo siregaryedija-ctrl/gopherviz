@@ -43,7 +43,7 @@
       "phase": "call",
       "line": 13,
       "func": "main",
-      "note": "panggil main()",
+      "note": "call main()",
       "mem": {
         "vars": []
       }
@@ -89,7 +89,7 @@
         "a": "→ 1",
         "b": "→ 2"
       },
-      "note": "panggil swap(a = → 1, b = → 2)",
+      "note": "call swap(a = → 1, b = → 2)",
       "mem": {
         "vars": [
           {
@@ -130,7 +130,7 @@
         "a": "→ 2",
         "b": "→ 1"
       },
-      "note": "swap(a = → 1, b = → 2) selesai",
+      "note": "swap(a = → 1, b = → 2) done",
       "mem": {
         "vars": [
           {
@@ -196,7 +196,7 @@
         "x": "2",
         "y": "1"
       },
-      "note": "fmt.Println(x, y) → cetak \"2 1\"",
+      "note": "fmt.Println(x, y) → print \"2 1\"",
       "output": "2 1\n",
       "mem": {
         "vars": [
@@ -291,7 +291,7 @@
         "x": "10",
         "y": "1"
       },
-      "note": "fmt.Println(x, *p, p == &x) → cetak \"10 10 true\"",
+      "note": "fmt.Println(x, *p, p == &x) → print \"10 10 true\"",
       "output": "10 10 true\n",
       "mem": {
         "vars": [
@@ -418,7 +418,7 @@
         "x": "10",
         "y": "1"
       },
-      "note": "fmt.Println(*q) → cetak \"5\"",
+      "note": "fmt.Println(*q) → print \"5\"",
       "output": "5\n",
       "mem": {
         "vars": [
@@ -1305,7 +1305,7 @@
         "x": "10",
         "y": "1"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "mem": {
         "vars": [
@@ -1374,7 +1374,7 @@
         "x": "10",
         "y": "1"
       },
-      "note": "fmt.Println(c.n, *c) → cetak \"3 {3}\"",
+      "note": "fmt.Println(c.n, *c) → print \"3 {3}\"",
       "output": "3 {3}\n",
       "mem": {
         "vars": [
@@ -1508,7 +1508,7 @@
         "x": "10",
         "y": "1"
       },
-      "note": "fmt.Println(nothing == nil) → cetak \"true\"",
+      "note": "fmt.Println(nothing == nil) → print \"true\"",
       "output": "true\n",
       "mem": {
         "vars": [
@@ -1579,7 +1579,7 @@
         "x": "10",
         "y": "1"
       },
-      "note": "main() selesai",
+      "note": "main() done",
       "mem": {
         "vars": [
           {

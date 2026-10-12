@@ -168,7 +168,7 @@ func buildStub(path string) *types.Package {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, path+".go", src, parser.SkipObjectResolution)
 	if err != nil {
-		panic("stub " + path + " tidak valid: " + err.Error())
+		panic("stub " + path + " is invalid: " + err.Error())
 	}
 	conf := types.Config{Importer: stubImporter{}, Error: func(error) {}}
 	pkg, _ := conf.Check(path, fset, []*ast.File{f}, nil)

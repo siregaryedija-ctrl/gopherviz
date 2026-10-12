@@ -38,7 +38,7 @@
         "grid": "[[1 2] [3 4]]",
         "row": "[1 2]"
       },
-      "note": "range row (2 elemen)",
+      "note": "range row (2 elements)",
       "items": [
         "1",
         "2"
@@ -58,7 +58,7 @@
         "v": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 1",
+      "note": "take element #1: v = 1",
       "ops": [
         {
           "op": "read",
@@ -104,7 +104,7 @@
         "row": "[1 2]",
         "v": "1"
       },
-      "note": "continue outer → langsung ke putaran berikutnya"
+      "note": "continue outer → jump to the next round"
     },
     {
       "n": 4,
@@ -119,7 +119,7 @@
         "row": "[1 2]",
         "v": "1"
       },
-      "note": "keluar dari loop karena continue outer",
+      "note": "leave the loop because of continue outer",
       "reason": "break"
     },
     {
@@ -134,7 +134,7 @@
         "grid": "[[1 2] [3 4]]",
         "row": "[3 4]"
       },
-      "note": "range row (2 elemen)",
+      "note": "range row (2 elements)",
       "items": [
         "3",
         "4"
@@ -154,7 +154,7 @@
         "v": "3"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 3",
+      "note": "take element #1: v = 3",
       "ops": [
         {
           "op": "read",
@@ -225,7 +225,7 @@
         "row": "[3 4]",
         "v": "3"
       },
-      "note": "break outer → keluar dari loop"
+      "note": "break outer → leave the loop"
     },
     {
       "n": 10,
@@ -240,7 +240,7 @@
         "row": "[3 4]",
         "v": "3"
       },
-      "note": "keluar dari loop karena break outer",
+      "note": "leave the loop because of break outer",
       "reason": "break"
     }
   ],

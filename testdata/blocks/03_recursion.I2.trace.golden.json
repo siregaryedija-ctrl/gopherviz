@@ -43,7 +43,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 2,
@@ -55,7 +55,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -82,7 +82,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 5,
@@ -94,7 +94,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -121,7 +121,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 8,
@@ -133,7 +133,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -160,7 +160,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "masuk cabang ke-1 (if n < 2)"
+      "note": "take branch #1 (if n < 2)"
     },
     {
       "n": 11,
@@ -172,7 +172,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 12,
@@ -184,7 +184,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -211,7 +211,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "masuk cabang ke-1 (if n < 2)"
+      "note": "take branch #1 (if n < 2)"
     },
     {
       "n": 15,
@@ -223,7 +223,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 16,
@@ -235,7 +235,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -262,7 +262,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "masuk cabang ke-1 (if n < 2)"
+      "note": "take branch #1 (if n < 2)"
     },
     {
       "n": 19,
@@ -274,7 +274,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 20,
@@ -286,7 +286,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -313,7 +313,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 23,
@@ -325,7 +325,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -352,7 +352,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "masuk cabang ke-1 (if n < 2)"
+      "note": "take branch #1 (if n < 2)"
     },
     {
       "n": 26,
@@ -364,7 +364,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 27,
@@ -376,7 +376,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -403,7 +403,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "masuk cabang ke-1 (if n < 2)"
+      "note": "take branch #1 (if n < 2)"
     },
     {
       "n": 30,
@@ -415,7 +415,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "return n → keluar dari fungsi"
+      "note": "return n → leave the function"
     },
     {
       "n": 31,
@@ -427,7 +427,7 @@
       "vars": {
         "n": "0"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     }
   ],

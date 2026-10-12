@@ -39,7 +39,7 @@
         "head": "<nil>",
         "v": "3"
       },
-      "note": "panggil push(head = <nil>, v = 3)",
+      "note": "call push(head = <nil>, v = 3)",
       "mem": {
         "vars": [
           {
@@ -66,7 +66,7 @@
         "head": "<nil>",
         "v": "3"
       },
-      "note": "return &Node{Val: v, Next: head} → keluar dari fungsi",
+      "note": "return &Node{Val: v, Next: head} → leave the function",
       "mem": {
         "vars": [
           {
@@ -95,7 +95,7 @@
         "head": "<nil>",
         "v": "3"
       },
-      "note": "push(head = <nil>, v = 3) mengembalikan &{3 <nil>}",
+      "note": "push(head = <nil>, v = 3) returns &{3 <nil>}",
       "mem": {
         "vars": [
           {
@@ -124,7 +124,7 @@
         "head": "&{3 <nil>}",
         "v": "2"
       },
-      "note": "panggil push(head = &{3 <nil>}, v = 2)",
+      "note": "call push(head = &{3 <nil>}, v = 2)",
       "mem": {
         "vars": [
           {
@@ -169,7 +169,7 @@
         "head": "&{3 <nil>}",
         "v": "2"
       },
-      "note": "return &Node{Val: v, Next: head} → keluar dari fungsi",
+      "note": "return &Node{Val: v, Next: head} → leave the function",
       "mem": {
         "vars": [
           {
@@ -216,7 +216,7 @@
         "head": "&{3 <nil>}",
         "v": "2"
       },
-      "note": "push(head = &{3 <nil>}, v = 2) mengembalikan &{2 &{3 <nil>}}",
+      "note": "push(head = &{3 <nil>}, v = 2) returns &{2 &{3 <nil>}}",
       "mem": {
         "vars": [
           {
@@ -263,7 +263,7 @@
         "head": "&{2 &{3 <nil>}}",
         "v": "1"
       },
-      "note": "panggil push(head = &{2 &{3 <nil>}}, v = 1)",
+      "note": "call push(head = &{2 &{3 <nil>}}, v = 1)",
       "mem": {
         "vars": [
           {
@@ -324,7 +324,7 @@
         "head": "&{2 &{3 <nil>}}",
         "v": "1"
       },
-      "note": "return &Node{Val: v, Next: head} → keluar dari fungsi",
+      "note": "return &Node{Val: v, Next: head} → leave the function",
       "mem": {
         "vars": [
           {
@@ -387,7 +387,7 @@
         "head": "&{2 &{3 <nil>}}",
         "v": "1"
       },
-      "note": "push(head = &{2 &{3 <nil>}}, v = 1) mengembalikan &{1 &{2 &{3 <nil>}}}",
+      "note": "push(head = &{2 &{3 <nil>}}, v = 1) returns &{1 &{2 &{3 <nil>}}}",
       "mem": {
         "vars": [
           {

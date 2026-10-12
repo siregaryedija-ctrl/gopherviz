@@ -37,7 +37,7 @@ func (it *interp) pyIter(v Value, at ir.Node) []Value {
 	pairs, ok := it.sem.iterate(it, v, nil)
 	if !ok {
 		if v.k == kUnknown {
-			it.structural("isi koleksi tidak diketahui: " + v.why)
+			it.structural("unknown collection contents: " + v.why)
 		}
 		it.throw(at, "TypeError", fmt.Sprintf("'%s' object is not iterable", it.pyTypeName(v)))
 	}
@@ -61,7 +61,7 @@ func (it *interp) pyLen(v Value, at ir.Node) int {
 			return int(toF(it.callFunc(&Func{decl: m, env: v.o.class.env}, v, argList{}, at)))
 		}
 	case kUnknown:
-		it.structural("panjang tidak diketahui: " + v.why)
+		it.structural("unknown length: " + v.why)
 	}
 	it.throw(at, "TypeError", fmt.Sprintf("object of type '%s' has no len()", it.pyTypeName(v)))
 	return 0
@@ -106,7 +106,7 @@ func (it *interp) pyRange(args []Value, at ir.Node) Value {
 	for _, a := range args {
 		if !pyIntLike(a) {
 			if a.k == kUnknown {
-				it.structural("batas range tidak diketahui: " + a.why)
+				it.structural("unknown range bounds: " + a.why)
 			}
 			it.throw(at, "TypeError", fmt.Sprintf("'%s' object cannot be interpreted as an integer", it.pyTypeName(a)))
 		}
@@ -127,7 +127,7 @@ func (it *interp) pyRange(args []Value, at ir.Node) Value {
 	var elems []Value
 	for i := start; step > 0 && i < stop || step < 0 && i > stop; i += step {
 		if len(elems) > 1_000_000 {
-			it.structural("range terlalu besar untuk disimulasikan")
+			it.structural("range too large to simulate")
 		}
 		elems = append(elems, pyInt(i))
 	}
@@ -706,11 +706,11 @@ func (it *interp) setupPython(s *pySem) {
 		if pyIntLike(a) {
 			return a
 		}
-		it.warn("hash() string di Python diacak setiap kali program jalan; nilainya di sini hanya contoh")
+		it.warn("Python randomizes string hash() on every run; the value here is only an example")
 		return pyInt(int64(len(keyID(a))))
 	})
 	fn("open", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.structural("membaca/menulis file (open) belum didukung simulator")
+		it.structural("reading/writing files (open) is not supported by the simulator yet")
 		return Value{}
 	})
 	fn("iter", func(it *interp, this Value, args []Value, at ir.Node) Value {
@@ -777,7 +777,7 @@ func (it *interp) pyBisectModule() Value {
 		return func(it *interp, this Value, args []Value, at ir.Node) Value {
 			a := arg(args, 0)
 			if a.k != kList {
-				it.throw(at, "TypeError", "bisect butuh list")
+				it.throw(at, "TypeError", "bisect needs a list")
 			}
 			x := arg(args, 1)
 			lo, hi := 0, len(a.l.elems)
@@ -912,7 +912,7 @@ func (it *interp) pyMathModule() Value {
 				it.throw(at, "ValueError", "factorial() not defined for negative values")
 			}
 			if k.Int64() > 5000 {
-				it.structural("faktorial terlalu besar untuk disimulasikan")
+				it.structural("factorial too large to simulate")
 			}
 			return bigV(new(big.Int).MulRange(1, k.Int64()))
 		}),
@@ -958,7 +958,7 @@ func (it *interp) pyMathModule() Value {
 
 func (it *interp) pyRandomModule() Value {
 	warn := func() {
-		it.warn("modul random disimulasikan dengan seed tetap; hasilnya berbeda dengan saat program dijalankan")
+		it.warn("the random module is simulated with a fixed seed; results differ from a real run")
 	}
 	return it.moduleV(map[string]Value{
 		"random": bf("random", func(it *interp, this Value, args []Value, at ir.Node) Value {
@@ -1070,7 +1070,7 @@ func (it *interp) pyImport(n *ir.Simple, e *Env) {
 			}
 			orig, alias = strings.TrimSpace(orig), strings.TrimSpace(alias)
 			if !ok {
-				bind(alias, unknown("modul "+modName+" belum didukung simulator"))
+				bind(alias, unknown("module "+modName+" is not supported by the simulator yet"))
 				continue
 			}
 			if orig == "*" {
@@ -1096,8 +1096,8 @@ func (it *interp) pyImport(n *ir.Simple, e *Env) {
 		if m, ok := module(orig); ok {
 			bind(strings.TrimSpace(alias), m)
 		} else {
-			bind(strings.TrimSpace(alias), unknown("modul"))
-			it.warn("modul " + orig + " belum didukung simulator; nilainya tidak bisa dihitung")
+			bind(strings.TrimSpace(alias), unknown("module"))
+			it.warn("module " + orig + " is not supported by the simulator yet; its values cannot be computed")
 		}
 	}
 }

@@ -37,7 +37,7 @@
         "nums": "[1 2 3 4]",
         "total": "0"
       },
-      "note": "range nums (4 elemen)",
+      "note": "range nums (4 elements)",
       "items": [
         "1",
         "2",
@@ -59,7 +59,7 @@
         "total": "0"
       },
       "result": true,
-      "note": "ambil elemen ke-1: n = 1",
+      "note": "take element #1: n = 1",
       "ops": [
         {
           "op": "read",
@@ -80,7 +80,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil isEven(n = 1)"
+      "note": "call isEven(n = 1)"
     },
     {
       "n": 3,
@@ -95,7 +95,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "isEven(n = 1) mengembalikan false"
+      "note": "isEven(n = 1) returns false"
     },
     {
       "n": 4,
@@ -127,7 +127,7 @@
         "total": "0"
       },
       "result": true,
-      "note": "ambil elemen ke-2: n = 2",
+      "note": "take element #2: n = 2",
       "ops": [
         {
           "op": "read",
@@ -148,7 +148,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "panggil isEven(n = 2)"
+      "note": "call isEven(n = 2)"
     },
     {
       "n": 7,
@@ -163,7 +163,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "isEven(n = 2) mengembalikan true"
+      "note": "isEven(n = 2) returns true"
     },
     {
       "n": 8,
@@ -210,7 +210,7 @@
         "total": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-3: n = 3",
+      "note": "take element #3: n = 3",
       "ops": [
         {
           "op": "read",
@@ -231,7 +231,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "panggil isEven(n = 3)"
+      "note": "call isEven(n = 3)"
     },
     {
       "n": 12,
@@ -246,7 +246,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "isEven(n = 3) mengembalikan false"
+      "note": "isEven(n = 3) returns false"
     },
     {
       "n": 13,
@@ -278,7 +278,7 @@
         "total": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-4: n = 4",
+      "note": "take element #4: n = 4",
       "ops": [
         {
           "op": "read",
@@ -299,7 +299,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil isEven(n = 4)"
+      "note": "call isEven(n = 4)"
     },
     {
       "n": 16,
@@ -314,7 +314,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "isEven(n = 4) mengembalikan true"
+      "note": "isEven(n = 4) returns true"
     },
     {
       "n": 17,
@@ -360,7 +360,7 @@
         "total": "6"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 20,
@@ -374,7 +374,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

@@ -143,14 +143,14 @@
       "phase": "body",
       "line": 23,
       "iteration": 0,
-      "note": "G1 menunggu: <-results (menunggu data)",
+      "note": "G1 waits: <-results (waiting for data)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -200,7 +200,7 @@
         "results": "chan",
         "sum": "0"
       },
-      "note": "terima 2 dari results",
+      "note": "receive 2 from results",
       "ops": [
         {
           "op": "recv",
@@ -425,7 +425,7 @@
         "results": "chan",
         "sum": "2"
       },
-      "note": "terima 4 dari results",
+      "note": "receive 4 from results",
       "ops": [
         {
           "op": "recv",
@@ -646,7 +646,7 @@
         "results": "chan",
         "sum": "6"
       },
-      "note": "terima 6 dari results",
+      "note": "receive 6 from results",
       "ops": [
         {
           "op": "recv",
@@ -863,7 +863,7 @@
         "results": "chan",
         "sum": "12"
       },
-      "note": "terima 8 dari results",
+      "note": "receive 8 from results",
       "ops": [
         {
           "op": "recv",
@@ -1076,7 +1076,7 @@
         "results": "chan",
         "sum": "20"
       },
-      "note": "terima 10 dari results",
+      "note": "receive 10 from results",
       "ops": [
         {
           "op": "recv",
@@ -1281,7 +1281,7 @@
         "results": "chan",
         "sum": "30"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "g": 1,
       "gs": [

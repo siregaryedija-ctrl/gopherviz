@@ -94,7 +94,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "masuk case 2, 3, 4, 5, 6"
+      "note": "take case 2, 3, 4, 5, 6"
     },
     {
       "n": 6,
@@ -106,7 +106,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "return \"hari kerja\" → keluar dari fungsi"
+      "note": "return \"hari kerja\" → leave the function"
     },
     {
       "n": 7,
@@ -118,7 +118,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -170,7 +170,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "masuk case 1, 7"
+      "note": "take case 1, 7"
     },
     {
       "n": 12,
@@ -182,7 +182,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "return \"akhir pekan\" → keluar dari fungsi"
+      "note": "return \"akhir pekan\" → leave the function"
     },
     {
       "n": 13,
@@ -194,7 +194,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -311,7 +311,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "masuk default"
+      "note": "take default"
     },
     {
       "n": 23,
@@ -323,7 +323,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "return \"bukan hari\" → keluar dari fungsi"
+      "note": "return \"bukan hari\" → leave the function"
     },
     {
       "n": 24,
@@ -335,7 +335,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     }
   ],

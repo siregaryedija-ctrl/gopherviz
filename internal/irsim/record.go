@@ -57,7 +57,7 @@ func (p *Ptr) load() Value {
 		return v
 	case p.dict != nil && p.iter:
 		if p.idx < 0 || p.idx >= len(p.dict.keys) {
-			return unknown("iterator di luar batas (end)")
+			return unknown("iterator out of bounds (end)")
 		}
 		if p.dict.kind == "set-sorted" || p.dict.kind == "uset" {
 			return p.dict.keys[p.idx]
@@ -67,7 +67,7 @@ func (p *Ptr) load() Value {
 		v, _ := p.dict.get(p.key)
 		return v
 	}
-	return unknown("pointer menunjuk ke luar array")
+	return unknown("pointer points outside the array")
 }
 
 func (p *Ptr) store(v Value) {
@@ -300,7 +300,7 @@ func (r *recorder) add(s trace.Step, vars map[string]string, items func() ([]str
 	r.steps = append(r.steps, s)
 	if len(r.steps) >= r.maxSteps {
 		r.truncated = true
-		r.warn("trace dipotong: terlalu banyak langkah untuk ditampilkan")
+		r.warn("trace cut short: too many steps to show")
 		panic(abort{kind: abortDone})
 	}
 }

@@ -95,7 +95,7 @@ const maxDepth = 200
 func (it *interp) tick() {
 	it.budget--
 	if it.budget <= 0 {
-		panic(abort{abortBudget, "terlalu banyak langkah komputasi: kemungkinan loop tak berujung atau rekursi terlalu dalam"})
+		panic(abort{abortBudget, "too many computation steps: possibly an endless loop or recursion that is too deep"})
 	}
 }
 
@@ -182,7 +182,7 @@ func (it *interp) snapshot(e *Env) map[string]string {
 				continue
 			}
 			v := s.vars[name].get()
-			if v.k == kFunc || v.k == kClass || v.k == kUnknown && v.why == "modul" {
+			if v.k == kFunc || v.k == kClass || v.k == kUnknown && v.why == "module" {
 				continue
 			}
 			out[name] = it.display(v, true)
@@ -329,7 +329,7 @@ func (it *interp) evalNote(x ir.Expr, e *Env) (v Value) {
 			if _, ok := r.(thrown); !ok {
 				panic(r)
 			}
-			v = unknown("error saat menyusun catatan")
+			v = unknown("error while building the note")
 		}
 	}()
 	return it.evalQuiet(x, e)
@@ -568,7 +568,7 @@ func (it *interp) nextIter(f *frame) {
 	f.iter++
 	if f.focus && f.iter >= it.rec.maxIter {
 		it.rec.truncated = true
-		it.warn(fmt.Sprintf("trace dibatasi %d putaran pertama", it.rec.maxIter))
+		it.warn(fmt.Sprintf("the trace is limited to the first %d rounds", it.rec.maxIter))
 		panic(abort{kind: abortDone})
 	}
 }
@@ -613,7 +613,7 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 	switch n := s.(type) {
 	case *ir.Block:
 		if !n.Closed && it.lang != "python" {
-			it.structural(fmt.Sprintf("blok di baris %d belum ditutup", it.line(n)))
+			it.structural(fmt.Sprintf("the block on line %d is not closed", it.line(n)))
 		}
 		return it.execList(n.List, it.blockScope(e))
 	case *ir.ExprStmt:
@@ -653,16 +653,16 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 		switch n.Tok {
 		case "break":
 			if it.recording() {
-				it.add(trace.Step{Phase: trace.PhaseBreak, Line: it.line(n), Note: strings.TrimSpace("break "+n.Label) + " → keluar dari loop"}, e)
+				it.add(trace.Step{Phase: trace.PhaseBreak, Line: it.line(n), Note: strings.TrimSpace("break "+n.Label) + " → leave the loop"}, e)
 			}
 			return flow{k: fBreak, label: n.Label, count: n.Count}
 		case "continue":
 			if it.recording() {
-				it.add(trace.Step{Phase: trace.PhaseContinue, Line: it.line(n), Note: strings.TrimSpace("continue "+n.Label) + " → langsung ke putaran berikutnya"}, e)
+				it.add(trace.Step{Phase: trace.PhaseContinue, Line: it.line(n), Note: strings.TrimSpace("continue "+n.Label) + " → jump to the next round"}, e)
 			}
 			return flow{k: fContinue, label: n.Label, count: n.Count}
 		default:
-			it.structural("goto belum disimulasikan")
+			it.structural("goto is not simulated yet")
 		}
 	case *ir.Return:
 		v := undef()
@@ -672,7 +672,7 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 		if n.X != nil {
 			v = it.eval(n.X, e)
 		}
-		it.step(n, e, strings.TrimSuffix(it.text(n), ";")+" → keluar dari fungsi")
+		it.step(n, e, strings.TrimSuffix(it.text(n), ";")+" → leave the function")
 		return flow{k: fReturn, ret: v}
 	case *ir.Throw:
 		var v Value
@@ -687,7 +687,7 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 			v = it.construct(v.c, nil, n)
 		}
 		msg := it.exceptionText(v)
-		it.step(n, e, it.text(n)+" → lempar "+msg)
+		it.step(n, e, it.text(n)+" → throw "+msg)
 		panic(thrown{v: v, msg: msg, at: n, depth: it.rec.depth + 1})
 	case *ir.Try:
 		return it.execTry(n, e)
@@ -696,7 +696,7 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 			fn := it.closure(n, e)
 			it.declareFunc(e, n.Name, fn)
 		}
-		it.step(n, e, "fungsi "+n.Name+" didefinisikan")
+		it.step(n, e, "function "+n.Name+" defined")
 	case *ir.Class:
 		if c := it.defineClass(n, e); c != nil && n.Name != "" {
 			e.define(n.Name, Value{k: kClass, c: c})
@@ -704,9 +704,9 @@ func (it *interp) exec(s ir.Stmt, e *Env) flow {
 	case *ir.Simple:
 		return it.simple(n, e)
 	case *ir.Bad:
-		it.structural(fmt.Sprintf("baris %d belum bisa dibaca: %s", it.line(n), n.Msg))
+		it.structural(fmt.Sprintf("line %d cannot be read yet: %s", it.line(n), n.Msg))
 	default:
-		it.structural(fmt.Sprintf("statement di baris %d belum disimulasikan", it.line(s)))
+		it.structural(fmt.Sprintf("the statement on line %d is not simulated yet", it.line(s)))
 	}
 	return flow{}
 }
@@ -731,7 +731,7 @@ func (it *interp) execExpr(n *ir.ExprStmt, e *Env) {
 	}
 	note := ""
 	if out := it.rec.out.String(); out != "" {
-		note = strings.TrimSuffix(it.text(n), ";") + " → cetak " + fmt.Sprintf("%q", strings.TrimSuffix(out, "\n"))
+		note = strings.TrimSuffix(it.text(n), ";") + " → print " + fmt.Sprintf("%q", strings.TrimSuffix(out, "\n"))
 	} else if targets := assignTargets(n.X); len(targets) > 0 {
 		note = it.effectNote(n, targets, e)
 	}
@@ -752,7 +752,7 @@ func (it *interp) execIf(n *ir.If, e *Env) flow {
 			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(cur), Result: &r, Note: it.condNote(cur.Cond, e, c, prefix)}, e)
 		}
 		if c {
-			it.branchStep(focus, n, branch, e, fmt.Sprintf("masuk cabang ke-%d (%s)", branch+1, strings.TrimSpace(prefix+it.text(cur.Cond))))
+			it.branchStep(focus, n, branch, e, fmt.Sprintf("take branch #%d (%s)", branch+1, strings.TrimSpace(prefix+it.text(cur.Cond))))
 			return it.blockExit(focus, n, it.execBody(cur.Then, e), e)
 		}
 		branch++
@@ -761,10 +761,10 @@ func (it *interp) execIf(n *ir.If, e *Env) flow {
 			cur = el
 			continue
 		case nil:
-			it.branchStep(focus, n, branch, e, "semua kondisi false dan tidak ada else → lewati")
+			it.branchStep(focus, n, branch, e, "all conditions false and no else → skip")
 			return it.blockExit(focus, n, flow{}, e)
 		default:
-			it.branchStep(focus, n, branch, e, "semua kondisi false → masuk cabang else")
+			it.branchStep(focus, n, branch, e, "all conditions false → take the else branch")
 			return it.blockExit(focus, n, it.execBody(el, e), e)
 		}
 	}
@@ -795,14 +795,14 @@ func (it *interp) blockExit(focus bool, n ir.Node, f flow, e *Env) flow {
 	if !focus || !it.recording() {
 		return f
 	}
-	reason, note := trace.ReasonDone, "selesai, lanjut ke baris berikutnya"
+	reason, note := trace.ReasonDone, "done, continue to the next line"
 	switch f.k {
 	case fBreak:
-		reason, note = trace.ReasonBreak, "keluar karena break"
+		reason, note = trace.ReasonBreak, "leave because of break"
 	case fContinue:
-		reason, note = trace.ReasonContinue, "keluar karena continue: loop di luarnya lanjut ke putaran berikutnya"
+		reason, note = trace.ReasonContinue, "leave because of continue: the outer loop goes to its next round"
 	case fReturn:
-		reason, note = trace.ReasonReturn, "keluar karena return"
+		reason, note = trace.ReasonReturn, "leave because of return"
 	}
 	it.add(trace.Step{Phase: trace.PhaseExit, Line: n.Span().End.Line, Reason: reason, Note: note}, e)
 	return f
@@ -814,15 +814,15 @@ func (it *interp) cond(x ir.Expr, e *Env, what string) bool {
 		return true
 	}
 	if _, bad := x.(*ir.BadExpr); bad {
-		it.structural(fmt.Sprintf("kondisi %s di baris %d belum lengkap", what, it.line(x)))
+		it.structural(fmt.Sprintf("the %s condition on line %d is incomplete", what, it.line(x)))
 	}
 	v := it.eval(x, e)
 	if v.k == kUnknown {
 		why := v.why
 		if why == "" {
-			why = "nilainya tidak diketahui"
+			why = "its value is unknown"
 		}
-		it.structural(fmt.Sprintf("kondisi %s %q di baris %d tidak bisa dihitung: %s", what, it.text(x), it.line(x), why))
+		it.structural(fmt.Sprintf("the %s condition %q on line %d cannot be computed: %s", what, it.text(x), it.line(x), why))
 	}
 	return it.sem.truthy(v)
 }
@@ -831,29 +831,29 @@ func (it *interp) loopFlow(f flow, label string, n ir.Node, e *Env) (done bool, 
 	switch f.k {
 	case fBreak:
 		if f.count > 1 { // PHP: break 2
-			it.exitStep(n, e, trace.ReasonBreak, fmt.Sprintf("keluar dari loop karena break %d", f.count))
+			it.exitStep(n, e, trace.ReasonBreak, fmt.Sprintf("leave the loop because of break %d", f.count))
 			f.count--
 			return true, f
 		}
 		if f.label == "" || f.label == label {
-			it.exitStep(n, e, trace.ReasonBreak, "keluar dari loop karena break")
+			it.exitStep(n, e, trace.ReasonBreak, "leave the loop because of break")
 			return true, flow{}
 		}
-		it.exitStep(n, e, trace.ReasonBreak, "keluar dari loop karena break "+f.label)
+		it.exitStep(n, e, trace.ReasonBreak, "leave the loop because of break "+f.label)
 		return true, f
 	case fContinue:
 		if f.count > 1 {
-			it.exitStep(n, e, trace.ReasonBreak, fmt.Sprintf("keluar dari loop karena continue %d", f.count))
+			it.exitStep(n, e, trace.ReasonBreak, fmt.Sprintf("leave the loop because of continue %d", f.count))
 			f.count--
 			return true, f
 		}
 		if f.label == "" || f.label == label {
 			return false, flow{}
 		}
-		it.exitStep(n, e, trace.ReasonBreak, "keluar dari loop karena continue "+f.label)
+		it.exitStep(n, e, trace.ReasonBreak, "leave the loop because of continue "+f.label)
 		return true, f
 	case fReturn:
-		it.exitStep(n, e, trace.ReasonReturn, "keluar dari loop karena return")
+		it.exitStep(n, e, trace.ReasonReturn, "leave the loop because of return")
 		return true, f
 	}
 	return false, flow{}
@@ -881,7 +881,7 @@ func (it *interp) execFor(n *ir.For, label string, e *Env) flow {
 				it.add(trace.Step{Phase: trace.PhaseCond, Line: it.line(n), Result: &r, Note: it.condNote(n.Cond, iterScope, c, "")}, iterScope)
 			}
 			if !c {
-				it.exitStep(n, iterScope, trace.ReasonCondFalse, "kondisi false → keluar dari loop")
+				it.exitStep(n, iterScope, trace.ReasonCondFalse, "condition false → leave the loop")
 				return flow{}
 			}
 		}
@@ -922,7 +922,7 @@ func (it *interp) execWhile(n *ir.While, label string, e *Env) flow {
 				it.add(trace.Step{Phase: trace.PhaseCond, Line: n.Span().End.Line, Result: &r, Note: it.condNote(n.Cond, e, c, "while ")}, e)
 			}
 			if !c {
-				it.exitStep(n, e, trace.ReasonCondFalse, "kondisi false → keluar dari loop")
+				it.exitStep(n, e, trace.ReasonCondFalse, "condition false → leave the loop")
 				return flow{}
 			}
 			it.nextIter(fr)
@@ -935,7 +935,7 @@ func (it *interp) execWhile(n *ir.While, label string, e *Env) flow {
 			it.add(trace.Step{Phase: trace.PhaseCond, Line: it.line(n), Result: &r, Note: it.condNote(n.Cond, e, c, "")}, e)
 		}
 		if !c {
-			it.exitStep(n, e, trace.ReasonCondFalse, "kondisi false → keluar dari loop")
+			it.exitStep(n, e, trace.ReasonCondFalse, "condition false → leave the loop")
 			if n.Else != nil { // Python while-else: jalan bila loop selesai tanpa break
 				return it.execBody(n.Else, e)
 			}
@@ -957,7 +957,7 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 	fr, leave := it.enterBlock(n, scene.BlockLoop)
 	defer leave()
 	if x.k == kUnknown {
-		it.structural(fmt.Sprintf("koleksi %q di baris %d tidak bisa dihitung: %s", it.text(n.X), it.line(n), x.why))
+		it.structural(fmt.Sprintf("collection %q on line %d cannot be computed: %s", it.text(n.X), it.line(n), x.why))
 	}
 	scope := e
 	if it.lang != "python" && it.lang != "php" {
@@ -965,7 +965,7 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 	}
 	pairs, ok := it.sem.iterate(it, x, n)
 	if !ok {
-		it.throw(n, "TypeError", it.sem.show(it, x)+" tidak bisa diiterasi")
+		it.throw(n, "TypeError", it.sem.show(it, x)+" is not iterable")
 	}
 	if it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseInit, Line: it.line(n), Note: fmt.Sprintf("%s %s (%s)", it.eachWord(n), it.text(n.X), it.describe(x, len(pairs)))}, scope)
@@ -1008,9 +1008,9 @@ func (it *interp) execForEach(n *ir.ForEach, label string, e *Env) flow {
 	}
 	if it.recording() {
 		r := false
-		it.add(trace.Step{Phase: trace.PhaseCond, Line: it.line(n), Result: &r, Note: "tidak ada elemen lagi"}, scope)
+		it.add(trace.Step{Phase: trace.PhaseCond, Line: it.line(n), Result: &r, Note: "no more elements"}, scope)
 	}
-	it.exitStep(n, scope, trace.ReasonRangeDone, "semua elemen sudah dikunjungi → keluar dari loop")
+	it.exitStep(n, scope, trace.ReasonRangeDone, "all elements visited → leave the loop")
 	if n.Else != nil {
 		return it.execBody(n.Else, scope)
 	}
@@ -1073,14 +1073,14 @@ func (it *interp) eachWord(n *ir.ForEach) string {
 func (it *interp) describe(x Value, n int) string {
 	switch x.k {
 	case kStr:
-		return fmt.Sprintf("%d karakter", n)
+		return fmt.Sprintf("%d characters", n)
 	case kDict:
 		if x.d.kind == "object" || x.d.kind == "dict" {
 			return fmt.Sprintf("%d key", n)
 		}
-		return fmt.Sprintf("%d pasangan", n)
+		return fmt.Sprintf("%d pairs", n)
 	}
-	return fmt.Sprintf("%d elemen", n)
+	return fmt.Sprintf("%d elements", n)
 }
 
 // bindEach mengisi variabel for-each untuk satu putaran.
@@ -1130,7 +1130,7 @@ func (it *interp) eachNote(n *ir.ForEach, e *Env, idx int) string {
 			}
 		}
 	}
-	note := fmt.Sprintf("ambil elemen ke-%d", idx+1)
+	note := fmt.Sprintf("take element #%d", idx+1)
 	if len(parts) > 0 {
 		note += ": " + strings.Join(parts, ", ")
 	}
@@ -1147,7 +1147,7 @@ func (it *interp) execSwitch(n *ir.Switch, e *Env) flow {
 	}
 	tag := it.eval(n.Tag, scope)
 	if tag.k == kUnknown {
-		it.structural(fmt.Sprintf("nilai switch di baris %d tidak bisa dihitung: %s", it.line(n), tag.why))
+		it.structural(fmt.Sprintf("the switch value on line %d cannot be computed: %s", it.line(n), tag.why))
 	}
 	if focus && it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseInit, Line: it.line(n), Note: fmt.Sprintf("switch %s → %s", it.text(n.Tag), it.sem.show(it, tag))}, scope)
@@ -1184,7 +1184,7 @@ func (it *interp) execSwitch(n *ir.Switch, e *Env) flow {
 		start = def
 	}
 	if start < 0 {
-		it.branchStep(focus, n, len(n.Cases), scope, "tidak ada case yang cocok → lewati")
+		it.branchStep(focus, n, len(n.Cases), scope, "no case matches → skip")
 		return it.blockExit(focus, n, flow{}, scope)
 	}
 	c := n.Cases[start]
@@ -1193,7 +1193,7 @@ func (it *interp) execSwitch(n *ir.Switch, e *Env) flow {
 		if c.Exprs != nil {
 			label = "case " + it.textList(c.Exprs)
 		}
-		it.branchStep(focus, n, start, scope, "masuk "+label)
+		it.branchStep(focus, n, start, scope, "take "+label)
 	} else {
 		it.step(c, scope, "case "+it.textList(c.Exprs))
 	}
@@ -1205,7 +1205,7 @@ func (it *interp) execSwitch(n *ir.Switch, e *Env) flow {
 			break
 		}
 		if i+1 < len(n.Cases) && len(n.Cases[i].Body) > 0 && it.recording() {
-			it.step(n.Cases[i+1], scope, "tanpa break → lanjut ke "+caseLabel(it, n.Cases[i+1]))
+			it.step(n.Cases[i+1], scope, "no break → fall through to "+caseLabel(it, n.Cases[i+1]))
 		}
 	}
 	if f.k == fBreak && f.label == "" {
@@ -1241,7 +1241,7 @@ func (it *interp) execTry(n *ir.Try, e *Env) (out flow) {
 	runFinally := func() {
 		if n.Finally != nil {
 			if it.recording() {
-				it.step(n.Finally, e, "finally dijalankan")
+				it.step(n.Finally, e, "finally runs")
 			}
 			if f := it.execList(n.Finally.List, it.blockScope(e)); f.k != fNone {
 				out = f
@@ -1277,7 +1277,7 @@ func (it *interp) execTry(n *ir.Try, e *Env) (out flow) {
 			scope.define(c.Name, caught.v)
 		}
 		if it.recording() {
-			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(c), Note: "exception ditangkap: " + caught.msg}, scope)
+			it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(c), Note: "exception caught: " + caught.msg}, scope)
 		}
 		func() {
 			defer func() {
@@ -1373,7 +1373,7 @@ func (it *interp) simple(n *ir.Simple, e *Env) flow {
 		}
 	case "empty", "pass", "type", "prototype":
 		if n.Kind == "pass" {
-			it.step(n, e, "pass (tidak melakukan apa-apa)")
+			it.step(n, e, "pass (does nothing)")
 		}
 	case "directive":
 		it.directive(n, e)

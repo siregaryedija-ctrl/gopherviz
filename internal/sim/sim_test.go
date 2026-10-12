@@ -422,7 +422,7 @@ func TestFallbacks(t *testing.T) {
 	})
 	t.Run("input user diisi angka acak", func(t *testing.T) {
 		tr := run(t, "func main() {\n\tvar n int\n\tfmt.Scan(&n)\n\tfor i := 0; i < 2; i++ {\n\t\tfmt.Print(n)\n\t}\n}\n", Options{})
-		if tr.Mode != trace.ModeSimulated || output(tr) != "6464" || !strings.Contains(strings.Join(tr.Warnings, " "), "angka acak") {
+		if tr.Mode != trace.ModeSimulated || output(tr) != "6464" || !strings.Contains(strings.Join(tr.Warnings, " "), "random numbers") {
 			t.Errorf("mode %s, output %q, warnings %v", tr.Mode, output(tr), tr.Warnings)
 		}
 	})
@@ -492,7 +492,7 @@ func TestFallbacks(t *testing.T) {
 	})
 	t.Run("loop belum lengkap: mode struktur dengan pesan", func(t *testing.T) {
 		tr := Trace(load(t, filepath.Join(loopsDir, "14_incomplete_noclose.go")), "L1", Options{})
-		if tr.Mode != trace.ModeStructural || !strings.Contains(tr.Warnings[0], "belum lengkap") {
+		if tr.Mode != trace.ModeStructural || !strings.Contains(tr.Warnings[0], "incomplete") {
 			t.Errorf("mode %s, warnings %v", tr.Mode, tr.Warnings)
 		}
 	})
@@ -563,11 +563,11 @@ func TestDataStructures(t *testing.T) {
 		tr := Trace(load(t, filepath.Join(dataDir, "05_defer_recover.go")), "F2", Options{})
 		var notes []string
 		for _, s := range tr.Steps {
-			if strings.HasPrefix(s.Note, "menjalankan defer") || strings.HasPrefix(s.Note, "recover()") || strings.Contains(s.Note, "mencari recover") {
+			if strings.HasPrefix(s.Note, "running defer") || strings.HasPrefix(s.Note, "recover()") || strings.Contains(s.Note, "looking for recover") {
 				notes = append(notes, s.Note)
 			}
 		}
-		if len(notes) < 4 || !strings.Contains(strings.Join(notes, "|"), "recover() menangkap panic: runtime error: integer divide by zero") {
+		if len(notes) < 4 || !strings.Contains(strings.Join(notes, "|"), "recover() catches panic: runtime error: integer divide by zero") {
 			t.Errorf("catatan = %v", notes)
 		}
 	})
@@ -618,7 +618,7 @@ func TestConcurrency(t *testing.T) {
 		tr := mainOf(t, "01_unbuffered.go")
 		waits := 0
 		for _, s := range tr.Steps {
-			if strings.Contains(s.Note, "menunggu") {
+			if strings.Contains(s.Note, "wait") {
 				waits++
 			}
 		}

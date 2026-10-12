@@ -35,7 +35,7 @@
       "vars": {
         "nums": "[3 1 2]"
       },
-      "note": "range nums (3 elemen)",
+      "note": "range nums (3 elements)",
       "items": [
         "3",
         "1",
@@ -55,7 +55,7 @@
         "v": "3"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 3",
+      "note": "take element #1: v = 3",
       "ops": [
         {
           "op": "read",
@@ -75,7 +75,7 @@
         "nums": "[3 1 2]",
         "v": "3"
       },
-      "note": "println(v) → cetak \"3\"",
+      "note": "println(v) → print \"3\"",
       "output": "3\n"
     },
     {
@@ -91,7 +91,7 @@
         "v": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-2: v = 1",
+      "note": "take element #2: v = 1",
       "ops": [
         {
           "op": "read",
@@ -111,7 +111,7 @@
         "nums": "[3 1 2]",
         "v": "1"
       },
-      "note": "println(v) → cetak \"1\"",
+      "note": "println(v) → print \"1\"",
       "output": "1\n"
     },
     {
@@ -127,7 +127,7 @@
         "v": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-3: v = 2",
+      "note": "take element #3: v = 2",
       "ops": [
         {
           "op": "read",
@@ -147,7 +147,7 @@
         "nums": "[3 1 2]",
         "v": "2"
       },
-      "note": "println(v) → cetak \"2\"",
+      "note": "println(v) → print \"2\"",
       "output": "2\n"
     },
     {
@@ -162,7 +162,7 @@
         "nums": "[3 1 2]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 8,
@@ -175,7 +175,7 @@
       "vars": {
         "nums": "[3 1 2]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

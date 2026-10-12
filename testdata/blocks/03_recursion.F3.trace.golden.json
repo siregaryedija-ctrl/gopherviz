@@ -32,7 +32,7 @@
       "phase": "call",
       "line": 19,
       "func": "main",
-      "note": "panggil main()"
+      "note": "call main()"
     },
     {
       "n": 1,
@@ -47,7 +47,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil factorial(n = 4)"
+      "note": "call factorial(n = 4)"
     },
     {
       "n": 2,
@@ -62,7 +62,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "factorial(n = 4) mengembalikan 24"
+      "note": "factorial(n = 4) returns 24"
     },
     {
       "n": 3,
@@ -71,7 +71,7 @@
       "run": 1,
       "phase": "body",
       "line": 20,
-      "note": "fmt.Println(factorial(4)) → cetak \"24\"",
+      "note": "fmt.Println(factorial(4)) → print \"24\"",
       "output": "24\n"
     },
     {
@@ -87,7 +87,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil fib(n = 4)"
+      "note": "call fib(n = 4)"
     },
     {
       "n": 5,
@@ -102,7 +102,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "fib(n = 4) mengembalikan 3"
+      "note": "fib(n = 4) returns 3"
     },
     {
       "n": 6,
@@ -111,7 +111,7 @@
       "run": 1,
       "phase": "body",
       "line": 21,
-      "note": "fmt.Println(fib(4)) → cetak \"3\"",
+      "note": "fmt.Println(fib(4)) → print \"3\"",
       "output": "3\n"
     },
     {
@@ -122,7 +122,7 @@
       "phase": "return",
       "line": 22,
       "func": "main",
-      "note": "main() selesai"
+      "note": "main() done"
     }
   ],
   "truncated": false,

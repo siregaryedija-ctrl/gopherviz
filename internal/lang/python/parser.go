@@ -22,7 +22,7 @@ func Parse(src string) (f *ir.File) {
 	f = &ir.File{Lang: "python"}
 	defer func() {
 		if r := recover(); r != nil {
-			f.Diags = append(f.Diags, ir.Diag{Pos: ir.Pos{Line: 1, Col: 1}, Msg: fmt.Sprintf("kesalahan internal parser: %v", r)})
+			f.Diags = append(f.Diags, ir.Diag{Pos: ir.Pos{Line: 1, Col: 1}, Msg: fmt.Sprintf("internal parser error: %v", r)})
 		}
 	}()
 	toks, ldiags := lex(src)
@@ -30,7 +30,7 @@ func Parse(src string) (f *ir.File) {
 	for !p.at(tEOF) {
 		before := p.i
 		if p.at(tIndent) {
-			p.errAt(p.peekTok(1).pos, "indentasi tidak terduga")
+			p.errAt(p.peekTok(1).pos, "unexpected indentation")
 			p.next()
 			continue
 		}
@@ -40,7 +40,7 @@ func Parse(src string) (f *ir.File) {
 		}
 		f.Body = append(f.Body, p.stmt()...)
 		if p.i == before {
-			p.badLine("tidak bisa dibaca di sini: " + p.tok().text)
+			p.badLine("cannot be read here: " + p.tok().text)
 		}
 	}
 	f.Diags = p.diags
@@ -90,7 +90,7 @@ func (p *parser) expect(s, what string) bool {
 	if p.accept(s) {
 		return true
 	}
-	p.errAt(p.tok().pos, fmt.Sprintf("kurang %q %s", s, what))
+	p.errAt(p.tok().pos, fmt.Sprintf("missing %q %s", s, what))
 	return false
 }
 
@@ -144,7 +144,7 @@ func (p *parser) endLine() {
 		p.next()
 	case p.at(tEOF), p.at(tDedent):
 	default:
-		p.badLine(fmt.Sprintf("tidak terduga: %q", p.tok().text))
+		p.badLine(fmt.Sprintf("unexpected: %q", p.tok().text))
 	}
 }
 
@@ -154,7 +154,7 @@ func (p *parser) stmt() []ir.Stmt {
 	p.depth++
 	defer func() { p.depth-- }()
 	if p.depth > 150 {
-		return []ir.Stmt{p.badLine("kode terlalu dalam bersarang")}
+		return []ir.Stmt{p.badLine("code nested too deep")}
 	}
 	start := p.tok().pos
 	if p.at(tName) {
@@ -357,7 +357,7 @@ func (p *parser) lineEnd() bool {
 func (p *parser) suite(what string) *ir.Block {
 	start := p.tok().pos
 	b := &ir.Block{}
-	if !p.expect(":", "di akhir baris "+what) {
+	if !p.expect(":", "at the end of the "+what+" line") {
 		// lompati sisa baris kepala
 		for !p.at(tNewline) && !p.at(tEOF) {
 			p.next()
@@ -374,7 +374,7 @@ func (p *parser) suite(what string) *ir.Block {
 		p.next()
 	}
 	if !p.at(tIndent) {
-		p.errAt(p.prevEnd(), "badan "+what+" belum ditulis (harus menjorok ke dalam)")
+		p.errAt(p.prevEnd(), "the "+what+" body is missing (it must be indented)")
 		b.S = p.span(start)
 		return b
 	}
@@ -386,13 +386,13 @@ func (p *parser) suite(what string) *ir.Block {
 			continue
 		}
 		if p.at(tIndent) {
-			p.errAt(p.tok().pos, "indentasi tidak terduga")
+			p.errAt(p.tok().pos, "unexpected indentation")
 			p.next()
 			continue
 		}
 		b.List = append(b.List, p.stmt()...)
 		if p.i == before {
-			b.List = append(b.List, p.badLine("tidak bisa dibaca di sini"))
+			b.List = append(b.List, p.badLine("cannot be read here"))
 		}
 	}
 	if p.at(tDedent) {
@@ -424,10 +424,10 @@ func (p *parser) forStmt(start ir.Pos) ir.Stmt {
 	p.next()
 	fe := &ir.ForEach{Kind: "py"}
 	fe.Value = p.targetList()
-	if p.expect("in", "di for") {
+	if p.expect("in", "in for") {
 		fe.X = p.exprListStar()
 	} else {
-		fe.X = &ir.BadExpr{S: p.span(start), Msg: "for tanpa in"}
+		fe.X = &ir.BadExpr{S: p.span(start), Msg: "for without in"}
 	}
 	fe.Header = p.span(start)
 	fe.Body = p.suite("for")
@@ -461,7 +461,7 @@ func (p *parser) funcDef(start ir.Pos, async bool) ir.Stmt {
 	if p.at(tName) {
 		f.Name = p.next().text
 	} else {
-		p.errAt(p.tok().pos, "kurang nama fungsi")
+		p.errAt(p.tok().pos, "missing function name")
 	}
 	if p.is("[") { // parameter tipe generik Python 3.12
 		for !p.is("]") && !p.at(tEOF) {
@@ -482,7 +482,7 @@ func (p *parser) funcDef(start ir.Pos, async bool) ir.Stmt {
 // params membaca parameter def (sampai ")") atau lambda (sampai ":").
 func (p *parser) params(close string) []*ir.Param {
 	var out []*ir.Param
-	if close == ")" && !p.expect("(", "setelah nama fungsi") {
+	if close == ")" && !p.expect("(", "after the function name") {
 		return nil
 	}
 	for !p.is(close) && !p.at(tEOF) && !p.at(tNewline) {
@@ -501,7 +501,7 @@ func (p *parser) params(close string) []*ir.Param {
 			continue
 		}
 		if !p.at(tName) {
-			p.errAt(p.tok().pos, "kurang nama parameter")
+			p.errAt(p.tok().pos, "missing parameter name")
 			break
 		}
 		pr.Name = p.next().text
@@ -517,7 +517,7 @@ func (p *parser) params(close string) []*ir.Param {
 		}
 	}
 	if close == ")" {
-		p.expect(")", "untuk menutup parameter")
+		p.expect(")", "to close the parameters")
 	}
 	return out
 }
@@ -540,7 +540,7 @@ func (p *parser) classDef(start ir.Pos) ir.Stmt {
 				break
 			}
 		}
-		p.expect(")", "untuk menutup daftar kelas induk")
+		p.expect(")", "to close the base class list")
 	}
 	c.Header = p.span(start)
 	body := p.suite("class")
@@ -587,7 +587,7 @@ func (p *parser) tryStmt() ir.Stmt {
 		n.Finally = p.suite("finally")
 	}
 	if len(n.Catches) == 0 && n.Finally == nil {
-		p.errAt(start, "try harus diikuti except atau finally")
+		p.errAt(start, "try must be followed by except or finally")
 	}
 	n.S = p.span(start)
 	return n
@@ -705,7 +705,7 @@ func (p *parser) tryMatch(start ir.Pos) ir.Stmt {
 	if p.at(tDedent) {
 		p.next()
 	} else if !p.at(tEOF) {
-		p.errAt(p.tok().pos, "di dalam match hanya boleh ada case")
+		p.errAt(p.tok().pos, "only case is allowed inside match")
 	}
 	sw.S = p.span(start)
 	return sw
@@ -807,13 +807,13 @@ func (p *parser) test() ir.Expr {
 	start := p.tok().pos
 	if p.depth > 300 {
 		p.next()
-		return &ir.BadExpr{S: p.span(start), Msg: "ekspresi terlalu dalam"}
+		return &ir.BadExpr{S: p.span(start), Msg: "expression nested too deep"}
 	}
 	if p.is("lambda") {
 		p.next()
 		f := &ir.Func{Arrow: true, Params: p.params(":")}
 		f.Header = p.span(start)
-		p.expect(":", "di lambda")
+		p.expect(":", "in lambda")
 		f.ExprBody = p.test()
 		f.S = p.span(start)
 		return f
@@ -822,7 +822,7 @@ func (p *parser) test() ir.Expr {
 	if p.is("if") {
 		p.next()
 		c := p.binary(precOr - 1)
-		if !p.expect("else", "di ekspresi ... if ... else ...") {
+		if !p.expect("else", "in the ... if ... else ... expression") {
 			return &ir.Cond{S: p.span(start), C: c, T: x, F: &ir.BadExpr{S: p.span(start)}}
 		}
 		f := p.test()
@@ -948,7 +948,7 @@ func (p *parser) postfix(x ir.Expr, start ir.Pos) ir.Expr {
 			if len(args) == 1 && p.is("for") {
 				args[0] = p.comprehension("gen", args[0], nil, nil, start)
 			}
-			p.expect(")", "untuk menutup argumen")
+			p.expect(")", "to close the arguments")
 			x = &ir.Call{S: p.span(start), Fun: x, Args: args}
 		case p.is("["):
 			p.next()
@@ -956,7 +956,7 @@ func (p *parser) postfix(x ir.Expr, start ir.Pos) ir.Expr {
 		case p.is("."):
 			p.next()
 			if !p.at(tName) {
-				p.errAt(p.tok().pos, "kurang nama setelah \".\"")
+				p.errAt(p.tok().pos, "missing name after \".\"")
 				return x
 			}
 			name := p.next().text
@@ -1011,7 +1011,7 @@ func (p *parser) subscript(x ir.Expr, start ir.Pos) ir.Expr {
 			break
 		}
 	}
-	p.expect("]", "untuk menutup indeks")
+	p.expect("]", "to close the index")
 	if isSlice && len(items) == 1 {
 		s := items[0].(*ir.Slice)
 		s.S = p.span(start)
@@ -1058,9 +1058,9 @@ func (p *parser) atom() ir.Expr {
 			return p.test()
 		}
 		if isKeyword(t.text) {
-			p.errAt(t.pos, fmt.Sprintf("kata kunci %q tidak bisa dipakai di sini", t.text))
+			p.errAt(t.pos, fmt.Sprintf("keyword %q cannot be used here", t.text))
 			p.next()
-			return &ir.BadExpr{S: t.spanOf(), Msg: "kata kunci"}
+			return &ir.BadExpr{S: t.spanOf(), Msg: "keyword"}
 		}
 		p.next()
 		return &ir.Ident{S: t.spanOf(), Name: t.text}
@@ -1078,14 +1078,14 @@ func (p *parser) atom() ir.Expr {
 				return c
 			}
 			if !p.is(",") {
-				p.expect(")", "untuk menutup kurung")
+				p.expect(")", "to close the parenthesis")
 				return first
 			}
 			items := []ir.Expr{first}
 			for p.accept(",") && !p.is(")") {
 				items = append(items, p.starOr(p.namedExpr))
 			}
-			p.expect(")", "untuk menutup tuple")
+			p.expect(")", "to close the tuple")
 			return &ir.ArrayLit{S: p.span(start), Elems: items, Kind: "tuple"}
 		case "[":
 			p.next()
@@ -1102,7 +1102,7 @@ func (p *parser) atom() ir.Expr {
 			for p.accept(",") && !p.is("]") {
 				items = append(items, p.starOr(p.namedExpr))
 			}
-			p.expect("]", "untuk menutup list")
+			p.expect("]", "to close the list")
 			return &ir.ArrayLit{S: p.span(start), Elems: items, Kind: "list"}
 		case "{":
 			return p.dictOrSet()
@@ -1111,12 +1111,12 @@ func (p *parser) atom() ir.Expr {
 			return &ir.Ident{S: t.spanOf(), Name: "Ellipsis"}
 		}
 	case tNewline, tEOF, tDedent, tIndent:
-		p.errAt(t.pos, "ekspresi belum selesai")
-		return &ir.BadExpr{S: t.spanOf(), Msg: "ekspresi belum selesai"}
+		p.errAt(t.pos, "unfinished expression")
+		return &ir.BadExpr{S: t.spanOf(), Msg: "unfinished expression"}
 	}
-	p.errAt(t.pos, "tidak bisa dibaca sebagai ekspresi: "+t.text)
+	p.errAt(t.pos, "cannot be read as an expression: "+t.text)
 	p.next()
-	return &ir.BadExpr{S: p.span(start), Msg: "ekspresi tidak valid"}
+	return &ir.BadExpr{S: p.span(start), Msg: "invalid expression"}
 }
 
 func isKeyword(s string) bool {
@@ -1161,7 +1161,7 @@ func (p *parser) dictOrSet() ir.Expr {
 	for p.accept(",") && !p.is("}") {
 		items = append(items, p.starOr(p.namedExpr))
 	}
-	p.expect("}", "untuk menutup set")
+	p.expect("}", "to close the set")
 	return &ir.ArrayLit{S: p.span(start), Elems: items, Kind: "set"}
 }
 
@@ -1173,11 +1173,11 @@ func (p *parser) dictRest(obj *ir.ObjectLit, start ir.Pos) ir.Expr {
 			continue
 		}
 		k := p.test()
-		p.expect(":", "di dict")
+		p.expect(":", "in dict")
 		v := p.test()
 		obj.Props = append(obj.Props, &ir.Prop{S: p.span(ps), Key: k, Value: v, Computed: true})
 	}
-	p.expect("}", "untuk menutup dict")
+	p.expect("}", "to close the dict")
 	obj.S = p.span(start)
 	return obj
 }
@@ -1188,7 +1188,7 @@ func (p *parser) comprehension(kind string, elt, key, val ir.Expr, start ir.Pos)
 		p.accept("async")
 		p.next()
 		f := &ir.CompFor{Target: p.targetList()}
-		p.expect("in", "di comprehension")
+		p.expect("in", "in the comprehension")
 		f.Iter = p.binary(precOr - 1)
 		for p.is("if") {
 			p.next()
@@ -1255,8 +1255,8 @@ func (p *parser) strings() ir.Expr {
 // subExpr mem-parse ekspresi di dalam f-string.
 func (p *parser) subExpr(src string, off int, near ir.Pos) ir.Expr {
 	if strings.TrimSpace(src) == "" {
-		p.errAt(near, "ekspresi kosong di f-string")
-		return &ir.BadExpr{S: ir.Span{Start: near, End: near}, Msg: "kosong"}
+		p.errAt(near, "empty expression in the f-string")
+		return &ir.BadExpr{S: ir.Span{Start: near, End: near}, Msg: "empty"}
 	}
 	toks, diags := lex("(" + src + ")")
 	// geser posisi supaya menunjuk ke sumber asli ("(" tambahan ada di offset off-1)

@@ -33,14 +33,14 @@
       "phase": "body",
       "line": 15,
       "iteration": 0,
-      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "note": "G1 waits: select (waiting for a case to be ready)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
@@ -75,7 +75,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "select: terima \"t=10ms\" dari time.After(10 * time.Millisecond)",
+      "note": "select: receive \"t=10ms\" from time.After(10 * time.Millisecond)",
       "ops": [
         {
           "op": "recv",
@@ -104,7 +104,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -127,7 +127,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "note": "fmt.Println(\"menunggu...\") → print \"menunggu...\"",
       "output": "menunggu...\n",
       "mem": {
         "vars": [
@@ -149,7 +149,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -169,20 +169,20 @@
       "phase": "body",
       "line": 15,
       "iteration": 1,
-      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "note": "G1 waits: select (waiting for a case to be ready)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -213,7 +213,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "select: terima \"t=20ms\" dari time.After(10 * time.Millisecond)",
+      "note": "select: receive \"t=20ms\" from time.After(10 * time.Millisecond)",
       "ops": [
         {
           "op": "send",
@@ -248,7 +248,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -271,7 +271,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "note": "fmt.Println(\"menunggu...\") → print \"menunggu...\"",
       "output": "menunggu...\n",
       "mem": {
         "vars": [
@@ -293,7 +293,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -313,20 +313,20 @@
       "phase": "body",
       "line": 15,
       "iteration": 2,
-      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "note": "G1 waits: select (waiting for a case to be ready)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -357,7 +357,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "select: terima \"t=30ms\" dari time.After(10 * time.Millisecond)",
+      "note": "select: receive \"t=30ms\" from time.After(10 * time.Millisecond)",
       "ops": [
         {
           "op": "send",
@@ -392,7 +392,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -415,7 +415,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "note": "fmt.Println(\"menunggu...\") → print \"menunggu...\"",
       "output": "menunggu...\n",
       "mem": {
         "vars": [
@@ -437,7 +437,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -457,20 +457,20 @@
       "phase": "body",
       "line": 15,
       "iteration": 3,
-      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "note": "G1 waits: select (waiting for a case to be ready)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -501,7 +501,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "select: terima \"t=40ms\" dari time.After(10 * time.Millisecond)",
+      "note": "select: receive \"t=40ms\" from time.After(10 * time.Millisecond)",
       "ops": [
         {
           "op": "send",
@@ -536,7 +536,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -559,7 +559,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "fmt.Println(\"menunggu...\") → cetak \"menunggu...\"",
+      "note": "fmt.Println(\"menunggu...\") → print \"menunggu...\"",
       "output": "menunggu...\n",
       "mem": {
         "vars": [
@@ -581,7 +581,7 @@
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -601,20 +601,20 @@
       "phase": "body",
       "line": 15,
       "iteration": 4,
-      "note": "G1 menunggu: select (menunggu salah satu case siap)",
+      "note": "G1 waits: select (waiting for a case to be ready)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "select (menunggu salah satu case siap)"
+          "why": "select (waiting for a case to be ready)"
         },
         {
           "id": 2,
           "name": "func() { time.Sleep(45 * time.Millisecond) done <- \"beres\" }()",
           "state": "tidur",
-          "why": "tidur 45ms"
+          "why": "sleeping 45ms"
         }
       ],
       "chans": [
@@ -646,7 +646,7 @@
         "done": "chan",
         "msg": "\"beres\""
       },
-      "note": "select: terima \"beres\" dari done",
+      "note": "select: receive \"beres\" from done",
       "ops": [
         {
           "op": "recv",
@@ -709,7 +709,7 @@
         "done": "chan",
         "msg": "\"beres\""
       },
-      "note": "fmt.Println(\"dapat:\", msg) → cetak \"dapat: beres\"",
+      "note": "fmt.Println(\"dapat:\", msg) → print \"dapat: beres\"",
       "output": "dapat: beres\n",
       "mem": {
         "vars": [
@@ -765,7 +765,7 @@
         "done": "chan",
         "msg": "\"beres\""
       },
-      "note": "return → keluar dari fungsi",
+      "note": "return → leave the function",
       "mem": {
         "vars": [
           {
@@ -819,7 +819,7 @@
       "vars": {
         "done": "chan"
       },
-      "note": "keluar dari loop karena return",
+      "note": "leave the loop because of return",
       "reason": "return",
       "mem": {
         "vars": [

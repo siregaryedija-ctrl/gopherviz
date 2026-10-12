@@ -98,10 +98,10 @@ func (it *interp) setupJava(s *javaSem) {
 	sys.statics.set(strV("err"), errS)
 	sys.statics.set(strV("in"), in)
 	fn(sys, "currentTimeMillis", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		return unknown("waktu sistem tidak bisa disimulasikan")
+		return unknown("system time cannot be simulated")
 	})
 	fn(sys, "nanoTime", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		return unknown("waktu sistem tidak bisa disimulasikan")
+		return unknown("system time cannot be simulated")
 	})
 	fn(sys, "exit", func(it *interp, this Value, args []Value, at ir.Node) Value {
 		panic(progExit{code: intOf(arg(args, 0))})
@@ -198,7 +198,7 @@ func (it *interp) setupJava(s *javaSem) {
 		return it.sem.convert(it, jlong(r), numPromote(arg(args, 0), arg(args, 1)))
 	})
 	fn(m, "random", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("Math.random() disimulasikan dengan seed tetap; hasilnya berbeda dengan saat program dijalankan")
+		it.warn("Math.random() is simulated with a fixed seed; results differ from a real run")
 		return floatV(it.rng.Float64())
 	})
 
@@ -444,7 +444,7 @@ func (it *interp) setupJava(s *javaSem) {
 	})
 	setI := cls("Set")
 	fn(setI, "of", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("urutan Set.of di Java tidak ditentukan; simulator memakai urutan tulis")
+		it.warn("Set.of order is unspecified in Java; the simulator uses the written order")
 		d := it.newDict("LinkedHashSet")
 		for _, a := range args {
 			d.set(a, a)
@@ -453,7 +453,7 @@ func (it *interp) setupJava(s *javaSem) {
 	})
 	mapI := cls("Map")
 	fn(mapI, "of", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("urutan Map.of di Java tidak ditentukan; simulator memakai urutan tulis")
+		it.warn("Map.of order is unspecified in Java; the simulator uses the written order")
 		d := it.newDict("LinkedHashMap")
 		for i := 0; i+1 < len(args); i += 2 {
 			d.set(args[i], args[i+1])
@@ -615,7 +615,7 @@ func (it *interp) setupJava(s *javaSem) {
 		return jint(int64(n))
 	})
 	fn(coll, "shuffle", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("Collections.shuffle disimulasikan dengan seed tetap")
+		it.warn("Collections.shuffle is simulated with a fixed seed")
 		l := arg(args, 0).l
 		it.rng.Shuffle(len(l.elems), func(i, j int) { l.elems[i], l.elems[j] = l.elems[j], l.elems[i] })
 		return undef()
@@ -899,7 +899,7 @@ func (it *interp) javaObjMember(x Value, name string, at ir.Node) (Value, bool) 
 		toErr := x.o.fields.has(strV("err"))
 		write := func(s string) {
 			if toErr {
-				it.warn("output ke System.err tidak ditampilkan di output program")
+				it.warn("output to System.err is not shown in the program output")
 				return
 			}
 			it.out(s)
@@ -1050,7 +1050,7 @@ func (it *interp) javaObjMember(x Value, name string, at ir.Node) (Value, bool) 
 			return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return undef() })
 		}
 	case c.native == "Random":
-		it.warn("Random disimulasikan dengan seed tetap; hasilnya berbeda dengan saat program dijalankan")
+		it.warn("Random is simulated with a fixed seed; results differ from a real run")
 		switch name {
 		case "nextInt":
 			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
@@ -1085,7 +1085,7 @@ func (it *interp) javaObjMember(x Value, name string, at ir.Node) (Value, bool) 
 			})
 		case "printStackTrace":
 			return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
-				it.warn("printStackTrace menulis ke System.err (tidak ditampilkan)")
+				it.warn("printStackTrace writes to System.err (not shown)")
 				return undef()
 			})
 		}
@@ -1249,7 +1249,7 @@ func (it *interp) javaStrMember(x Value, name string, at ir.Node) (Value, bool) 
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value {
 			re, err := regexp.Compile(argStr(arg(args, 0)))
 			if err != nil {
-				it.structural("regex ini belum didukung simulator")
+				it.structural("this regex is not supported by the simulator yet")
 			}
 			rep := strings.ReplaceAll(argStr(arg(args, 1)), "$", "$$")
 			for i := 9; i >= 0; i-- {
@@ -1305,7 +1305,7 @@ func (it *interp) javaStrMember(x Value, name string, at ir.Node) (Value, bool) 
 	case "intern", "toString":
 		return m(func(it *interp, this Value, args []Value, at ir.Node) Value { return this })
 	case "chars":
-		it.structural("stream (chars()) belum disimulasikan")
+		it.structural("streams (chars()) are not simulated yet")
 	}
 	return Value{}, false
 }
@@ -1556,7 +1556,7 @@ func (it *interp) javaListMember(x Value, name string, at ir.Node) (Value, bool)
 			return it.newList("array", append([]Value(nil), l.elems...))
 		})
 	case "stream":
-		it.structural("Stream API belum disimulasikan")
+		it.structural("the Stream API is not simulated yet")
 	}
 	return Value{}, false
 }

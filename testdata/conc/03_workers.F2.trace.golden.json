@@ -40,7 +40,7 @@
       "phase": "call",
       "line": 11,
       "func": "main",
-      "note": "panggil main()"
+      "note": "call main()"
     },
     {
       "n": 1,
@@ -193,7 +193,7 @@
         "results": "chan",
         "w": "1"
       },
-      "note": "go worker(w, jobs, results) → goroutine G2 dibuat (siap jalan)",
+      "note": "go worker(w, jobs, results) → goroutine G2 created (ready to run)",
       "g": 1,
       "gs": [
         {
@@ -320,7 +320,7 @@
         "results": "chan",
         "w": "2"
       },
-      "note": "go worker(w, jobs, results) → goroutine G3 dibuat (siap jalan)",
+      "note": "go worker(w, jobs, results) → goroutine G3 created (ready to run)",
       "g": 1,
       "gs": [
         {
@@ -462,7 +462,7 @@
         "results": "chan",
         "w": "3"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "g": 1,
       "gs": [
@@ -605,7 +605,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 1 ke jobs",
+      "note": "jobs <- j → send 1 to jobs",
       "ops": [
         {
           "op": "send",
@@ -761,7 +761,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 2 ke jobs",
+      "note": "jobs <- j → send 2 to jobs",
       "ops": [
         {
           "op": "send",
@@ -920,7 +920,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 3 ke jobs",
+      "note": "jobs <- j → send 3 to jobs",
       "ops": [
         {
           "op": "send",
@@ -1082,7 +1082,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 4 ke jobs",
+      "note": "jobs <- j → send 4 to jobs",
       "ops": [
         {
           "op": "send",
@@ -1247,7 +1247,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 5 ke jobs",
+      "note": "jobs <- j → send 5 to jobs",
       "ops": [
         {
           "op": "send",
@@ -1415,7 +1415,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "g": 1,
       "gs": [
@@ -1680,14 +1680,14 @@
       "phase": "body",
       "line": 23,
       "iteration": 0,
-      "note": "G1 menunggu: <-results (menunggu data)",
+      "note": "G1 waits: <-results (waiting for data)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -1738,14 +1738,14 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "panggil worker(id = 2, jobs = chan, results = chan)",
+      "note": "call worker(id = 2, jobs = chan, results = chan)",
       "g": 3,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -1802,7 +1802,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -1854,7 +1854,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-1: j = 1",
+      "note": "take element #1: j = 1",
       "ops": [
         {
           "op": "recv",
@@ -1869,7 +1869,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -1919,7 +1919,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 2 ke results",
+      "note": "results <- j * 2 → send 2 to results",
       "ops": [
         {
           "op": "send",
@@ -1985,7 +1985,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-2: j = 2",
+      "note": "take element #2: j = 2",
       "ops": [
         {
           "op": "recv",
@@ -2049,7 +2049,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 4 ke results",
+      "note": "results <- j * 2 → send 4 to results",
       "ops": [
         {
           "op": "send",
@@ -2115,7 +2115,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-3: j = 3",
+      "note": "take element #3: j = 3",
       "ops": [
         {
           "op": "recv",
@@ -2179,7 +2179,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 6 ke results",
+      "note": "results <- j * 2 → send 6 to results",
       "ops": [
         {
           "op": "send",
@@ -2245,7 +2245,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-4: j = 4",
+      "note": "take element #4: j = 4",
       "ops": [
         {
           "op": "recv",
@@ -2309,7 +2309,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 8 ke results",
+      "note": "results <- j * 2 → send 8 to results",
       "ops": [
         {
           "op": "send",
@@ -2375,7 +2375,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-5: j = 5",
+      "note": "take element #5: j = 5",
       "ops": [
         {
           "op": "recv",
@@ -2438,7 +2438,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 10 ke results",
+      "note": "results <- j * 2 → send 10 to results",
       "ops": [
         {
           "op": "send",
@@ -2502,7 +2502,7 @@
         "results": "chan"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "g": 3,
       "gs": [
         {
@@ -2557,7 +2557,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "g": 3,
       "gs": [
@@ -2613,7 +2613,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "worker(id = 2, jobs = chan, results = chan) selesai",
+      "note": "worker(id = 2, jobs = chan, results = chan) done",
       "g": 3,
       "gs": [
         {
@@ -2668,7 +2668,7 @@
         "results": "chan",
         "sum": "0"
       },
-      "note": "terima 2 dari results",
+      "note": "receive 2 from results",
       "ops": [
         {
           "op": "recv",
@@ -2893,7 +2893,7 @@
         "results": "chan",
         "sum": "2"
       },
-      "note": "terima 4 dari results",
+      "note": "receive 4 from results",
       "ops": [
         {
           "op": "recv",
@@ -3114,7 +3114,7 @@
         "results": "chan",
         "sum": "6"
       },
-      "note": "terima 6 dari results",
+      "note": "receive 6 from results",
       "ops": [
         {
           "op": "recv",
@@ -3331,7 +3331,7 @@
         "results": "chan",
         "sum": "12"
       },
-      "note": "terima 8 dari results",
+      "note": "receive 8 from results",
       "ops": [
         {
           "op": "recv",
@@ -3544,7 +3544,7 @@
         "results": "chan",
         "sum": "20"
       },
-      "note": "terima 10 dari results",
+      "note": "receive 10 from results",
       "ops": [
         {
           "op": "recv",
@@ -3749,7 +3749,7 @@
         "results": "chan",
         "sum": "30"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "g": 1,
       "gs": [
@@ -3797,7 +3797,7 @@
         "results": "chan",
         "sum": "30"
       },
-      "note": "fmt.Println(\"total\", sum) → cetak \"total 30\"",
+      "note": "fmt.Println(\"total\", sum) → print \"total 30\"",
       "output": "total 30\n",
       "g": 1,
       "gs": [
@@ -3846,7 +3846,7 @@
         "results": "chan",
         "sum": "30"
       },
-      "note": "main() selesai",
+      "note": "main() done",
       "g": 1,
       "gs": [
         {

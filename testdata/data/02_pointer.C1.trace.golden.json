@@ -110,7 +110,7 @@
       "n": 3,
       "loop": "",
       "phase": "exit",
-      "note": "program selesai",
+      "note": "program finished",
       "output": "3 {3}\ntrue\n",
       "reason": "done",
       "objs": [

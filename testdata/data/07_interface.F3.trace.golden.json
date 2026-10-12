@@ -39,7 +39,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "panggil Rect.String(r = {2 3})",
+      "note": "call Rect.String(r = {2 3})",
       "mem": {
         "vars": [
           {
@@ -88,7 +88,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → keluar dari fungsi",
+      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → leave the function",
       "mem": {
         "vars": [
           {
@@ -139,7 +139,7 @@
       "vars": {
         "r": "{2 3}"
       },
-      "note": "Rect.String(r = {2 3}) mengembalikan \"Rect(2x3)\"",
+      "note": "Rect.String(r = {2 3}) returns \"Rect(2x3)\"",
       "mem": {
         "vars": [
           {
@@ -190,7 +190,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "panggil Rect.String(r = {1 1})",
+      "note": "call Rect.String(r = {1 1})",
       "mem": {
         "vars": [
           {
@@ -239,7 +239,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → keluar dari fungsi",
+      "note": "return fmt.Sprintf(\"Rect(%vx%v)\", r.W, r.H) → leave the function",
       "mem": {
         "vars": [
           {
@@ -290,7 +290,7 @@
       "vars": {
         "r": "{1 1}"
       },
-      "note": "Rect.String(r = {1 1}) mengembalikan \"Rect(1x1)\"",
+      "note": "Rect.String(r = {1 1}) returns \"Rect(1x1)\"",
       "mem": {
         "vars": [
           {

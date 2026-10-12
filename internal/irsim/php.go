@@ -321,7 +321,7 @@ func (s *phpSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		case "*":
 			r, ok = mulOv(x.i, y.i)
 		default:
-			it.structural("operator " + op + " belum disimulasikan")
+			it.structural("operator " + op + " is not simulated yet")
 		}
 		if ok {
 			return intV(r)
@@ -336,7 +336,7 @@ func (s *phpSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 	case "*":
 		return floatV(f * g)
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -487,7 +487,7 @@ func (s *phpSem) unary(it *interp, op string, v Value, at ir.Node) Value {
 	case "~":
 		return intV(^int64(toF(it.phpToNumber(v, "~", intV(0), at))))
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 

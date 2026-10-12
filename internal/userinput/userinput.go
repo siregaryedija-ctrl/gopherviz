@@ -24,7 +24,7 @@ const MaxReads = 20
 const DefaultSeed = 20261007
 
 // Warning ditambahkan ke trace bila ada input yang diisi angka acak.
-const Warning = "input user belum diisi, jadi diisi angka acak 0–100 sebagai contoh"
+const Warning = "user input is empty, so random numbers 0–100 are used as an example"
 
 // Source menghasilkan baris input: nilai dari user dulu, lalu angka acak.
 type Source struct {

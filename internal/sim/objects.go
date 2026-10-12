@@ -60,7 +60,7 @@ func (it *interp) objID(st *structVal) string {
 	if len(ob.list) >= maxObjs {
 		if !ob.overflow {
 			ob.overflow = true
-			it.warn(fmt.Sprintf("hanya %d object pertama yang digambar", maxObjs))
+			it.warn(fmt.Sprintf("only the first %d objects are drawn", maxObjs))
 		}
 		return ""
 	}
@@ -304,7 +304,7 @@ func (it *interp) classWatch(n ast.Node, e *env) {
 	it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Note: it.text(n)}, e)
 }
 
-// classFinish menutup trace class dengan langkah "program selesai".
+// classFinish menutup trace class dengan langkah "program finished".
 func (it *interp) classFinish() {
 	r := it.rec
 	if r.obj.typ == "" || !r.reached || r.truncated {
@@ -312,7 +312,7 @@ func (it *interp) classFinish() {
 	}
 	defer func() { recover() }()
 	r.obj.final = true
-	it.add(trace.Step{Phase: trace.PhaseExit, Reason: trace.ReasonDone, Note: "program selesai"}, it.globals)
+	it.add(trace.Step{Phase: trace.PhaseExit, Reason: trace.ReasonDone, Note: "program finished"}, it.globals)
 }
 
 // classInfo: cetak biru struct name: field, method (urut sumber), struct tertanam (induk),

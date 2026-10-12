@@ -349,7 +349,7 @@
         "line": 110,
         "endLine": 112,
         "state": "complete",
-        "name": "(anonim)",
+        "name": "(anonymous)",
         "header": "function ($x) use ($pengali)",
         "params": [
           "$x"

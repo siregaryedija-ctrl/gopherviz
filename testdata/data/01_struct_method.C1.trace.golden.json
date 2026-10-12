@@ -63,7 +63,7 @@
       "vars": {
         "p": "&{Ani 20}"
       },
-      "note": "panggil Person.Birthday(p = &{Ani 20})",
+      "note": "call Person.Birthday(p = &{Ani 20})",
       "objs": [
         {
           "id": "obj1",
@@ -124,7 +124,7 @@
       "vars": {
         "p": "&{Ani 21}"
       },
-      "note": "Person.Birthday(p = &{Ani 20}) selesai",
+      "note": "Person.Birthday(p = &{Ani 20}) done",
       "objs": [
         {
           "id": "obj1",
@@ -156,7 +156,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "panggil Person.Greet(p = {Ani 21})",
+      "note": "call Person.Greet(p = {Ani 21})",
       "objs": [
         {
           "id": "obj1",
@@ -187,7 +187,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "return \"Halo, aku \" + p.Name → keluar dari fungsi",
+      "note": "return \"Halo, aku \" + p.Name → leave the function",
       "objs": [
         {
           "id": "obj1",
@@ -220,7 +220,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "Person.Greet(p = {Ani 21}) mengembalikan \"Halo, aku Ani\"",
+      "note": "Person.Greet(p = {Ani 21}) returns \"Halo, aku Ani\"",
       "objs": [
         {
           "id": "obj1",
@@ -477,7 +477,7 @@
       "vars": {
         "p": "&{Budi 30}"
       },
-      "note": "panggil Person.Birthday(p = &{Budi 30})",
+      "note": "call Person.Birthday(p = &{Budi 30})",
       "objs": [
         {
           "id": "obj1",
@@ -656,7 +656,7 @@
       "vars": {
         "p": "&{Budi 31}"
       },
-      "note": "Person.Birthday(p = &{Budi 30}) selesai",
+      "note": "Person.Birthday(p = &{Budi 30}) done",
       "objs": [
         {
           "id": "obj1",
@@ -835,7 +835,7 @@
       "vars": {
         "p": "&{Citra 25}"
       },
-      "note": "panggil Person.Birthday(p = &{Citra 25})",
+      "note": "call Person.Birthday(p = &{Citra 25})",
       "objs": [
         {
           "id": "obj1",
@@ -1012,7 +1012,7 @@
       "vars": {
         "p": "&{Citra 26}"
       },
-      "note": "Person.Birthday(p = &{Citra 25}) selesai",
+      "note": "Person.Birthday(p = &{Citra 25}) done",
       "objs": [
         {
           "id": "obj1",
@@ -1302,7 +1302,7 @@
       "loop": "",
       "run": 4,
       "phase": "exit",
-      "note": "program selesai",
+      "note": "program finished",
       "output": "Ani Salinan\n",
       "reason": "done",
       "objs": [

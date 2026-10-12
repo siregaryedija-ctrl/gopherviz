@@ -55,7 +55,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -95,7 +95,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati",
+      "note": "all conditions false and no else → skip",
       "g": 2,
       "gs": [
         {
@@ -112,7 +112,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -151,7 +151,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done",
       "g": 2,
       "gs": [
@@ -169,7 +169,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -221,7 +221,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -266,7 +266,7 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati",
+      "note": "all conditions false and no else → skip",
       "g": 3,
       "gs": [
         {
@@ -278,7 +278,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -322,7 +322,7 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done",
       "g": 3,
       "gs": [
@@ -335,7 +335,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -397,7 +397,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -437,7 +437,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati",
+      "note": "all conditions false and no else → skip",
       "g": 2,
       "gs": [
         {
@@ -454,7 +454,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -493,7 +493,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done",
       "g": 2,
       "gs": [
@@ -511,7 +511,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -563,7 +563,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -608,7 +608,7 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "masuk cabang ke-1 (if ball >= 4)",
+      "note": "take branch #1 (if ball >= 4)",
       "g": 3,
       "gs": [
         {
@@ -620,7 +620,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -712,7 +712,7 @@
       "run": 4,
       "phase": "body",
       "line": 10,
-      "note": "G3 menunggu: done <- true (menunggu penerima)",
+      "note": "G3 waits: done <- true (waiting for a receiver)",
       "ops": [
         {
           "op": "send",
@@ -737,7 +737,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         }
       ],
       "chans": [

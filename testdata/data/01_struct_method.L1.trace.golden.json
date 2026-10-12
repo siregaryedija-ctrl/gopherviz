@@ -36,7 +36,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 30} {Citra 25}]"
       },
-      "note": "range people (2 elemen)",
+      "note": "range people (2 elements)",
       "items": [
         "{Budi 30}",
         "{Citra 25}"
@@ -80,7 +80,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-1: p = {Budi 30}",
+      "note": "take element #1: p = {Budi 30}",
       "ops": [
         {
           "op": "read",
@@ -195,7 +195,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-2: p = {Citra 25}",
+      "note": "take element #2: p = {Citra 25}",
       "ops": [
         {
           "op": "read",
@@ -309,7 +309,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "mem": {
         "vars": [
           {
@@ -347,7 +347,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 30} {Citra 25}]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "mem": {
         "vars": [

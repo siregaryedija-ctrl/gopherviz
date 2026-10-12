@@ -334,7 +334,7 @@
         "line": 53,
         "endLine": 53,
         "state": "complete",
-        "name": "(anonim)",
+        "name": "(anonymous)",
         "header": "[](int a)",
         "params": [
           "a"

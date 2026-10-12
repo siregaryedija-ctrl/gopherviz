@@ -33,7 +33,7 @@
       "phase": "call",
       "line": 16,
       "func": "func",
-      "note": "panggil func()"
+      "note": "call func()"
     },
     {
       "n": 1,
@@ -68,7 +68,7 @@
       "phase": "return",
       "line": 20,
       "func": "func",
-      "note": "func() selesai"
+      "note": "func() done"
     },
     {
       "n": 4,
@@ -78,7 +78,7 @@
       "phase": "call",
       "line": 16,
       "func": "func",
-      "note": "panggil func()"
+      "note": "call func()"
     },
     {
       "n": 5,
@@ -87,7 +87,7 @@
       "run": 2,
       "phase": "body",
       "line": 17,
-      "note": "recover() menangkap panic: runtime error: integer divide by zero → program lanjut"
+      "note": "recover() catches panic: runtime error: integer divide by zero → the program continues"
     },
     {
       "n": 6,
@@ -134,7 +134,7 @@
       "phase": "return",
       "line": 20,
       "func": "func",
-      "note": "func() selesai"
+      "note": "func() done"
     }
   ],
   "truncated": false,

@@ -152,7 +152,7 @@ func (it *interp) setupJS(s *jsSem) {
 			return num(r)
 		}),
 		"random": bf("random", func(it *interp, this Value, args []Value, at ir.Node) Value {
-			it.warn("Math.random() disimulasikan dengan angka acak tetap (seed); hasilnya tidak sama dengan saat program dijalankan")
+			it.warn("Math.random() is simulated with a fixed random seed; results differ from a real run")
 			return num(it.rng.Float64())
 		}),
 	})
@@ -207,7 +207,7 @@ func (it *interp) setupJS(s *jsSem) {
 						return v
 					}
 				}
-				return unknown("modul")
+				return unknown("module")
 			}
 			if nm == "prompt" { // kotak dialog browser: teks yang diketik user (angka acak), null bila habis
 				if s, ok := it.userText(false); ok {
@@ -215,7 +215,7 @@ func (it *interp) setupJS(s *jsSem) {
 				}
 				return null()
 			}
-			return unknown("membaca input dari user (" + nm + ") belum didukung")
+			return unknown("reading user input (" + nm + ") is not supported yet")
 		})
 	}
 
@@ -687,7 +687,7 @@ func (it *interp) awaitValue(v Value, at ir.Node) Value {
 		}
 		it.runOneTask()
 	}
-	return unknown("promise belum selesai")
+	return unknown("promise not settled yet")
 }
 
 func (it *interp) runOneTask() {

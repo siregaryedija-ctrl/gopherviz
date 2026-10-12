@@ -214,7 +214,7 @@ func (it *interp) treeStep(e *env) *trace.TreeState {
 	if r.tree == nil {
 		t, ids, tooBig := readTree(v, sp)
 		if tooBig {
-			it.warn(fmt.Sprintf("pohon lebih dari %d simpul tidak digambar", graphs.MaxTreeNodes))
+			it.warn(fmt.Sprintf("trees with more than %d nodes are not drawn", graphs.MaxTreeNodes))
 		}
 		if t == nil {
 			r.treeSpec = nil

@@ -76,7 +76,7 @@ func (it *interp) loadModule(path string) *module {
 		return nil
 	}
 	if len(it.mods) >= maxModules {
-		it.warn(fmt.Sprintf("hanya %d file pertama yang ikut disimulasikan", maxModules))
+		it.warn(fmt.Sprintf("only the first %d files are simulated", maxModules))
 		return nil
 	}
 	text, ok := it.files.Read(path)
@@ -86,7 +86,7 @@ func (it *interp) loadModule(path string) *module {
 	name := project.Rel(filepath.Dir(it.focusMod.path), path)
 	res := lang.Analyze(it.lang, path, text)
 	if len(res.Diagnostics) > 0 {
-		it.warn(fmt.Sprintf("%s belum lengkap atau masih ada error (baris %d), jadi isinya tidak ikut disimulasikan", name, res.Diagnostics[0].Line))
+		it.warn(fmt.Sprintf("%s is incomplete or has errors (line %d), so its contents are not simulated", name, res.Diagnostics[0].Line))
 		return nil
 	}
 	return it.register(path, name, res)
@@ -307,7 +307,7 @@ func (it *interp) jsImport(n *ir.Simple, e *Env) {
 	}
 	m := it.jsResolve(spec)
 	if m == nil {
-		it.warn("file " + spec + " tidak ditemukan, jadi isinya tidak bisa disimulasikan")
+		it.warn("file " + spec + " not found, so its contents cannot be simulated")
 		return
 	}
 	it.jsRunModule(m)

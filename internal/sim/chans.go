@@ -133,11 +133,11 @@ func (it *interp) tryRecv(ch *chanVal, zero value) (v value, ok, done bool) {
 // chanSend menjalankan `ch <- v`.
 func (it *interp) chanSend(chv value, v value, at ast.Node, name string) {
 	if chv.k != kChan {
-		it.structural(fmt.Sprintf("kirim ke %s belum disimulasikan (baris %d)", name, it.line(at)))
+		it.structural(fmt.Sprintf("sending to %s is not simulated yet (line %d)", name, it.line(at)))
 	}
 	ch := chv.ch
 	if ch == nil {
-		it.park("kirim ke channel nil (selamanya)", at)
+		it.park("send to nil channel (forever)", at)
 	}
 	if ch.closed {
 		it.panicf(at, "send on closed channel")
@@ -148,9 +148,9 @@ func (it *interp) chanSend(chv value, v value, at ast.Node, name string) {
 	w := &waiter{g: it.sch.cur, v: v}
 	ch.sendq = append(ch.sendq, w)
 	it.commOp(trace.OpSend, ch, len(ch.inflight)+len(ch.buf)+liveCount(ch.sendq)-1, v) // nilai menunggu di pipa
-	why := fmt.Sprintf("%s <- %s (menunggu penerima)", name, show(v))
+	why := fmt.Sprintf("%s <- %s (waiting for a receiver)", name, show(v))
 	if ch.cap > 0 {
-		why = fmt.Sprintf("%s <- %s (buffer penuh)", name, show(v))
+		why = fmt.Sprintf("%s <- %s (buffer full)", name, show(v))
 	}
 	it.park(why, at)
 	if w.closed {
@@ -161,11 +161,11 @@ func (it *interp) chanSend(chv value, v value, at ast.Node, name string) {
 // chanRecv menjalankan `<-ch`. ok=false bila channel sudah ditutup dan kosong.
 func (it *interp) chanRecv(chv value, at ast.Node, name string, elem types.Type) (value, bool) {
 	if chv.k != kChan {
-		it.structural(fmt.Sprintf("terima dari %s belum disimulasikan (baris %d)", name, it.line(at)))
+		it.structural(fmt.Sprintf("receiving from %s is not simulated yet (line %d)", name, it.line(at)))
 	}
 	ch := chv.ch
 	if ch == nil {
-		it.park("terima dari channel nil (selamanya)", at)
+		it.park("receive from nil channel (forever)", at)
 	}
 	zero := zeroOf(elem)
 	if v, ok, done := it.tryRecv(ch, zero); done {
@@ -173,7 +173,7 @@ func (it *interp) chanRecv(chv value, at ast.Node, name string, elem types.Type)
 	}
 	w := &waiter{g: it.sch.cur, zero: zero}
 	ch.recvq = append(ch.recvq, w)
-	it.park("<-"+name+" (menunggu data)", at)
+	it.park("<-"+name+" (waiting for data)", at)
 	if w.ok {
 		it.pickup(ch, w)
 	}
@@ -257,13 +257,13 @@ func (it *interp) execSelect(n *ast.SelectStmt, e *env) flow {
 		if c.recvX != nil {
 			u, ok := unparen(c.recvX).(*ast.UnaryExpr)
 			if !ok || u.Op != token.ARROW {
-				it.structural(fmt.Sprintf("case select di baris %d belum disimulasikan", it.line(cc)))
+				it.structural(fmt.Sprintf("select case on line %d is not simulated yet", it.line(cc)))
 			}
 			c.ch, c.name = it.eval(u.X, e), it.chanName(u.X)
 			c.elem = chanElem(it.p.Info.Types[u.X].Type)
 		}
 		if c.ch.k != kChan {
-			it.structural(fmt.Sprintf("channel pada select di baris %d tidak bisa dihitung", it.line(cc)))
+			it.structural(fmt.Sprintf("the channel in the select on line %d cannot be computed", it.line(cc)))
 		}
 		cases = append(cases, c)
 	}
@@ -298,7 +298,7 @@ func (it *interp) execSelect(n *ast.SelectStmt, e *env) flow {
 	var body []ast.Stmt
 	switch {
 	case chosen < 0 && def != nil:
-		it.step(def, scope, "select: tidak ada case yang siap → default")
+		it.step(def, scope, "select: no case is ready → default")
 		body = def.Body
 	case chosen < 0:
 		// tidak ada yang siap: tunggu di semua channel sekaligus
@@ -316,7 +316,7 @@ func (it *interp) execSelect(n *ast.SelectStmt, e *env) flow {
 			}
 			ws[i] = w
 		}
-		it.park("select (menunggu salah satu case siap)", n)
+		it.park("select (waiting for a case to be ready)", n)
 		chosen = sel.fired
 		w := ws[chosen]
 		if cases[chosen].send && w.closed {
@@ -331,7 +331,7 @@ func (it *interp) execSelect(n *ast.SelectStmt, e *env) flow {
 		c := cases[chosen]
 		body = c.cc.Body
 		if c.send {
-			it.step(c.cc, scope, fmt.Sprintf("select: kirim %s ke %s", show(c.v), c.name))
+			it.step(c.cc, scope, fmt.Sprintf("select: send %s to %s", show(c.v), c.name))
 		} else {
 			if as, isAssign := c.cc.Comm.(*ast.AssignStmt); isAssign {
 				vals := []value{got, boolV(gotOK)}
@@ -341,9 +341,9 @@ func (it *interp) execSelect(n *ast.SelectStmt, e *env) flow {
 					}
 				}
 			}
-			note := fmt.Sprintf("select: terima %s dari %s", show(got), c.name)
+			note := fmt.Sprintf("select: receive %s from %s", show(got), c.name)
 			if !gotOK {
-				note = fmt.Sprintf("select: %s sudah ditutup → nilai nol", c.name)
+				note = fmt.Sprintf("select: %s is closed → zero value", c.name)
 			}
 			it.step(c.cc, scope, note)
 		}
@@ -368,7 +368,7 @@ func (it *interp) syncCall(sel *ast.SelectorExpr, call *ast.CallExpr, e *env, ty
 		cell = it.ref(sel.X, e)
 	}
 	if cell == nil || cell.k != kStruct || cell.st == nil || len(cell.st.fields) == 0 {
-		it.structural(fmt.Sprintf("%s belum disimulasikan (baris %d)", it.text(sel), it.line(sel)))
+		it.structural(fmt.Sprintf("%s is not simulated yet (line %d)", it.text(sel), it.line(sel)))
 	}
 	f := &cell.st.fields[0]
 	s := it.sch
@@ -392,29 +392,29 @@ func (it *interp) syncCall(sel *ast.SelectorExpr, call *ast.CallExpr, e *env, ty
 		if f.i < 0 {
 			it.panicf(call, "sync: negative WaitGroup counter")
 		}
-		it.syncStep(call, e, fmt.Sprintf("%s → hitungan = %d", it.text(call), f.i))
+		it.syncStep(call, e, fmt.Sprintf("%s → counter = %d", it.text(call), f.i))
 		if f.i == 0 {
 			wakeAll()
 		}
 	case "WaitGroup.Wait":
 		for f.i != 0 {
 			s.waitq[f] = append(s.waitq[f], s.cur)
-			it.park(fmt.Sprintf("%s.Wait() (hitungan %d)", label, f.i), call)
+			it.park(fmt.Sprintf("%s.Wait() (counter %d)", label, f.i), call)
 		}
-		it.syncStep(call, e, label+".Wait() selesai: hitungan sudah 0")
+		it.syncStep(call, e, label+".Wait() done: the counter is 0")
 	case "Mutex.Lock", "RWMutex.Lock", "RWMutex.RLock":
 		for f.b {
 			s.waitq[f] = append(s.waitq[f], s.cur)
-			it.park(label+".Lock() (pintu sedang dikunci)", call)
+			it.park(label+".Lock() (the door is locked)", call)
 		}
 		f.b = true
-		it.syncStep(call, e, label+".Lock() → pintu dikunci")
+		it.syncStep(call, e, label+".Lock() → door locked")
 	case "Mutex.Unlock", "RWMutex.Unlock", "RWMutex.RUnlock":
 		if !f.b {
 			panic(fatal{msg: "fatal error: sync: unlock of unlocked mutex"})
 		}
 		f.b = false
-		it.syncStep(call, e, label+".Unlock() → pintu dibuka")
+		it.syncStep(call, e, label+".Unlock() → door unlocked")
 		if q := s.waitq[f]; len(q) > 0 {
 			s.waitq[f] = q[1:]
 			s.ready(q[0])
@@ -426,7 +426,7 @@ func (it *interp) syncCall(sel *ast.SelectorExpr, call *ast.CallExpr, e *env, ty
 			it.callValue(args[0], nil, call)
 		}
 	default:
-		it.structural(fmt.Sprintf("sync.%s.%s belum disimulasikan", typ, name))
+		it.structural(fmt.Sprintf("sync.%s.%s is not simulated yet", typ, name))
 	}
 	return nil
 }

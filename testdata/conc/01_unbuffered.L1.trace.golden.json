@@ -42,7 +42,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -80,7 +80,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -110,7 +110,7 @@
         "ch": "chan",
         "i": "1"
       },
-      "note": "ch <- i * 10 → kirim 10 ke ch",
+      "note": "ch <- i * 10 → send 10 to ch",
       "ops": [
         {
           "op": "send",
@@ -226,7 +226,7 @@
       "phase": "body",
       "line": 7,
       "iteration": 1,
-      "note": "G2 menunggu: ch <- 20 (menunggu penerima)",
+      "note": "G2 waits: ch <- 20 (waiting for a receiver)",
       "ops": [
         {
           "op": "send",
@@ -246,7 +246,7 @@
           "id": 2,
           "name": "produce(ch)",
           "state": "menunggu",
-          "why": "ch <- 20 (menunggu penerima)"
+          "why": "ch <- 20 (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -274,14 +274,14 @@
         "ch": "chan",
         "i": "2"
       },
-      "note": "ch <- i * 10 → kirim 20 ke ch",
+      "note": "ch <- i * 10 → send 20 to ch",
       "g": 2,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -318,7 +318,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -356,7 +356,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -386,7 +386,7 @@
         "ch": "chan",
         "i": "3"
       },
-      "note": "ch <- i * 10 → kirim 30 ke ch",
+      "note": "ch <- i * 10 → send 30 to ch",
       "ops": [
         {
           "op": "send",
@@ -506,7 +506,7 @@
         "ch": "chan",
         "i": "4"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "g": 2,
       "gs": [

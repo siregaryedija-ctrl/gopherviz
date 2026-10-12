@@ -63,15 +63,15 @@ func (it *interp) eval(x ir.Expr, e *Env) Value {
 		}
 		return v
 	case *ir.Spread:
-		it.structural(fmt.Sprintf("spread di baris %d belum disimulasikan di posisi ini", it.line(n)))
+		it.structural(fmt.Sprintf("spread on line %d is not simulated in this position yet", it.line(n)))
 	case *ir.KwArg:
 		return it.eval(n.Value, e)
 	case *ir.TypeRef:
-		return unknown("tipe " + n.Name)
+		return unknown("type " + n.Name)
 	case *ir.BadExpr:
-		it.structural(fmt.Sprintf("ekspresi di baris %d belum lengkap", it.line(n)))
+		it.structural(fmt.Sprintf("the expression on line %d is incomplete", it.line(n)))
 	}
-	it.structural(fmt.Sprintf("ekspresi di baris %d belum disimulasikan", it.line(x)))
+	it.structural(fmt.Sprintf("the expression on line %d is not simulated yet", it.line(x)))
 	return Value{}
 }
 
@@ -137,7 +137,7 @@ func (it *interp) lookupName(id *ir.Ident, e *Env) Value {
 		}
 		return strV(name)
 	}
-	it.structural(fmt.Sprintf("%q di baris %d belum dideklarasikan (atau berasal dari library yang belum didukung)", name, it.line(id)))
+	it.structural(fmt.Sprintf("%q on line %d is not declared (or comes from a library that is not supported yet)", name, it.line(id)))
 	return Value{}
 }
 
@@ -226,7 +226,7 @@ func (it *interp) assignName(id *ir.Ident, e *Env, v Value) {
 	default:
 		if c := e.lookup(name); c != nil {
 			if c.konst {
-				it.structural(fmt.Sprintf("%s adalah konstanta dan tidak bisa diubah (baris %d)", name, it.line(id)))
+				it.structural(fmt.Sprintf("%s is a constant and cannot be changed (line %d)", name, it.line(id)))
 			}
 			if c.typ != "" {
 				v = it.sem.convert(it, v, c.typ)
@@ -244,7 +244,7 @@ func (it *interp) assignName(id *ir.Ident, e *Env, v Value) {
 				return
 			}
 		}
-		it.structural(fmt.Sprintf("%q di baris %d belum dideklarasikan", name, it.line(id)))
+		it.structural(fmt.Sprintf("%q on line %d is not declared", name, it.line(id)))
 	}
 }
 
@@ -477,7 +477,7 @@ func (it *interp) bindTarget(t ir.Expr, e *Env, v Value, declare bool) {
 		if x.Op == "*" { // C: *p = v
 			p := it.eval(x.X, e)
 			if p.k != kPtr {
-				it.structural(fmt.Sprintf("dereferensi di baris %d bukan pointer", it.line(x)))
+				it.structural(fmt.Sprintf("the dereference on line %d is not a pointer", it.line(x)))
 			}
 			p.p.store(it.convertPtr(p.p, v))
 			if p.p.list != nil && it.rec.coll != "" {
@@ -485,9 +485,9 @@ func (it *interp) bindTarget(t ir.Expr, e *Env, v Value, declare bool) {
 			}
 			return
 		}
-		it.structural(fmt.Sprintf("target assignment di baris %d belum disimulasikan", it.line(t)))
+		it.structural(fmt.Sprintf("the assignment target on line %d is not simulated yet", it.line(t)))
 	default:
-		it.structural(fmt.Sprintf("target assignment di baris %d belum disimulasikan", it.line(t)))
+		it.structural(fmt.Sprintf("the assignment target on line %d is not simulated yet", it.line(t)))
 	}
 }
 
@@ -665,11 +665,11 @@ func (it *interp) evalUnary(n *ir.Unary, e *Env) Value {
 	case "await":
 		v := it.eval(n.X, e)
 		if it.curCoro == nil {
-			it.warn("await di luar fungsi async disimulasikan secara langsung (sinkron)")
+			it.warn("await outside an async function is simulated directly (synchronously)")
 		}
 		return it.awaitValue(v, n)
 	case "yield", "yield*", "yield from":
-		it.structural("generator (yield) belum disimulasikan")
+		it.structural("generators (yield) are not simulated yet")
 	case "&":
 		p := it.addrOf(n.X, e)
 		return Value{k: kPtr, p: p}
@@ -688,9 +688,9 @@ func (it *interp) evalUnary(n *ir.Unary, e *Env) Value {
 			}
 			return typedInt(0, "char")
 		case kNull:
-			it.throw(n, "SegmentationFault", "dereferensi pointer NULL")
+			it.throw(n, "SegmentationFault", "dereferencing a NULL pointer")
 		}
-		return unknown("dereferensi nilai ini belum disimulasikan")
+		return unknown("dereferencing this value is not simulated yet")
 	case "sizeof":
 		return it.sizeOf(n.X, e)
 	case "clone":
@@ -708,7 +708,7 @@ func (it *interp) evalUnary(n *ir.Unary, e *Env) Value {
 	case "new":
 		return it.eval(n.X, e)
 	case "$":
-		it.structural("variabel variabel ($$x) belum disimulasikan")
+		it.structural("variable variables ($$x) are not simulated yet")
 	}
 	return it.sem.unary(it, n.Op, it.eval(n.X, e), n)
 }
@@ -972,7 +972,7 @@ func (it *interp) relation(a, b Value) string {
 
 func (it *interp) template(n *ir.Template, e *Env) Value {
 	if n.Tag != nil {
-		it.structural("tagged template belum disimulasikan")
+		it.structural("tagged templates are not simulated yet")
 	}
 	var b strings.Builder
 	for i, p := range n.Parts {
@@ -1068,7 +1068,7 @@ func (it *interp) objectLit(n *ir.ObjectLit, e *Env) Value {
 			k := it.eval(p.Key, e)
 			v := it.eval(p.Value, e)
 			if k.k == kUnknown || v.k == kUnknown {
-				return unknown("isi dict tidak diketahui")
+				return unknown("unknown dict contents")
 			}
 			d.set(k, v)
 		}
@@ -1249,7 +1249,7 @@ func (it *interp) comprehension(n *ir.Comp, e *Env) Value {
 		f := n.Fors[i]
 		src := it.eval(f.Iter, scope)
 		if src.k == kUnknown {
-			it.structural("isi comprehension tidak diketahui: " + src.why)
+			it.structural("unknown comprehension contents: " + src.why)
 		}
 		pairs, ok := it.sem.iterate(it, src, nil)
 		if !ok {

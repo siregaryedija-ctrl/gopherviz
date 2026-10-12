@@ -35,7 +35,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil isEven(n = 1)"
+      "note": "call isEven(n = 1)"
     },
     {
       "n": 1,
@@ -47,7 +47,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "return n%2 == 0 → keluar dari fungsi"
+      "note": "return n%2 == 0 → leave the function"
     },
     {
       "n": 2,
@@ -61,7 +61,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "isEven(n = 1) mengembalikan false"
+      "note": "isEven(n = 1) returns false"
     },
     {
       "n": 3,
@@ -75,7 +75,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "panggil isEven(n = 2)"
+      "note": "call isEven(n = 2)"
     },
     {
       "n": 4,
@@ -87,7 +87,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "return n%2 == 0 → keluar dari fungsi"
+      "note": "return n%2 == 0 → leave the function"
     },
     {
       "n": 5,
@@ -101,7 +101,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "isEven(n = 2) mengembalikan true"
+      "note": "isEven(n = 2) returns true"
     },
     {
       "n": 6,
@@ -115,7 +115,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "panggil isEven(n = 3)"
+      "note": "call isEven(n = 3)"
     },
     {
       "n": 7,
@@ -127,7 +127,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "return n%2 == 0 → keluar dari fungsi"
+      "note": "return n%2 == 0 → leave the function"
     },
     {
       "n": 8,
@@ -141,7 +141,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "isEven(n = 3) mengembalikan false"
+      "note": "isEven(n = 3) returns false"
     },
     {
       "n": 9,
@@ -155,7 +155,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil isEven(n = 4)"
+      "note": "call isEven(n = 4)"
     },
     {
       "n": 10,
@@ -167,7 +167,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "return n%2 == 0 → keluar dari fungsi"
+      "note": "return n%2 == 0 → leave the function"
     },
     {
       "n": 11,
@@ -181,7 +181,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "isEven(n = 4) mengembalikan true"
+      "note": "isEven(n = 4) returns true"
     }
   ],
   "truncated": false,

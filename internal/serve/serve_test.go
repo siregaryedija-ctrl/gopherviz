@@ -98,7 +98,7 @@ func TestSession(t *testing.T) {
 	if got := string(resps[3].Result); got != `{}` {
 		t.Errorf("focus di luar blok = %s", got)
 	}
-	if resps[5].Error == nil || !strings.Contains(resps[5].Error.Message, "belum pernah dikirim") {
+	if resps[5].Error == nil || !strings.Contains(resps[5].Error.Message, "never sent") {
 		t.Errorf("focus setelah close harus error: %+v", resps[5])
 	}
 }
@@ -111,7 +111,7 @@ func TestErrors(t *testing.T) {
 		`{"id":4,"method":"trace","params":{"file":"main.go","loopId":"L1"}}`,
 		update(5, "for {", 1),
 	)
-	wants := []string{"bukan JSON", "tidak dikenal", "wajib", "belum pernah dikirim", ""}
+	wants := []string{"not valid JSON", "unknown method", "required", "never sent", ""}
 	for i, want := range wants {
 		r := resps[i]
 		switch {

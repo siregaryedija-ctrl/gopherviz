@@ -511,7 +511,7 @@
         "n": "1",
         "steps": "8"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     }
   ],

@@ -120,7 +120,7 @@ func (it *interp) cinRead(n *ir.Binary, e *Env) Value {
 	}
 	p := it.addrOf(n.Y, e)
 	if p == nil {
-		it.structural("tujuan cin >> harus berupa variabel")
+		it.structural("the target of cin >> must be a variable")
 	}
 	s, ok := it.readToken()
 	if !ok {

@@ -73,12 +73,12 @@ func (s *pySem) lit(it *interp, l *ir.Lit) Value {
 		}
 		b, ok := new(big.Int).SetString(v, base)
 		if !ok {
-			return unknown("angka")
+			return unknown("number")
 		}
 		return bigV(b)
 	case ir.LitFloat:
 		if strings.HasSuffix(strings.ToLower(l.Value), "j") {
-			return unknown("bilangan kompleks belum didukung")
+			return unknown("complex numbers are not supported yet")
 		}
 		f, _ := strconv.ParseFloat(strings.ReplaceAll(l.Value, "_", ""), 64)
 		return floatV(f)
@@ -435,7 +435,7 @@ func (s *pySem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 			c = 0
 		}
 		if len(str.s)*c > 10_000_000 {
-			it.structural("string terlalu besar")
+			it.structural("string too large")
 		}
 		return strV(strings.Repeat(str.s, c))
 	case op == "*" && (a.k == kList && pyIntLike(b) || pyIntLike(a) && b.k == kList):
@@ -567,7 +567,7 @@ func (it *interp) pyArith(op string, a, b Value, at ir.Node) Value {
 			return floatV(math.Pow(fx, fy))
 		}
 		if y.BitLen() > 20 || x.BitLen()*int(y.Int64()) > 100_000 {
-			it.structural("hasil pangkat terlalu besar untuk disimulasikan")
+			it.structural("power result too large to simulate")
 		}
 		r.Exp(x, y, nil)
 	case "&":
@@ -621,7 +621,7 @@ func (s *pySem) unary(it *interp, op string, v Value, at ir.Node) Value {
 		}
 		it.throw(at, "TypeError", "bad operand type for unary ~: '"+it.pyTypeName(v)+"'")
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -892,7 +892,7 @@ func (s *pySem) iterate(it *interp, x Value, fe *ir.ForEach) ([]kv, bool) {
 				return s.iterate(it, r, fe)
 			}
 		}
-		it.structural("iterator buatan sendiri (__iter__/__next__) belum disimulasikan")
+		it.structural("custom iterators (__iter__/__next__) are not simulated yet")
 	}
 	return nil, false
 }
@@ -1192,7 +1192,7 @@ func cfmt(format string, b *big.Int) string { return fmt.Sprintf(format, b) }
 func (it *interp) execPyMatch(n *ir.Switch, e *Env, focus bool) flow {
 	subj := it.eval(n.Tag, e)
 	if subj.k == kUnknown {
-		it.structural("nilai match tidak diketahui: " + subj.why)
+		it.structural("unknown match value: " + subj.why)
 	}
 	if focus && it.recording() {
 		it.add(stepInit(it.line(n), fmt.Sprintf("match %s → %s", it.text(n.Tag), it.sem.show(it, subj))), e)
@@ -1214,12 +1214,12 @@ func (it *interp) execPyMatch(n *ir.Switch, e *Env, focus bool) flow {
 			it.add(stepCond(it.line(c), label+" → "+it.boolText(ok), &r), e)
 		}
 		if ok {
-			it.branchStep(focus, n, i, e, "masuk "+map[bool]string{true: "case _", false: "case " + it.textList(c.Exprs)}[c.Exprs == nil])
+			it.branchStep(focus, n, i, e, "take "+map[bool]string{true: "case _", false: "case " + it.textList(c.Exprs)}[c.Exprs == nil])
 			f := it.execList(c.Body, e)
 			return it.blockExit(focus, n, f, e)
 		}
 	}
-	it.branchStep(focus, n, len(n.Cases), e, "tidak ada case yang cocok → lewati")
+	it.branchStep(focus, n, len(n.Cases), e, "no case matches → skip")
 	return it.blockExit(focus, n, flow{}, e)
 }
 

@@ -38,7 +38,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "panggil RangeError.Error(e = &{500})",
+      "note": "call RangeError.Error(e = &{500})",
       "mem": {
         "vars": [
           {
@@ -86,7 +86,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "return \"nilai \" + strconv.Itoa(e.Value) + \" di luar batas\" → keluar dari fungsi",
+      "note": "return \"nilai \" + strconv.Itoa(e.Value) + \" di luar batas\" → leave the function",
       "mem": {
         "vars": [
           {
@@ -136,7 +136,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\"",
+      "note": "RangeError.Error(e = &{500}) returns \"nilai 500 di luar batas\"",
       "mem": {
         "vars": [
           {

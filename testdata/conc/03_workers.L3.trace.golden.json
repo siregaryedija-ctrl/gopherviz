@@ -131,7 +131,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 1 ke jobs",
+      "note": "jobs <- j → send 1 to jobs",
       "ops": [
         {
           "op": "send",
@@ -287,7 +287,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 2 ke jobs",
+      "note": "jobs <- j → send 2 to jobs",
       "ops": [
         {
           "op": "send",
@@ -446,7 +446,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 3 ke jobs",
+      "note": "jobs <- j → send 3 to jobs",
       "ops": [
         {
           "op": "send",
@@ -608,7 +608,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 4 ke jobs",
+      "note": "jobs <- j → send 4 to jobs",
       "ops": [
         {
           "op": "send",
@@ -773,7 +773,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "jobs <- j → kirim 5 ke jobs",
+      "note": "jobs <- j → send 5 to jobs",
       "ops": [
         {
           "op": "send",
@@ -941,7 +941,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "g": 1,
       "gs": [

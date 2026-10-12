@@ -295,7 +295,7 @@
         "n": "&{1 &{2 &{3 <nil>}}}",
         "total": "1"
       },
-      "note": "fmt.Print(n.Val, \" \") → cetak \"1 \"",
+      "note": "fmt.Print(n.Val, \" \") → print \"1 \"",
       "output": "1 ",
       "mem": {
         "vars": [
@@ -633,7 +633,7 @@
         "n": "&{2 &{3 <nil>}}",
         "total": "3"
       },
-      "note": "fmt.Print(n.Val, \" \") → cetak \"2 \"",
+      "note": "fmt.Print(n.Val, \" \") → print \"2 \"",
       "output": "2 ",
       "mem": {
         "vars": [
@@ -971,7 +971,7 @@
         "n": "&{3 <nil>}",
         "total": "6"
       },
-      "note": "fmt.Print(n.Val, \" \") → cetak \"3 \"",
+      "note": "fmt.Print(n.Val, \" \") → print \"3 \"",
       "output": "3 ",
       "mem": {
         "vars": [
@@ -1225,7 +1225,7 @@
         "n": "<nil>",
         "total": "6"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false",
       "mem": {
         "vars": [

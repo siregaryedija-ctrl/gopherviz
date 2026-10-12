@@ -185,7 +185,7 @@ func (it *interp) readTree(root Value, sp *graphs.TreeSpec) (*trace.Tree, map[an
 	}
 	tr.Root = visit(root)
 	if tooBig {
-		it.warn(fmt.Sprintf("pohon lebih dari %d simpul tidak digambar", graphs.MaxTreeNodes))
+		it.warn(fmt.Sprintf("trees with more than %d nodes are not drawn", graphs.MaxTreeNodes))
 		return nil, nil
 	}
 	if tr.Root == "" {

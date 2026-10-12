@@ -35,7 +35,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "panggil dayName(day = 3)"
+      "note": "call dayName(day = 3)"
     },
     {
       "n": 1,
@@ -59,7 +59,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "return \"hari kerja\" → keluar dari fungsi"
+      "note": "return \"hari kerja\" → leave the function"
     },
     {
       "n": 3,
@@ -73,7 +73,7 @@
       "vars": {
         "day": "3"
       },
-      "note": "dayName(day = 3) mengembalikan \"hari kerja\""
+      "note": "dayName(day = 3) returns \"hari kerja\""
     },
     {
       "n": 4,
@@ -87,7 +87,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "panggil dayName(day = 7)"
+      "note": "call dayName(day = 7)"
     },
     {
       "n": 5,
@@ -111,7 +111,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "return \"akhir pekan\" → keluar dari fungsi"
+      "note": "return \"akhir pekan\" → leave the function"
     },
     {
       "n": 7,
@@ -125,7 +125,7 @@
       "vars": {
         "day": "7"
       },
-      "note": "dayName(day = 7) mengembalikan \"akhir pekan\""
+      "note": "dayName(day = 7) returns \"akhir pekan\""
     },
     {
       "n": 8,
@@ -139,7 +139,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "panggil dayName(day = 9)"
+      "note": "call dayName(day = 9)"
     },
     {
       "n": 9,
@@ -163,7 +163,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "return \"bukan hari\" → keluar dari fungsi"
+      "note": "return \"bukan hari\" → leave the function"
     },
     {
       "n": 11,
@@ -177,7 +177,7 @@
       "vars": {
         "day": "9"
       },
-      "note": "dayName(day = 9) mengembalikan \"bukan hari\""
+      "note": "dayName(day = 9) returns \"bukan hari\""
     }
   ],
   "truncated": false,

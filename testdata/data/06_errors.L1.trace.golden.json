@@ -40,7 +40,7 @@
       "phase": "init",
       "line": 34,
       "iteration": 0,
-      "note": "range []string{\"42\", \"\", \"abc\", \"500\"} (4 elemen)"
+      "note": "range []string{\"42\", \"\", \"abc\", \"500\"} (4 elements)"
     },
     {
       "n": 1,
@@ -54,7 +54,7 @@
         "s": "\"42\""
       },
       "result": true,
-      "note": "ambil elemen ke-1: s = \"42\""
+      "note": "take element #1: s = \"42\""
     },
     {
       "n": 2,
@@ -69,7 +69,7 @@
       "vars": {
         "s": "\"42\""
       },
-      "note": "panggil parse(s = \"42\")"
+      "note": "call parse(s = \"42\")"
     },
     {
       "n": 3,
@@ -86,7 +86,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "parse(s = \"42\") mengembalikan 42, <nil>"
+      "note": "parse(s = \"42\") returns 42, <nil>"
     },
     {
       "n": 4,
@@ -132,7 +132,7 @@
         "n": "42",
         "s": "\"42\""
       },
-      "note": "fmt.Println(\"ok:\", n) → cetak \"ok: 42\"",
+      "note": "fmt.Println(\"ok:\", n) → print \"ok: 42\"",
       "output": "ok: 42\n"
     },
     {
@@ -147,7 +147,7 @@
         "s": "\"\""
       },
       "result": true,
-      "note": "ambil elemen ke-2: s = \"\""
+      "note": "take element #2: s = \"\""
     },
     {
       "n": 8,
@@ -162,7 +162,7 @@
       "vars": {
         "s": "\"\""
       },
-      "note": "panggil parse(s = \"\")"
+      "note": "call parse(s = \"\")"
     },
     {
       "n": 9,
@@ -177,7 +177,7 @@
       "vars": {
         "s": "\"\""
       },
-      "note": "parse(s = \"\") mengembalikan 0, error(\"input kosong\")"
+      "note": "parse(s = \"\") returns 0, error(\"input kosong\")"
     },
     {
       "n": 10,
@@ -223,7 +223,7 @@
         "n": "0",
         "s": "\"\""
       },
-      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: input kosong true\"",
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → print \"error: input kosong true\"",
       "output": "error: input kosong true\n"
     },
     {
@@ -239,7 +239,7 @@
         "n": "0",
         "s": "\"\""
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 14,
@@ -253,7 +253,7 @@
         "s": "\"abc\""
       },
       "result": true,
-      "note": "ambil elemen ke-3: s = \"abc\""
+      "note": "take element #3: s = \"abc\""
     },
     {
       "n": 15,
@@ -268,7 +268,7 @@
       "vars": {
         "s": "\"abc\""
       },
-      "note": "panggil parse(s = \"abc\")"
+      "note": "call parse(s = \"abc\")"
     },
     {
       "n": 16,
@@ -285,7 +285,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "parse(s = \"abc\") mengembalikan 0, error(\"parse \\\"abc\\\": strconv.Atoi: par…"
+      "note": "parse(s = \"abc\") returns 0, error(\"parse \\\"abc\\\": strconv.Atoi: par…"
     },
     {
       "n": 17,
@@ -331,7 +331,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: parse \\\"abc\\\": strconv.Atoi: parsing \\\"abc\\\": invalid syntax false\"",
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → print \"error: parse \\\"abc\\\": strconv.Atoi: parsing \\\"abc\\\": invalid syntax false\"",
       "output": "error: parse \"abc\": strconv.Atoi: parsing \"abc\": invalid syntax false\n"
     },
     {
@@ -347,7 +347,7 @@
         "n": "0",
         "s": "\"abc\""
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 21,
@@ -361,7 +361,7 @@
         "s": "\"500\""
       },
       "result": true,
-      "note": "ambil elemen ke-4: s = \"500\""
+      "note": "take element #4: s = \"500\""
     },
     {
       "n": 22,
@@ -376,7 +376,7 @@
       "vars": {
         "s": "\"500\""
       },
-      "note": "panggil parse(s = \"500\")"
+      "note": "call parse(s = \"500\")"
     },
     {
       "n": 23,
@@ -393,7 +393,7 @@
         "n": "500",
         "s": "\"500\""
       },
-      "note": "parse(s = \"500\") mengembalikan 0, &{500}"
+      "note": "parse(s = \"500\") returns 0, &{500}"
     },
     {
       "n": 24,
@@ -439,7 +439,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "panggil RangeError.Error(e = &{500})"
+      "note": "call RangeError.Error(e = &{500})"
     },
     {
       "n": 27,
@@ -454,7 +454,7 @@
       "vars": {
         "e": "&{500}"
       },
-      "note": "RangeError.Error(e = &{500}) mengembalikan \"nilai 500 di luar batas\""
+      "note": "RangeError.Error(e = &{500}) returns \"nilai 500 di luar batas\""
     },
     {
       "n": 28,
@@ -469,7 +469,7 @@
         "n": "0",
         "s": "\"500\""
       },
-      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → cetak \"error: nilai 500 di luar batas false\"",
+      "note": "fmt.Println(\"error:\", err, errors.Is(err, ErrKosong)) → print \"error: nilai 500 di luar batas false\"",
       "output": "error: nilai 500 di luar batas false\n"
     },
     {
@@ -485,7 +485,7 @@
         "n": "0",
         "s": "\"500\""
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 30,
@@ -496,7 +496,7 @@
       "line": 34,
       "iteration": 4,
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 31,
@@ -506,7 +506,7 @@
       "phase": "exit",
       "line": 34,
       "iteration": 4,
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

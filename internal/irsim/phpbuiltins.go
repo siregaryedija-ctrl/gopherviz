@@ -600,7 +600,7 @@ func (it *interp) setupPHP(s *phpSem) {
 	for _, name := range []string{"fscanf", "date", "time", "microtime", "file_get_contents", "fopen"} {
 		nm := name
 		fn(nm, func(it *interp, this Value, args []Value, at ir.Node) Value {
-			return unknown(nm + "() bergantung pada input/waktu/file sehingga tidak bisa disimulasikan")
+			return unknown(nm + "() depends on input/time/files, so it cannot be simulated")
 		})
 	}
 	c["STDIN"] = unknown("STDIN")
@@ -682,7 +682,7 @@ func (it *interp) setupPHP(s *phpSem) {
 	mm("max", 1)
 	mm("min", -1)
 	randFn := func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("rand()/mt_rand() disimulasikan dengan seed tetap; hasilnya berbeda dengan saat program dijalankan")
+		it.warn("rand()/mt_rand() is simulated with a fixed seed; results differ from a real run")
 		if len(args) >= 2 {
 			a, b := int64(toF(args[0])), int64(toF(args[1]))
 			if b < a {
@@ -1181,7 +1181,7 @@ func (it *interp) setupPHP(s *phpSem) {
 	userSort("uasort", true, false)
 	userSort("uksort", true, true)
 	fn("shuffle", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.warn("shuffle() disimulasikan dengan seed tetap")
+		it.warn("shuffle() is simulated with a fixed seed")
 		d := it.needArray(arg(args, 0), "shuffle", 1, at)
 		it.rng.Shuffle(len(d.vals), func(i, j int) { d.vals[i], d.vals[j] = d.vals[j], d.vals[i] })
 		for i := range d.keys {
@@ -1192,7 +1192,7 @@ func (it *interp) setupPHP(s *phpSem) {
 		return boolV(true)
 	})
 	fn("compact", func(it *interp, this Value, args []Value, at ir.Node) Value {
-		it.structural("compact() belum disimulasikan")
+		it.structural("compact() is not simulated yet")
 		return Value{}
 	})
 }

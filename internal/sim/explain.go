@@ -48,7 +48,7 @@ func (it *interp) stackOverflow(at ast.Node) {
 	msg := "fatal error: stack overflow"
 	err := it.panicInfo(at, msg)
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg + " (rekursi terlalu dalam)", Err: err}, nil)
+		it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg + " (recursion too deep)", Err: err}, nil)
 	}
 	panic(fatal{msg: msg})
 }

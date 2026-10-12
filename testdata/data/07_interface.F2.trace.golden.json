@@ -36,7 +36,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "panggil Circle.Area(c = {1})",
+      "note": "call Circle.Area(c = {1})",
       "mem": {
         "vars": [
           {
@@ -78,7 +78,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "return 3 * c.R * c.R → keluar dari fungsi",
+      "note": "return 3 * c.R * c.R → leave the function",
       "mem": {
         "vars": [
           {
@@ -122,7 +122,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "Circle.Area(c = {1}) mengembalikan 3",
+      "note": "Circle.Area(c = {1}) returns 3",
       "mem": {
         "vars": [
           {
@@ -166,7 +166,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "panggil Circle.Area(c = {1})",
+      "note": "call Circle.Area(c = {1})",
       "mem": {
         "vars": [
           {
@@ -208,7 +208,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "return 3 * c.R * c.R → keluar dari fungsi",
+      "note": "return 3 * c.R * c.R → leave the function",
       "mem": {
         "vars": [
           {
@@ -252,7 +252,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "Circle.Area(c = {1}) mengembalikan 3",
+      "note": "Circle.Area(c = {1}) returns 3",
       "mem": {
         "vars": [
           {

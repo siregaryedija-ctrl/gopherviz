@@ -43,7 +43,7 @@
       "vars": {
         "grid": "[[1 2] [3 4]]"
       },
-      "note": "range grid (2 elemen)",
+      "note": "range grid (2 elements)",
       "items": [
         "[1 2]",
         "[3 4]"
@@ -62,7 +62,7 @@
         "row": "[1 2]"
       },
       "result": true,
-      "note": "ambil elemen ke-1: row = [1 2]",
+      "note": "take element #1: row = [1 2]",
       "ops": [
         {
           "op": "read",
@@ -82,7 +82,7 @@
         "grid": "[[1 2] [3 4]]",
         "row": "[1 2]"
       },
-      "note": "range row (2 elemen)"
+      "note": "range row (2 elements)"
     },
     {
       "n": 3,
@@ -98,7 +98,7 @@
         "v": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 1"
+      "note": "take element #1: v = 1"
     },
     {
       "n": 4,
@@ -129,7 +129,7 @@
         "row": "[1 2]",
         "v": "1"
       },
-      "note": "continue outer → langsung ke putaran berikutnya"
+      "note": "continue outer → jump to the next round"
     },
     {
       "n": 6,
@@ -144,7 +144,7 @@
         "row": "[1 2]",
         "v": "1"
       },
-      "note": "keluar dari loop karena continue outer",
+      "note": "leave the loop because of continue outer",
       "reason": "break"
     },
     {
@@ -160,7 +160,7 @@
         "row": "[3 4]"
       },
       "result": true,
-      "note": "ambil elemen ke-2: row = [3 4]",
+      "note": "take element #2: row = [3 4]",
       "ops": [
         {
           "op": "read",
@@ -180,7 +180,7 @@
         "grid": "[[1 2] [3 4]]",
         "row": "[3 4]"
       },
-      "note": "range row (2 elemen)"
+      "note": "range row (2 elements)"
     },
     {
       "n": 9,
@@ -196,7 +196,7 @@
         "v": "3"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 3"
+      "note": "take element #1: v = 3"
     },
     {
       "n": 10,
@@ -243,7 +243,7 @@
         "row": "[3 4]",
         "v": "3"
       },
-      "note": "break outer → keluar dari loop"
+      "note": "break outer → leave the loop"
     },
     {
       "n": 13,
@@ -258,7 +258,7 @@
         "row": "[3 4]",
         "v": "3"
       },
-      "note": "keluar dari loop karena break outer",
+      "note": "leave the loop because of break outer",
       "reason": "break"
     },
     {
@@ -273,7 +273,7 @@
         "grid": "[[1 2] [3 4]]",
         "row": "[3 4]"
       },
-      "note": "keluar dari loop karena break",
+      "note": "leave the loop because of break",
       "reason": "break"
     }
   ],

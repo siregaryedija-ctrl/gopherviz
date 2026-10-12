@@ -57,7 +57,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "panggil Circle.Area(c = {1})",
+      "note": "call Circle.Area(c = {1})",
       "output": "Rect(2x3) 6\n",
       "objs": [
         {
@@ -84,7 +84,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "return 3 * c.R * c.R → keluar dari fungsi",
+      "note": "return 3 * c.R * c.R → leave the function",
       "objs": [
         {
           "id": "obj1",
@@ -112,7 +112,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "Circle.Area(c = {1}) mengembalikan 3",
+      "note": "Circle.Area(c = {1}) returns 3",
       "objs": [
         {
           "id": "obj1",
@@ -177,7 +177,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "panggil Circle.Area(c = {1})",
+      "note": "call Circle.Area(c = {1})",
       "objs": [
         {
           "id": "obj1",
@@ -215,7 +215,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "return 3 * c.R * c.R → keluar dari fungsi",
+      "note": "return 3 * c.R * c.R → leave the function",
       "objs": [
         {
           "id": "obj1",
@@ -255,7 +255,7 @@
       "vars": {
         "c": "{1}"
       },
-      "note": "Circle.Area(c = {1}) mengembalikan 3",
+      "note": "Circle.Area(c = {1}) returns 3",
       "objs": [
         {
           "id": "obj1",
@@ -325,7 +325,7 @@
       "loop": "",
       "run": 2,
       "phase": "exit",
-      "note": "program selesai",
+      "note": "program finished",
       "output": "Rect(1x1) 1\ntotal 10\n",
       "reason": "done",
       "objs": [

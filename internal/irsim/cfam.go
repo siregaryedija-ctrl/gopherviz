@@ -164,7 +164,7 @@ func (s *cSem) lit(it *interp, l *ir.Lit) Value {
 		}
 		n, err := strconv.ParseUint(v, base, 64)
 		if err != nil {
-			return unknown("angka terlalu besar")
+			return unknown("number too large")
 		}
 		t := "int"
 		switch {
@@ -255,7 +255,7 @@ func (s *cSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		return a
 	}
 	if op == ">>" && a.k == kObj && a.o.class.native == "istream" {
-		it.structural("membaca input dari user (cin >>) belum didukung simulator")
+		it.structural("reading user input (cin >>) is not supported by the simulator yet")
 	}
 	// operator buatan user (C++): a + b → a.operator+(b)
 	if a.k == kObj && s.cpp {
@@ -313,7 +313,7 @@ func (s *cSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		if b.k == kUnknown {
 			return b
 		}
-		it.structural(fmt.Sprintf("operator %s untuk nilai ini belum disimulasikan (baris %d)", op, it.line(at)))
+		it.structural(fmt.Sprintf("operator %s on this value is not simulated yet (line %d)", op, it.line(at)))
 	}
 	ta, tb := cTypeOf(a), cTypeOf(b)
 	if a.k == kFloat || b.k == kFloat {
@@ -347,9 +347,9 @@ func (s *cSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		case "!=":
 			return it.cBool(x != y)
 		case "%":
-			it.structural("operator % tidak berlaku untuk bilangan desimal (gunakan fmod)")
+			it.structural("operator % does not work on decimal numbers (use fmod)")
 		}
-		it.structural("operator " + op + " untuk bilangan desimal belum disimulasikan")
+		it.structural("operator " + op + " on decimal numbers is not simulated yet")
 	}
 	rt := promote(ta, tb)
 	t, _ := cIntType(rt)
@@ -383,7 +383,7 @@ func (s *cSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		return ret(x * y)
 	case "/", "%":
 		if y == 0 {
-			it.cCrash(at, "pembagian bilangan bulat dengan nol (program crash: SIGFPE)")
+			it.cCrash(at, "integer division by zero (program crash: SIGFPE)")
 		}
 		if t.unsigned {
 			if op == "/" {
@@ -414,7 +414,7 @@ func (s *cSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		}
 		return cmp(x < y, x == y)
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -505,7 +505,7 @@ func (it *interp) cPtrOp(op string, a, b Value, at ir.Node) Value {
 			return it.cBool(map[string]bool{"<": x < y, ">": x > y, "<=": x <= y, ">=": x >= y}[op])
 		}
 	}
-	it.structural(fmt.Sprintf("operasi pointer %s di baris %d belum disimulasikan", op, it.line(at)))
+	it.structural(fmt.Sprintf("pointer operation %s on line %d is not simulated yet", op, it.line(at)))
 	return Value{}
 }
 
@@ -556,7 +556,7 @@ func (s *cSem) unary(it *interp, op string, v Value, at ir.Node) Value {
 		it2, _ := cIntType(t)
 		return typedInt(wrap(^intOf(v), it2), t)
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -882,7 +882,7 @@ func (s *cSem) show(it *interp, v Value) string {
 			return "→ " + v.p.name
 		}
 		if v.p.list != nil {
-			return fmt.Sprintf("→ elemen ke-%d", v.p.idx)
+			return fmt.Sprintf("→ element #%d", v.p.idx)
 		}
 		return "→ ?"
 	case kFunc:
@@ -989,7 +989,7 @@ func (it *interp) streamWrite(st, v Value, at ir.Node) {
 
 func (it *interp) streamOut(st Value, s string) {
 	if name, _ := st.o.fields.get(strV("stream")); name.s == "cerr" {
-		it.warn("output ke cerr tidak ditampilkan di output program")
+		it.warn("output to cerr is not shown in the program output")
 		return
 	}
 	it.out(s)

@@ -56,7 +56,7 @@ func (it *interp) fieldPath(base *value, path []int, at ast.Node) *value {
 			cur = cur.ptr
 		}
 		if cur.k != kStruct || cur.st == nil || idx >= len(cur.st.fields) {
-			it.structural(fmt.Sprintf("field %q belum bisa dibaca simulator (baris %d)", it.text(at), it.line(at)))
+			it.structural(fmt.Sprintf("the simulator cannot read field %q yet (line %d)", it.text(at), it.line(at)))
 		}
 		cur = &cur.st.fields[idx]
 	}
@@ -66,7 +66,7 @@ func (it *interp) fieldPath(base *value, path []int, at ast.Node) *value {
 func (it *interp) selector(n *ast.SelectorExpr, e *env) value {
 	sel := it.p.Info.Selections[n]
 	if sel == nil {
-		return unknown(fmt.Sprintf("%s belum disimulasikan", it.text(n)))
+		return unknown(fmt.Sprintf("%s is not simulated yet", it.text(n)))
 	}
 	switch sel.Kind() {
 	case types.FieldVal:
@@ -79,11 +79,11 @@ func (it *interp) selector(n *ast.SelectorExpr, e *env) value {
 		// method value (x.M tanpa dipanggil): receiver diikat sekarang
 		recv, decl := it.receiver(n, e)
 		if decl == nil {
-			return unknown(fmt.Sprintf("method %s belum disimulasikan", it.text(n)))
+			return unknown(fmt.Sprintf("method %s is not simulated yet", it.text(n)))
 		}
 		return value{k: kFunc, fn: &funcVal{name: n.Sel.Name, decl: decl, recv: &recv}}
 	}
-	return unknown(fmt.Sprintf("%s belum disimulasikan", it.text(n)))
+	return unknown(fmt.Sprintf("%s is not simulated yet", it.text(n)))
 }
 
 // ---------- pointer ----------
@@ -184,9 +184,9 @@ func (it *interp) callMethod(sel *ast.SelectorExpr, call *ast.CallExpr, e *env) 
 	}
 	recv, decl := it.receiver(sel, e)
 	if decl == nil {
-		it.warn(fmt.Sprintf("method %s belum disimulasikan", it.text(sel)))
+		it.warn(fmt.Sprintf("method %s is not simulated yet", it.text(sel)))
 		it.args(call, e)
-		return []value{unknown(it.text(sel) + " belum disimulasikan")}
+		return []value{unknown(it.text(sel) + " is not simulated yet")}
 	}
 	args := it.args(call, e)
 	name := recvTypeName(decl) + "." + decl.Name.Name

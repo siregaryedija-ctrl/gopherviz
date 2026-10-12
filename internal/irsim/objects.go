@@ -70,7 +70,7 @@ func (it *interp) objID(o *Object) string {
 	if len(ob.list) >= maxObjs {
 		if !ob.overflow {
 			ob.overflow = true
-			it.warn(fmt.Sprintf("hanya %d object pertama yang digambar", maxObjs))
+			it.warn(fmt.Sprintf("only the first %d objects are drawn", maxObjs))
 		}
 		return ""
 	}
@@ -393,7 +393,7 @@ func classFields(res *lang.Result, c *ir.Class, field func(string)) {
 	}
 }
 
-// classFinish menutup trace class dengan langkah "program selesai" (membawa output terakhir).
+// classFinish menutup trace class dengan langkah "program finished" (membawa output terakhir).
 func (it *interp) classFinish() {
 	r := it.rec
 	if r.obj.cls == nil || !r.reached || r.truncated {
@@ -401,7 +401,7 @@ func (it *interp) classFinish() {
 	}
 	defer func() { recover() }() // batas langkah tercapai: abaikan
 	r.obj.final = true
-	it.add(trace.Step{Phase: trace.PhaseExit, Reason: trace.ReasonDone, Note: "program selesai"}, it.globals)
+	it.add(trace.Step{Phase: trace.PhaseExit, Reason: trace.ReasonDone, Note: "program finished"}, it.globals)
 }
 
 // classOfMethod mencari class (IR) yang memuat method fn.

@@ -28,7 +28,7 @@
       "phase": "init",
       "line": 9,
       "iteration": 0,
-      "note": "range 3 (angka 3)"
+      "note": "range 3 (number 3)"
     },
     {
       "n": 1,
@@ -39,7 +39,7 @@
       "line": 9,
       "iteration": 0,
       "result": true,
-      "note": "ambil elemen ke-1"
+      "note": "take element #1"
     },
     {
       "n": 2,
@@ -49,7 +49,7 @@
       "phase": "body",
       "line": 10,
       "iteration": 0,
-      "note": "fmt.Println(\"halo\") → cetak \"halo\"",
+      "note": "fmt.Println(\"halo\") → print \"halo\"",
       "output": "halo\n"
     },
     {
@@ -61,7 +61,7 @@
       "line": 9,
       "iteration": 1,
       "result": true,
-      "note": "ambil elemen ke-2"
+      "note": "take element #2"
     },
     {
       "n": 4,
@@ -71,7 +71,7 @@
       "phase": "body",
       "line": 10,
       "iteration": 1,
-      "note": "fmt.Println(\"halo\") → cetak \"halo\"",
+      "note": "fmt.Println(\"halo\") → print \"halo\"",
       "output": "halo\n"
     },
     {
@@ -83,7 +83,7 @@
       "line": 9,
       "iteration": 2,
       "result": true,
-      "note": "ambil elemen ke-3"
+      "note": "take element #3"
     },
     {
       "n": 6,
@@ -93,7 +93,7 @@
       "phase": "body",
       "line": 10,
       "iteration": 2,
-      "note": "fmt.Println(\"halo\") → cetak \"halo\"",
+      "note": "fmt.Println(\"halo\") → print \"halo\"",
       "output": "halo\n"
     },
     {
@@ -105,7 +105,7 @@
       "line": 9,
       "iteration": 3,
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 8,
@@ -115,7 +115,7 @@
       "phase": "exit",
       "line": 9,
       "iteration": 3,
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

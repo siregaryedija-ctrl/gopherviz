@@ -63,12 +63,12 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	defer func() {
 		if r := recover(); r != nil {
 			tr.Mode, tr.Steps = trace.ModeStructural, []trace.Step{}
-			tr.Warnings = append([]string{fmt.Sprintf("kesalahan internal simulator: %v", r)}, tr.Warnings...)
+			tr.Warnings = append([]string{fmt.Sprintf("internal simulator error: %v", r)}, tr.Warnings...)
 		}
 	}()
 	blk, ok := res.Scene.Block(blockID)
 	if !ok {
-		tr.Warnings = append(tr.Warnings, "blok "+blockID+" tidak ditemukan")
+		tr.Warnings = append(tr.Warnings, "block "+blockID+" not found")
 		return tr
 	}
 	tr.Block = trace.BlockInfo{ID: blk.ID, Kind: blk.Kind, Line: blk.Line, EndLine: blk.EndLine, Name: blk.Name}
@@ -79,12 +79,12 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 	}
 	sem, ok := semFor(res.Scene.Language)
 	if !ok {
-		tr.Warnings = append(tr.Warnings, "simulasi nilai untuk "+lang.Names[res.Scene.Language]+" belum tersedia, jadi yang tampil hanya alurnya")
+		tr.Warnings = append(tr.Warnings, "value simulation for "+lang.Names[res.Scene.Language]+" is not available yet, so only the flow is shown")
 		return tr
 	}
 	node := res.Nodes[blockID]
 	if node == nil || blk.State == scene.StateIncomplete || len(res.Diagnostics) > 0 {
-		tr.Warnings = append(tr.Warnings, "kode belum lengkap atau masih ada error; selesaikan dulu supaya nilainya bisa dihitung")
+		tr.Warnings = append(tr.Warnings, "the code is incomplete or still has errors; finish it so the values can be computed")
 		return tr
 	}
 	tr.Block.Names = blockNames(node)
@@ -166,7 +166,7 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		tr.Warnings = append([]string{reason}, tr.Warnings...)
 		return tr
 	case !r.reached:
-		tr.Warnings = append([]string{"blok ini tidak pernah dijalankan (fungsinya tidak dipanggil, atau kondisinya tidak pernah tercapai)"}, tr.Warnings...)
+		tr.Warnings = append([]string{"this block never runs (its function is not called, or its condition is never reached)"}, tr.Warnings...)
 		return tr
 	}
 	tr.Mode = trace.ModeSimulated
@@ -219,15 +219,15 @@ func (it *interp) run(node ir.Node, unknownArgs bool) (structural string) {
 				msg = it.exceptionText(x.v)
 			}
 			if !it.rec.reached {
-				structural = "program akan berhenti karena error sebelum sampai ke blok ini: " + msg
+				structural = "the program stops with an error before reaching this block: " + msg
 				return
 			}
-			it.rec.warn("program berhenti karena " + msg)
+			it.rec.warn("the program stops because of " + msg)
 			it.finalStep(x, msg)
 		case abort:
 			switch x.kind {
 			case abortStructural:
-				structural = "nilai tidak bisa dihitung, jadi yang tampil hanya alurnya: " + x.msg
+				structural = "values cannot be computed, so only the flow is shown: " + x.msg
 			case abortBudget:
 				if len(it.rec.steps) > 0 {
 					it.rec.truncated = true
@@ -237,7 +237,7 @@ func (it *interp) run(node ir.Node, unknownArgs bool) (structural string) {
 				}
 			}
 		default:
-			structural = fmt.Sprintf("kesalahan internal simulator: %v", r)
+			structural = fmt.Sprintf("internal simulator error: %v", r)
 		}
 	}()
 	it.sem.setup(it)
@@ -275,17 +275,17 @@ func (it *interp) finalStep(x thrown, msg string) {
 func (it *interp) uncaughtNote(msg string) string {
 	switch it.lang {
 	case "python":
-		return "Traceback: " + msg + " → program berhenti"
+		return "Traceback: " + msg + " → the program stops"
 	case "javascript", "typescript":
-		return "Uncaught " + msg + " → program berhenti"
+		return "Uncaught " + msg + " → the program stops"
 	case "php":
-		return "Fatal error: Uncaught " + msg + " → program berhenti"
+		return "Fatal error: Uncaught " + msg + " → the program stops"
 	case "java":
-		return "Exception in thread \"main\" " + msg + " → program berhenti"
+		return "Exception in thread \"main\" " + msg + " → the program stops"
 	case "cpp":
-		return "terminate called after throwing " + msg + " → program berhenti"
+		return "terminate called after throwing " + msg + " → the program stops"
 	}
-	return msg + " → program berhenti"
+	return msg + " → the program stops"
 }
 
 // runProgram menjalankan titik masuk sesuai bahasa.
@@ -334,7 +334,7 @@ func (it *interp) runProgram() {
 				return
 			}
 		}
-		it.structural("tidak ada method public static void main(String[] args)")
+		it.structural("there is no public static void main(String[] args) method")
 	}
 }
 
@@ -463,7 +463,7 @@ func (it *interp) callUnknown(fn *ir.Func) {
 		if p.Name == "self" && it.lang == "python" {
 			continue
 		}
-		args = append(args, unknown(p.Name+" adalah parameter fungsi "+fn.Name+" yang tidak dipanggil dengan nilai"))
+		args = append(args, unknown(p.Name+" is a parameter of function "+fn.Name+", which is not called with a value"))
 	}
 	it.callFunc(f, this, argList{pos: args}, fn)
 }
@@ -628,10 +628,10 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 	opt = opt.withDefaults()
 	sem, ok := semFor(res.Scene.Language)
 	if !ok {
-		return "", "bahasa belum didukung"
+		return "", "language not supported yet"
 	}
 	if len(res.Diagnostics) > 0 {
-		return "", "kode masih ada error: " + res.Diagnostics[0].Message
+		return "", "the code still has errors: " + res.Diagnostics[0].Message
 	}
 	it := &interp{
 		lang: res.Scene.Language, sem: sem, res: res, src: res.Src,
@@ -654,7 +654,7 @@ func Run(res *lang.Result, opt Options) (stdout string, err string) {
 				case abort:
 					err = x.msg
 				default:
-					err = fmt.Sprintf("kesalahan internal: %v", r)
+					err = fmt.Sprintf("internal error: %v", r)
 				}
 			}
 		}()

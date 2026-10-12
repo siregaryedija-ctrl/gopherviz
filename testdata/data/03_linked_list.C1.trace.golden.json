@@ -344,7 +344,7 @@
       "n": 6,
       "loop": "",
       "phase": "exit",
-      "note": "program selesai",
+      "note": "program finished",
       "reason": "done",
       "objs": [
         {

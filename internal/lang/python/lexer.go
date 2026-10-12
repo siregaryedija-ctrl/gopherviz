@@ -212,7 +212,7 @@ func (lx *lexer) indentTo(col int) {
 			lx.toks = append(lx.toks, token{k: tDedent, pos: p, end: p})
 		}
 		if col != lx.indents[len(lx.indents)-1] {
-			lx.errf(lx.pos(), "indentasi tidak cocok dengan baris-baris sebelumnya")
+			lx.errf(lx.pos(), "indentation does not match the previous lines")
 			lx.indents = append(lx.indents, col)
 			lx.toks = append(lx.toks, token{k: tIndent, pos: p, end: p})
 		}
@@ -362,7 +362,7 @@ func (lx *lexer) str() {
 		lx.advance(1)
 	}
 	if !closed {
-		lx.errf(start, "string belum ditutup")
+		lx.errf(start, "string is not closed")
 	}
 	if fmode {
 		t := lx.emit(tFStr, start)
@@ -428,7 +428,7 @@ func (lx *lexer) fexpr(quote string) ([2]int, string, bool) {
 		}
 		lx.advance(1)
 	}
-	lx.errf(lx.pos(), "kurung { di f-string belum ditutup")
+	lx.errf(lx.pos(), "brace { in the f-string is not closed")
 	if exprEnd < 0 {
 		exprEnd = lx.off
 	}
@@ -494,6 +494,6 @@ func (lx *lexer) op() {
 		}
 	}
 	r, size := utf8.DecodeRuneInString(rest)
-	lx.errf(start, "karakter tidak dikenal: "+strconv.QuoteRune(r))
+	lx.errf(start, "unknown character: "+strconv.QuoteRune(r))
 	lx.advance(size)
 }

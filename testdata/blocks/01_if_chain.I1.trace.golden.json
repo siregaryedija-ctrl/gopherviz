@@ -43,7 +43,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "masuk cabang ke-1 (if score >= 90)"
+      "note": "take branch #1 (if score >= 90)"
     },
     {
       "n": 2,
@@ -55,7 +55,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "return \"A\" → keluar dari fungsi"
+      "note": "return \"A\" → leave the function"
     },
     {
       "n": 3,
@@ -67,7 +67,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -107,7 +107,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "masuk cabang ke-2 (else if score >= 75)"
+      "note": "take branch #2 (else if score >= 75)"
     },
     {
       "n": 7,
@@ -119,7 +119,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "return \"B\" → keluar dari fungsi"
+      "note": "return \"B\" → leave the function"
     },
     {
       "n": 8,
@@ -131,7 +131,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -184,7 +184,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "semua kondisi false → masuk cabang else"
+      "note": "all conditions false → take the else branch"
     },
     {
       "n": 13,
@@ -196,7 +196,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "return \"D\" → keluar dari fungsi"
+      "note": "return \"D\" → leave the function"
     },
     {
       "n": 14,
@@ -208,7 +208,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     }
   ],

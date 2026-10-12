@@ -78,7 +78,7 @@ func (s *javaSem) lit(it *interp, l *ir.Lit) Value {
 		}
 		n, err := strconv.ParseUint(v, base, 64)
 		if err != nil {
-			return unknown("angka")
+			return unknown("number")
 		}
 		if strings.HasSuffix(raw, "l") {
 			return jlong(int64(n))
@@ -323,7 +323,7 @@ func (s *javaSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		if b.k == kUnknown {
 			return b
 		}
-		it.structural(fmt.Sprintf("operator %s untuk nilai ini belum disimulasikan (baris %d)", op, it.line(at)))
+		it.structural(fmt.Sprintf("operator %s on this value is not simulated yet (line %d)", op, it.line(at)))
 	}
 	rt := numPromote(a, b)
 	if rt == "double" || rt == "float" {
@@ -354,7 +354,7 @@ func (s *javaSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 		case ">=":
 			return boolV(x >= y)
 		}
-		it.structural("operator " + op + " untuk bilangan desimal belum disimulasikan")
+		it.structural("operator " + op + " on decimal numbers is not simulated yet")
 	}
 	x, y := intOf(a), intOf(b)
 	ret := func(n int64) Value {
@@ -408,7 +408,7 @@ func (s *javaSem) binary(it *interp, op string, a, b Value, at ir.Node) Value {
 	case ">=":
 		return boolV(x >= y)
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 
@@ -489,7 +489,7 @@ func (s *javaSem) unary(it *interp, op string, v Value, at ir.Node) Value {
 		}
 		return jint(^v.i)
 	}
-	it.structural("operator " + op + " belum disimulasikan")
+	it.structural("operator " + op + " is not simulated yet")
 	return Value{}
 }
 

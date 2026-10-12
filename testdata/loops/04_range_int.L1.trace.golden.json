@@ -32,7 +32,7 @@
       "phase": "init",
       "line": 6,
       "iteration": 0,
-      "note": "range 5 (angka 5)"
+      "note": "range 5 (number 5)"
     },
     {
       "n": 1,
@@ -46,7 +46,7 @@
         "i": "0"
       },
       "result": true,
-      "note": "ambil elemen ke-1: i = 0"
+      "note": "take element #1: i = 0"
     },
     {
       "n": 2,
@@ -59,7 +59,7 @@
       "vars": {
         "i": "0"
       },
-      "note": "fmt.Println(i) → cetak \"0\"",
+      "note": "fmt.Println(i) → print \"0\"",
       "output": "0\n"
     },
     {
@@ -74,7 +74,7 @@
         "i": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-2: i = 1"
+      "note": "take element #2: i = 1"
     },
     {
       "n": 4,
@@ -87,7 +87,7 @@
       "vars": {
         "i": "1"
       },
-      "note": "fmt.Println(i) → cetak \"1\"",
+      "note": "fmt.Println(i) → print \"1\"",
       "output": "1\n"
     },
     {
@@ -102,7 +102,7 @@
         "i": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-3: i = 2"
+      "note": "take element #3: i = 2"
     },
     {
       "n": 6,
@@ -115,7 +115,7 @@
       "vars": {
         "i": "2"
       },
-      "note": "fmt.Println(i) → cetak \"2\"",
+      "note": "fmt.Println(i) → print \"2\"",
       "output": "2\n"
     },
     {
@@ -130,7 +130,7 @@
         "i": "3"
       },
       "result": true,
-      "note": "ambil elemen ke-4: i = 3"
+      "note": "take element #4: i = 3"
     },
     {
       "n": 8,
@@ -143,7 +143,7 @@
       "vars": {
         "i": "3"
       },
-      "note": "fmt.Println(i) → cetak \"3\"",
+      "note": "fmt.Println(i) → print \"3\"",
       "output": "3\n"
     },
     {
@@ -158,7 +158,7 @@
         "i": "4"
       },
       "result": true,
-      "note": "ambil elemen ke-5: i = 4"
+      "note": "take element #5: i = 4"
     },
     {
       "n": 10,
@@ -171,7 +171,7 @@
       "vars": {
         "i": "4"
       },
-      "note": "fmt.Println(i) → cetak \"4\"",
+      "note": "fmt.Println(i) → print \"4\"",
       "output": "4\n"
     },
     {
@@ -183,7 +183,7 @@
       "line": 6,
       "iteration": 5,
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 12,
@@ -193,7 +193,7 @@
       "phase": "exit",
       "line": 6,
       "iteration": 5,
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

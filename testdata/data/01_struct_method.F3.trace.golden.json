@@ -41,7 +41,7 @@
       "phase": "call",
       "line": 18,
       "func": "main",
-      "note": "panggil main()",
+      "note": "call main()",
       "mem": {
         "vars": []
       }
@@ -90,7 +90,7 @@
       "vars": {
         "p": "&{Ani 20}"
       },
-      "note": "panggil Person.Birthday(p = &{Ani 20})",
+      "note": "call Person.Birthday(p = &{Ani 20})",
       "mem": {
         "vars": [
           {
@@ -130,7 +130,7 @@
       "vars": {
         "p": "&{Ani 21}"
       },
-      "note": "Person.Birthday(p = &{Ani 20}) selesai",
+      "note": "Person.Birthday(p = &{Ani 20}) done",
       "mem": {
         "vars": [
           {
@@ -202,7 +202,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "panggil Person.Greet(p = {Ani 21})",
+      "note": "call Person.Greet(p = {Ani 21})",
       "mem": {
         "vars": [
           {
@@ -236,7 +236,7 @@
       "vars": {
         "p": "{Ani 21}"
       },
-      "note": "Person.Greet(p = {Ani 21}) mengembalikan \"Halo, aku Ani\"",
+      "note": "Person.Greet(p = {Ani 21}) returns \"Halo, aku Ani\"",
       "mem": {
         "vars": [
           {
@@ -267,7 +267,7 @@
       "vars": {
         "ani": "{Ani 21}"
       },
-      "note": "fmt.Println(ani.Greet(), ani.Age) → cetak \"Halo, aku Ani 21\"",
+      "note": "fmt.Println(ani.Greet(), ani.Age) → print \"Halo, aku Ani 21\"",
       "output": "Halo, aku Ani 21\n",
       "mem": {
         "vars": [
@@ -342,7 +342,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 30} {Citra 25}]"
       },
-      "note": "range people (2 elemen)",
+      "note": "range people (2 elements)",
       "mem": {
         "vars": [
           {
@@ -382,7 +382,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-1: p = {Budi 30}",
+      "note": "take element #1: p = {Budi 30}",
       "ops": [
         {
           "op": "read",
@@ -497,7 +497,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-2: p = {Citra 25}",
+      "note": "take element #2: p = {Citra 25}",
       "ops": [
         {
           "op": "read",
@@ -611,7 +611,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "mem": {
         "vars": [
           {
@@ -649,7 +649,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 30} {Citra 25}]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "mem": {
         "vars": [
@@ -688,7 +688,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 30} {Citra 25}]"
       },
-      "note": "range people (2 elemen)",
+      "note": "range people (2 elements)",
       "mem": {
         "vars": [
           {
@@ -728,7 +728,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-1: i = 0",
+      "note": "take element #1: i = 0",
       "ops": [
         {
           "op": "read",
@@ -778,7 +778,7 @@
       "vars": {
         "p": "&{Budi 30}"
       },
-      "note": "panggil Person.Birthday(p = &{Budi 30})",
+      "note": "call Person.Birthday(p = &{Budi 30})",
       "mem": {
         "vars": [
           {
@@ -818,7 +818,7 @@
       "vars": {
         "p": "&{Budi 31}"
       },
-      "note": "Person.Birthday(p = &{Budi 30}) selesai",
+      "note": "Person.Birthday(p = &{Budi 30}) done",
       "mem": {
         "vars": [
           {
@@ -904,7 +904,7 @@
         "people": "[{Budi 31} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-2: i = 1",
+      "note": "take element #2: i = 1",
       "ops": [
         {
           "op": "read",
@@ -954,7 +954,7 @@
       "vars": {
         "p": "&{Citra 25}"
       },
-      "note": "panggil Person.Birthday(p = &{Citra 25})",
+      "note": "call Person.Birthday(p = &{Citra 25})",
       "mem": {
         "vars": [
           {
@@ -994,7 +994,7 @@
       "vars": {
         "p": "&{Citra 26}"
       },
-      "note": "Person.Birthday(p = &{Citra 25}) selesai",
+      "note": "Person.Birthday(p = &{Citra 25}) done",
       "mem": {
         "vars": [
           {
@@ -1079,7 +1079,7 @@
         "people": "[{Budi 31} {Citra 26}]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "mem": {
         "vars": [
           {
@@ -1117,7 +1117,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 31} {Citra 26}]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "mem": {
         "vars": [
@@ -1155,7 +1155,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 31} {Citra 26}]"
       },
-      "note": "fmt.Println(people) → cetak \"[{Budi 31} {Citra 26}]\"",
+      "note": "fmt.Println(people) → print \"[{Budi 31} {Citra 26}]\"",
       "output": "[{Budi 31} {Citra 26}]\n",
       "mem": {
         "vars": [
@@ -1193,7 +1193,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 31} {Citra 26}]"
       },
-      "note": "fmt.Printf(\"%+v\\n\", people[0]) → cetak \"{Name:Budi Age:31}\"",
+      "note": "fmt.Printf(\"%+v\\n\", people[0]) → print \"{Name:Budi Age:31}\"",
       "output": "{Name:Budi Age:31}\n",
       "mem": {
         "vars": [
@@ -1338,7 +1338,7 @@
         "copyAni": "{Salinan 21}",
         "people": "[{Budi 31} {Citra 26}]"
       },
-      "note": "fmt.Println(ani.Name, copyAni.Name) → cetak \"Ani Salinan\"",
+      "note": "fmt.Println(ani.Name, copyAni.Name) → print \"Ani Salinan\"",
       "output": "Ani Salinan\n",
       "mem": {
         "vars": [
@@ -1393,7 +1393,7 @@
         "copyAni": "{Salinan 21}",
         "people": "[{Budi 31} {Citra 26}]"
       },
-      "note": "main() selesai",
+      "note": "main() done",
       "mem": {
         "vars": [
           {

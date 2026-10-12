@@ -62,7 +62,7 @@
       "vars": {
         "i": "0"
       },
-      "note": "fmt.Println(i) → cetak \"0\"",
+      "note": "fmt.Println(i) → print \"0\"",
       "output": "0\n"
     },
     {
@@ -103,7 +103,7 @@
       "vars": {
         "i": "1"
       },
-      "note": "fmt.Println(i) → cetak \"1\"",
+      "note": "fmt.Println(i) → print \"1\"",
       "output": "1\n"
     },
     {
@@ -144,7 +144,7 @@
       "vars": {
         "i": "2"
       },
-      "note": "fmt.Println(i) → cetak \"2\"",
+      "note": "fmt.Println(i) → print \"2\"",
       "output": "2\n"
     },
     {
@@ -185,7 +185,7 @@
       "vars": {
         "i": "3"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     }
   ],

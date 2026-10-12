@@ -19,8 +19,8 @@ func TestList(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit %d", code)
 	}
-	for _, want := range []string{"5 blok (go)", "F1 ", "  L1", "    L2", "8-19", "for klasik", "for i := 0; i < n-1; i++",
-		"fungsi", "func main()", "if a[j] > a[j+1]", "1 cabang", "lengkap"} {
+	for _, want := range []string{"5 blocks (go)", "F1 ", "  L1", "    L2", "8-19", "classic for", "for i := 0; i < n-1; i++",
+		"function", "func main()", "if a[j] > a[j+1]", "1 branch", "complete"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output tidak memuat %q:\n%s", want, out)
 		}
@@ -29,7 +29,7 @@ func TestList(t *testing.T) {
 
 func TestListIncomplete(t *testing.T) {
 	_, out, _ := runCmd(t, "", "list", "../../testdata/loops/14_incomplete_noclose.go")
-	for _, want := range []string{"belum lengkap", "Catatan parser"} {
+	for _, want := range []string{"incomplete", "Parser notes"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output tidak memuat %q:\n%s", want, out)
 		}
@@ -62,7 +62,7 @@ func TestListJSONFromStdin(t *testing.T) {
 
 func TestTraceCmd(t *testing.T) {
 	code, out, _ := runCmd(t, "", "trace", "../../testdata/loops/01_for3.go:7")
-	for _, want := range []string{"mode simulated", "i < 3 → 0 < 3 → true", "⇒ 2", "kondisi false"} {
+	for _, want := range []string{"mode simulated", "i < 3 → 0 < 3 → true", "⇒ 2", "condition false"} {
 		if code != 0 || !strings.Contains(out, want) {
 			t.Errorf("output tidak memuat %q (exit %d):\n%s", want, code, out)
 		}
@@ -86,17 +86,17 @@ func TestCommands(t *testing.T) {
 		code int
 		want string
 	}{
-		{[]string{"version"}, 0, "scene v2, trace v2, protokol v2"},
-		{[]string{"help"}, 0, "Pemakaian"},
-		{[]string{"trace"}, 2, "pemakaian: gopherviz trace"},
-		{[]string{"trace", "../../testdata/loops/01_for3.go:2"}, 1, "tidak ada blok"},
-		{[]string{"trace", "../../testdata/blocks/03_recursion.go:12"}, 0, "fib(n = 4) mengembalikan 3"},
-		{[]string{"show"}, 2, "setelah Fase 9"},
-		{[]string{"terbang"}, 2, "tidak dikenal"},
-		{[]string{"list"}, 2, "pemakaian"},
-		{[]string{"list", "--warna", "a.go"}, 2, "flag tidak dikenal"},
-		{[]string{"list", "tidak-ada.go"}, 1, "gagal membaca"},
-		{nil, 2, "Pemakaian"},
+		{[]string{"version"}, 0, "scene v2, trace v2, protocol v2"},
+		{[]string{"help"}, 0, "Usage"},
+		{[]string{"trace"}, 2, "usage: gopherviz trace"},
+		{[]string{"trace", "../../testdata/loops/01_for3.go:2"}, 1, "no block"},
+		{[]string{"trace", "../../testdata/blocks/03_recursion.go:12"}, 0, "fib(n = 4) returns 3"},
+		{[]string{"show"}, 2, "after Phase 9"},
+		{[]string{"terbang"}, 2, "unknown command"},
+		{[]string{"list"}, 2, "usage"},
+		{[]string{"list", "--warna", "a.go"}, 2, "unknown flag"},
+		{[]string{"list", "tidak-ada.go"}, 1, "failed to read"},
+		{nil, 2, "Usage"},
 	}
 	for _, tt := range tests {
 		code, out, errOut := runCmd(t, "", tt.args...)

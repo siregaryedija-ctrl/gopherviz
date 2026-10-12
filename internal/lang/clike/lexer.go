@@ -151,7 +151,7 @@ func (lx *lexer) run(base int) {
 			start := lx.pos(base)
 			end := strings.Index(lx.src[lx.off+2:], "*/")
 			if end < 0 {
-				lx.errf(start, "komentar /* belum ditutup dengan */")
+				lx.errf(start, "comment /* is not closed with */")
 				lx.advance(len(lx.src) - lx.off)
 			} else {
 				lx.advance(end + 4)
@@ -395,7 +395,7 @@ func (lx *lexer) str(start ir.Pos, base int, q byte) {
 		lx.advance(1)
 	}
 	if !closed {
-		lx.errf(start, "string belum ditutup")
+		lx.errf(start, "string is not closed")
 	}
 	k := tStr
 	if q == '\'' && lx.d.CharLit {
@@ -554,7 +554,7 @@ func (lx *lexer) template(start ir.Pos, base int) {
 		lx.advance(1)
 	}
 	if !closed {
-		lx.errf(start, "template string belum ditutup dengan `")
+		lx.errf(start, "template string is not closed with `")
 	}
 	t := lx.emit(tTemplate, start, base)
 	t.parts = append(parts, b.String())
@@ -604,7 +604,7 @@ func (lx *lexer) textBlock(start ir.Pos, base int) {
 	end := strings.Index(lx.src[lx.off:], `"""`)
 	body := ""
 	if end < 0 {
-		lx.errf(start, `text block belum ditutup dengan """`)
+		lx.errf(start, `text block is not closed with """`)
 		body = lx.src[lx.off:]
 		lx.advance(len(lx.src) - lx.off)
 	} else {
@@ -657,7 +657,7 @@ func (lx *lexer) rawString(start ir.Pos, base int) {
 	lx.advance(q + 1)
 	open := strings.IndexByte(lx.src[lx.off:], '(')
 	if open < 0 {
-		lx.errf(start, "raw string tidak valid")
+		lx.errf(start, "invalid raw string")
 		lx.advance(len(lx.src) - lx.off)
 		lx.emit(tStr, start, base)
 		return
@@ -668,7 +668,7 @@ func (lx *lexer) rawString(start ir.Pos, base int) {
 	end := strings.Index(lx.src[lx.off:], closing)
 	body := ""
 	if end < 0 {
-		lx.errf(start, "raw string belum ditutup")
+		lx.errf(start, "raw string is not closed")
 		body = lx.src[lx.off:]
 		lx.advance(len(lx.src) - lx.off)
 	} else {
@@ -697,14 +697,14 @@ func (lx *lexer) heredoc(start ir.Pos, base int) {
 		lx.advance(1)
 	}
 	if label == "" {
-		lx.errf(start, "heredoc tanpa label")
+		lx.errf(start, "heredoc without a label")
 		lx.emit(tPunct, start, base)
 		return
 	}
 	// badan dimulai di baris berikutnya dan berakhir pada baris yang hanya berisi label
 	nl := strings.IndexByte(lx.src[lx.off:], '\n')
 	if nl < 0 {
-		lx.errf(start, "heredoc belum ditutup")
+		lx.errf(start, "heredoc is not closed")
 		lx.advance(len(lx.src) - lx.off)
 		lx.emit(tStr, start, base)
 		return
@@ -729,7 +729,7 @@ func (lx *lexer) heredoc(start ir.Pos, base int) {
 		i = lineEnd + 1
 	}
 	if bodyEnd < 0 {
-		lx.errf(start, "heredoc belum ditutup dengan "+label)
+		lx.errf(start, "heredoc is not closed with "+label)
 		bodyEnd = len(lx.src)
 		lx.advance(len(lx.src) - lx.off)
 	}
@@ -794,7 +794,7 @@ func (lx *lexer) regex(start ir.Pos, base int) {
 		lx.advance(1)
 	}
 	if lx.peek(0) != '/' {
-		lx.errf(start, "regex belum ditutup dengan /")
+		lx.errf(start, "regex is not closed with /")
 	} else {
 		lx.advance(1)
 	}
@@ -822,6 +822,6 @@ func (lx *lexer) punct(start ir.Pos, base int) {
 		}
 	}
 	r, size := utf8.DecodeRuneInString(rest)
-	lx.errf(start, "karakter tidak dikenal: "+strconv.QuoteRune(r))
+	lx.errf(start, "unknown character: "+strconv.QuoteRune(r))
 	lx.advance(size)
 }

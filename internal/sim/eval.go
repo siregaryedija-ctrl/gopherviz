@@ -75,9 +75,9 @@ func (it *interp) eval0(x ast.Expr, e *env) value {
 		if fd, ok := it.funcs[n.Name]; ok {
 			return value{k: kFunc, fn: &funcVal{name: n.Name, decl: fd}}
 		}
-		return unknown(fmt.Sprintf("nilai %s tidak diketahui", n.Name))
+		return unknown(fmt.Sprintf("value of %s is unknown", n.Name))
 	case *ast.BasicLit:
-		return unknown("literal tidak terbaca")
+		return unknown("unreadable literal")
 	case *ast.ParenExpr:
 		return it.eval(n.X, e)
 	case *ast.FuncLit:
@@ -106,13 +106,13 @@ func (it *interp) eval0(x ast.Expr, e *env) value {
 	case *ast.StarExpr:
 		return it.deref(it.eval(n.X, e), n)
 	}
-	return unknown(fmt.Sprintf("ekspresi %q belum disimulasikan", it.text(x)))
+	return unknown(fmt.Sprintf("expression %q is not simulated yet", it.text(x)))
 }
 
 func (it *interp) composite(n *ast.CompositeLit, e *env) value {
 	t := it.p.Info.Types[n].Type
 	if t == nil {
-		return unknown("tipe literal tidak diketahui")
+		return unknown("unknown literal type")
 	}
 	switch u := t.Underlying().(type) {
 	case *types.Slice, *types.Array:
@@ -130,7 +130,7 @@ func (it *interp) composite(n *ast.CompositeLit, e *env) value {
 			if kv, ok := el.(*ast.KeyValueExpr); ok {
 				k := it.eval(kv.Key, e)
 				if k.k != kInt {
-					return unknown("indeks literal tidak diketahui")
+					return unknown("unknown literal index")
 				}
 				idx = int(k.i)
 				el = kv.Value
@@ -161,7 +161,7 @@ func (it *interp) composite(n *ast.CompositeLit, e *env) value {
 	case *types.Struct:
 		return it.structLit(n, u, e)
 	}
-	return unknown(fmt.Sprintf("nilai bertipe %s belum disimulasikan", t))
+	return unknown(fmt.Sprintf("values of type %s are not simulated yet", t))
 }
 
 func (it *interp) evalBinary(n *ast.BinaryExpr, e *env) value {
@@ -366,7 +366,7 @@ func (it *interp) binary(op token.Token, a, b value, at ast.Node) value {
 			return boolV(!isNil)
 		}
 	}
-	return unknown(fmt.Sprintf("operasi %s di baris %d belum disimulasikan", op, it.line(at)))
+	return unknown(fmt.Sprintf("operation %s on line %d is not simulated yet", op, it.line(at)))
 }
 
 func (it *interp) unary(n *ast.UnaryExpr, e *env) value {
@@ -392,14 +392,14 @@ func (it *interp) unary(n *ast.UnaryExpr, e *env) value {
 	case n.Op == token.XOR && v.k == kInt:
 		return intV(^v.i)
 	}
-	return unknown(fmt.Sprintf("operator %s belum disimulasikan", n.Op))
+	return unknown(fmt.Sprintf("operator %s is not simulated yet", n.Op))
 }
 
 func (it *interp) recv(n *ast.UnaryExpr, e *env) (value, bool) {
 	ch := it.eval(n.X, e)
 	v, ok := it.chanRecv(ch, n, it.chanName(n.X), chanElem(it.p.Info.Types[n.X].Type))
 	if it.recording() {
-		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Note: fmt.Sprintf("terima %s dari %s", show(v), it.chanName(n.X))}, e)
+		it.add(trace.Step{Phase: trace.PhaseBody, Line: it.line(n), Note: fmt.Sprintf("receive %s from %s", show(v), it.chanName(n.X))}, e)
 	}
 	return v, ok
 }
@@ -425,7 +425,7 @@ func (it *interp) evalIndex(n *ast.IndexExpr, e *env) value {
 	case kString:
 		return intV(int64(base.s[it.index(n, idx, len(base.s))]))
 	}
-	return unknown(fmt.Sprintf("indeks pada %q belum disimulasikan", it.text(n.X)))
+	return unknown(fmt.Sprintf("indexing %q is not simulated yet", it.text(n.X)))
 }
 
 func (it *interp) evalSlice(n *ast.SliceExpr, e *env) value {
@@ -448,7 +448,7 @@ func (it *interp) evalSlice(n *ast.SliceExpr, e *env) value {
 	case kUnknown:
 		return base
 	default:
-		return unknown("slice atas nilai ini belum disimulasikan")
+		return unknown("slicing this value is not simulated yet")
 	}
 	bound := func(x ast.Expr, def int) int {
 		if x == nil {
@@ -456,7 +456,7 @@ func (it *interp) evalSlice(n *ast.SliceExpr, e *env) value {
 		}
 		v := it.eval(x, e)
 		if v.k != kInt {
-			it.structural(fmt.Sprintf("batas slice di baris %d tidak bisa dihitung", it.line(x)))
+			it.structural(fmt.Sprintf("the slice bounds on line %d cannot be computed", it.line(x)))
 		}
 		return int(v.i)
 	}
@@ -500,7 +500,7 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 	// konversi tipe: int(x), string(r), []byte(s), ...
 	if tv, ok := it.p.Info.Types[n.Fun]; ok && tv.IsType() {
 		if len(n.Args) != 1 {
-			return []value{unknown("konversi tidak valid")}
+			return []value{unknown("invalid conversion")}
 		}
 		return []value{convert(it.eval(n.Args[0], e), it.p.Info.Types[n.Args[0]].Type, tv.Type)}
 	}
@@ -524,9 +524,9 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 		}
 		if sel := it.p.Info.Selections[f]; sel == nil {
 			// method dari tipe di package lain (mis. strings.Builder.WriteString)
-			it.warn(fmt.Sprintf("method %s belum disimulasikan", it.text(n.Fun)))
+			it.warn(fmt.Sprintf("method %s is not simulated yet", it.text(n.Fun)))
 			it.args(n, e)
-			return []value{unknown(it.text(n.Fun) + " belum disimulasikan")}
+			return []value{unknown(it.text(n.Fun) + " is not simulated yet")}
 		}
 		// field bertipe fungsi: dipanggil seperti nilai fungsi biasa di bawah
 	}
@@ -535,7 +535,7 @@ func (it *interp) call(n *ast.CallExpr, e *env) []value {
 		if fv.k == kFunc {
 			it.panicf(n, "runtime error: invalid memory address or nil pointer dereference")
 		}
-		return []value{unknown(fmt.Sprintf("fungsi %s tidak diketahui", it.text(n.Fun)))}
+		return []value{unknown(fmt.Sprintf("unknown function %s", it.text(n.Fun)))}
 	}
 	args := it.args(n, e)
 	if n.Ellipsis.IsValid() && len(args) > 0 {
@@ -565,7 +565,7 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 		ft, body, parent = fn.lit.Type, fn.lit.Body, fn.env
 	}
 	if body == nil {
-		return []value{unknown("fungsi tanpa isi")}
+		return []value{unknown("function without a body")}
 	}
 	var node ast.Node
 	if fn.decl != nil {
@@ -629,7 +629,7 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 					v = args[i]
 					i++
 				default:
-					v = unknown(fmt.Sprintf("%s adalah parameter fungsi %s", name.Name, fn.name))
+					v = unknown(fmt.Sprintf("%s is a parameter of function %s", name.Name, fn.name))
 				}
 				if obj := it.p.Info.Defs[name]; obj != nil {
 					v = coerce(v, obj.Type())
@@ -644,7 +644,7 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 	argText := strings.Join(params, ", ")
 	if recordCall && it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: fn.name, Args: argText,
-			Note: fmt.Sprintf("panggil %s(%s)", fn.name, argText)}, scope)
+			Note: fmt.Sprintf("call %s(%s)", fn.name, argText)}, scope)
 	}
 	// fungsi dari file lain di package yang sama: langkah call di atas masih di file pemanggil,
 	// isi dan return-nya di file fungsi itu
@@ -692,9 +692,9 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 			rets[i] = show(v)
 		}
 		ret := strings.Join(rets, ", ")
-		note := fmt.Sprintf("%s(%s) selesai", fn.name, argText)
+		note := fmt.Sprintf("%s(%s) done", fn.name, argText)
 		if ret != "" {
-			note = fmt.Sprintf("%s(%s) mengembalikan %s", fn.name, argText, ret)
+			note = fmt.Sprintf("%s(%s) returns %s", fn.name, argText, ret)
 		}
 		it.add(trace.Step{Phase: trace.PhaseReturn, Line: it.p.Line(body.Rbrace), Func: fn.name, Return: ret, Note: note}, scope)
 	}
@@ -707,7 +707,7 @@ func (it *interp) callFunc(fn *funcVal, args []value, at ast.Node) []value {
 func guardRuntime(res *[]value, what string) {
 	if r := recover(); r != nil {
 		if _, ok := r.(runtime.Error); ok {
-			*res = []value{unknown(what + " dipanggil dengan argumen yang tidak valid")}
+			*res = []value{unknown(what + " called with invalid arguments")}
 			return
 		}
 		panic(r)
@@ -744,7 +744,7 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
 			}
 			return one(intV(int64(len(v.ch.buf))))
 		}
-		return one(unknown(fmt.Sprintf("panjang %s tidak diketahui", it.text(n.Args[0]))))
+		return one(unknown(fmt.Sprintf("length of %s is unknown", it.text(n.Args[0]))))
 	case "append":
 		s := it.eval(n.Args[0], e)
 		if s.k == kUnknown {
@@ -777,7 +777,7 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
 		if len(n.Args) > 1 {
 			v := it.eval(n.Args[1], e)
 			if v.k != kInt {
-				return one(unknown("ukuran make tidak diketahui"))
+				return one(unknown("unknown make size"))
 			}
 			size = int(v.i)
 		}
@@ -802,7 +802,7 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
 		case *types.Chan:
 			return one(it.newChan(size))
 		}
-		return one(unknown("make untuk tipe ini belum disimulasikan"))
+		return one(unknown("make for this type is not simulated yet"))
 	case "delete":
 		m := it.eval(n.Args[0], e)
 		if m.k == kMap && m.m != nil {
@@ -871,7 +871,7 @@ func (it *interp) builtin(name string, n *ast.CallExpr, e *env) (res []value) {
 		it.chanClose(it.eval(n.Args[0], e), n)
 		return nil
 	}
-	return one(unknown(fmt.Sprintf("fungsi bawaan %s belum disimulasikan", name)))
+	return one(unknown(fmt.Sprintf("built-in function %s is not simulated yet", name)))
 }
 
 func sliceElem(t types.Type) types.Type {
@@ -887,7 +887,7 @@ func sliceElem(t types.Type) types.Type {
 // appendVals meniru append Go: menulis ke array lama bila kapasitas cukup, selain itu menyalin ke array baru.
 func appendVals(s value, extra []value) value {
 	if s.k != kSlice {
-		return unknown("append pada nilai yang bukan slice")
+		return unknown("append on a value that is not a slice")
 	}
 	n := s.sl.elemsLen()
 	if s.sl != nil && n+len(extra) <= s.sl.cap {
@@ -1147,7 +1147,7 @@ func (it *interp) pkgApply(pkg, name string, args []value, n ast.Node) (res []va
 		return []value{strV(strings.ToLower(str(0)))}
 	case "strings.Repeat":
 		if args[1].i < 0 || args[1].i > 10000 {
-			return []value{unknown("strings.Repeat terlalu besar")}
+			return []value{unknown("strings.Repeat is too large")}
 		}
 		return []value{strV(strings.Repeat(str(0), int(args[1].i)))}
 	case "strings.Contains":
@@ -1213,6 +1213,6 @@ func (it *interp) pkgApply(pkg, name string, args []value, n ast.Node) (res []va
 	case "unicode.IsSpace":
 		return []value{boolV(unicode.IsSpace(rune(args[0].i)))}
 	}
-	it.warn(fmt.Sprintf("%s.%s tidak disimulasikan; hasilnya dianggap tidak diketahui", pkg, name))
-	return []value{unknown(fmt.Sprintf("hasil %s.%s tidak diketahui", pkg, name))}
+	it.warn(fmt.Sprintf("%s.%s is not simulated; its result is treated as unknown", pkg, name))
+	return []value{unknown(fmt.Sprintf("result of %s.%s is unknown", pkg, name))}
 }

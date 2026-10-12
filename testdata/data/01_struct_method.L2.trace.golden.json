@@ -36,7 +36,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 30} {Citra 25}]"
       },
-      "note": "range people (2 elemen)",
+      "note": "range people (2 elements)",
       "items": [
         "{Budi 30}",
         "{Citra 25}"
@@ -80,7 +80,7 @@
         "people": "[{Budi 30} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-1: i = 0",
+      "note": "take element #1: i = 0",
       "ops": [
         {
           "op": "read",
@@ -130,7 +130,7 @@
       "vars": {
         "p": "&{Budi 30}"
       },
-      "note": "panggil Person.Birthday(p = &{Budi 30})",
+      "note": "call Person.Birthday(p = &{Budi 30})",
       "mem": {
         "vars": [
           {
@@ -170,7 +170,7 @@
       "vars": {
         "p": "&{Budi 31}"
       },
-      "note": "Person.Birthday(p = &{Budi 30}) selesai",
+      "note": "Person.Birthday(p = &{Budi 30}) done",
       "mem": {
         "vars": [
           {
@@ -256,7 +256,7 @@
         "people": "[{Budi 31} {Citra 25}]"
       },
       "result": true,
-      "note": "ambil elemen ke-2: i = 1",
+      "note": "take element #2: i = 1",
       "ops": [
         {
           "op": "read",
@@ -306,7 +306,7 @@
       "vars": {
         "p": "&{Citra 25}"
       },
-      "note": "panggil Person.Birthday(p = &{Citra 25})",
+      "note": "call Person.Birthday(p = &{Citra 25})",
       "mem": {
         "vars": [
           {
@@ -346,7 +346,7 @@
       "vars": {
         "p": "&{Citra 26}"
       },
-      "note": "Person.Birthday(p = &{Citra 25}) selesai",
+      "note": "Person.Birthday(p = &{Citra 25}) done",
       "mem": {
         "vars": [
           {
@@ -431,7 +431,7 @@
         "people": "[{Budi 31} {Citra 26}]"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "mem": {
         "vars": [
           {
@@ -469,7 +469,7 @@
         "ani": "{Ani 21}",
         "people": "[{Budi 31} {Citra 26}]"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "mem": {
         "vars": [

@@ -47,7 +47,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "masuk cabang ke-1 (if total > 5)"
+      "note": "take branch #1 (if total > 5)"
     },
     {
       "n": 2,
@@ -60,7 +60,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "fmt.Println(\"besar\", total) → cetak \"besar 6\"",
+      "note": "fmt.Println(\"besar\", total) → print \"besar 6\"",
       "output": "besar 6\n"
     },
     {
@@ -74,7 +74,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

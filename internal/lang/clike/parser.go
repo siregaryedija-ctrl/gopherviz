@@ -28,12 +28,12 @@ func Parse(lang, src string) (f *ir.File) {
 	d := DialectFor(lang)
 	f = &ir.File{Lang: lang}
 	if d == nil {
-		f.Diags = []ir.Diag{{Pos: ir.Pos{Line: 1, Col: 1}, Msg: "bahasa tidak dikenal: " + lang}}
+		f.Diags = []ir.Diag{{Pos: ir.Pos{Line: 1, Col: 1}, Msg: "unknown language: " + lang}}
 		return f
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			f.Diags = append(f.Diags, ir.Diag{Pos: ir.Pos{Line: 1, Col: 1}, Msg: fmt.Sprintf("kesalahan internal parser: %v", r)})
+			f.Diags = append(f.Diags, ir.Diag{Pos: ir.Pos{Line: 1, Col: 1}, Msg: fmt.Sprintf("internal parser error: %v", r)})
 		}
 	}()
 	toks, ldiags := lex(d, src, ir.Pos{})
@@ -45,7 +45,7 @@ func Parse(lang, src string) (f *ir.File) {
 			f.Body = append(f.Body, s)
 		}
 		if p.i == before {
-			p.badSkip("tidak bisa dibaca di sini: " + p.tok().text)
+			p.badSkip("cannot be read here: " + p.tok().text)
 		}
 	}
 	f.Diags = p.diags
@@ -109,7 +109,7 @@ func (p *parser) expect(s string, what string) bool {
 	if p.accept(s) {
 		return true
 	}
-	p.errAt(p.tok().pos, fmt.Sprintf("kurang %q %s", s, what))
+	p.errAt(p.tok().pos, fmt.Sprintf("missing %q %s", s, what))
 	return false
 }
 
@@ -162,7 +162,7 @@ func (p *parser) semi() {
 	t := p.tok()
 	if t.k == tEOF || p.is("}") || t.k == tInline {
 		if !p.d.ASI && t.k == tEOF {
-			p.errAt(p.prevEnd(), "kurang \";\" di akhir statement")
+			p.errAt(p.prevEnd(), "missing \";\" at the end of the statement")
 		}
 		return
 	}
@@ -170,10 +170,10 @@ func (p *parser) semi() {
 		return
 	}
 	if t.nl {
-		p.errAt(p.prevEnd(), "kurang \";\" di akhir baris")
+		p.errAt(p.prevEnd(), "missing \";\" at the end of the line")
 		return
 	}
-	p.badSkip(fmt.Sprintf("kurang \";\" sebelum %q", t.text))
+	p.badSkip(fmt.Sprintf("missing \";\" before %q", t.text))
 }
 
 // ---------- statement ----------
@@ -182,7 +182,7 @@ func (p *parser) stmt() ir.Stmt {
 	p.depth++
 	defer func() { p.depth-- }()
 	if p.depth > 200 {
-		return p.badSkip("kode terlalu dalam bersarang")
+		return p.badSkip("code nested too deep")
 	}
 	t := p.tok()
 	start := t.pos
@@ -204,7 +204,7 @@ func (p *parser) stmt() ir.Stmt {
 			p.next()
 			return &ir.Simple{S: p.span(start), Kind: "empty"}
 		case "}":
-			return p.badSkip("kurung kurawal } berlebih")
+			return p.badSkip("extra closing brace }")
 		case "@":
 			if p.d.TSTypes || p.d.Lang == "java" {
 				p.annotation()
@@ -293,7 +293,7 @@ func (p *parser) skipBalanced() {
 func (p *parser) block() *ir.Block {
 	start := p.tok().pos
 	if !p.accept("{") {
-		p.errAt(start, "kurang \"{\"")
+		p.errAt(start, "missing \"{\"")
 		b := &ir.Block{Closed: false}
 		if s := p.stmt(); s != nil {
 			b.List = append(b.List, s)
@@ -308,13 +308,13 @@ func (p *parser) block() *ir.Block {
 			b.List = append(b.List, s)
 		}
 		if p.i == before {
-			b.List = append(b.List, p.badSkip("tidak bisa dibaca di sini: "+p.tok().text))
+			b.List = append(b.List, p.badSkip("cannot be read here: "+p.tok().text))
 		}
 	}
 	if p.accept("}") {
 		b.Closed = true
 	} else {
-		p.errAt(start, "kurung kurawal { belum ditutup")
+		p.errAt(start, "curly brace { is not closed")
 	}
 	b.S = p.span(start)
 	return b
@@ -333,7 +333,7 @@ func (p *parser) body(alt string) ir.Stmt {
 				b.List = append(b.List, s)
 			}
 			if p.i == before {
-				p.badSkip("tidak bisa dibaca di sini")
+				p.badSkip("cannot be read here")
 			}
 		}
 		if p.is(alt) {
@@ -345,26 +345,26 @@ func (p *parser) body(alt string) ir.Stmt {
 		return b
 	}
 	if p.at(tEOF) {
-		p.errAt(p.prevEnd(), "badan belum ditulis")
+		p.errAt(p.prevEnd(), "the body is missing")
 		return &ir.Block{S: p.span(p.tok().pos)}
 	}
 	return p.stmt()
 }
 
 func (p *parser) parenCond(what string) ir.Expr {
-	if !p.expect("(", "setelah "+what) {
+	if !p.expect("(", "after "+what) {
 		if p.is("{") {
-			return &ir.BadExpr{S: p.span(p.tok().pos), Msg: "kondisi kosong"}
+			return &ir.BadExpr{S: p.span(p.tok().pos), Msg: "empty condition"}
 		}
 		return p.expr()
 	}
 	if p.is(")") {
-		p.errAt(p.tok().pos, "kondisi "+what+" masih kosong")
+		p.errAt(p.tok().pos, "the "+what+" condition is empty")
 		p.next()
-		return &ir.BadExpr{S: p.span(p.tok().pos), Msg: "kondisi kosong"}
+		return &ir.BadExpr{S: p.span(p.tok().pos), Msg: "empty condition"}
 	}
 	x := p.exprSeq()
-	p.expect(")", "untuk menutup kondisi "+what)
+	p.expect(")", "to close the "+what+" condition")
 	return x
 }
 
@@ -394,13 +394,13 @@ func (p *parser) keywordStmt() ir.Stmt {
 			hdr := p.span(start)
 			body := p.stmt()
 			var cond ir.Expr
-			if p.expect("while", "setelah badan do") {
+			if p.expect("while", "after the do body") {
 				cond = p.parenCond("do-while")
 			} else {
-				cond = &ir.BadExpr{S: p.span(p.tok().pos), Msg: "kondisi kosong"}
+				cond = &ir.BadExpr{S: p.span(p.tok().pos), Msg: "empty condition"}
 			}
 			if !p.accept(";") && !p.d.ASI && !p.at(tEOF) {
-				p.errAt(p.prevEnd(), "kurang \";\" setelah do-while")
+				p.errAt(p.prevEnd(), "missing \";\" after do-while")
 			}
 			return &ir.While{S: p.span(start), Cond: cond, Body: body, Do: true, Header: hdr}
 		}
@@ -673,7 +673,7 @@ func (p *parser) forStmt() ir.Stmt {
 	if p.d.ASI && p.is("await") {
 		p.next()
 	}
-	if !p.expect("(", "setelah for") {
+	if !p.expect("(", "after for") {
 		hdr := p.span(start)
 		return &ir.For{S: p.span(start), Body: p.body("endfor"), Header: hdr}
 	}
@@ -703,15 +703,15 @@ func (p *parser) forStmt() ir.Stmt {
 			es.S = p.span(is)
 		}
 	}
-	p.expect(";", "setelah bagian awal for")
+	p.expect(";", "after the for initializer")
 	if !p.is(";") {
 		n.Cond = p.exprSeq()
 	}
-	p.expect(";", "setelah kondisi for")
+	p.expect(";", "after the for condition")
 	if !p.is(")") {
 		n.Post = p.exprSeq()
 	}
-	p.expect(")", "untuk menutup kepala for")
+	p.expect(")", "to close the for header")
 	n.Header = p.span(start)
 	n.Body = p.body("endfor")
 	n.S = p.span(start)
@@ -779,7 +779,7 @@ func (p *parser) tryForEach(start ir.Pos) ir.Stmt {
 	} else {
 		return nil
 	}
-	p.expect(")", "untuk menutup kepala for")
+	p.expect(")", "to close the for header")
 	fe.Header = p.span(start)
 	fe.Body = p.body("endfor")
 	fe.S = p.span(start)
@@ -791,9 +791,9 @@ func (p *parser) foreachStmt() ir.Stmt {
 	start := p.tok().pos
 	p.next()
 	fe := &ir.ForEach{Kind: "foreach"}
-	if p.expect("(", "setelah foreach") {
+	if p.expect("(", "after foreach") {
 		fe.X = p.expr()
-		if p.expect("as", "di foreach") {
+		if p.expect("as", "in foreach") {
 			ref := p.accept("&")
 			first := p.expr()
 			if p.accept("=>") {
@@ -806,10 +806,10 @@ func (p *parser) foreachStmt() ir.Stmt {
 				fe.Decl = "&" // foreach dengan referensi: mengubah elemen array asli
 			}
 		}
-		p.expect(")", "untuk menutup kepala foreach")
+		p.expect(")", "to close the foreach header")
 	}
 	if fe.X == nil {
-		fe.X = &ir.BadExpr{S: p.span(start), Msg: "foreach tanpa koleksi"}
+		fe.X = &ir.BadExpr{S: p.span(start), Msg: "foreach without a collection"}
 	}
 	fe.Header = p.span(start)
 	fe.Body = p.body("endforeach")
@@ -824,7 +824,7 @@ func (p *parser) switchStmt() ir.Stmt {
 	hdr := p.span(start)
 	n := &ir.Switch{Tag: tag, Header: hdr}
 	alt := p.d.Dollar && p.is(":")
-	if !alt && !p.expect("{", "setelah switch") {
+	if !alt && !p.expect("{", "after switch") {
 		n.S = p.span(start)
 		return n
 	}
@@ -857,10 +857,10 @@ func (p *parser) switchStmt() ir.Stmt {
 			before := p.i
 			s := p.stmt()
 			if p.i == before {
-				s = p.badSkip("tidak bisa dibaca di sini")
+				s = p.badSkip("cannot be read here")
 			}
 			if cur == nil {
-				p.errAt(cs, "statement di switch harus berada di bawah case")
+				p.errAt(cs, "statements in a switch must be under a case")
 				cur = &ir.Case{S: p.span(cs)}
 				n.Cases = append(n.Cases, cur)
 			}
@@ -882,7 +882,7 @@ func (p *parser) switchStmt() ir.Stmt {
 		p.accept(";")
 	}
 	if !closed {
-		p.errAt(start, "switch belum ditutup dengan }")
+		p.errAt(start, "switch is not closed with }")
 	}
 	n.S = p.span(start)
 	return n
@@ -899,7 +899,7 @@ func (p *parser) caseColon(c *ir.Case) {
 	case p.d.Lang == "java" && p.accept("->"):
 		c.Arrow = true
 	default:
-		p.errAt(p.tok().pos, "kurang \":\" setelah case")
+		p.errAt(p.tok().pos, "missing \":\" after case")
 	}
 }
 
@@ -941,7 +941,7 @@ func (p *parser) tryStmt() ir.Stmt {
 					}
 				}
 			}
-			p.expect(")", "untuk menutup catch")
+			p.expect(")", "to close catch")
 		}
 		c.Body = p.block()
 		c.S = p.span(cs)
@@ -951,7 +951,7 @@ func (p *parser) tryStmt() ir.Stmt {
 		n.Finally = p.block()
 	}
 	if len(n.Catches) == 0 && n.Finally == nil {
-		p.errAt(start, "try harus diikuti catch atau finally")
+		p.errAt(start, "try must be followed by catch or finally")
 	}
 	n.S = p.span(start)
 	return n
@@ -969,7 +969,7 @@ func (p *parser) varDecl() *ir.VarDecl {
 		} else if p.at(tIdent) {
 			spec.Name = p.next().text
 		} else {
-			p.errAt(p.tok().pos, "kurang nama variabel")
+			p.errAt(p.tok().pos, "missing variable name")
 			if !p.is(";") && !p.is("=") {
 				p.next()
 			}
@@ -1015,7 +1015,7 @@ func (p *parser) funcDecl(start ir.Pos, class string) *ir.Func {
 				f.Uses = append(f.Uses, p.next().text)
 				p.accept(",")
 			}
-			p.expect(")", "untuk menutup use")
+			p.expect(")", "to close use")
 		}
 	}
 	if p.accept(":") {
@@ -1038,7 +1038,7 @@ func (p *parser) funcDecl(start ir.Pos, class string) *ir.Func {
 // params membaca daftar parameter "( ... )" untuk semua dialek.
 func (p *parser) params() []*ir.Param {
 	var out []*ir.Param
-	if !p.expect("(", "untuk parameter") {
+	if !p.expect("(", "for the parameters") {
 		return nil
 	}
 	for !p.is(")") && !p.at(tEOF) {
@@ -1051,7 +1051,7 @@ func (p *parser) params() []*ir.Param {
 			p.next()
 		}
 	}
-	p.expect(")", "untuk menutup parameter")
+	p.expect(")", "to close the parameters")
 	return out
 }
 

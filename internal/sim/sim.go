@@ -69,7 +69,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	}
 	blk, ok := p.Result.Scene.Block(blockID)
 	if !ok {
-		tr.Warnings = append(tr.Warnings, "blok "+blockID+" tidak ditemukan")
+		tr.Warnings = append(tr.Warnings, "block "+blockID+" not found")
 		return tr
 	}
 	if p.Lang != "" && p.Lang != "go" {
@@ -89,7 +89,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 	}
 	node := p.BlockNodes[blockID]
 	if node == nil || blk.State == scene.StateIncomplete || len(p.Result.Diagnostics) > 0 {
-		tr.Warnings = append(tr.Warnings, "kode belum lengkap atau masih ada error; selesaikan dulu supaya nilainya bisa dihitung")
+		tr.Warnings = append(tr.Warnings, "the code is incomplete or still has errors; finish it so the values can be computed")
 		return tr
 	}
 
@@ -144,7 +144,7 @@ func Trace(p *analyzer.Program, blockID string, opt Options) (tr trace.Trace) {
 		tr.Warnings = append([]string{reason}, tr.Warnings...)
 		return tr
 	case !r.reached:
-		tr.Warnings = append([]string{"blok ini tidak pernah dijalankan (fungsinya tidak dipanggil dari main, atau kondisinya tidak pernah tercapai)"}, tr.Warnings...)
+		tr.Warnings = append([]string{"this block never runs (its function is not called from main, or its condition is never reached)"}, tr.Warnings...)
 		return tr
 	}
 	tr.Mode = trace.ModeSimulated
@@ -188,9 +188,9 @@ func (it *interp) run(node ast.Node) (structural string) {
 		}
 		if ft, ok := r.(fatal); ok {
 			if !it.rec.reached {
-				structural = "program berhenti sebelum sampai ke blok ini: " + ft.msg
+				structural = "the program stops before reaching this block: " + ft.msg
 			} else {
-				it.rec.warn("program berhenti: " + ft.msg)
+				it.rec.warn("the program stopped: " + ft.msg)
 				it.closeWithError(ft.msg)
 			}
 			return
@@ -198,9 +198,9 @@ func (it *interp) run(node ast.Node) (structural string) {
 		if gp, ok := r.(goPanic); ok {
 			// panic yang tidak ditangkap recover() sampai ke puncak program
 			if !it.rec.reached {
-				structural = "program akan panic sebelum sampai ke blok ini: " + gp.msg
+				structural = "the program panics before reaching this block: " + gp.msg
 			} else {
-				it.rec.warn("program berhenti karena " + gp.msg)
+				it.rec.warn("the program stops because of " + gp.msg)
 				it.closeWithError(gp.msg)
 			}
 			return
@@ -212,7 +212,7 @@ func (it *interp) run(node ast.Node) (structural string) {
 		}
 		switch a.kind {
 		case abortStructural:
-			structural = "nilai tidak bisa dihitung, jadi yang tampil hanya alurnya: " + a.msg
+			structural = "values cannot be computed, so only the flow is shown: " + a.msg
 		case abortBudget:
 			if len(it.rec.steps) > 0 {
 				it.rec.truncated = true
@@ -222,7 +222,7 @@ func (it *interp) run(node ast.Node) (structural string) {
 			}
 		case abortPanic:
 			if !it.rec.reached {
-				structural = "program akan panic sebelum sampai ke blok ini: " + a.msg
+				structural = "the program panics before reaching this block: " + a.msg
 			}
 		}
 	}()

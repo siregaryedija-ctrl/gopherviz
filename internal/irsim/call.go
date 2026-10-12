@@ -21,7 +21,7 @@ func (it *interp) closure(f *ir.Func, e *Env) *Func {
 		}
 	}
 	if f.Name == "" {
-		fn.name = "(anonim)"
+		fn.name = "(anonymous)"
 		if it.lang == "python" {
 			fn.name = "<lambda>"
 		}
@@ -377,7 +377,7 @@ func (it *interp) callValueArgs(fv, this Value, args argList, at ir.Node) Value 
 	case "php":
 		it.throw(at, "Error", "Call to undefined function "+name+"()")
 	}
-	it.structural(fmt.Sprintf("%s di baris %d bukan fungsi yang dikenal", name, it.line(at)))
+	it.structural(fmt.Sprintf("%s on line %d is not a known function", name, it.line(at)))
 	return Value{}
 }
 
@@ -403,7 +403,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	decl := fn.decl
 	defer it.bindCallbackElem(decl, args)()
 	if decl.Generator {
-		it.structural("generator (function* / yield) belum disimulasikan")
+		it.structural("generators (function* / yield) are not simulated yet")
 	}
 	it.depth++
 	defer func() { it.depth-- }()
@@ -419,7 +419,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 		case "php":
 			it.fatal(at, "Error", "Maximum function nesting level of '200' reached")
 		}
-		it.fatal(at, "SegmentationFault", "stack overflow (rekursi terlalu dalam)")
+		it.fatal(at, "SegmentationFault", "stack overflow (recursion too deep)")
 	}
 	if fn.this != nil {
 		this = *fn.this
@@ -483,7 +483,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	argText := strings.Join(params, ", ")
 	name := fn.name
 	if name == "" {
-		name = "(anonim)"
+		name = "(anonymous)"
 	}
 	it.nameFromCall(at, this)
 	frameName := name
@@ -500,7 +500,7 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	}
 	if recordCall && it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseCall, Line: it.line(at), Func: name, Args: argText,
-			Note: fmt.Sprintf("panggil %s(%s)", name, argText)}, scope)
+			Note: fmt.Sprintf("call %s(%s)", name, argText)}, scope)
 	}
 	// fungsi dari file lain: langkah call di atas masih di file pemanggil (baris pemanggilannya),
 	// isi dan return-nya tercatat di file fungsi itu
@@ -554,9 +554,9 @@ func (it *interp) callFunc(fn *Func, this Value, args argList, at ir.Node) Value
 	}
 	if recordCall && it.recording() {
 		rs := it.sem.show(it, ret)
-		note := fmt.Sprintf("%s(%s) selesai", name, argText)
+		note := fmt.Sprintf("%s(%s) done", name, argText)
 		if ret.k != kUndef && !(ret.k == kNull && it.lang != "javascript") && decl.Ret != "void" {
-			note = fmt.Sprintf("%s(%s) mengembalikan %s", name, argText, rs)
+			note = fmt.Sprintf("%s(%s) returns %s", name, argText, rs)
 		} else {
 			rs = ""
 		}
@@ -646,11 +646,11 @@ func (it *interp) bindParams(fn *Func, scope *Env, args argList, at ir.Node) []s
 					it.throw(at, "TypeError", fmt.Sprintf("%s() missing %d required positional argument%s: %s",
 						fn.name, len(missing), plural(len(missing)), strings.Join(missing, " and ")))
 				}
-				v = unknown(p.Name + " adalah parameter fungsi " + fn.name)
+				v = unknown(p.Name + " is a parameter of function " + fn.name)
 			case "php":
 				it.throw(at, "ArgumentCountError", fmt.Sprintf("Too few arguments to function %s(), %d passed and at least %d expected", fn.name, len(args.pos), requiredParams(decl)))
 			default:
-				v = unknown(fmt.Sprintf("%s adalah parameter fungsi %s", p.Name, fn.name))
+				v = unknown(fmt.Sprintf("%s is a parameter of function %s", p.Name, fn.name))
 			}
 		}
 		if v.k == kPtr && v.t == "&ref" { // parameter referensi
@@ -849,7 +849,7 @@ func (it *interp) getProp(obj Value, name string, at ir.Node) Value {
 		case "php":
 			it.throw(at, "Error", fmt.Sprintf("Call to a member function %s() on null", name))
 		}
-		it.structural("akses lewat pointer/nilai null di baris " + fmt.Sprint(it.line(at)))
+		it.structural("access through a null pointer/value on line " + fmt.Sprint(it.line(at)))
 	}
 	if v, ok := it.sem.member(it, obj, name, at); ok {
 		return v
@@ -867,7 +867,7 @@ func (it *interp) missingProp(obj Value, name string, at ir.Node) Value {
 		it.warn("Warning: Undefined property: $" + name)
 		return null()
 	}
-	return unknown(fmt.Sprintf("%s belum disimulasikan", name))
+	return unknown(fmt.Sprintf("%s is not simulated yet", name))
 }
 
 func (it *interp) setMember(n *ir.Member, e *Env, v Value) {
@@ -917,13 +917,13 @@ func (it *interp) setMember(n *ir.Member, e *Env, v Value) {
 		case "java":
 			it.throw(n, "NullPointerException", "Cannot assign field \""+name+"\" because value is null")
 		}
-		it.structural("menulis field lewat null di baris " + fmt.Sprint(it.line(n)))
+		it.structural("writing a field through null on line " + fmt.Sprint(it.line(n)))
 	case kList:
 		if obj.l.kind == "pair" && (name == "first" || name == "second") {
 			obj.l.elems[map[string]int{"first": 0, "second": 1}[name]] = v
 			return
 		}
-		it.structural("menulis field " + name + " belum disimulasikan")
+		it.structural("writing field " + name + " is not simulated yet")
 	default:
 		if it.lang == "python" {
 			it.throw(n, "AttributeError", fmt.Sprintf("'%s' object has no attribute '%s'", it.pyTypeName(obj), name))
@@ -942,7 +942,7 @@ func (it *interp) evalIndex(n *ir.Index, e *Env) Value {
 		return undef()
 	}
 	if n.I == nil {
-		it.structural("indeks kosong [] hanya untuk menambah elemen")
+		it.structural("empty index [] is only for appending elements")
 	}
 	idx := it.eval(n.I, e)
 	if idx.k == kUnknown {
@@ -970,7 +970,7 @@ func (it *interp) index(base, idx Value, at ir.Node) Value {
 				}
 				return undef()
 			}
-			it.throw(at, "TypeError", "indeks harus bilangan bulat")
+			it.throw(at, "TypeError", "index must be an integer")
 		}
 		n := len(base.l.elems)
 		if it.lang == "python" && i < 0 {
@@ -1080,7 +1080,7 @@ func (it *interp) index(base, idx Value, at ir.Node) Value {
 	if it.lang == "python" {
 		it.throw(at, "TypeError", fmt.Sprintf("'%s' object is not subscriptable", it.pyTypeName(base)))
 	}
-	return unknown("indeks pada nilai ini belum disimulasikan")
+	return unknown("indexing this value is not simulated yet")
 }
 
 func (it *interp) intIndex(v Value) (int, bool) {
@@ -1126,7 +1126,7 @@ func (it *interp) outOfRange(base Value, i, n int, at ir.Node) Value {
 		it.errCtx = nil
 		return undef()
 	}
-	it.fatal(at, "UndefinedBehavior", fmt.Sprintf("indeks %d di luar batas (panjang %d)", i, n))
+	it.fatal(at, "UndefinedBehavior", fmt.Sprintf("index %d out of bounds (length %d)", i, n))
 	return Value{}
 }
 
@@ -1179,7 +1179,7 @@ func (it *interp) setIndex(n *ir.Index, e *Env, v Value) {
 			if it.lang == "javascript" || it.lang == "typescript" {
 				return
 			}
-			it.throw(n, "TypeError", "indeks harus bilangan bulat")
+			it.throw(n, "TypeError", "index must be an integer")
 		}
 		size := len(base.l.elems)
 		if it.lang == "python" && i < 0 {
@@ -1343,7 +1343,7 @@ func (it *interp) defineClass(n *ir.Class, e *Env) *Class {
 	c := &Class{name: n.Name, methods: map[string]*Fn{}, getters: map[string]*Fn{}, setters: map[string]*Fn{},
 		statics: it.newDict("statics"), env: e, kind: n.Kind, decl: n}
 	if c.name == "" {
-		c.name = "(anonim)"
+		c.name = "(anonymous)"
 	}
 	for _, ext := range n.Extends {
 		if sc := it.findClass(ext, e); sc != nil && sc.kind == "interface" && it.lang == "java" {
@@ -1794,7 +1794,7 @@ func (it *interp) constructType(typ string, args []Value, at ir.Node) Value {
 	if len(args) == 0 {
 		return it.sem.zero(base)
 	}
-	return unknown("konstruktor " + typ + " belum disimulasikan")
+	return unknown("constructor " + typ + " is not simulated yet")
 }
 
 // zeroOfType: nilai awal variabel tanpa inisialisasi.
@@ -1839,14 +1839,14 @@ func (it *interp) makeArray(elem string, dims []ir.Expr, init ir.Expr, e *Env) V
 		if d < len(dims) && dims[d] != nil {
 			n := it.eval(dims[d], e)
 			if n.k == kUnknown {
-				it.structural("ukuran array tidak diketahui: " + n.why)
+				it.structural("unknown array size: " + n.why)
 			}
 			size = int(toF(n))
 			if size < 0 {
 				if it.lang == "java" {
 					it.throw(dims[d], "NegativeArraySizeException", fmt.Sprint(size))
 				}
-				it.structural("ukuran array negatif")
+				it.structural("negative array size")
 			}
 		}
 		var given []Value
@@ -1863,7 +1863,7 @@ func (it *interp) makeArray(elem string, dims []ir.Expr, init ir.Expr, e *Env) V
 			size = len(given)
 		}
 		if size > 100_000 {
-			it.structural("array terlalu besar untuk disimulasikan")
+			it.structural("array too large to simulate")
 		}
 		elems := make([]Value, size)
 		for i := range elems {
@@ -1968,7 +1968,7 @@ func (it *interp) designatedInit(typ string, ol *ir.ObjectLit, e *Env) Value {
 	name := strings.TrimPrefix(strings.TrimSpace(typ), "struct ")
 	c := it.findClass(name, e)
 	if c == nil {
-		return unknown("struct " + name + " tidak dikenal")
+		return unknown("unknown struct " + name)
 	}
 	obj := it.construct(c, nil, ol)
 	for _, p := range ol.Props {

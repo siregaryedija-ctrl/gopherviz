@@ -67,14 +67,14 @@
       "phase": "body",
       "line": 15,
       "iteration": 0,
-      "note": "G1 menunggu: <-ch (menunggu data)",
+      "note": "G1 waits: <-ch (waiting for data)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -105,7 +105,7 @@
         "v": "10"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 10",
+      "note": "take element #1: v = 10",
       "ops": [
         {
           "op": "recv",
@@ -125,7 +125,7 @@
           "id": 2,
           "name": "produce(ch)",
           "state": "menunggu",
-          "why": "ch <- 20 (menunggu penerima)"
+          "why": "ch <- 20 (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -152,7 +152,7 @@
         "ch": "chan",
         "v": "10"
       },
-      "note": "fmt.Println(\"terima\", v) → cetak \"terima 10\"",
+      "note": "fmt.Println(\"terima\", v) → print \"terima 10\"",
       "output": "terima 10\n",
       "g": 1,
       "gs": [
@@ -165,7 +165,7 @@
           "id": 2,
           "name": "produce(ch)",
           "state": "menunggu",
-          "why": "ch <- 20 (menunggu penerima)"
+          "why": "ch <- 20 (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -193,7 +193,7 @@
         "v": "20"
       },
       "result": true,
-      "note": "ambil elemen ke-2: v = 20",
+      "note": "take element #2: v = 20",
       "ops": [
         {
           "op": "recv",
@@ -236,7 +236,7 @@
         "ch": "chan",
         "v": "20"
       },
-      "note": "fmt.Println(\"terima\", v) → cetak \"terima 20\"",
+      "note": "fmt.Println(\"terima\", v) → print \"terima 20\"",
       "output": "terima 20\n",
       "g": 1,
       "gs": [
@@ -268,14 +268,14 @@
       "phase": "body",
       "line": 15,
       "iteration": 2,
-      "note": "G1 menunggu: <-ch (menunggu data)",
+      "note": "G1 waits: <-ch (waiting for data)",
       "g": 1,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-ch (menunggu data)"
+          "why": "<-ch (waiting for data)"
         },
         {
           "id": 2,
@@ -306,7 +306,7 @@
         "v": "30"
       },
       "result": true,
-      "note": "ambil elemen ke-3: v = 30",
+      "note": "take element #3: v = 30",
       "ops": [
         {
           "op": "recv",
@@ -350,7 +350,7 @@
         "ch": "chan",
         "v": "30"
       },
-      "note": "fmt.Println(\"terima\", v) → cetak \"terima 30\"",
+      "note": "fmt.Println(\"terima\", v) → print \"terima 30\"",
       "output": "terima 30\n",
       "g": 1,
       "gs": [
@@ -387,7 +387,7 @@
         "ch": "chan"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "g": 1,
       "gs": [
         {
@@ -422,7 +422,7 @@
       "vars": {
         "ch": "chan"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "g": 1,
       "gs": [

@@ -37,7 +37,7 @@
       "phase": "call",
       "line": 18,
       "func": "main",
-      "note": "panggil main()"
+      "note": "call main()"
     },
     {
       "n": 1,
@@ -156,7 +156,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "go player(\"ping\", ping, pong, done) → goroutine G2 dibuat (siap jalan)",
+      "note": "go player(\"ping\", ping, pong, done) → goroutine G2 created (ready to run)",
       "g": 1,
       "gs": [
         {
@@ -203,7 +203,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "go player(\"pong\", pong, ping, done) → goroutine G3 dibuat (siap jalan)",
+      "note": "go player(\"pong\", pong, ping, done) → goroutine G3 created (ready to run)",
       "g": 1,
       "gs": [
         {
@@ -250,7 +250,7 @@
       "run": 1,
       "phase": "body",
       "line": 24,
-      "note": "G1 menunggu: ping <- 1 (menunggu penerima)",
+      "note": "G1 waits: ping <- 1 (waiting for a receiver)",
       "ops": [
         {
           "op": "send",
@@ -265,7 +265,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "ping <- 1 (menunggu penerima)"
+          "why": "ping <- 1 (waiting for a receiver)"
         },
         {
           "id": 2,
@@ -318,14 +318,14 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "panggil player(name = \"pong\", in = chan, out = chan, done = chan)",
+      "note": "call player(name = \"pong\", in = chan, out = chan, done = chan)",
       "g": 3,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "ping <- 1 (menunggu penerima)"
+          "why": "ping <- 1 (waiting for a receiver)"
         },
         {
           "id": 2,
@@ -384,7 +384,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "ping <- 1 (menunggu penerima)"
+          "why": "ping <- 1 (waiting for a receiver)"
         },
         {
           "id": 2,
@@ -430,14 +430,14 @@
       "phase": "body",
       "line": 6,
       "iteration": 0,
-      "note": "G3 menunggu: <-in (menunggu data)",
+      "note": "G3 waits: <-in (waiting for data)",
       "g": 3,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "ping <- 1 (menunggu penerima)"
+          "why": "ping <- 1 (waiting for a receiver)"
         },
         {
           "id": 2,
@@ -448,7 +448,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -492,14 +492,14 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "panggil player(name = \"ping\", in = chan, out = chan, done = chan)",
+      "note": "call player(name = \"ping\", in = chan, out = chan, done = chan)",
       "g": 2,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "ping <- 1 (menunggu penerima)"
+          "why": "ping <- 1 (waiting for a receiver)"
         },
         {
           "id": 2,
@@ -510,7 +510,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -560,7 +560,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "ping <- 1 (menunggu penerima)"
+          "why": "ping <- 1 (waiting for a receiver)"
         },
         {
           "id": 2,
@@ -571,7 +571,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -616,7 +616,7 @@
         "out": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-1: ball = 1",
+      "note": "take element #1: ball = 1",
       "ops": [
         {
           "op": "recv",
@@ -641,7 +641,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -682,7 +682,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "fmt.Println(name, ball) → cetak \"ping 1\"",
+      "note": "fmt.Println(name, ball) → print \"ping 1\"",
       "output": "ping 1\n",
       "g": 2,
       "gs": [
@@ -700,7 +700,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -759,7 +759,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -800,7 +800,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "out <- ball + 1 → kirim 2 ke out",
+      "note": "out <- ball + 1 → send 2 to out",
       "ops": [
         {
           "op": "send",
@@ -859,7 +859,7 @@
       "phase": "body",
       "line": 6,
       "iteration": 1,
-      "note": "G2 menunggu: <-in (menunggu data)",
+      "note": "G2 waits: <-in (waiting for data)",
       "g": 2,
       "gs": [
         {
@@ -871,7 +871,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -920,7 +920,7 @@
         "out": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-1: ball = 2",
+      "note": "take element #1: ball = 2",
       "ops": [
         {
           "op": "recv",
@@ -940,7 +940,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -986,7 +986,7 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "fmt.Println(name, ball) → cetak \"pong 2\"",
+      "note": "fmt.Println(name, ball) → print \"pong 2\"",
       "output": "pong 2\n",
       "g": 3,
       "gs": [
@@ -999,7 +999,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -1058,7 +1058,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -1104,7 +1104,7 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "out <- ball + 1 → kirim 3 ke out",
+      "note": "out <- ball + 1 → send 3 to out",
       "ops": [
         {
           "op": "send",
@@ -1163,7 +1163,7 @@
       "phase": "body",
       "line": 6,
       "iteration": 1,
-      "note": "G3 menunggu: <-in (menunggu data)",
+      "note": "G3 waits: <-in (waiting for data)",
       "g": 3,
       "gs": [
         {
@@ -1180,7 +1180,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -1224,7 +1224,7 @@
         "out": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-2: ball = 3",
+      "note": "take element #2: ball = 3",
       "ops": [
         {
           "op": "recv",
@@ -1249,7 +1249,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -1290,7 +1290,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "fmt.Println(name, ball) → cetak \"ping 3\"",
+      "note": "fmt.Println(name, ball) → print \"ping 3\"",
       "output": "ping 3\n",
       "g": 2,
       "gs": [
@@ -1308,7 +1308,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -1367,7 +1367,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         }
       ],
       "chans": [
@@ -1408,7 +1408,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "out <- ball + 1 → kirim 4 ke out",
+      "note": "out <- ball + 1 → send 4 to out",
       "ops": [
         {
           "op": "send",
@@ -1467,7 +1467,7 @@
       "phase": "body",
       "line": 6,
       "iteration": 2,
-      "note": "G2 menunggu: <-in (menunggu data)",
+      "note": "G2 waits: <-in (waiting for data)",
       "g": 2,
       "gs": [
         {
@@ -1479,7 +1479,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -1528,7 +1528,7 @@
         "out": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-2: ball = 4",
+      "note": "take element #2: ball = 4",
       "ops": [
         {
           "op": "recv",
@@ -1548,7 +1548,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -1594,7 +1594,7 @@
         "name": "\"pong\"",
         "out": "chan"
       },
-      "note": "fmt.Println(name, ball) → cetak \"pong 4\"",
+      "note": "fmt.Println(name, ball) → print \"pong 4\"",
       "output": "pong 4\n",
       "g": 3,
       "gs": [
@@ -1607,7 +1607,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -1666,7 +1666,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "<-in (menunggu data)"
+          "why": "<-in (waiting for data)"
         },
         {
           "id": 3,
@@ -1762,7 +1762,7 @@
       "phase": "body",
       "line": 10,
       "iteration": 1,
-      "note": "G3 menunggu: done <- true (menunggu penerima)",
+      "note": "G3 waits: done <- true (waiting for a receiver)",
       "ops": [
         {
           "op": "send",
@@ -1787,7 +1787,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -1831,7 +1831,7 @@
         "out": "chan"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "g": 2,
       "gs": [
         {
@@ -1848,7 +1848,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -1891,7 +1891,7 @@
         "name": "\"ping\"",
         "out": "chan"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "g": 2,
       "gs": [
@@ -1909,7 +1909,7 @@
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -1945,7 +1945,7 @@
       "depth": 1,
       "phase": "body",
       "line": 15,
-      "note": "G2 menunggu: done <- true (menunggu penerima)",
+      "note": "G2 waits: done <- true (waiting for a receiver)",
       "ops": [
         {
           "op": "send",
@@ -1965,13 +1965,13 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         },
         {
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -2012,7 +2012,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "ping <- 1 → kirim 1 ke ping",
+      "note": "ping <- 1 → send 1 to ping",
       "g": 1,
       "gs": [
         {
@@ -2024,13 +2024,13 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         },
         {
           "id": 3,
           "name": "player(\"pong\", pong, ping, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         }
       ],
       "chans": [
@@ -2071,7 +2071,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "terima true dari done",
+      "note": "receive true from done",
       "ops": [
         {
           "op": "recv",
@@ -2091,7 +2091,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         },
         {
           "id": 3,
@@ -2148,7 +2148,7 @@
           "id": 2,
           "name": "player(\"ping\", ping, pong, done)",
           "state": "menunggu",
-          "why": "done <- true (menunggu penerima)"
+          "why": "done <- true (waiting for a receiver)"
         },
         {
           "id": 3,
@@ -2193,7 +2193,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "terima true dari done",
+      "note": "receive true from done",
       "ops": [
         {
           "op": "recv",
@@ -2307,7 +2307,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "fmt.Println(\"permainan selesai\") → cetak \"permainan selesai\"",
+      "note": "fmt.Println(\"permainan selesai\") → print \"permainan selesai\"",
       "output": "permainan selesai\n",
       "g": 1,
       "gs": [
@@ -2362,7 +2362,7 @@
         "ping": "chan",
         "pong": "chan"
       },
-      "note": "main() selesai",
+      "note": "main() done",
       "g": 1,
       "gs": [
         {

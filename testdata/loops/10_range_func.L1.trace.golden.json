@@ -61,7 +61,7 @@
         "v": "3"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 3"
+      "note": "take element #1: v = 3"
     },
     {
       "n": 3,
@@ -72,7 +72,7 @@
       "vars": {
         "v": "3"
       },
-      "note": "fmt.Println(v) → cetak \"3\"",
+      "note": "fmt.Println(v) → print \"3\"",
       "output": "3\n"
     },
     {
@@ -126,7 +126,7 @@
         "v": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-2: v = 2"
+      "note": "take element #2: v = 2"
     },
     {
       "n": 8,
@@ -137,7 +137,7 @@
       "vars": {
         "v": "2"
       },
-      "note": "fmt.Println(v) → cetak \"2\"",
+      "note": "fmt.Println(v) → print \"2\"",
       "output": "2\n"
     },
     {
@@ -191,7 +191,7 @@
         "v": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-3: v = 1"
+      "note": "take element #3: v = 1"
     },
     {
       "n": 13,
@@ -202,7 +202,7 @@
       "vars": {
         "v": "1"
       },
-      "note": "fmt.Println(v) → cetak \"1\"",
+      "note": "fmt.Println(v) → print \"1\"",
       "output": "1\n"
     },
     {
@@ -257,7 +257,7 @@
       "vars": {
         "i": "0"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     }
   ],

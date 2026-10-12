@@ -35,7 +35,7 @@
       "phase": "init",
       "line": 6,
       "iteration": 0,
-      "note": "range \"héllo\" (5 karakter)"
+      "note": "range \"héllo\" (5 characters)"
     },
     {
       "n": 1,
@@ -50,7 +50,7 @@
         "r": "104"
       },
       "result": true,
-      "note": "ambil elemen ke-1: i = 0, r = 104 ('h')"
+      "note": "take element #1: i = 0, r = 104 ('h')"
     },
     {
       "n": 2,
@@ -64,7 +64,7 @@
         "i": "0",
         "r": "104"
       },
-      "note": "fmt.Println(i, string(r)) → cetak \"0 h\"",
+      "note": "fmt.Println(i, string(r)) → print \"0 h\"",
       "output": "0 h\n"
     },
     {
@@ -80,7 +80,7 @@
         "r": "233"
       },
       "result": true,
-      "note": "ambil elemen ke-2: i = 1, r = 233 ('é')"
+      "note": "take element #2: i = 1, r = 233 ('é')"
     },
     {
       "n": 4,
@@ -94,7 +94,7 @@
         "i": "1",
         "r": "233"
       },
-      "note": "fmt.Println(i, string(r)) → cetak \"1 é\"",
+      "note": "fmt.Println(i, string(r)) → print \"1 é\"",
       "output": "1 é\n"
     },
     {
@@ -110,7 +110,7 @@
         "r": "108"
       },
       "result": true,
-      "note": "ambil elemen ke-4: i = 3, r = 108 ('l')"
+      "note": "take element #4: i = 3, r = 108 ('l')"
     },
     {
       "n": 6,
@@ -124,7 +124,7 @@
         "i": "3",
         "r": "108"
       },
-      "note": "fmt.Println(i, string(r)) → cetak \"3 l\"",
+      "note": "fmt.Println(i, string(r)) → print \"3 l\"",
       "output": "3 l\n"
     },
     {
@@ -140,7 +140,7 @@
         "r": "108"
       },
       "result": true,
-      "note": "ambil elemen ke-5: i = 4, r = 108 ('l')"
+      "note": "take element #5: i = 4, r = 108 ('l')"
     },
     {
       "n": 8,
@@ -154,7 +154,7 @@
         "i": "4",
         "r": "108"
       },
-      "note": "fmt.Println(i, string(r)) → cetak \"4 l\"",
+      "note": "fmt.Println(i, string(r)) → print \"4 l\"",
       "output": "4 l\n"
     },
     {
@@ -170,7 +170,7 @@
         "r": "111"
       },
       "result": true,
-      "note": "ambil elemen ke-6: i = 5, r = 111 ('o')"
+      "note": "take element #6: i = 5, r = 111 ('o')"
     },
     {
       "n": 10,
@@ -184,7 +184,7 @@
         "i": "5",
         "r": "111"
       },
-      "note": "fmt.Println(i, string(r)) → cetak \"5 o\"",
+      "note": "fmt.Println(i, string(r)) → print \"5 o\"",
       "output": "5 o\n"
     },
     {
@@ -196,7 +196,7 @@
       "line": 6,
       "iteration": 5,
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 12,
@@ -206,7 +206,7 @@
       "phase": "exit",
       "line": 6,
       "iteration": 5,
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

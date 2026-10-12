@@ -26,7 +26,7 @@ func dump(b *strings.Builder, n Node, ind int) {
 	case *Block:
 		closed := ""
 		if !n.Closed {
-			closed = " (belum ditutup)"
+			closed = " (not closed)"
 		}
 		line("block%s", closed)
 		for _, s := range n.List {

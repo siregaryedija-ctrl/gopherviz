@@ -71,7 +71,7 @@
         "v": "1"
       },
       "result": true,
-      "note": "ambil elemen ke-1: v = 1",
+      "note": "take element #1: v = 1",
       "ops": [
         {
           "op": "recv",
@@ -112,7 +112,7 @@
         "ch": "chan",
         "v": "1"
       },
-      "note": "fmt.Println(v) → cetak \"1\"",
+      "note": "fmt.Println(v) → print \"1\"",
       "output": "1\n",
       "g": 1,
       "gs": [
@@ -147,7 +147,7 @@
         "v": "2"
       },
       "result": true,
-      "note": "ambil elemen ke-2: v = 2",
+      "note": "take element #2: v = 2",
       "ops": [
         {
           "op": "recv",
@@ -186,7 +186,7 @@
         "ch": "chan",
         "v": "2"
       },
-      "note": "fmt.Println(v) → cetak \"2\"",
+      "note": "fmt.Println(v) → print \"2\"",
       "output": "2\n",
       "g": 1,
       "gs": [
@@ -218,7 +218,7 @@
         "ch": "chan"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "g": 1,
       "gs": [
         {
@@ -248,7 +248,7 @@
       "vars": {
         "ch": "chan"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "g": 1,
       "gs": [

@@ -62,7 +62,7 @@
       "vars": {
         "i": "1"
       },
-      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+      "note": "defer noted: fmt.Println(\"defer\", i) (runs when the function ends)"
     },
     {
       "n": 3,
@@ -102,7 +102,7 @@
       "vars": {
         "i": "2"
       },
-      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+      "note": "defer noted: fmt.Println(\"defer\", i) (runs when the function ends)"
     },
     {
       "n": 6,
@@ -142,7 +142,7 @@
       "vars": {
         "i": "3"
       },
-      "note": "defer dicatat: fmt.Println(\"defer\", i) (dijalankan saat fungsi selesai)"
+      "note": "defer noted: fmt.Println(\"defer\", i) (runs when the function ends)"
     },
     {
       "n": 9,
@@ -182,7 +182,7 @@
       "vars": {
         "i": "4"
       },
-      "note": "kondisi false → keluar dari loop",
+      "note": "condition false → leave the loop",
       "reason": "cond-false"
     }
   ],

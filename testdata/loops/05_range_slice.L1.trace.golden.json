@@ -40,7 +40,7 @@
         "nums": "[4 8 15 16]",
         "sum": "0"
       },
-      "note": "range nums (4 elemen)",
+      "note": "range nums (4 elements)",
       "items": [
         "4",
         "8",
@@ -63,7 +63,7 @@
         "v": "4"
       },
       "result": true,
-      "note": "ambil elemen ke-1: i = 0, v = 4",
+      "note": "take element #1: i = 0, v = 4",
       "ops": [
         {
           "op": "read",
@@ -118,7 +118,7 @@
         "sum": "4",
         "v": "4"
       },
-      "note": "fmt.Println(i, v) → cetak \"0 4\"",
+      "note": "fmt.Println(i, v) → print \"0 4\"",
       "output": "0 4\n"
     },
     {
@@ -136,7 +136,7 @@
         "v": "8"
       },
       "result": true,
-      "note": "ambil elemen ke-2: i = 1, v = 8",
+      "note": "take element #2: i = 1, v = 8",
       "ops": [
         {
           "op": "read",
@@ -191,7 +191,7 @@
         "sum": "12",
         "v": "8"
       },
-      "note": "fmt.Println(i, v) → cetak \"1 8\"",
+      "note": "fmt.Println(i, v) → print \"1 8\"",
       "output": "1 8\n"
     },
     {
@@ -209,7 +209,7 @@
         "v": "15"
       },
       "result": true,
-      "note": "ambil elemen ke-3: i = 2, v = 15",
+      "note": "take element #3: i = 2, v = 15",
       "ops": [
         {
           "op": "read",
@@ -248,7 +248,7 @@
         "sum": "12",
         "v": "15"
       },
-      "note": "continue → langsung ke putaran berikutnya"
+      "note": "continue → jump to the next round"
     },
     {
       "n": 12,
@@ -265,7 +265,7 @@
         "v": "16"
       },
       "result": true,
-      "note": "ambil elemen ke-4: i = 3, v = 16",
+      "note": "take element #4: i = 3, v = 16",
       "ops": [
         {
           "op": "read",
@@ -320,7 +320,7 @@
         "sum": "28",
         "v": "16"
       },
-      "note": "fmt.Println(i, v) → cetak \"3 16\"",
+      "note": "fmt.Println(i, v) → print \"3 16\"",
       "output": "3 16\n"
     },
     {
@@ -336,7 +336,7 @@
         "sum": "28"
       },
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 17,
@@ -350,7 +350,7 @@
         "nums": "[4 8 15 16]",
         "sum": "28"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

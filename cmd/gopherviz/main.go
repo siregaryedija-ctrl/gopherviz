@@ -34,8 +34,8 @@ func main() {
 
 // Perintah yang sudah direncanakan tapi belum dibuat, beserta fasenya.
 var planned = map[string]string{
-	"show": "tampilan terminal, setelah Fase 9",
-	"on":   "tampilan terminal, setelah Fase 9",
+	"show": "terminal view, after Phase 9",
+	"on":   "terminal view, after Phase 9",
 }
 
 func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
@@ -56,7 +56,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 0
 	case "ir": // debug: pohon IR untuk bahasa selain Go
 		if len(args) != 2 {
-			fmt.Fprintln(stderr, "pemakaian: gopherviz ir <file>")
+			fmt.Fprintln(stderr, "usage: gopherviz ir <file>")
 			return 2
 		}
 		src, err := os.ReadFile(args[1])
@@ -66,13 +66,13 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		}
 		language := lang.Detect(args[1])
 		if language == "" || language == "go" {
-			fmt.Fprintln(stderr, "gopherviz ir hanya untuk bahasa selain Go")
+			fmt.Fprintln(stderr, "gopherviz ir is only for languages other than Go")
 			return 2
 		}
 		fmt.Fprint(stdout, ir.Dump(lang.Parse(language, string(src))))
 		return 0
 	case "version", "--version", "-v":
-		fmt.Fprintf(stdout, "gopherviz %s (scene v%d, trace v%d, protokol v%d)\n",
+		fmt.Fprintf(stdout, "gopherviz %s (scene v%d, trace v%d, protocol v%d)\n",
 			version, scene.Version, trace.Version, protocol.Version)
 		return 0
 	case "help", "--help", "-h":
@@ -80,27 +80,27 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 0
 	default:
 		if phase, ok := planned[cmd]; ok {
-			fmt.Fprintf(stderr, "gopherviz %s belum tersedia (direncanakan di %s).\n", cmd, phase)
+			fmt.Fprintf(stderr, "gopherviz %s is not available yet (planned for %s).\n", cmd, phase)
 			return 2
 		}
-		fmt.Fprintf(stderr, "perintah tidak dikenal: %q\n\n", cmd)
+		fmt.Fprintf(stderr, "unknown command: %q\n\n", cmd)
 		usage(stderr)
 		return 2
 	}
 }
 
 func usage(w io.Writer) {
-	fmt.Fprint(w, `gopherviz: visualisasi cara kerja loop di Go
+	fmt.Fprint(w, `gopherviz: see how your code works, step by step
 
-Pemakaian:
-  gopherviz list [--json] <file.go>   daftar semua loop dan jenisnya (- untuk stdin)
-  gopherviz trace [--json] <file.go>:<baris>
-                                    langkah demi langkah satu loop (nilai variabel, kondisi, output)
-  gopherviz serve                     server JSON lines lewat stdin/stdout (dipakai ekstensi IDE)
-  gopherviz version                   versi binary dan skema data
-  gopherviz help                      tampilkan bantuan ini
+Usage:
+  gopherviz list [--json] <file>      list every block and its kind (- for stdin)
+  gopherviz trace [--json] <file>:<line>
+                                    step through one block (variable values, conditions, output)
+  gopherviz serve                     JSON lines server over stdin/stdout (used by the IDE extension)
+  gopherviz version                   binary and data schema versions
+  gopherviz help                      show this help
 
-Segera hadir: on, show.
+Coming soon: on, show.
 `)
 }
 
@@ -114,14 +114,14 @@ func cmdList(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		case a == "-":
 			files = append(files, a)
 		case strings.HasPrefix(a, "-"):
-			fmt.Fprintf(stderr, "flag tidak dikenal: %s\n", a)
+			fmt.Fprintf(stderr, "unknown flag: %s\n", a)
 			return 2
 		default:
 			files = append(files, a)
 		}
 	}
 	if len(files) != 1 {
-		fmt.Fprintln(stderr, "pemakaian: gopherviz list [--json] <file.go>")
+		fmt.Fprintln(stderr, "usage: gopherviz list [--json] <file>")
 		return 2
 	}
 
@@ -134,7 +134,7 @@ func cmdList(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if asJSON {
 		out, err := res.JSON()
 		if err != nil {
-			fmt.Fprintf(stderr, "gagal membuat JSON: %v\n", err)
+			fmt.Fprintf(stderr, "failed to build JSON: %v\n", err)
 			return 1
 		}
 		stdout.Write(out)
@@ -154,7 +154,7 @@ func readSource(name string, stdin io.Reader, stderr io.Writer) (string, []byte,
 		src, err = os.ReadFile(name)
 	}
 	if err != nil {
-		fmt.Fprintf(stderr, "gagal membaca %s: %v\n", name, err)
+		fmt.Fprintf(stderr, "failed to read %s: %v\n", name, err)
 		return name, nil, false
 	}
 	return name, bytes.ReplaceAll(src, []byte("\r\n"), []byte("\n")), true
@@ -168,13 +168,13 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		case a == "--json" || a == "-json":
 			asJSON = true
 		case strings.HasPrefix(a, "-") && a != "-":
-			fmt.Fprintf(stderr, "flag tidak dikenal: %s\n", a)
+			fmt.Fprintf(stderr, "unknown flag: %s\n", a)
 			return 2
 		default:
 			targets = append(targets, a)
 		}
 	}
-	const use = "pemakaian: gopherviz trace [--json] <file.go>:<baris>"
+	const use = "usage: gopherviz trace [--json] <file>:<line>"
 	if len(targets) != 1 {
 		fmt.Fprintln(stderr, use)
 		return 2
@@ -192,7 +192,7 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	prog := analyzer.Load(name, src)
 	id, found := prog.Result.Scene.BlockAt(line)
 	if !found {
-		fmt.Fprintf(stderr, "tidak ada blok (fungsi, if, switch, atau loop) di baris %d\n", line)
+		fmt.Fprintf(stderr, "no block (function, if, switch or loop) on line %d\n", line)
 		return 1
 	}
 	tr := sim.Trace(prog, id, sim.Options{Files: project.Disk{}})
@@ -202,7 +202,7 @@ func cmdTrace(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		enc.SetEscapeHTML(false)
 		enc.SetIndent("", "  ")
 		if err := enc.Encode(tr); err != nil {
-			fmt.Fprintf(stderr, "gagal membuat JSON: %v\n", err)
+			fmt.Fprintf(stderr, "failed to build JSON: %v\n", err)
 			return 1
 		}
 		return 0
@@ -218,12 +218,12 @@ func printTrace(w io.Writer, tr trace.Trace) {
 	} else if tr.Block.Name != "" {
 		kind += " " + tr.Block.Name
 	}
-	fmt.Fprintf(w, "%s %s baris %d-%d · mode %s · %d langkah\n", tr.Block.ID, kind, tr.Block.Line, tr.Block.EndLine, tr.Mode, len(tr.Steps))
+	fmt.Fprintf(w, "%s %s lines %d-%d · mode %s · %d steps\n", tr.Block.ID, kind, tr.Block.Line, tr.Block.EndLine, tr.Mode, len(tr.Steps))
 	for _, warn := range tr.Warnings {
 		fmt.Fprintf(w, "  ! %s\n", warn)
 	}
 	if tr.Collection != nil {
-		fmt.Fprintf(w, "  koleksi: %v\n", tr.Collection.Items)
+		fmt.Fprintf(w, "  collection: %v\n", tr.Collection.Items)
 	}
 	fmt.Fprintln(w)
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
@@ -233,32 +233,32 @@ func printTrace(w io.Writer, tr trace.Trace) {
 			out = "  ⇒ " + strings.TrimSuffix(s.Output, "\n")
 		}
 		// kedalaman call stack ditampilkan sebagai indentasi catatan
-		fmt.Fprintf(tw, "%d\t%s\t%s\tbaris %d\t%s%s%s\n", s.N, s.Block, s.Phase, s.Line, strings.Repeat("· ", s.Depth), s.Note, out)
+		fmt.Fprintf(tw, "%d\t%s\t%s\tline %d\t%s%s%s\n", s.N, s.Block, s.Phase, s.Line, strings.Repeat("· ", s.Depth), s.Note, out)
 	}
 	tw.Flush()
 	if tr.Truncated {
-		fmt.Fprintln(w, "… (dipotong)")
+		fmt.Fprintln(w, "… (cut)")
 	}
 }
 
 var kindNames = map[scene.Kind]string{
-	scene.KindFor3:         "for klasik",
-	scene.KindCond:         "for kondisi",
-	scene.KindInfinite:     "for tanpa batas",
-	scene.KindRangeInt:     "range angka",
+	scene.KindFor3:         "classic for",
+	scene.KindCond:         "condition for",
+	scene.KindInfinite:     "endless for",
+	scene.KindRangeInt:     "range number",
 	scene.KindRangeSlice:   "range slice",
 	scene.KindRangeArray:   "range array",
 	scene.KindRangeString:  "range string",
 	scene.KindRangeMap:     "range map",
 	scene.KindRangeChan:    "range channel",
 	scene.KindRangeFunc:    "range iterator",
-	scene.KindRangeUnknown: "range (tipe tak dikenal)",
+	scene.KindRangeUnknown: "range (unknown type)",
 	scene.KindDoWhile:      "do-while",
 	scene.KindRangeKeys:    "range key",
 }
 
 var blockKindNames = map[scene.BlockKind]string{
-	scene.BlockFunc:   "fungsi",
+	scene.BlockFunc:   "function",
 	scene.BlockIf:     "if",
 	scene.BlockSwitch: "switch",
 	scene.BlockLoop:   "loop",
@@ -274,12 +274,12 @@ func printList(w io.Writer, res analyzer.Result) {
 		loops[l.ID] = l
 	}
 	if len(blocks) == 0 {
-		fmt.Fprintf(w, "%s: tidak ada blok\n", res.Scene.File)
+		fmt.Fprintf(w, "%s: no blocks\n", res.Scene.File)
 	} else {
-		fmt.Fprintf(w, "%s: %d blok (%s)\n\n", res.Scene.File, len(blocks), res.Scene.Language)
+		fmt.Fprintf(w, "%s: %d blocks (%s)\n\n", res.Scene.File, len(blocks), res.Scene.Language)
 		depth := map[string]int{}
 		tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(tw, "ID\tBARIS\tJENIS\tKEPALA\tISI\tSTATUS")
+		fmt.Fprintln(tw, "ID\tLINES\tKIND\tHEADER\tBODY\tSTATUS")
 		for _, b := range blocks {
 			if b.Parent != "" {
 				depth[b.ID] = depth[b.Parent] + 1
@@ -308,11 +308,11 @@ func printList(w io.Writer, res analyzer.Result) {
 				}
 				body = fmt.Sprintf("%d method", n)
 			default:
-				body = fmt.Sprintf("%d cabang", len(b.Branches))
+				body = plural(len(b.Branches), "branch", "branches")
 			}
-			state := "lengkap"
+			state := "complete"
 			if b.State == scene.StateIncomplete {
-				state = "belum lengkap"
+				state = "incomplete"
 			}
 			fmt.Fprintf(tw, "%s%s\t%s\t%s\t%s\t%s\t%s\n",
 				strings.Repeat("  ", depth[b.ID]), b.ID, lines, kind, clip(head, 44), body, state)
@@ -320,22 +320,29 @@ func printList(w io.Writer, res analyzer.Result) {
 		tw.Flush()
 	}
 	if n := len(res.Diagnostics); n > 0 {
-		fmt.Fprintf(w, "\nCatatan parser (%d):\n", n)
+		fmt.Fprintf(w, "\nParser notes (%d):\n", n)
 		for i, d := range res.Diagnostics {
 			if i == maxDiagnostics {
-				fmt.Fprintf(w, "  … dan %d lagi\n", n-maxDiagnostics)
+				fmt.Fprintf(w, "  … and %d more\n", n-maxDiagnostics)
 				break
 			}
-			fmt.Fprintf(w, "  baris %d:%d  %s\n", d.Line, d.Col, d.Message)
+			fmt.Fprintf(w, "  line %d:%d  %s\n", d.Line, d.Col, d.Message)
 		}
 	}
 }
 
 func parts(n int) string {
 	if n == 0 {
-		return "kosong"
+		return "empty"
 	}
-	return fmt.Sprintf("%d bagian", n)
+	return plural(n, "part", "parts")
+}
+
+func plural(n int, one, many string) string {
+	if n == 1 {
+		return "1 " + one
+	}
+	return fmt.Sprintf("%d %s", n, many)
 }
 
 func clip(s string, n int) string {

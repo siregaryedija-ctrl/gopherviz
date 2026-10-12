@@ -38,7 +38,7 @@
       "vars": {
         "c": "&{{false} 0}"
       },
-      "note": "panggil Counter.Inc(c = &{{false} 0})",
+      "note": "call Counter.Inc(c = &{{false} 0})",
       "mem": {
         "vars": [
           {
@@ -71,7 +71,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -118,7 +118,7 @@
       "vars": {
         "c": "&{{true} 0}"
       },
-      "note": "c.mu.Lock() → pintu dikunci",
+      "note": "c.mu.Lock() → door locked",
       "mem": {
         "vars": [
           {
@@ -151,7 +151,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -198,7 +198,7 @@
       "vars": {
         "c": "&{{true} 0}"
       },
-      "note": "defer dicatat: c.mu.Unlock() (dijalankan saat fungsi selesai)",
+      "note": "defer noted: c.mu.Unlock() (runs when the function ends)",
       "mem": {
         "vars": [
           {
@@ -231,7 +231,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -311,7 +311,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -355,14 +355,14 @@
       "run": 1,
       "phase": "body",
       "line": 15,
-      "note": "menjalankan defer: c.mu.Unlock()",
+      "note": "running defer: c.mu.Unlock()",
       "g": 4,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -409,7 +409,7 @@
       "vars": {
         "c": "&{{false} 1}"
       },
-      "note": "c.mu.Unlock() → pintu dibuka",
+      "note": "c.mu.Unlock() → door unlocked",
       "mem": {
         "vars": [
           {
@@ -442,7 +442,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -490,7 +490,7 @@
       "vars": {
         "c": "&{{false} 1}"
       },
-      "note": "Counter.Inc(c = &{{false} 0}) selesai",
+      "note": "Counter.Inc(c = &{{false} 0}) done",
       "mem": {
         "vars": [
           {
@@ -523,7 +523,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -572,7 +572,7 @@
       "vars": {
         "c": "&{{false} 1}"
       },
-      "note": "panggil Counter.Inc(c = &{{false} 1})",
+      "note": "call Counter.Inc(c = &{{false} 1})",
       "mem": {
         "vars": [
           {
@@ -605,7 +605,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -652,7 +652,7 @@
       "vars": {
         "c": "&{{true} 1}"
       },
-      "note": "c.mu.Lock() → pintu dikunci",
+      "note": "c.mu.Lock() → door locked",
       "mem": {
         "vars": [
           {
@@ -685,7 +685,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -732,7 +732,7 @@
       "vars": {
         "c": "&{{true} 1}"
       },
-      "note": "defer dicatat: c.mu.Unlock() (dijalankan saat fungsi selesai)",
+      "note": "defer noted: c.mu.Unlock() (runs when the function ends)",
       "mem": {
         "vars": [
           {
@@ -765,7 +765,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -845,7 +845,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -889,14 +889,14 @@
       "run": 2,
       "phase": "body",
       "line": 15,
-      "note": "menjalankan defer: c.mu.Unlock()",
+      "note": "running defer: c.mu.Unlock()",
       "g": 2,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -943,7 +943,7 @@
       "vars": {
         "c": "&{{false} 2}"
       },
-      "note": "c.mu.Unlock() → pintu dibuka",
+      "note": "c.mu.Unlock() → door unlocked",
       "mem": {
         "vars": [
           {
@@ -976,7 +976,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1024,7 +1024,7 @@
       "vars": {
         "c": "&{{false} 2}"
       },
-      "note": "Counter.Inc(c = &{{false} 1}) selesai",
+      "note": "Counter.Inc(c = &{{false} 1}) done",
       "mem": {
         "vars": [
           {
@@ -1057,7 +1057,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1106,7 +1106,7 @@
       "vars": {
         "c": "&{{false} 2}"
       },
-      "note": "panggil Counter.Inc(c = &{{false} 2})",
+      "note": "call Counter.Inc(c = &{{false} 2})",
       "mem": {
         "vars": [
           {
@@ -1139,7 +1139,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1186,7 +1186,7 @@
       "vars": {
         "c": "&{{true} 2}"
       },
-      "note": "c.mu.Lock() → pintu dikunci",
+      "note": "c.mu.Lock() → door locked",
       "mem": {
         "vars": [
           {
@@ -1219,7 +1219,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1266,7 +1266,7 @@
       "vars": {
         "c": "&{{true} 2}"
       },
-      "note": "defer dicatat: c.mu.Unlock() (dijalankan saat fungsi selesai)",
+      "note": "defer noted: c.mu.Unlock() (runs when the function ends)",
       "mem": {
         "vars": [
           {
@@ -1299,7 +1299,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1379,7 +1379,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1423,14 +1423,14 @@
       "run": 3,
       "phase": "body",
       "line": 15,
-      "note": "menjalankan defer: c.mu.Unlock()",
+      "note": "running defer: c.mu.Unlock()",
       "g": 3,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1477,7 +1477,7 @@
       "vars": {
         "c": "&{{false} 3}"
       },
-      "note": "c.mu.Unlock() → pintu dibuka",
+      "note": "c.mu.Unlock() → door unlocked",
       "mem": {
         "vars": [
           {
@@ -1510,7 +1510,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,
@@ -1558,7 +1558,7 @@
       "vars": {
         "c": "&{{false} 3}"
       },
-      "note": "Counter.Inc(c = &{{false} 2}) selesai",
+      "note": "Counter.Inc(c = &{{false} 2}) done",
       "mem": {
         "vars": [
           {
@@ -1591,7 +1591,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "wg.Wait() (hitungan 3)"
+          "why": "wg.Wait() (counter 3)"
         },
         {
           "id": 2,

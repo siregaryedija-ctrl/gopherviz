@@ -34,7 +34,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "panggil isEven(n = 1)"
+      "note": "call isEven(n = 1)"
     },
     {
       "n": 1,
@@ -49,7 +49,7 @@
       "vars": {
         "n": "1"
       },
-      "note": "isEven(n = 1) mengembalikan false"
+      "note": "isEven(n = 1) returns false"
     },
     {
       "n": 2,
@@ -79,7 +79,7 @@
         "nums": "[1 2 3 4]",
         "total": "0"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 4,
@@ -93,7 +93,7 @@
         "nums": "[1 2 3 4]",
         "total": "0"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -109,7 +109,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "panggil isEven(n = 2)"
+      "note": "call isEven(n = 2)"
     },
     {
       "n": 6,
@@ -124,7 +124,7 @@
       "vars": {
         "n": "2"
       },
-      "note": "isEven(n = 2) mengembalikan true"
+      "note": "isEven(n = 2) returns true"
     },
     {
       "n": 7,
@@ -154,7 +154,7 @@
         "nums": "[1 2 3 4]",
         "total": "0"
       },
-      "note": "masuk cabang ke-1 (if isEven(n))"
+      "note": "take branch #1 (if isEven(n))"
     },
     {
       "n": 9,
@@ -182,7 +182,7 @@
         "nums": "[1 2 3 4]",
         "total": "2"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -198,7 +198,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "panggil isEven(n = 3)"
+      "note": "call isEven(n = 3)"
     },
     {
       "n": 12,
@@ -213,7 +213,7 @@
       "vars": {
         "n": "3"
       },
-      "note": "isEven(n = 3) mengembalikan false"
+      "note": "isEven(n = 3) returns false"
     },
     {
       "n": 13,
@@ -243,7 +243,7 @@
         "nums": "[1 2 3 4]",
         "total": "2"
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 15,
@@ -257,7 +257,7 @@
         "nums": "[1 2 3 4]",
         "total": "2"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -273,7 +273,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "panggil isEven(n = 4)"
+      "note": "call isEven(n = 4)"
     },
     {
       "n": 17,
@@ -288,7 +288,7 @@
       "vars": {
         "n": "4"
       },
-      "note": "isEven(n = 4) mengembalikan true"
+      "note": "isEven(n = 4) returns true"
     },
     {
       "n": 18,
@@ -318,7 +318,7 @@
         "nums": "[1 2 3 4]",
         "total": "2"
       },
-      "note": "masuk cabang ke-1 (if isEven(n))"
+      "note": "take branch #1 (if isEven(n))"
     },
     {
       "n": 20,
@@ -346,7 +346,7 @@
         "nums": "[1 2 3 4]",
         "total": "6"
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

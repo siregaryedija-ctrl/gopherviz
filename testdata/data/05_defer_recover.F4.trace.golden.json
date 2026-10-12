@@ -32,7 +32,7 @@
       "phase": "call",
       "line": 25,
       "func": "main",
-      "note": "panggil main()"
+      "note": "call main()"
     },
     {
       "n": 1,
@@ -43,7 +43,7 @@
       "phase": "call",
       "line": 26,
       "func": "order",
-      "note": "panggil order()"
+      "note": "call order()"
     },
     {
       "n": 2,
@@ -54,7 +54,7 @@
       "phase": "return",
       "line": 13,
       "func": "order",
-      "note": "order() selesai",
+      "note": "order() done",
       "output": "isi fungsi selesai\ndefer 3\ndefer 2\ndefer 1\n"
     },
     {
@@ -80,7 +80,7 @@
         "a": "10",
         "b": "2"
       },
-      "note": "panggil safeDivide(a = 10, b = 2)"
+      "note": "call safeDivide(a = 10, b = 2)"
     },
     {
       "n": 5,
@@ -98,7 +98,7 @@
         "err": "<nil>",
         "result": "5"
       },
-      "note": "safeDivide(a = 10, b = 2) mengembalikan 5, <nil>"
+      "note": "safeDivide(a = 10, b = 2) returns 5, <nil>"
     },
     {
       "n": 6,
@@ -107,7 +107,7 @@
       "run": 1,
       "phase": "body",
       "line": 27,
-      "note": "fmt.Println(safeDivide(10, 2)) → cetak \"5 <nil>\"",
+      "note": "fmt.Println(safeDivide(10, 2)) → print \"5 <nil>\"",
       "output": "5 <nil>\n"
     },
     {
@@ -124,7 +124,7 @@
         "a": "1",
         "b": "0"
       },
-      "note": "panggil safeDivide(a = 1, b = 0)"
+      "note": "call safeDivide(a = 1, b = 0)"
     },
     {
       "n": 8,
@@ -142,7 +142,7 @@
         "err": "error(\"pembagian gagal\")",
         "result": "0"
       },
-      "note": "safeDivide(a = 1, b = 0) mengembalikan 0, error(\"pembagian gagal\")"
+      "note": "safeDivide(a = 1, b = 0) returns 0, error(\"pembagian gagal\")"
     },
     {
       "n": 9,
@@ -151,7 +151,7 @@
       "run": 1,
       "phase": "body",
       "line": 28,
-      "note": "fmt.Println(safeDivide(1, 0)) → cetak \"0 pembagian gagal\"",
+      "note": "fmt.Println(safeDivide(1, 0)) → print \"0 pembagian gagal\"",
       "output": "0 pembagian gagal\n"
     },
     {
@@ -162,7 +162,7 @@
       "phase": "return",
       "line": 29,
       "func": "main",
-      "note": "main() selesai"
+      "note": "main() done"
     }
   ],
   "truncated": false,

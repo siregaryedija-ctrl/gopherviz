@@ -34,7 +34,7 @@
       "phase": "init",
       "line": 18,
       "iteration": 0,
-      "note": "range []int{95, 80, 40} (3 elemen)"
+      "note": "range []int{95, 80, 40} (3 elements)"
     },
     {
       "n": 1,
@@ -48,7 +48,7 @@
         "s": "95"
       },
       "result": true,
-      "note": "ambil elemen ke-1: s = 95"
+      "note": "take element #1: s = 95"
     },
     {
       "n": 2,
@@ -63,7 +63,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "panggil grade(score = 95)"
+      "note": "call grade(score = 95)"
     },
     {
       "n": 3,
@@ -78,7 +78,7 @@
       "vars": {
         "score": "95"
       },
-      "note": "grade(score = 95) mengembalikan \"A\""
+      "note": "grade(score = 95) returns \"A\""
     },
     {
       "n": 4,
@@ -91,7 +91,7 @@
       "vars": {
         "s": "95"
       },
-      "note": "fmt.Println(s, grade(s)) → cetak \"95 A\"",
+      "note": "fmt.Println(s, grade(s)) → print \"95 A\"",
       "output": "95 A\n"
     },
     {
@@ -106,7 +106,7 @@
         "s": "80"
       },
       "result": true,
-      "note": "ambil elemen ke-2: s = 80"
+      "note": "take element #2: s = 80"
     },
     {
       "n": 6,
@@ -121,7 +121,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "panggil grade(score = 80)"
+      "note": "call grade(score = 80)"
     },
     {
       "n": 7,
@@ -136,7 +136,7 @@
       "vars": {
         "score": "80"
       },
-      "note": "grade(score = 80) mengembalikan \"B\""
+      "note": "grade(score = 80) returns \"B\""
     },
     {
       "n": 8,
@@ -149,7 +149,7 @@
       "vars": {
         "s": "80"
       },
-      "note": "fmt.Println(s, grade(s)) → cetak \"80 B\"",
+      "note": "fmt.Println(s, grade(s)) → print \"80 B\"",
       "output": "80 B\n"
     },
     {
@@ -164,7 +164,7 @@
         "s": "40"
       },
       "result": true,
-      "note": "ambil elemen ke-3: s = 40"
+      "note": "take element #3: s = 40"
     },
     {
       "n": 10,
@@ -179,7 +179,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "panggil grade(score = 40)"
+      "note": "call grade(score = 40)"
     },
     {
       "n": 11,
@@ -194,7 +194,7 @@
       "vars": {
         "score": "40"
       },
-      "note": "grade(score = 40) mengembalikan \"D\""
+      "note": "grade(score = 40) returns \"D\""
     },
     {
       "n": 12,
@@ -207,7 +207,7 @@
       "vars": {
         "s": "40"
       },
-      "note": "fmt.Println(s, grade(s)) → cetak \"40 D\"",
+      "note": "fmt.Println(s, grade(s)) → print \"40 D\"",
       "output": "40 D\n"
     },
     {
@@ -219,7 +219,7 @@
       "line": 18,
       "iteration": 3,
       "result": false,
-      "note": "tidak ada elemen lagi"
+      "note": "no more elements"
     },
     {
       "n": 14,
@@ -229,7 +229,7 @@
       "phase": "exit",
       "line": 18,
       "iteration": 3,
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done"
     }
   ],

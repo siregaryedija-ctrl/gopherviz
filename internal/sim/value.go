@@ -187,7 +187,7 @@ func namedOf(t types.Type) string {
 
 func zeroOf(t types.Type) value {
 	if t == nil {
-		return unknown("tipe tidak diketahui")
+		return unknown("unknown type")
 	}
 	v := zeroUnder(t)
 	if n := namedOf(t); n != "" && v.k != kUnknown {
@@ -235,7 +235,7 @@ func zeroUnder(t types.Type) value {
 	case *types.Chan:
 		return value{k: kChan}
 	}
-	return unknown("nilai bertipe " + t.String() + " belum disimulasikan")
+	return unknown("values of type " + t.String() + " are not simulated yet")
 }
 
 // coerce menyesuaikan v dengan tipe statis t (mis. konstanta 3 di konteks float64)
@@ -317,7 +317,7 @@ func constValue(tv types.TypeAndValue) value {
 		f, _ := constant.Float64Val(c)
 		v = floatV(f)
 	default:
-		return unknown("konstanta kompleks belum disimulasikan")
+		return unknown("complex constants are not simulated yet")
 	}
 	return coerce(v, tv.Type)
 }
@@ -464,19 +464,19 @@ func show(v value) string {
 func describe(v value) string {
 	switch v.k {
 	case kSlice:
-		return fmt.Sprintf("%d elemen", v.sl.elemsLen())
+		return fmt.Sprintf("%d elements", v.sl.elemsLen())
 	case kArray:
-		return fmt.Sprintf("%d elemen", len(v.arr))
+		return fmt.Sprintf("%d elements", len(v.arr))
 	case kString:
-		return fmt.Sprintf("%d karakter", utf8.RuneCountInString(v.s))
+		return fmt.Sprintf("%d characters", utf8.RuneCountInString(v.s))
 	case kMap:
 		n := 0
 		if v.m != nil {
 			n = len(v.m.keys)
 		}
-		return fmt.Sprintf("%d pasangan", n)
+		return fmt.Sprintf("%d pairs", n)
 	case kInt:
-		return fmt.Sprintf("angka %d", v.i)
+		return fmt.Sprintf("number %d", v.i)
 	case kChan:
 		return "channel"
 	case kFunc:

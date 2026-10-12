@@ -44,7 +44,7 @@
       "vars": {
         "s": "\"42\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 2,
@@ -56,7 +56,7 @@
       "vars": {
         "s": "\"42\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -83,7 +83,7 @@
       "vars": {
         "s": "\"\""
       },
-      "note": "masuk cabang ke-1 (if s == \"\")"
+      "note": "take branch #1 (if s == \"\")"
     },
     {
       "n": 5,
@@ -95,7 +95,7 @@
       "vars": {
         "s": "\"\""
       },
-      "note": "return 0, ErrKosong → keluar dari fungsi"
+      "note": "return 0, ErrKosong → leave the function"
     },
     {
       "n": 6,
@@ -107,7 +107,7 @@
       "vars": {
         "s": "\"\""
       },
-      "note": "keluar karena return",
+      "note": "leave because of return",
       "reason": "return"
     },
     {
@@ -134,7 +134,7 @@
       "vars": {
         "s": "\"abc\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 9,
@@ -146,7 +146,7 @@
       "vars": {
         "s": "\"abc\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     },
     {
@@ -173,7 +173,7 @@
       "vars": {
         "s": "\"500\""
       },
-      "note": "semua kondisi false dan tidak ada else → lewati"
+      "note": "all conditions false and no else → skip"
     },
     {
       "n": 12,
@@ -185,7 +185,7 @@
       "vars": {
         "s": "\"500\""
       },
-      "note": "selesai, lanjut ke baris berikutnya",
+      "note": "done, continue to the next line",
       "reason": "done"
     }
   ],

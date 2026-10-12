@@ -39,14 +39,14 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "panggil worker(id = 2, jobs = chan, results = chan)",
+      "note": "call worker(id = 2, jobs = chan, results = chan)",
       "g": 3,
       "gs": [
         {
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -102,7 +102,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -153,7 +153,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-1: j = 1",
+      "note": "take element #1: j = 1",
       "ops": [
         {
           "op": "recv",
@@ -168,7 +168,7 @@
           "id": 1,
           "name": "main",
           "state": "menunggu",
-          "why": "<-results (menunggu data)"
+          "why": "<-results (waiting for data)"
         },
         {
           "id": 2,
@@ -217,7 +217,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 2 ke results",
+      "note": "results <- j * 2 → send 2 to results",
       "ops": [
         {
           "op": "send",
@@ -282,7 +282,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-2: j = 2",
+      "note": "take element #2: j = 2",
       "ops": [
         {
           "op": "recv",
@@ -345,7 +345,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 4 ke results",
+      "note": "results <- j * 2 → send 4 to results",
       "ops": [
         {
           "op": "send",
@@ -410,7 +410,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-3: j = 3",
+      "note": "take element #3: j = 3",
       "ops": [
         {
           "op": "recv",
@@ -473,7 +473,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 6 ke results",
+      "note": "results <- j * 2 → send 6 to results",
       "ops": [
         {
           "op": "send",
@@ -538,7 +538,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-4: j = 4",
+      "note": "take element #4: j = 4",
       "ops": [
         {
           "op": "recv",
@@ -601,7 +601,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 8 ke results",
+      "note": "results <- j * 2 → send 8 to results",
       "ops": [
         {
           "op": "send",
@@ -666,7 +666,7 @@
         "results": "chan"
       },
       "result": true,
-      "note": "ambil elemen ke-5: j = 5",
+      "note": "take element #5: j = 5",
       "ops": [
         {
           "op": "recv",
@@ -728,7 +728,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "results <- j * 2 → kirim 10 ke results",
+      "note": "results <- j * 2 → send 10 to results",
       "ops": [
         {
           "op": "send",
@@ -791,7 +791,7 @@
         "results": "chan"
       },
       "result": false,
-      "note": "tidak ada elemen lagi",
+      "note": "no more elements",
       "g": 3,
       "gs": [
         {
@@ -845,7 +845,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "range selesai → keluar dari loop",
+      "note": "range done → leave the loop",
       "reason": "range-done",
       "g": 3,
       "gs": [
@@ -900,7 +900,7 @@
         "jobs": "chan",
         "results": "chan"
       },
-      "note": "worker(id = 2, jobs = chan, results = chan) selesai",
+      "note": "worker(id = 2, jobs = chan, results = chan) done",
       "g": 3,
       "gs": [
         {
