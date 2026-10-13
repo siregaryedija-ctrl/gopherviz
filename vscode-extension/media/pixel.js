@@ -102,6 +102,10 @@
 
   const textW = s => Math.max(0, s.length * 4 - 1);
   function text(c, s, x, y, col) {
+    if (defer(c, s, x, y, col, 1)) return;
+    pixelText(c, s, x, y, col);
+  }
+  function pixelText(c, s, x, y, col) {
     c.fillStyle = col;
     s = s.toUpperCase();
     for (let i = 0; i < s.length; i++) {
@@ -111,9 +115,9 @@
     }
   }
   const textCenter = (c, s, cx, y, col) => text(c, s, Math.round(cx - textW(s) / 2), y, col);
-  /** Teks dalam huruf besar tanpa karakter yang tidak ada di font, dipotong ".." bila lebih dari max karakter. */
+  /** Teks satu baris (huruf besar/kecil dipertahankan), dipotong ".." bila lebih dari max karakter. */
   function fit(s, max) {
-    s = [...String(s).toUpperCase()].map(ch => (FONT[ch] ? ch : ch === '\t' ? ' ' : '')).join('').replace(/\s+/g, ' ').trim();
+    s = [...String(s)].map(ch => (FONT[ch.toUpperCase()] || ch > ' ' ? ch : ch === '\t' ? ' ' : '')).join('').replace(/\s+/g, ' ').trim();
     return max != null && s.length > max ? s.slice(0, Math.max(1, max - 2)) + '..' : s;
   }
 
@@ -198,6 +202,7 @@
     rect(x, 0, 0, w, h, col); rect(x, 1, 1, w - 2, h - 2, '#fff8fb');
     rect(x, 2, 2, w - 4, 1, col); rect(x, 2, h - 3, w - 4, 1, col);
     text(x, label, 4, 4, col);
+    c.__stamp = { label, col }; // drawImage ke canvas yang mendukung teks halus: label ditulis ulang halus
     return (stamps[key] = c);
   }
 
@@ -210,12 +215,16 @@
   function paintWorld(c, W, H, GY) {
     c.clearRect(0, 0, W, H);
     c.canvas.__theme = { kind: 'world', GY };
+    c.canvas.__texts = [];
   }
 
   /** Gambar latar panggung setiap frame: tema (bergerak) di bawah isi canvas latar. */
   function drawBg(w, bg) {
+    const dst = w.canvas.__texts;
+    if (dst) dst.length = 0; // latar = awal frame: teks frame sebelumnya yang belum dipresent dibuang
     if (G.theme) G.theme.drawBg(w, bg);
     else w.drawImage(bg, 0, 0);
+    if (dst && bg.__texts) for (const t of bg.__texts) dst.push(t); // teks latar (sudah di koordinat dunia)
   }
 
   /** Posisi pada jalur berbelok (daftar titik) di t = 0..1, menurut panjang lintasan. */
@@ -262,8 +271,145 @@
       ctx.fillRect(0, 0, cw, ch);
     }
     ctx.drawImage(world, 0, 0, worldW, worldH, 0, 0, cw, ch);
+    flushTexts(ctx, world, k, 0, 0, 1);
     return k;
   }
+
+  // ---------- teks halus ----------
+  // Keputusan user 2026-10-12: tulisan di panggung jangan terlalu pixel supaya mudah dibaca. Kubus, Gopher, dan
+  // latar tetap pixel art; teks yang ditulis ke canvas dunia dicatat (posisi, warna, alpha, transform) lalu
+  // digambar dengan font monospace beresolusi penuh oleh present(), sesudah dunia diperbesar. Lebar satu huruf
+  // monospace (~0.55em) hampir sama dengan lebar huruf pixel (4 piksel dunia), jadi tata letak tidak berubah.
+  // Canvas lain (cache sprite kecil) tetap memakai font pixel.
+  const MONO = 'Consolas, "Cascadia Mono", "SF Mono", Menlo, "DejaVu Sans Mono", monospace';
+
+  /** Catat teks untuk lapisan halus bila canvas c mendukungnya (dunia panggung atau latarnya). */
+  function defer(c, s, x, y, col, size) {
+    const list = c.canvas && c.canvas.__texts;
+    if (!list) return false;
+    const m = c.getTransform();
+    list.push({ s: String(s), x, y, col, size, a: c.globalAlpha, m, box: devBox(m, x, y, textW(String(s)) * size * 1.06, 5 * size) });
+    return true;
+  }
+
+  /** Kotak (x, y, w, h) di transform m (tanpa rotasi) dalam koordinat canvas: [x0, y0, x1, y1]. */
+  function devBox(m, x, y, w, h) {
+    const x0 = m.a * x + m.c * y + m.e, y0 = m.b * x + m.d * y + m.f, x1 = x0 + m.a * w, y1 = y0 + m.d * h;
+    return [Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1), Math.max(y0, y1)];
+  }
+
+  // Urutan gambar: teks halus digambar paling akhir, jadi kotak atau sprite yang digambar SESUDAH sebuah teks
+  // dan menimpanya (tiket yang lewat, Gopher, lapisan peredup) dicatat sebagai penutup teks itu. Saat teks
+  // ditulis, bagian yang tertutup dihapus (sprite: sesuai bentuk pikselnya), seolah teks ada di bawahnya.
+  function occlude(c, x, y, w, h, img, src) {
+    const list = c.canvas.__texts;
+    if (!list || !list.length || !(Math.abs(w) >= 1 && Math.abs(h) >= 1)) return;
+    const b = devBox(c.getTransform(), x, y, w, h);
+    for (const t of list) {
+      const q = t.box;
+      if (!q || q[0] >= b[2] || b[0] >= q[2] || q[1] >= b[3] || b[1] >= q[3]) continue;
+      (t.occ || (t.occ = [])).push({ b, img, src, a: c.globalAlpha });
+    }
+  }
+  const rawFillRect = CanvasRenderingContext2D.prototype.fillRect;
+  CanvasRenderingContext2D.prototype.fillRect = function (x, y, w, h) {
+    if (this.canvas.__texts) occlude(this, x, y, w, h);
+    return rawFillRect.call(this, x, y, w, h);
+  };
+
+  /** Teks yang sebagian tertutup: tulis di canvas sementara, hapus bagian penutupnya, lalu tempel. */
+  let tmpCv = null;
+  function smoothOccluded(ctx, t, k, ox, oy, alpha) {
+    const q = t.box, M = 3, x0 = Math.floor(q[0] - M), y0 = Math.floor(q[1] - M);
+    const w = Math.ceil((q[2] - q[0] + 2 * M) * k), h = Math.ceil((q[3] - q[1] + 2 * M) * k);
+    if (!tmpCv) tmpCv = document.createElement('canvas');
+    if (tmpCv.width < w) tmpCv.width = w;
+    if (tmpCv.height < h) tmpCv.height = h;
+    const x = tmpCv.getContext('2d');
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.globalCompositeOperation = 'source-over';
+    x.clearRect(0, 0, w, h);
+    smooth(x, t, k, -x0 * k, -y0 * k, 1);
+    x.globalCompositeOperation = 'destination-out';
+    x.imageSmoothingEnabled = false;
+    x.setTransform(k, 0, 0, k, -x0 * k, -y0 * k);
+    for (const o of t.occ) {
+      x.globalAlpha = o.a;
+      const [bx0, by0, bx1, by1] = o.b;
+      if (o.img) rawDrawImage.call(x, o.img, ...o.src, bx0, by0, bx1 - bx0, by1 - by0);
+      else x.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
+    }
+    x.globalCompositeOperation = 'source-over';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = alpha;
+    rawDrawImage.call(ctx, tmpCv, 0, 0, w, h, ox + x0 * k, oy + y0 * k, w, h);
+  }
+
+  /** Gambar satu teks halus: posisi dunia (x, y = atas huruf) di transform m, diperbesar k, digeser (ox, oy). */
+  function smooth(ctx, t, k, ox, oy, alpha) {
+    const m = t.m;
+    ctx.setTransform(m.a * k, m.b * k, m.c * k, m.d * k, ox + m.e * k, oy + m.f * k);
+    ctx.globalAlpha = t.a * alpha;
+    ctx.fillStyle = t.col;
+    ctx.font = `bold ${7.4 * t.size}px ${MONO}`;
+    const want = textW(t.s) * t.size * 1.06, got = ctx.measureText(t.s).width;
+    ctx.translate(t.x, t.y + 5 * t.size);
+    if (got > want && got > 0) ctx.scale(want / got, 1); // teks yang lebih lebar dari kotaknya dipadatkan
+    ctx.fillText(t.s, 0, 0);
+  }
+
+  /** Teks halus t di transform ctx sekarang (untuk perekam). */
+  function drawText(ctx, t) {
+    ctx.save();
+    smooth(ctx, Object.assign({}, t, { m: ctx.getTransform() }), 1, 0, 0, 1);
+    ctx.restore();
+  }
+
+  /** Tulis semua teks halus milik canvas dunia src ke ctx (dunia digambar dengan skala k di (ox, oy)). */
+  function flushTexts(ctx, src, k, ox, oy, alpha) {
+    const list = src.__texts;
+    src.__texts = [];
+    if (!list || !list.length) return;
+    ctx.save();
+    for (const t of list) {
+      if (t.occ) smoothOccluded(ctx, t, k, ox, oy, alpha);
+      else smooth(ctx, t, k, ox, oy, alpha);
+    }
+    ctx.restore();
+  }
+
+  // Stempel (DONE!, PANIC!) digambar dengan drawImage: di canvas yang mendukung teks halus, labelnya ditulis
+  // ulang halus di atas stempel (stempel memakai bingkai pixel yang sama).
+  const rawDrawImage = CanvasRenderingContext2D.prototype.drawImage;
+  CanvasRenderingContext2D.prototype.drawImage = function (img, ...a) {
+    if (this.canvas.__texts && a.length >= 2) {
+      const n = a.length, src = n === 8 ? a.slice(0, 4) : [0, 0, img.width, img.height];
+      occlude(this, n === 8 ? a[4] : a[0], n === 8 ? a[5] : a[1], n === 8 ? a[6] : n === 4 ? a[2] : img.width, n === 8 ? a[7] : n === 4 ? a[3] : img.height, img, src);
+    }
+    const st = img && img.__stamp;
+    const hiRes = st && !this.canvas.__texts && this.canvas.__k; // canvas panggung (sudah diperbesar)
+    if (!st || (!this.canvas.__texts && !hiRes)) return rawDrawImage.call(this, img, ...a);
+    const dx = a.length === 8 ? a[4] : a[0], dy = a.length === 8 ? a[5] : a[1];
+    const dw = a.length === 8 ? a[6] : a.length === 4 ? a[2] : img.width;
+    rawDrawImage.call(this, plainStamp(img), ...a);
+    const sc = dw / img.width;
+    const t = { s: st.label, x: dx + 4 * sc, y: dy + 4 * sc, col: st.col, size: sc, a: this.globalAlpha, m: this.getTransform() };
+    if (this.canvas.__texts) this.canvas.__texts.push(t);
+    else { this.save(); smooth(this, Object.assign(t, { m: new DOMMatrix() }), 1, 0, 0, 1); this.restore(); }
+  };
+  /** Stempel tanpa tulisan (bingkai saja) untuk ditimpa teks halus. */
+  function plainStamp(img) {
+    if (img.__plain) return img.__plain;
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const x = c.getContext('2d'), col = img.__stamp.col, w = img.width, h = img.height;
+    rect(x, 0, 0, w, h, col); rect(x, 1, 1, w - 2, h - 2, '#fff8fb');
+    rect(x, 2, 2, w - 4, 1, col); rect(x, 2, h - 3, w - 4, 1, col);
+    return (img.__plain = c);
+  }
+
+  /** Aktifkan teks halus untuk canvas (dunia panggung yang dipresent, adegan error). */
+  const smoothText = cv => { if (!cv.__texts) cv.__texts = []; return cv; };
 
   /** Gopher biru berdiri dengan kaki di groundY. Mengembalikan y kepala. */
   function drawGopher(c, x, groundY, face, step, alpha) {
@@ -278,6 +424,7 @@
   function paintSky(c, W, H) {
     c.clearRect(0, 0, W, H);
     c.canvas.__theme = { kind: 'sky' };
+    c.canvas.__texts = [];
   }
 
   // Warna ubin per jenis bagian body, sama dengan ikon di daftar "Isi" panel.
@@ -401,7 +548,7 @@
   }
 
   G.pixel = {
-    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit,
+    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit, smoothText, flushTexts, drawText,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
     along, present, drawGopher, paintSky, drawBg, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth, stmtLabel, tileRow, labelTile,
   };

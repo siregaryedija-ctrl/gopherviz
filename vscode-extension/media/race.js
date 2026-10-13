@@ -146,10 +146,10 @@
       c.imageSmoothingEnabled = false;
       c.fillStyle = '#fde3eb';
       c.fillRect(0, 0, W, H);
-      const K = 4; // skala teks pixel
+      const K = 4; // skala teks (1 satuan = 1 piksel dunia)
       const text = (s, x, y, col, center) => {
         c.save(); c.setTransform(K, 0, 0, K, Math.round(center ? x - (P.textW(s) * K) / 2 : x), y);
-        P.text(c, s, 0, 0, col); c.restore();
+        P.drawText(c, { s, x: 0, y: 0, col, size: 1, a: 1 }); c.restore();
       };
       const win = this.finished() ? this.winner() : null;
       this.lanes.forEach((l, k) => {

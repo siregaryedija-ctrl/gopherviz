@@ -21,6 +21,7 @@
   const RED = '#e5534b', PAPER = '#fff6f8';
   const world = document.createElement('canvas');
   world.width = W; world.height = H;
+  P.smoothText(world);
   const c = world.getContext('2d');
 
   const seg = (ms, a, b) => clamp((ms - a) / (b - a), 0, 1); // kemajuan 0..1 di antara a..b ms
@@ -270,6 +271,7 @@
     ctx.globalAlpha = fade;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(world, Math.round((cw - w) / 2), Math.round((ch - h) / 2), w, h);
+    P.flushTexts(ctx, world, k, Math.round((cw - w) / 2), Math.round((ch - h) / 2), fade);
     ctx.restore();
   }
 

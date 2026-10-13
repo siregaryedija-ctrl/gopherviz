@@ -32,24 +32,29 @@
     bytes(s) { for (let i = 0; i < s.length; i++) this.out.push(s.charCodeAt(i)); }
     u16(n) { this.out.push(n & 255, (n >> 8) & 255); }
 
+    /**
+     * Indeks palet untuk warna c. Warna baru hanya masuk palet bila cukup berbeda dari semua warna yang sudah
+     * ada; warna antara (tepi teks halus, panggung yang diperkecil) memakai warna terdekat. Tanpa ini palet
+     * habis oleh gradasi di bagian atas frame pertama dan warna kubus/Gopher di bawahnya jadi pucat.
+     */
     colorIndex(c) {
       let k = this.idx.get(c);
       if (k != null) return k;
-      if (this.pal.length < 255) {
-        k = this.pal.length;
-        this.pal.push(c);
-        this.idx.set(c, k);
-        return k;
-      }
       k = this.near.get(c);
       if (k != null) return k;
       const r = c >> 16, g = (c >> 8) & 255, b = c & 255;
-      let best = 0, bd = Infinity;
+      let best = -1, bd = Infinity;
       for (let i = 0; i < this.pal.length; i++) {
         const p = this.pal[i];
         const dr = r - (p >> 16), dg = g - ((p >> 8) & 255), db = b - (p & 255);
         const d = dr * dr * 3 + dg * dg * 4 + db * db * 2;
         if (d < bd) { bd = d; best = i; }
+      }
+      if (best < 0 || (bd > GifWriter.NEAR && this.pal.length < 255)) {
+        k = this.pal.length;
+        this.pal.push(c);
+        this.idx.set(c, k);
+        return k;
       }
       this.near.set(c, best);
       return best;
@@ -156,27 +161,29 @@
   /** Ukuran keluaran: panggung saja (lebar tetap, tinggi mengikuti panggung) atau reel 9:16. */
   function frameSize(frame, format, stageW, stageH) {
     const big = format !== 'gif';
-    if (frame === 'reel') return big ? { w: 720, h: 1280 } : { w: 360, h: 640 };
-    const w = big ? 960 : 480;
+    // GIF 720 lebar (bukan 480) supaya teks halus panggung tetap tajam
+    if (frame === 'reel') return big ? { w: 720, h: 1280 } : { w: 540, h: 960 };
+    const w = big ? 960 : 720;
     let h = Math.round(w * stageH / stageW);
     if (big && h % 2) h++; // video butuh ukuran genap
     return { w, h };
   }
 
-  /** Teks pixel (font GopherViz) diperbesar k kali. */
+  /** Teks judul selebar teks pixel k kali (font halus yang sama dengan panggung). */
   function bigText(ctx, s, x, y, k, col) {
-    const c = document.createElement('canvas');
-    c.width = Math.max(1, P.textW(s)); c.height = 5;
-    P.text(c.getContext('2d'), s, 0, 0, col);
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(c, Math.round(x), Math.round(y), c.width * k, c.height * k);
+    ctx.save();
+    ctx.setTransform(k, 0, 0, k, Math.round(x), Math.round(y));
+    P.drawText(ctx, { s, x: 0, y: 0, col, size: 1, a: 1 });
+    ctx.restore();
   }
 
   /**
    * Menggambar satu bingkai ke ctx (w×h). info: { title, sub, code: {lines}, line, file, output }.
    */
   function compose(ctx, w, h, frame, stage, info) {
-    ctx.imageSmoothingEnabled = false;
+    // panggung diperkecil: dihaluskan supaya teks tetap terbaca (pixel art tetap tegas di skala ini)
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     if (frame !== 'reel') {
       ctx.fillStyle = '#fde3eb';
       ctx.fillRect(0, 0, w, h);
@@ -254,5 +261,6 @@
     ctx.fillText('GopherViz', w - 76 * u, h - 12 * u);
   }
 
+  GifWriter.NEAR = 700; // jarak warna (berbobot) yang masih dianggap sama
   G.recorder = { GifWriter, frameSize, compose };
 })(window.GV = window.GV || {});
