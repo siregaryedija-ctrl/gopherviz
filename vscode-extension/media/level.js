@@ -15,11 +15,12 @@
   const WALK = 48;         // kecepatan jalan, piksel per detik
   const ITER = 3;          // contoh jumlah putaran di mode struktur
   const GOPHER_V = 2;      // tinggi gopher (pakai warna biru gopher klasik)
-  const AIR = new Set(['stmt', 'if', 'block', 'bad', 'empty']);
+  const AIR = new Set(['stmt', 'if', 'switch', 'block', 'bad', 'empty']); // switch = blok percabangan seperti if
 
   const BLOCK = {
     stmt: { fill: '#f3c75a', line: '#a8741f' },
     if: { fill: '#86d6cb', line: '#2f8a7a' },
+    switch: { fill: '#86d6cb', line: '#2f8a7a' },
     block: { fill: '#e9a28d', line: '#a4594a' },
     empty: { fill: '#ead0c4', line: '#b98a78' },
     bad: { fill: '#f6eef2', line: '#b07a92' },
@@ -32,7 +33,7 @@
     loop: { fill: '#b8a2ee', hi: '#d9cdf7', line: '#5a43a0', label: '' },
   };
   const GROUND_SOUND = { break: 'pipe', continue: 'boing', return: 'door', goto: 'warp', loop: 'warp' };
-  const HIT_SOUND = { stmt: 'coin', if: 'blip', block: 'blip', empty: 'tok', bad: 'tok' };
+  const HIT_SOUND = { stmt: 'coin', if: 'blip', switch: 'blip', block: 'blip', empty: 'tok', bad: 'tok' };
 
   class Level {
     /**
@@ -521,7 +522,7 @@
       this.arrowActive = v.warp && v.act !== 'warp-exit' && t < 0.5;
       this.activeItem = a > 0 ? v.item : null;
       const vars = (this.trace.loop.vars || []).map(n => v.step.vars && v.step.vars[n] != null ? `${n}=${v.step.vars[n]}` : null).filter(Boolean);
-      this.hud = { left: v.act === 'panic' ? 'PANIC!' : `ROUND ${v.iter + 1}`, vars: vars.join(' ') };
+      this.hud = { left: v.act === 'panic' ? P.panicWord() : `ROUND ${v.iter + 1}`, vars: vars.join(' ') };
       if (v.act === 'child') this.hud.vars = `${this.hud.vars}  ${v.item.ref || ''} X${v.group.length}`.trim();
       // balok putaran yang baru selesai jatuh ke tembok saat gopher kembali ke awal putaran
       const run = v.wallRun;
@@ -560,7 +561,7 @@
     hitFx(item) {
       const x = item.x, y = BLOCK_Y - 2;
       if (item.kind === 'stmt') this.burst(x, y, 6, ['#f3c75a', '#fff3b8'], { sp: 30, up: 60, g: 140, life: 500, s: 2 });
-      else if (item.kind === 'if') this.burst(x, y, 8, ['#86d6cb', '#ffffff'], { sp: 60, up: 40, g: 60, life: 500 });
+      else if (item.kind === 'if' || item.kind === 'switch') this.burst(x, y, 8, ['#86d6cb', '#ffffff'], { sp: 60, up: 40, g: 60, life: 500 });
       else this.burst(x, BLOCK_Y + 15, 5, ['#d8b4a6', '#ffffff'], { sp: 40, up: 10, g: 80, life: 350 });
     }
     confetti(x) {

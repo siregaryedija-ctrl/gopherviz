@@ -1,0 +1,33 @@
+1: directive [#include <stdio.h>] 
+3: var(int) counter = 0
+5: func tick()
+  5: block
+    6: expr (counter++)
+    7: expr printf("tick %d\n", counter)
+    8: return counter
+11: func main()
+  11: block
+    12: var(int) arr[1 dim] = init[0, 0, 0, 0, 0]
+    13: var(int) n = 0
+    14: expr (arr[(n++)] = 7)
+    15: expr (arr[(n++)] = 8)
+    16: var(int) i = 0
+    17: while (((i++) + 0) < 3)
+      17: block
+        18: expr printf("loop %d\n", i)
+    20: if ((tick() + 0) > 5)
+      20: block
+        21: expr printf("big\n")
+    23: var(int) total = 0
+    24: expr (total += tick())
+    25: var(int) t = ((n > 1) ? (n++) : 0)
+    26: var(int) k = 0
+    27: for [var(int) j = 0] [((j < 3) && ((k++) < 5))] [(j++)]
+      27: block
+        28: expr printf("for %d %d\n", j, k)
+    30: var(int) m = 10
+    31: do-while ((-- m) > 0)
+      31: block
+        32: expr (m -= 3)
+    34: expr printf("%d %d %d %d %d %d %d %d %d\n", arr[0], arr[1], n, i, counter, total, t, k, m)
+    35: return 0

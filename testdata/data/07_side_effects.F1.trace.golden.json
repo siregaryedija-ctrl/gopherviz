@@ -1,0 +1,526 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_side_effects.go",
+  "mode": "simulated",
+  "block": {
+    "id": "F1",
+    "kind": "func",
+    "line": 7,
+    "endLine": 11,
+    "name": "tick",
+    "names": [
+      "Println",
+      "counter",
+      "fmt",
+      "int",
+      "tick"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "call",
+      "line": 22,
+      "func": "tick",
+      "note": "call tick()",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 8,
+      "note": "counter++ → counter = 1",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 9,
+      "note": "fmt.Println(\"tick\", counter) → print \"tick 1\"",
+      "output": "tick 1\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "body",
+      "line": 10,
+      "note": "return counter → leave the function",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "phase": "return",
+      "line": 11,
+      "func": "tick",
+      "return": "1",
+      "note": "tick() returns 1",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "call",
+      "line": 26,
+      "func": "tick",
+      "note": "call tick()",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 8,
+      "note": "counter++ → counter = 2",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 9,
+      "note": "fmt.Println(\"tick\", counter) → print \"tick 2\"",
+      "output": "tick 2\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "body",
+      "line": 10,
+      "note": "return counter → leave the function",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "loop": "",
+      "block": "F1",
+      "run": 2,
+      "phase": "return",
+      "line": 11,
+      "func": "tick",
+      "return": "2",
+      "note": "tick() returns 2",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "call",
+      "line": 27,
+      "func": "tick",
+      "note": "call tick()",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "body",
+      "line": 8,
+      "note": "counter++ → counter = 3",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "body",
+      "line": 9,
+      "note": "fmt.Println(\"tick\", counter) → print \"tick 3\"",
+      "output": "tick 3\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "body",
+      "line": 10,
+      "note": "return counter → leave the function",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "loop": "",
+      "block": "F1",
+      "run": 3,
+      "phase": "return",
+      "line": 11,
+      "func": "tick",
+      "return": "3",
+      "note": "tick() returns 3",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "call",
+      "line": 29,
+      "func": "tick",
+      "note": "call tick()",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "body",
+      "line": 8,
+      "note": "counter++ → counter = 4",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "body",
+      "line": 9,
+      "note": "fmt.Println(\"tick\", counter) → print \"tick 4\"",
+      "output": "tick 4\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "body",
+      "line": 10,
+      "note": "return counter → leave the function",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "loop": "",
+      "block": "F1",
+      "run": 4,
+      "phase": "return",
+      "line": 11,
+      "func": "tick",
+      "return": "4",
+      "note": "tick() returns 4",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

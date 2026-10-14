@@ -1,0 +1,290 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "typescript",
+    "file": "03_side_effects.ts",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 2,
+        "endLine": 6,
+        "state": "complete",
+        "name": "tick",
+        "header": "function tick()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 3,
+            "text": "counter++;"
+          },
+          {
+            "kind": "stmt",
+            "line": 4,
+            "text": "console.log(\"tick \" + counter);"
+          },
+          {
+            "kind": "return",
+            "line": 5,
+            "text": "return counter;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 7,
+        "endLine": 35,
+        "state": "complete",
+        "name": "main",
+        "header": "function main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "const arr = [0, 0, 0, 0, 0]"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "let n = 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "arr[n++] = 7;"
+          },
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "arr[n++] = 8;"
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "let i = 0"
+          },
+          {
+            "kind": "loop",
+            "line": 13,
+            "endLine": 15,
+            "ref": "L1"
+          },
+          {
+            "kind": "if",
+            "line": 16,
+            "endLine": 18,
+            "text": "if (tick() + 0 > 5)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 17,
+                "text": "console.log(\"big\");"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "let total = 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "total += tick();"
+          },
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "const t = n > 1 ? n++ : 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "const st = [1, 2, 3, 4]"
+          },
+          {
+            "kind": "loop",
+            "line": 23,
+            "endLine": 25,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "let k = 0"
+          },
+          {
+            "kind": "loop",
+            "line": 27,
+            "endLine": 29,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "const q = [5, 6, 7]"
+          },
+          {
+            "kind": "loop",
+            "line": 31,
+            "endLine": 33,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 34,
+            "text": "console.log(arr[0], arr[1], n, i, counter, total, t, st.len…"
+          }
+        ],
+        "children": [
+          "L1",
+          "I1",
+          "L2",
+          "L3",
+          "L4"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 13,
+        "endLine": 15,
+        "state": "complete",
+        "header": "while (i++ + 0 < 3)",
+        "parent": "F2"
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": "if (tick() + 0 > 5)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "tick() + 0 > 5",
+            "line": 16,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 17,
+                "text": "console.log(\"big\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 23,
+        "endLine": 25,
+        "state": "complete",
+        "header": "while (st.length && st.pop() > 2)",
+        "parent": "F2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": "for (let j = 0; j < 3 && k++ < 5; j++)",
+        "parent": "F2"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "header": "while (q.shift() < 7)",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 13,
+        "endLine": 15,
+        "state": "complete",
+        "header": {
+          "text": "while (i++ + 0 < 3)",
+          "cond": "i++ + 0 < 3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "console.log(\"loop \" + i);"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 23,
+        "endLine": 25,
+        "state": "complete",
+        "header": {
+          "text": "while (st.length && st.pop() > 2)",
+          "cond": "st.length && st.pop() > 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "console.log(\"popped\");"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 27,
+        "endLine": 29,
+        "state": "complete",
+        "header": {
+          "text": "for (let j = 0; j < 3 && k++ < 5; j++)",
+          "init": "let j = 0",
+          "cond": "j < 3 && k++ < 5",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "console.log(\"for \" + j + \" \" + k);"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "cond",
+        "line": 31,
+        "endLine": 33,
+        "state": "complete",
+        "header": {
+          "text": "while (q.shift() < 7)",
+          "cond": "q.shift() < 7"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 32,
+            "text": "console.log(\"shift \" + q.length);"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

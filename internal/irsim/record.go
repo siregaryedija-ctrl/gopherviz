@@ -185,6 +185,7 @@ type recorder struct {
 	steps     []trace.Step
 	ops       []trace.Op
 	out       strings.Builder
+	all       *strings.Builder // seluruh output program (hanya bila diminta, untuk test)
 	warnings  []string
 	seen      map[string]bool
 	truncated bool

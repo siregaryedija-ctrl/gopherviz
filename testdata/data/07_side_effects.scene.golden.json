@@ -1,0 +1,211 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "go",
+    "file": "07_side_effects.go",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 7,
+        "endLine": 11,
+        "state": "complete",
+        "name": "tick",
+        "header": "func tick() int",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "counter++"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "fmt.Println(\"tick\", counter)"
+          },
+          {
+            "kind": "return",
+            "line": 10,
+            "text": "return counter"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 13,
+        "endLine": 35,
+        "state": "complete",
+        "name": "main",
+        "header": "func main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "arr := []int{0, 0, 0, 0, 0}"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "ch := make(chan int, 3)"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "ch <- 1"
+          },
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "ch <- 2"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "ch <- 9"
+          },
+          {
+            "kind": "loop",
+            "line": 19,
+            "endLine": 21,
+            "ref": "L1"
+          },
+          {
+            "kind": "if",
+            "line": 22,
+            "endLine": 24,
+            "text": "if tick()+0 > 5",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"big\")"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "total := 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "total += tick()"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "arr[tick()] = 7"
+          },
+          {
+            "kind": "switch",
+            "line": 28,
+            "endLine": 33,
+            "text": "switch { …",
+            "ref": "S1"
+          },
+          {
+            "kind": "stmt",
+            "line": 34,
+            "text": "fmt.Println(arr, counter, total, len(ch))"
+          }
+        ],
+        "children": [
+          "L1",
+          "I1",
+          "S1"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": "for <-ch+0 < 5",
+        "parent": "F2"
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 22,
+        "endLine": 24,
+        "state": "complete",
+        "header": "if tick()+0 > 5",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "tick()+0 > 5",
+            "line": 22,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "fmt.Println(\"big\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "S1",
+        "kind": "switch",
+        "line": 28,
+        "endLine": 33,
+        "state": "complete",
+        "header": "switch",
+        "branches": [
+          {
+            "kind": "case",
+            "label": "tick()+0 > 10",
+            "line": 29,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 30,
+                "text": "fmt.Println(\"no\")"
+              }
+            ]
+          },
+          {
+            "kind": "case",
+            "label": "counter > 0",
+            "line": 31,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 32,
+                "text": "fmt.Println(\"yes\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": {
+          "text": "for <-ch+0 < 5",
+          "cond": "<-ch+0 < 5"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "fmt.Println(\"recv\")"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": []
+}

@@ -700,7 +700,7 @@ func FuzzTrace(f *testing.F) {
 		for _, l := range p.Result.Scene.Loops {
 			tr := Trace(p, l.ID, Options{Budget: 20_000, MaxSteps: 200})
 			for _, w := range tr.Warnings {
-				if strings.Contains(w, "kesalahan internal") {
+				if strings.Contains(w, "internal") && strings.Contains(w, "error") {
 					t.Fatalf("%s: %s", l.ID, w)
 				}
 			}

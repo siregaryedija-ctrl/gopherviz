@@ -1,0 +1,37 @@
+2: expr ($counter = 0)
+3: func tick()
+  3: block
+    4: global [$counter] 
+    5: expr ($counter++)
+    6: expr echo(`tick ${$counter}
+`)
+    7: return $counter
+9: func main()
+  9: block
+    10: global [$counter] 
+    11: expr ($arr = array[0, 0, 0, 0, 0])
+    12: expr ($n = 0)
+    13: expr ($arr[($n++)] = 7)
+    14: expr ($arr[($n++)] = 8)
+    15: expr ($i = 0)
+    16: while ((($i++) + 0) < 3)
+      16: block
+        17: expr echo(`loop ${$i}
+`)
+    19: if ((tick() + 0) > 5)
+      19: block
+        20: expr echo("big\n")
+    22: expr ($total = 0)
+    23: expr ($total += tick())
+    24: expr ($t = (($n > 1) ? ($n++) : 0))
+    25: expr ($st = array[1, 2, 3, 4])
+    26: while (count($st) && (array_pop($st) > 2))
+      26: block
+        27: expr echo("popped\n")
+    29: expr ($k = 0)
+    30: for [expr ($j = 0)] [(($j < 3) && (($k++) < 5))] [($j++)]
+      30: block
+        31: expr echo(`for ${$j} ${$k}
+`)
+    33: expr echo($arr[0], " ", $arr[1], " ", $n, " ", $i, " ", $counter, " ", $total, " ", $t, " ", count($st), " ", $k, "\n")
+35: expr main()

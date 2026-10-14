@@ -18,6 +18,14 @@ import (
 )
 
 func (it *interp) eval(x ast.Expr, e *env) value {
+	v := it.evalNode(x, e)
+	if it.capt != nil && it.depth == it.captDepth {
+		it.capt[x] = v // simpanan untuk catatan langkah (notes.go)
+	}
+	return v
+}
+
+func (it *interp) evalNode(x ast.Expr, e *env) value {
 	it.tick()
 	tv, hasType := it.p.Info.Types[x]
 	if hasType && tv.Value != nil {

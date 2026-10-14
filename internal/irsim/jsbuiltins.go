@@ -26,7 +26,12 @@ func arg(args []Value, i int) Value {
 	return undef()
 }
 
-func (it *interp) out(s string) { it.rec.out.WriteString(s) }
+func (it *interp) out(s string) {
+	it.rec.out.WriteString(s)
+	if it.rec.all != nil {
+		it.rec.all.WriteString(s)
+	}
+}
 
 // moduleV membuat objek berisi fungsi/konstanta (Math, JSON, console, ...).
 func (it *interp) moduleV(members map[string]Value) Value {

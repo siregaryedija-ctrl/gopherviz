@@ -9,6 +9,14 @@ import (
 )
 
 func (it *interp) eval(x ir.Expr, e *Env) Value {
+	v := it.evalNode(x, e)
+	if it.capt != nil {
+		it.captured(x, v)
+	}
+	return v
+}
+
+func (it *interp) evalNode(x ir.Expr, e *Env) Value {
 	it.tick()
 	switch n := x.(type) {
 	case nil:

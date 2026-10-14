@@ -20,6 +20,18 @@ const Max = 100
 // seperti `while (cin >> x)` atau `while sc.hasNext()` tetap berhenti.
 const MaxReads = 20
 
+// MaxEOFReads: program yang masih mencoba membaca sebanyak ini SESUDAH input habis mengabaikan
+// tanda EOF (mis. menu `do { if (!(cin >> x)) { cin.clear(); continue; } } while (x != 0)`), dan
+// akan berputar sampai batas putaran. Simulasi dihentikan dengan penjelasan "input habis"
+// (Ended). Program yang benar seperti `while (cin >> x)` hanya sekali membaca saat input habis.
+const MaxEOFReads = 3
+
+// Ended adalah nama error penghenti simulasi saat input habis (lihat explain).
+const Ended = "InputEnded"
+
+// EndedMsg adalah pesan error penghenti itu.
+const EndedMsg = "user input ran out, but the program keeps reading"
+
 // DefaultSeed dipakai bila editor tidak mengirim seed.
 const DefaultSeed = 20261007
 
@@ -32,7 +44,12 @@ type Source struct {
 	r      *rand.Rand
 	reads  int
 	random bool
+	// eofReads: berapa kali program mencoba membaca sesudah input habis
+	eofReads int
 }
+
+// Stalled melaporkan bahwa program terus membaca sesudah input habis (lihat MaxEOFReads).
+func (s *Source) Stalled() bool { return s.eofReads >= MaxEOFReads }
 
 // New membuat sumber baru; setiap simulasi memakai sumber sendiri. seed 0 = DefaultSeed.
 func New(given []string, seed int64) *Source {
@@ -69,6 +86,7 @@ func (s *Source) UsedRandom() bool { return s.random }
 // Next mengembalikan baris berikutnya, atau ok=false bila input habis.
 func (s *Source) Next() (line string, ok bool) {
 	if s.reads >= s.limit() {
+		s.eofReads++
 		return "", false
 	}
 	s.reads++

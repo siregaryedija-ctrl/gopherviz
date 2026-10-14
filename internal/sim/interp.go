@@ -92,16 +92,20 @@ type interp struct {
 	methods  map[string]map[string]*ast.FuncDecl // nama tipe → nama method → deklarasi
 	budget   int
 	depth    int
-	rec      *recorder
-	rng      *rand.Rand
-	quiet    int
-	pids     int               // penghitung identitas pointer (untuk alamat palsu yang deterministik)
-	eids     int               // penghitung identitas error (untuk == dan errors.Is)
-	calls    []*callFrame      // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
-	sch      *sched            // penjadwal goroutine
-	goEntry  bool              // pemanggilan berikutnya adalah fungsi awal sebuah goroutine
-	selfStep ast.Expr          // pemanggilan yang sudah merekam langkahnya sendiri
-	input    *userinput.Source // angka pengganti input user (dibuat saat pertama dipakai)
+	// simpanan nilai sub-ekspresi untuk catatan langkah (notes.go)
+	capt      map[ast.Expr]value
+	captDepth int
+	notes     map[ast.Expr]value
+	rec       *recorder
+	rng       *rand.Rand
+	quiet     int
+	pids      int               // penghitung identitas pointer (untuk alamat palsu yang deterministik)
+	eids      int               // penghitung identitas error (untuk == dan errors.Is)
+	calls     []*callFrame      // pemanggilan fungsi yang sedang berjalan (untuk defer/recover)
+	sch       *sched            // penjadwal goroutine
+	goEntry   bool              // pemanggilan berikutnya adalah fungsi awal sebuah goroutine
+	selfStep  ast.Expr          // pemanggilan yang sudah merekam langkahnya sendiri
+	input     *userinput.Source // angka pengganti input user (dibuat saat pertama dipakai)
 }
 
 // callFrame menyimpan defer satu pemanggilan fungsi dan panic yang sedang terjadi.
@@ -277,7 +281,11 @@ func (it *interp) mapKey(x ast.Expr, e *env) (string, bool) {
 	if id, ok := ix.X.(*ast.Ident); !ok || id.Name != it.rec.coll {
 		return "", false
 	}
-	return format(it.evalQuiet(ix.Index, e)), true
+	k, ok := it.liveValue(ix.Index, e)
+	if !ok {
+		return "", false
+	}
+	return format(k), true
 }
 
 // mapSetOp mencatat penulisan ke elemen map koleksi (m[k] = v, m[k]++, m[k] += v).
@@ -285,7 +293,7 @@ func (it *interp) mapSetOp(x ast.Expr, e *env) {
 	if !it.recording() {
 		return
 	}
-	if key, ok := it.mapKey(x, e); ok {
+	if key, ok := it.mapKey(x, e); ok && !it.hasEffects(x) {
 		it.rec.op(trace.Op{Op: trace.OpSet, A: -1, Key: key, Value: format(it.evalQuiet(x, e))})
 	}
 }
@@ -300,8 +308,8 @@ func (it *interp) collIndex(x ast.Expr, e *env) int {
 	if !ok || id.Name != it.rec.coll {
 		return -1
 	}
-	v := it.evalQuiet(ix.Index, e)
-	if v.k != kInt {
+	v, ok := it.liveValue(ix.Index, e)
+	if !ok || v.k != kInt {
 		return -1
 	}
 	return int(v.i)
@@ -379,14 +387,14 @@ func (it *interp) subst(x ast.Expr, e *env) string {
 	switch n := x.(type) {
 	case *ast.BinaryExpr:
 		if !isCompare(n.Op) && n.Op != token.LAND && n.Op != token.LOR {
-			if v, ok := it.evalNote(n, e); ok {
+			if v, ok := it.noteValue(n, e); ok {
 				return show(v) // aritmetika langsung dihitung: "n-1" menjadi "5"
 			}
 			return it.text(x)
 		}
 		if n.Op == token.LAND || n.Op == token.LOR {
 			// && / || berhenti lebih awal: sisi kanan yang tidak dihitung program ditulis apa adanya
-			if l, ok := it.evalNote(n.X, e); ok && l.k == kBool && l.b == (n.Op == token.LOR) {
+			if l, ok := it.noteValue(n.X, e); ok && l.k == kBool && l.b == (n.Op == token.LOR) {
 				return it.subst(n.X, e) + " " + n.Op.String() + " " + it.text(n.Y)
 			}
 		}
@@ -397,15 +405,18 @@ func (it *interp) subst(x ast.Expr, e *env) string {
 		return n.Op.String() + it.subst(n.X, e)
 	case *ast.Ident:
 		if cell := e.lookup(n.Name); cell != nil && cell.k != kFunc {
+			if v, ok := it.noted(n); ok {
+				return show(v) // nilai saat kondisi dihitung, bukan sesudahnya
+			}
 			return show(*cell)
 		}
 	case *ast.IndexExpr:
-		if v, ok := it.evalNote(n, e); ok {
+		if v, ok := it.noteValue(n, e); ok {
 			return show(v)
 		}
 	case *ast.CallExpr:
 		if id, ok := n.Fun.(*ast.Ident); ok && (id.Name == "len" || id.Name == "cap") && it.isBuiltin(id) {
-			if v, ok := it.evalNote(n, e); ok {
+			if v, ok := it.noteValue(n, e); ok {
 				return show(v)
 			}
 		}
@@ -434,7 +445,9 @@ func (it *interp) effectNote(n ast.Stmt, lhs []ast.Expr, e *env) string {
 				parts = append(parts, t.Name+" = "+show(*cell))
 			}
 		case *ast.IndexExpr:
-			parts = append(parts, it.text(t)+" = "+show(it.evalQuiet(t, e)))
+			if !it.hasEffects(t) { // a[f()] = x: indeksnya tidak dihitung ulang
+				parts = append(parts, it.text(t)+" = "+show(it.evalQuiet(t, e)))
+			}
 		}
 	}
 	if len(parts) == 0 {
@@ -460,7 +473,7 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 	case *ast.BlockStmt:
 		return it.execList(n.List, newEnv(e, false))
 	case *ast.ExprStmt:
-		it.eval(n.X, e)
+		it.evalCapture(n.X, e)
 		if it.selfStep == n.X {
 			it.selfStep = nil // pemanggilan ini sudah mencatat langkahnya sendiri (mis. wg.Add)
 			break
@@ -472,7 +485,7 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 		it.step(n, e, note)
 		it.classWatch(n, e)
 	case *ast.AssignStmt:
-		it.assign(n, e)
+		it.withCapture(func() { it.assign(n, e) })
 		it.step(n, e, it.effectNote(n, n.Lhs, e))
 		it.classWatch(n, e)
 	case *ast.IncDecStmt:
@@ -480,9 +493,11 @@ func (it *interp) exec(s ast.Stmt, e *env) flow {
 		if n.Tok == token.DEC {
 			op = token.SUB
 		}
-		t := it.target(n.X, e, false)
-		t.set(it.binary(op, t.get(), intV(1), n))
-		it.markColl(n.X, e)
+		it.withCapture(func() {
+			t := it.target(n.X, e, false)
+			t.set(it.binary(op, t.get(), intV(1), n))
+			it.markColl(n.X, e)
+		})
 		it.step(n, e, it.effectNote(n, []ast.Expr{n.X}, e))
 		it.classWatch(n, e)
 	case *ast.DeclStmt:
@@ -630,7 +645,7 @@ func (it *interp) blockExit(focus bool, n ast.Node, f flow, e *env) flow {
 
 // cond mengevaluasi kondisi; nilai yang tidak diketahui membuat simulasi beralih ke mode struktur.
 func (it *interp) cond(x ast.Expr, e *env, what string) bool {
-	v := it.eval(x, e)
+	v := it.evalCapture(x, e)
 	if v.k != kBool {
 		why := v.why
 		if why == "" {
@@ -664,7 +679,7 @@ func (it *interp) execSwitch(n *ast.SwitchStmt, e *env) flow {
 			continue
 		}
 		for _, x := range cc.List {
-			v := it.eval(x, scope)
+			v := it.evalCapture(x, scope)
 			eq := it.binary(token.EQL, tag, v, x)
 			if eq.k != kBool {
 				it.structural(fmt.Sprintf("the case on line %d cannot be computed", it.line(x)))

@@ -1,0 +1,256 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "cpp",
+    "file": "04_side_effects.cpp",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 7,
+        "endLine": 11,
+        "state": "complete",
+        "name": "tick",
+        "header": "int tick()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 8,
+            "text": "counter++;"
+          },
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "cout << \"tick \" << counter << \"\\n\";"
+          },
+          {
+            "kind": "return",
+            "line": 10,
+            "text": "return counter;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 13,
+        "endLine": 38,
+        "state": "complete",
+        "name": "main",
+        "header": "int main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "int arr[5] = {0, 0, 0, 0, 0};"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "int n = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "arr[n++] = 7;"
+          },
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "arr[n++] = 8;"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "int i = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 19,
+            "endLine": 21,
+            "ref": "L1"
+          },
+          {
+            "kind": "if",
+            "line": 22,
+            "endLine": 24,
+            "text": "if (tick() + 0 > 5)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "cout << \"big\\n\";"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "total += tick();"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "int t = (n > 1) ? n++ : 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "vector<int> st = {1, 2, 3, 4};"
+          },
+          {
+            "kind": "loop",
+            "line": 29,
+            "endLine": 31,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 32,
+            "text": "int k = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 33,
+            "endLine": 35,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 36,
+            "text": "cout << arr[0] << \" \" << arr[1] << \" \" << n << \" \" << i << …"
+          },
+          {
+            "kind": "return",
+            "line": 37,
+            "text": "return 0;"
+          }
+        ],
+        "children": [
+          "L1",
+          "I1",
+          "L2",
+          "L3"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": "while (i++ + 0 < 3)",
+        "parent": "F2"
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 22,
+        "endLine": 24,
+        "state": "complete",
+        "header": "if (tick() + 0 > 5)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "tick() + 0 > 5",
+            "line": 22,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 23,
+                "text": "cout << \"big\\n\";"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 29,
+        "endLine": 31,
+        "state": "complete",
+        "header": "while (!st.empty() && st.back() + 0 > 2)",
+        "parent": "F2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 33,
+        "endLine": 35,
+        "state": "complete",
+        "header": "for (int j = 0; j < 3 && k++ < 5; j++)",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": {
+          "text": "while (i++ + 0 < 3)",
+          "cond": "i++ + 0 < 3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "cout << \"loop \" << i << \"\\n\";"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 29,
+        "endLine": 31,
+        "state": "complete",
+        "header": {
+          "text": "while (!st.empty() && st.back() + 0 > 2)",
+          "cond": "!st.empty() && st.back() + 0 > 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 30,
+            "text": "st.pop_back();"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 33,
+        "endLine": 35,
+        "state": "complete",
+        "header": {
+          "text": "for (int j = 0; j < 3 && k++ < 5; j++)",
+          "init": "int j = 0",
+          "cond": "j < 3 && k++ < 5",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 34,
+            "text": "cout << \"for \" << j << \" \" << k << \"\\n\";"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

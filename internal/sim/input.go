@@ -19,6 +19,9 @@ func (it *interp) userText() (string, bool) {
 	if ok {
 		it.output(s + "\n")
 	}
+	if !ok && it.input.Stalled() {
+		it.inputEnded()
+	}
 	return s, ok
 }
 

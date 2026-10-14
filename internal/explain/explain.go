@@ -70,6 +70,8 @@ func classify(name, msg string) string {
 		return false
 	}
 	switch {
+	case name == "InputEnded":
+		return "input"
 	case has("deadlock"):
 		return "deadlock"
 	case name == "RecursionError" || name == "StackOverflowError" ||
@@ -231,6 +233,10 @@ func fill(e *trace.ErrInfo, lang string, c *Ctx) {
 		e.Title = "Value cannot be converted"
 		e.Text = "The value cannot be converted to the requested form (" + clip(e.Msg, 90) + ")."
 		e.Hint = "Make sure text converted to a number really contains a number."
+	case "input":
+		e.Title = "User input ran out"
+		e.Text = "The program keeps asking for input, but every value has already been used. GopherViz only types the values from the Input box (and up to 20 random numbers), so the simulation stops here instead of looping forever."
+		e.Hint = "Type more values in the Input box, separated by commas, e.g. 1, Ani, 2, Budi, 3, 0. Include the value that ends the loop (such as 0)."
 	case "deadlock":
 		e.Title = "Deadlock: everyone is waiting"
 		e.Text = "All goroutines are waiting for each other (channel send/receive, Wait, Lock), so none of them can run anymore."

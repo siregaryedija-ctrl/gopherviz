@@ -6,6 +6,7 @@ import (
 
 	"gopherviz/internal/explain"
 	"gopherviz/internal/trace"
+	"gopherviz/internal/userinput"
 )
 
 // Penjelasan error (Fase 12b): tempat yang memicu panic menyimpan keterangan penyebabnya di
@@ -49,6 +50,21 @@ func (it *interp) stackOverflow(at ast.Node) {
 	err := it.panicInfo(at, msg)
 	if it.recording() {
 		it.add(trace.Step{Phase: trace.PhaseExit, Line: it.line(at), Reason: trace.ReasonPanic, Note: msg + " (recursion too deep)", Err: err}, nil)
+	}
+	panic(fatal{msg: msg})
+}
+
+// inputEnded menghentikan simulasi saat program terus membaca sesudah input habis (userinput).
+func (it *interp) inputEnded() {
+	msg := userinput.Ended + ": " + userinput.EndedMsg
+	err := explain.Error("go", userinput.Ended, userinput.EndedMsg, nil)
+	line := 0
+	if n := len(it.rec.steps); n > 0 {
+		line = it.rec.steps[n-1].Line
+	}
+	it.lastErr = &lastErr{line: line, msg: msg, err: err}
+	if it.recording() {
+		it.add(trace.Step{Phase: trace.PhaseExit, Line: line, Reason: trace.ReasonPanic, Note: "user input ran out → the simulation stops here", Err: err}, nil)
 	}
 	panic(fatal{msg: msg})
 }

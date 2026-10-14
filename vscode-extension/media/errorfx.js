@@ -111,6 +111,7 @@
     const face = ms > 2200 ? 'shock' : 'idle';
     const hy = drawGopher(c, gx, GY, face, ms > 200 && ms < 1400 ? walkStep(ms) : 0);
     if (ms > 2400) bubble(c, gx, hy - 15, '?', RED);
+    if (e.kind === 'input') return 'NO MORE INPUT';
     return e.kind === 'empty' ? 'ALREADY EMPTY' : `IT HOLDS ${fit(e.value || 'NULL', 10)}: NO DATA`;
   }
 
@@ -234,6 +235,7 @@
     switch (e.kind) {
       case 'index': caption = sceneIndex(e, ms); break;
       case 'empty': caption = sceneChest(e, ms, 'EMPTY'); break;
+      case 'input': caption = sceneChest(e, ms, 'INPUT'); break;
       case 'null': caption = sceneChest(e, ms, e.value || 'NULL'); break;
       case 'zero': caption = sceneZero(e, ms); break;
       case 'key': caption = sceneKey(e, ms); break;

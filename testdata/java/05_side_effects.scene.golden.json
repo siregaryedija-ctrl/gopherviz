@@ -1,0 +1,308 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "java",
+    "file": "05_side_effects.java",
+    "blocks": [
+      {
+        "id": "C1",
+        "kind": "class",
+        "line": 5,
+        "endLine": 43,
+        "state": "complete",
+        "name": "Main",
+        "header": "public class Main",
+        "children": [
+          "F1",
+          "F2"
+        ]
+      },
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 8,
+        "endLine": 12,
+        "state": "complete",
+        "name": "Main.tick",
+        "header": "static int tick()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 9,
+            "text": "counter++;"
+          },
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "System.out.println(\"tick \" + counter);"
+          },
+          {
+            "kind": "return",
+            "line": 11,
+            "text": "return counter;"
+          }
+        ],
+        "parent": "C1"
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 14,
+        "endLine": 42,
+        "state": "complete",
+        "name": "Main.main",
+        "header": "public static void main(String[] args)",
+        "params": [
+          "args"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "int[] arr = new int[5];"
+          },
+          {
+            "kind": "stmt",
+            "line": 16,
+            "text": "int n = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "arr[n++] = 7;"
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "arr[n++] = 8;"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "int i = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 20,
+            "endLine": 22,
+            "ref": "L1"
+          },
+          {
+            "kind": "if",
+            "line": 23,
+            "endLine": 25,
+            "text": "if (tick() + 0 > 5)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 24,
+                "text": "System.out.println(\"big\");"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "int total = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "total += tick();"
+          },
+          {
+            "kind": "stmt",
+            "line": 28,
+            "text": "int t = n > 1 ? n++ : 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 29,
+            "text": "List<Integer> st = new ArrayList<>(List.of(1, 2, 3, 4));"
+          },
+          {
+            "kind": "loop",
+            "line": 30,
+            "endLine": 32,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 33,
+            "text": "int k = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 34,
+            "endLine": 36,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 37,
+            "text": "ArrayDeque<Integer> q = new ArrayDeque<>(List.of(5, 6, 7));"
+          },
+          {
+            "kind": "loop",
+            "line": 38,
+            "endLine": 40,
+            "ref": "L4"
+          },
+          {
+            "kind": "stmt",
+            "line": 41,
+            "text": "System.out.println(arr[0] + \" \" + arr[1] + \" \" + n + \" \" + …"
+          }
+        ],
+        "parent": "C1",
+        "children": [
+          "L1",
+          "I1",
+          "L2",
+          "L3",
+          "L4"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 20,
+        "endLine": 22,
+        "state": "complete",
+        "header": "while (i++ + 0 < 3)",
+        "parent": "F2"
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 23,
+        "endLine": 25,
+        "state": "complete",
+        "header": "if (tick() + 0 > 5)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "tick() + 0 > 5",
+            "line": 23,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 24,
+                "text": "System.out.println(\"big\");"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 30,
+        "endLine": 32,
+        "state": "complete",
+        "header": "while (!st.isEmpty() && st.remove(st.size() - 1) > 2)",
+        "parent": "F2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 34,
+        "endLine": 36,
+        "state": "complete",
+        "header": "for (int j = 0; j < 3 && k++ < 5; j++)",
+        "parent": "F2"
+      },
+      {
+        "id": "L4",
+        "kind": "loop",
+        "line": 38,
+        "endLine": 40,
+        "state": "complete",
+        "header": "while (q.poll() < 7)",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 20,
+        "endLine": 22,
+        "state": "complete",
+        "header": {
+          "text": "while (i++ + 0 < 3)",
+          "cond": "i++ + 0 < 3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 21,
+            "text": "System.out.println(\"loop \" + i);"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 30,
+        "endLine": 32,
+        "state": "complete",
+        "header": {
+          "text": "while (!st.isEmpty() && st.remove(st.size() - 1) > 2)",
+          "cond": "!st.isEmpty() && st.remove(st.size() - 1) > 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 31,
+            "text": "System.out.println(\"popped\");"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 34,
+        "endLine": 36,
+        "state": "complete",
+        "header": {
+          "text": "for (int j = 0; j < 3 && k++ < 5; j++)",
+          "init": "int j = 0",
+          "cond": "j < 3 && k++ < 5",
+          "post": "j++"
+        },
+        "vars": [
+          "j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 35,
+            "text": "System.out.println(\"for \" + j + \" \" + k);"
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "kind": "cond",
+        "line": 38,
+        "endLine": 40,
+        "state": "complete",
+        "header": {
+          "text": "while (q.poll() < 7)",
+          "cond": "q.poll() < 7"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 39,
+            "text": "System.out.println(\"shift \" + q.size());"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

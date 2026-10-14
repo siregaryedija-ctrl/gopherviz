@@ -36,15 +36,19 @@ type semantics interface {
 type kv struct{ k, v Value }
 
 type interp struct {
-	lang      string
-	sem       semantics
-	res       *lang.Result
-	src       string
-	globals   *Env
-	rec       *recorder
-	rng       *rand.Rand
-	budget    int
-	depth     int
+	lang    string
+	sem     semantics
+	res     *lang.Result
+	src     string
+	globals *Env
+	rec     *recorder
+	rng     *rand.Rand
+	budget  int
+	depth   int
+	// simpanan nilai sub-ekspresi untuk catatan langkah (notes.go)
+	capt      map[ir.Expr]Value
+	captDepth int
+	notes     map[ir.Expr]Value
 	quiet     int
 	errCtx    *explain.Ctx // keterangan untuk exception berikutnya (indeks, panjang, isi koleksi)
 	raceSpec  *race.Spec   // lomba: fungsi fokus dipanggil langsung dengan list acak (race.go)
@@ -289,7 +293,10 @@ func (it *interp) collIndex(x ir.Expr, e *Env) int {
 	if id, ok := ix.X.(*ir.Ident); !ok || id.Name != it.rec.coll {
 		return -1
 	}
-	v := it.evalQuiet(ix.I, e)
+	v, ok := it.liveValue(ix.I, e)
+	if !ok {
+		return -1
+	}
 	if v.k == kFloat && isIntegral(v.f) {
 		return int(v.f)
 	}
@@ -312,7 +319,11 @@ func (it *interp) mapKey(x ir.Expr, e *Env) (string, bool) {
 	if id, ok := ix.X.(*ir.Ident); !ok || id.Name != it.rec.coll {
 		return "", false
 	}
-	return it.format(it.evalQuiet(ix.I, e)), true
+	k, ok := it.liveValue(ix.I, e)
+	if !ok {
+		return "", false
+	}
+	return it.format(k), true
 }
 
 func (it *interp) evalQuiet(x ir.Expr, e *Env) Value {
@@ -340,16 +351,19 @@ func (it *interp) subst(x ir.Expr, e *Env) string {
 	switch n := x.(type) {
 	case *ir.Binary:
 		if !isCompareOp(n.Op) && !isLogicOp(n.Op) {
-			if v := it.evalNote(n, e); v.k != kUnknown {
+			if v, ok := it.noteValue(n, e); ok && v.k != kUnknown {
+				if v.k == kObj && v.o.class.native == "istream" { // cin >> x di kondisi: berhasil atau gagal
+					return it.boolText(it.sem.truthy(v))
+				}
 				return it.display(v, true)
 			}
 			return it.text(x)
 		}
 		if isLogicOp(n.Op) && n.Op != "??" {
 			// and/or berhenti lebih awal: sisi kanan yang tidak dihitung program ditulis apa adanya
-			l := it.evalNote(n.X, e)
+			l, ok := it.noteValue(n.X, e)
 			and := n.Op == "&&" || n.Op == "and"
-			if l.k != kUnknown && it.sem.truthy(l) != and {
+			if ok && l.k != kUnknown && it.sem.truthy(l) != and {
 				return it.subst(n.X, e) + " " + n.Op + " " + it.text(n.Y)
 			}
 		}
@@ -363,6 +377,9 @@ func (it *interp) subst(x ir.Expr, e *Env) string {
 			return n.Op + sep + it.subst(n.X, e)
 		}
 	case *ir.Ident:
+		if v, ok := it.noted(n); ok && v.k != kFunc && v.k != kClass && v.k != kUnknown {
+			return it.sem.show(it, v) // nilai saat kondisi dihitung, bukan sesudahnya
+		}
 		if c := it.findVar(e, n.Name); c != nil {
 			if v := c.get(); v.k != kFunc && v.k != kClass {
 				return it.sem.show(it, v)
@@ -372,15 +389,14 @@ func (it *interp) subst(x ir.Expr, e *Env) string {
 			return it.sem.show(it, v)
 		}
 	case *ir.Index, *ir.Member:
-		v := it.evalNote(n, e)
-		if v.k != kFunc && v.k != kUnknown {
+		if v, ok := it.noteValue(n, e); ok && v.k != kFunc && v.k != kUnknown {
 			return it.display(v, true)
 		}
 	case *ir.Call:
 		if !isSimpleCall(n) {
 			break
 		}
-		if v := it.evalNote(n, e); v.k != kUnknown {
+		if v, ok := it.noteValue(n, e); ok && v.k != kUnknown {
 			return it.display(v, true)
 		}
 	}
@@ -460,9 +476,8 @@ func (it *interp) effectNote(n ir.Node, targets []ir.Expr, e *Env) string {
 			if ix, ok := x.(*ir.Index); ok && ix.I == nil { // PHP $a[] = x: tampilkan isi array-nya
 				t = ix.X
 			}
-			v := it.evalQuiet(t, e)
-			if v.k != kUnknown {
-				parts = append(parts, it.text(x)+" = "+it.sem.show(it, v))
+			if label, v, ok := it.targetValue(t, e); ok {
+				parts = append(parts, label+" = "+it.sem.show(it, v))
 			}
 		}
 	}
@@ -725,7 +740,7 @@ func (it *interp) declareFunc(e *Env, name string, fn *Func) {
 }
 
 func (it *interp) execExpr(n *ir.ExprStmt, e *Env) {
-	x := it.eval(n.X, e)
+	x := it.evalCapture(n.X, e)
 	if !it.recording() {
 		return
 	}
@@ -816,7 +831,7 @@ func (it *interp) cond(x ir.Expr, e *Env, what string) bool {
 	if _, bad := x.(*ir.BadExpr); bad {
 		it.structural(fmt.Sprintf("the %s condition on line %d is incomplete", what, it.line(x)))
 	}
-	v := it.eval(x, e)
+	v := it.evalCapture(x, e)
 	if v.k == kUnknown {
 		why := v.why
 		if why == "" {
@@ -891,7 +906,7 @@ func (it *interp) execFor(n *ir.For, label string, e *Env) flow {
 		}
 		if n.Post != nil {
 			it.quiet++
-			it.eval(n.Post, iterScope)
+			it.evalCapture(n.Post, iterScope)
 			it.quiet--
 			if it.recording() {
 				it.add(trace.Step{Phase: trace.PhasePost, Line: it.line(n), Note: it.effectNote(n.Post, assignTargets(n.Post), iterScope)}, iterScope)

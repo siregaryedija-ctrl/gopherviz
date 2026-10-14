@@ -1,0 +1,39 @@
+1: import [] 
+2: import [] 
+3: import [] 
+5: class Main []
+  6: var(static int) counter = 0
+  8: func Main.tick()
+    8: block
+      9: expr (counter++)
+      10: expr System.out.println(("tick " + counter))
+      11: return counter
+  14: func Main.main(args)
+    14: block
+      15: var(int[]) arr = new int[][5]()
+      16: var(int) n = 0
+      17: expr (arr[(n++)] = 7)
+      18: expr (arr[(n++)] = 8)
+      19: var(int) i = 0
+      20: while (((i++) + 0) < 3)
+        20: block
+          21: expr System.out.println(("loop " + i))
+      23: if ((tick() + 0) > 5)
+        23: block
+          24: expr System.out.println("big")
+      26: var(int) total = 0
+      27: expr (total += tick())
+      28: var(int) t = ((n > 1) ? (n++) : 0)
+      29: var(List<Integer>) st = new ArrayList<>(List.of(1, 2, 3, 4))
+      30: while ((! st.isEmpty()) && (st.remove((st.size() - 1)) > 2))
+        30: block
+          31: expr System.out.println("popped")
+      33: var(int) k = 0
+      34: for [var(int) j = 0] [((j < 3) && ((k++) < 5))] [(j++)]
+        34: block
+          35: expr System.out.println(((("for " + j) + " ") + k))
+      37: var(ArrayDeque<Integer>) q = new ArrayDeque<>(List.of(5, 6, 7))
+      38: while (q.poll() < 7)
+        38: block
+          39: expr System.out.println(("shift " + q.size()))
+      41: expr System.out.println(((((((((((((((((((arr[0] + " ") + arr[1]) + " ") + n) + " ") + i) + " ") + counter) + " ") + total) + " ") + t) + " ") + st.size()) + " ") + k) + " ") + q.size()))

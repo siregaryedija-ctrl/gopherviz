@@ -116,6 +116,9 @@ const samples = {
   demo_class: ['@/demo/account.py', 1],
   demo_if: ['@/demo/grades.py', 3],
   demo_error: ['@/demo/total.py', 1],
+  loop_switch: ['@/loopswitchgo/main.go', 6],
+  menu_cpp: ['@/cpp/menu.cpp', 9],
+  input_end: ['@/cpp/menu_end.cpp', 9],
 };
 
 const run = (...args) => JSON.parse(execFileSync(exe, args, { encoding: 'utf8' }));

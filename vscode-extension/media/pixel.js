@@ -191,9 +191,16 @@
     text(c, ch, cx - 1, T + 3, col);
   }
 
+  /**
+   * Kata penghenti program untuk langkah yang sedang digambar: "PANIC!" untuk error/crash, "STOPPED"
+   * bila simulasi dihentikan karena input user habis (G.pixel.stopKind diisi main.js per langkah).
+   */
+  const panicWord = () => (G.pixel && G.pixel.stopKind === 'input' ? 'STOPPED' : 'PANIC!');
+
   const stamps = {};
   /** Stempel teks berbingkai (BREAK!, SELESAI!), digambar dengan skala bilangan bulat. */
   function stamp(label, col) {
+    if (label === 'PANIC!') label = panicWord();
     const key = label + col;
     if (stamps[key]) return stamps[key];
     const w = textW(label) + 8, h = 13, c = document.createElement('canvas');
@@ -548,7 +555,7 @@
   }
 
   G.pixel = {
-    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit, smoothText, flushTexts, drawText,
+    INK, VCOL, clamp, lerp, ease, bounce, mix, gopher, text, textW, textCenter, fit, smoothText, flushTexts, drawText, panicWord, stopKind: null,
     disc, ell, rect, box, dashedBox, dashedLine, bubble, stamp, paintWorld,
     along, present, drawGopher, paintSky, drawBg, tile, nodeAt, NODE_COL, wallLabel, wallLayout, drawWall, cube, cubeDepth, stmtLabel, tileRow, labelTile,
   };

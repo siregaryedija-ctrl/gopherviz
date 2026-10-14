@@ -1,0 +1,236 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "python",
+    "file": "05_side_effects.py",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 4,
+        "endLine": 8,
+        "state": "complete",
+        "name": "tick",
+        "header": "def tick()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 5,
+            "text": "global counter"
+          },
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "counter += 1"
+          },
+          {
+            "kind": "stmt",
+            "line": 7,
+            "text": "print(\"tick\", counter)"
+          },
+          {
+            "kind": "return",
+            "line": 8,
+            "text": "return counter"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 11,
+        "endLine": 27,
+        "state": "complete",
+        "name": "main",
+        "header": "def main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "arr = [0, 0, 0, 0, 0]"
+          },
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "st = [1, 2, 3, 4]"
+          },
+          {
+            "kind": "loop",
+            "line": 14,
+            "endLine": 15,
+            "ref": "L1"
+          },
+          {
+            "kind": "if",
+            "line": 16,
+            "endLine": 17,
+            "text": "if tick() + 0 > 5",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 17,
+                "text": "print(\"big\")"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 18,
+            "text": "total = 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 19,
+            "text": "total += tick()"
+          },
+          {
+            "kind": "stmt",
+            "line": 20,
+            "text": "n = 0"
+          },
+          {
+            "kind": "loop",
+            "line": 21,
+            "endLine": 22,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "q = [5, 6, 7]"
+          },
+          {
+            "kind": "loop",
+            "line": 24,
+            "endLine": 25,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 26,
+            "text": "x = tick() if counter > 1 else 0"
+          },
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "print(arr[0], len(st), counter, total, n, len(q), x)"
+          }
+        ],
+        "children": [
+          "L1",
+          "I1",
+          "L2",
+          "L3"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 14,
+        "endLine": 15,
+        "state": "complete",
+        "header": "while st and st.pop() > 2",
+        "parent": "F2"
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 16,
+        "endLine": 17,
+        "state": "complete",
+        "header": "if tick() + 0 > 5",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "tick() + 0 > 5",
+            "line": 16,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 17,
+                "text": "print(\"big\")"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 21,
+        "endLine": 22,
+        "state": "complete",
+        "header": "while (n := n + 1) < 3",
+        "parent": "F2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 24,
+        "endLine": 25,
+        "state": "complete",
+        "header": "while q.pop(0) < 7",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 14,
+        "endLine": 15,
+        "state": "complete",
+        "header": {
+          "text": "while st and st.pop() > 2",
+          "cond": "st and st.pop() > 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "print(\"popped\")"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 21,
+        "endLine": 22,
+        "state": "complete",
+        "header": {
+          "text": "while (n := n + 1) < 3",
+          "cond": "(n := n + 1) < 3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "print(\"walrus\", n)"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "cond",
+        "line": 24,
+        "endLine": 25,
+        "state": "complete",
+        "header": {
+          "text": "while q.pop(0) < 7",
+          "cond": "q.pop(0) < 7"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "print(\"shift\", len(q))"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}

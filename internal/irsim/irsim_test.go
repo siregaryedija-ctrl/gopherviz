@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"gopherviz/internal/lang"
+	"gopherviz/internal/trace"
 )
 
 // oracle mengembalikan perintah untuk menjalankan file dengan interpreter/compiler asli.
@@ -87,6 +88,37 @@ func TestAgainstReal(t *testing.T) {
 	}
 }
 
+// TestTraceMatchesRun: merekam langkah tidak boleh mengubah jalannya program. Untuk setiap contoh
+// dan setiap blok, output program saat direkam (Trace) harus sama dengan output tanpa merekam (Run).
+// Bug lama (2026-10-13): catatan langkah menghitung ulang kondisi/target assignment, sehingga
+// `cin >> x`, `i++`, `a[n++] = v`, dan pemanggilan fungsi terjadi dua kali.
+func TestTraceMatchesRun(t *testing.T) {
+	for _, o := range oracles {
+		files, _ := filepath.Glob(filepath.Join("../../testdata", o.lang, "*"+o.ext))
+		for _, path := range files {
+			t.Run(o.lang+"/"+filepath.Base(path), func(t *testing.T) {
+				t.Parallel()
+				src, err := os.ReadFile(path)
+				if err != nil {
+					t.Fatal(err)
+				}
+				res := lang.Analyze(o.lang, filepath.Base(path), string(src))
+				want, _ := Run(res, Options{Budget: 2_000_000})
+				for _, b := range res.Scene.Blocks {
+					got := ""
+					tr := Trace(res, b.ID, Options{Budget: 2_000_000, outHook: func(s string) { got = s }})
+					if tr.Mode != trace.ModeSimulated || tr.Truncated {
+						continue
+					}
+					if !strings.HasPrefix(want, got) {
+						t.Errorf("%s: output saat direkam berbeda dari Run\ndirekam:\n%s\nRun:\n%s", b.ID, got, want)
+					}
+				}
+			})
+		}
+	}
+}
+
 // FuzzTrace: simulator tidak boleh mengalami kesalahan internal untuk program apa pun.
 func FuzzTrace(f *testing.F) {
 	for _, l := range []string{"javascript", "typescript", "python", "php", "cpp", "c", "java"} {
@@ -107,12 +139,12 @@ func FuzzTrace(f *testing.F) {
 		for _, b := range res.Scene.Blocks {
 			tr := Trace(res, b.ID, Options{Budget: 20_000, MaxSteps: 200})
 			for _, w := range tr.Warnings {
-				if strings.Contains(w, "kesalahan internal") {
+				if strings.Contains(w, "internal") && strings.Contains(w, "error") {
 					t.Fatalf("%s %s: %s", language, b.ID, w)
 				}
 			}
 		}
-		if _, why := Run(res, Options{Budget: 20_000}); strings.Contains(why, "kesalahan internal") {
+		if _, why := Run(res, Options{Budget: 20_000}); strings.Contains(why, "internal") && strings.Contains(why, "error") {
 			t.Fatalf("%s: %s", language, why)
 		}
 	})

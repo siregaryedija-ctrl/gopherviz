@@ -29,6 +29,9 @@ type Options struct {
 
 	// Call: fungsi fokus dipanggil langsung dengan list acak (lomba algoritma, Fase 12c).
 	Call *race.Spec
+
+	// outHook (khusus test): menerima seluruh output program saat Trace selesai menjalankannya.
+	outHook func(string)
 }
 
 func (o Options) withDefaults() Options {
@@ -126,7 +129,13 @@ func Trace(res *lang.Result, blockID string, opt Options) (tr trace.Trace) {
 		return it
 	}
 	it := mk()
+	if opt.outHook != nil {
+		it.rec.all = &strings.Builder{}
+	}
 	reason := it.run(node, false)
+	if opt.outHook != nil {
+		opt.outHook(it.rec.all.String())
+	}
 	tr.Work = it.work
 	if it.raceSpec != nil && it.raceSpec.Count {
 		if reason != "" { // error atau terlalu panjang: jumlah operasinya tidak berarti
@@ -265,6 +274,12 @@ func (it *interp) finalStep(x thrown, msg string) {
 	note := it.uncaughtNote(msg)
 	if x.fatal {
 		note = msg + " → program crash"
+	}
+	if strings.HasPrefix(msg, userinput.Ended) {
+		note = "user input ran out → the simulation stops here"
+		if n := len(it.rec.steps); line == 0 && n > 0 {
+			line = it.rec.steps[n-1].Line
+		}
 	}
 	if x.depth > 0 { // tumpukan panggilan sudah terurai: catat di lantai tempat error terjadi
 		it.rec.depth = x.depth - 1

@@ -489,6 +489,7 @@
       },
       render: (i, t) => {
         const e = errOf(i);
+        G.pixel.stopKind = e ? e.kind : null; // "STOPPED" bukan "PANIC!" saat input habis
         if (!e) return base.render(i, t);
         const d = base.duration(i), el = t * (d + FX.DUR);
         base.render(i, Math.min(1, el / d));

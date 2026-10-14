@@ -18,6 +18,9 @@ func (it *interp) userText(echo bool) (string, bool) {
 	if ok && echo {
 		it.out(s + "\n")
 	}
+	if !ok && it.input.Stalled() {
+		it.fatal(nil, userinput.Ended, userinput.EndedMsg)
+	}
 	return s, ok
 }
 

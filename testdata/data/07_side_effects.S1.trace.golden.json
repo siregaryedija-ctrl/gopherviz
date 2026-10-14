@@ -1,0 +1,237 @@
+{
+  "version": 2,
+  "language": "go",
+  "file": "07_side_effects.go",
+  "mode": "simulated",
+  "block": {
+    "id": "S1",
+    "kind": "switch",
+    "line": 28,
+    "endLine": 33,
+    "names": [
+      "Println",
+      "counter",
+      "fmt",
+      "tick"
+    ]
+  },
+  "loop": {
+    "id": "",
+    "kind": "",
+    "line": 0,
+    "endLine": 0
+  },
+  "steps": [
+    {
+      "n": 0,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "call",
+      "line": 29,
+      "func": "tick",
+      "note": "call tick()",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 1,
+      "loop": "",
+      "block": "F1",
+      "run": 1,
+      "depth": 1,
+      "phase": "return",
+      "line": 11,
+      "func": "tick",
+      "return": "4",
+      "note": "tick() returns 4",
+      "output": "tick 4\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "cond",
+      "line": 29,
+      "vars": {
+        "arr": "[0 0 0 7 0]",
+        "ch": "chan",
+        "total": "2"
+      },
+      "result": false,
+      "note": "case tick()+0 > 10 → 4 > 10 → false",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "cond",
+      "line": 31,
+      "vars": {
+        "arr": "[0 0 0 7 0]",
+        "ch": "chan",
+        "total": "2"
+      },
+      "result": true,
+      "note": "case counter > 0 → 4 > 0 → true",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "branch",
+      "line": 28,
+      "branch": 1,
+      "vars": {
+        "arr": "[0 0 0 7 0]",
+        "ch": "chan",
+        "total": "2"
+      },
+      "note": "take case counter > 0",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "body",
+      "line": 32,
+      "vars": {
+        "arr": "[0 0 0 7 0]",
+        "ch": "chan",
+        "total": "2"
+      },
+      "note": "fmt.Println(\"yes\") → print \"yes\"",
+      "output": "yes\n",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "loop": "",
+      "block": "S1",
+      "run": 1,
+      "phase": "exit",
+      "line": 33,
+      "vars": {
+        "arr": "[0 0 0 7 0]",
+        "ch": "chan",
+        "total": "2"
+      },
+      "note": "done, continue to the next line",
+      "reason": "done",
+      "g": 1,
+      "gs": [
+        {
+          "id": 1,
+          "name": "main",
+          "state": "jalan"
+        }
+      ],
+      "chans": [
+        {
+          "id": "ch1",
+          "name": "ch",
+          "cap": 3,
+          "items": []
+        }
+      ]
+    }
+  ],
+  "truncated": false,
+  "warnings": []
+}

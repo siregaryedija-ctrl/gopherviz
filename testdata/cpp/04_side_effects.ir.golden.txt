@@ -1,0 +1,35 @@
+1: directive [#include <iostream>] 
+2: directive [#include <vector>] 
+3: import [] 
+5: var(int) counter = 0
+7: func tick()
+  7: block
+    8: expr (counter++)
+    9: expr (((cout << "tick ") << counter) << "\n")
+    10: return counter
+13: func main()
+  13: block
+    14: var(int) arr[1 dim] = init[0, 0, 0, 0, 0]
+    15: var(int) n = 0
+    16: expr (arr[(n++)] = 7)
+    17: expr (arr[(n++)] = 8)
+    18: var(int) i = 0
+    19: while (((i++) + 0) < 3)
+      19: block
+        20: expr (((cout << "loop ") << i) << "\n")
+    22: if ((tick() + 0) > 5)
+      22: block
+        23: expr (cout << "big\n")
+    25: var(int) total = 0
+    26: expr (total += tick())
+    27: var(int) t = ((n > 1) ? (n++) : 0)
+    28: var(vector<int>) st = init[1, 2, 3, 4]
+    29: while ((! st.empty()) && ((st.back() + 0) > 2))
+      29: block
+        30: expr st.pop_back()
+    32: var(int) k = 0
+    33: for [var(int) j = 0] [((j < 3) && ((k++) < 5))] [(j++)]
+      33: block
+        34: expr (((((cout << "for ") << j) << " ") << k) << "\n")
+    36: expr ((((((((((((((((((cout << arr[0]) << " ") << arr[1]) << " ") << n) << " ") << i) << " ") << counter) << " ") << total) << " ") << t) << " ") << st.size()) << " ") << k) << "\n")
+    37: return 0

@@ -1,0 +1,36 @@
+1: var(let) counter = 0
+2: func tick()
+  2: block
+    3: expr (counter++)
+    4: expr console.log(("tick " + counter))
+    5: return counter
+7: func main()
+  7: block
+    8: var(const) arr = array[0, 0, 0, 0, 0]
+    9: var(let) n = 0
+    10: expr (arr[(n++)] = 7)
+    11: expr (arr[(n++)] = 8)
+    12: var(let) i = 0
+    13: while (((i++) + 0) < 3)
+      13: block
+        14: expr console.log(("loop " + i))
+    16: if ((tick() + 0) > 5)
+      16: block
+        17: expr console.log("big")
+    19: var(let) total = 0
+    20: expr (total += tick())
+    21: var(const) t = ((n > 1) ? (n++) : 0)
+    22: var(const) st = array[1, 2, 3, 4]
+    23: while (st.length && (st.pop() > 2))
+      23: block
+        24: expr console.log("popped")
+    26: var(let) k = 0
+    27: for [var(let) j = 0] [((j < 3) && ((k++) < 5))] [(j++)]
+      27: block
+        28: expr console.log(((("for " + j) + " ") + k))
+    30: var(const) q = array[5, 6, 7]
+    31: while (q.shift() < 7)
+      31: block
+        32: expr console.log(("shift " + q.length))
+    34: expr console.log(arr[0], arr[1], n, i, counter, total, t, st.length, k, q.length)
+36: expr main()

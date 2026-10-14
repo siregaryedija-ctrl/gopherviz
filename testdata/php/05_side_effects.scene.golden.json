@@ -1,0 +1,261 @@
+{
+  "scene": {
+    "version": 2,
+    "language": "php",
+    "file": "05_side_effects.php",
+    "blocks": [
+      {
+        "id": "F1",
+        "kind": "func",
+        "line": 3,
+        "endLine": 8,
+        "state": "complete",
+        "name": "tick",
+        "header": "function tick()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 4,
+            "text": "global $counter;"
+          },
+          {
+            "kind": "stmt",
+            "line": 5,
+            "text": "$counter++;"
+          },
+          {
+            "kind": "stmt",
+            "line": 6,
+            "text": "echo \"tick $counter\\n\";"
+          },
+          {
+            "kind": "return",
+            "line": 7,
+            "text": "return $counter;"
+          }
+        ]
+      },
+      {
+        "id": "F2",
+        "kind": "func",
+        "line": 9,
+        "endLine": 34,
+        "state": "complete",
+        "name": "main",
+        "header": "function main()",
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 10,
+            "text": "global $counter;"
+          },
+          {
+            "kind": "stmt",
+            "line": 11,
+            "text": "$arr = [0, 0, 0, 0, 0];"
+          },
+          {
+            "kind": "stmt",
+            "line": 12,
+            "text": "$n = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 13,
+            "text": "$arr[$n++] = 7;"
+          },
+          {
+            "kind": "stmt",
+            "line": 14,
+            "text": "$arr[$n++] = 8;"
+          },
+          {
+            "kind": "stmt",
+            "line": 15,
+            "text": "$i = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 16,
+            "endLine": 18,
+            "ref": "L1"
+          },
+          {
+            "kind": "if",
+            "line": 19,
+            "endLine": 21,
+            "text": "if (tick() + 0 > 5)",
+            "ref": "I1",
+            "then": [
+              {
+                "kind": "stmt",
+                "line": 20,
+                "text": "echo \"big\\n\";"
+              }
+            ]
+          },
+          {
+            "kind": "stmt",
+            "line": 22,
+            "text": "$total = 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 23,
+            "text": "$total += tick();"
+          },
+          {
+            "kind": "stmt",
+            "line": 24,
+            "text": "$t = $n > 1 ? $n++ : 0;"
+          },
+          {
+            "kind": "stmt",
+            "line": 25,
+            "text": "$st = [1, 2, 3, 4];"
+          },
+          {
+            "kind": "loop",
+            "line": 26,
+            "endLine": 28,
+            "ref": "L2"
+          },
+          {
+            "kind": "stmt",
+            "line": 29,
+            "text": "$k = 0;"
+          },
+          {
+            "kind": "loop",
+            "line": 30,
+            "endLine": 32,
+            "ref": "L3"
+          },
+          {
+            "kind": "stmt",
+            "line": 33,
+            "text": "echo $arr[0], \" \", $arr[1], \" \", $n, \" \", $i, \" \", $counter…"
+          }
+        ],
+        "children": [
+          "L1",
+          "I1",
+          "L2",
+          "L3"
+        ]
+      },
+      {
+        "id": "L1",
+        "kind": "loop",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": "while ($i++ + 0 < 3)",
+        "parent": "F2"
+      },
+      {
+        "id": "I1",
+        "kind": "if",
+        "line": 19,
+        "endLine": 21,
+        "state": "complete",
+        "header": "if (tick() + 0 > 5)",
+        "branches": [
+          {
+            "kind": "if",
+            "label": "tick() + 0 > 5",
+            "line": 19,
+            "body": [
+              {
+                "kind": "stmt",
+                "line": 20,
+                "text": "echo \"big\\n\";"
+              }
+            ]
+          }
+        ],
+        "parent": "F2"
+      },
+      {
+        "id": "L2",
+        "kind": "loop",
+        "line": 26,
+        "endLine": 28,
+        "state": "complete",
+        "header": "while (count($st) && array_pop($st) > 2)",
+        "parent": "F2"
+      },
+      {
+        "id": "L3",
+        "kind": "loop",
+        "line": 30,
+        "endLine": 32,
+        "state": "complete",
+        "header": "for ($j = 0; $j < 3 && $k++ < 5; $j++)",
+        "parent": "F2"
+      }
+    ],
+    "loops": [
+      {
+        "id": "L1",
+        "kind": "cond",
+        "line": 16,
+        "endLine": 18,
+        "state": "complete",
+        "header": {
+          "text": "while ($i++ + 0 < 3)",
+          "cond": "$i++ + 0 < 3"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 17,
+            "text": "echo \"loop $i\\n\";"
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "kind": "cond",
+        "line": 26,
+        "endLine": 28,
+        "state": "complete",
+        "header": {
+          "text": "while (count($st) && array_pop($st) > 2)",
+          "cond": "count($st) && array_pop($st) > 2"
+        },
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 27,
+            "text": "echo \"popped\\n\";"
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "kind": "for3",
+        "line": 30,
+        "endLine": 32,
+        "state": "complete",
+        "header": {
+          "text": "for ($j = 0; $j < 3 && $k++ < 5; $j++)",
+          "init": "$j = 0",
+          "cond": "$j < 3 && $k++ < 5",
+          "post": "$j++"
+        },
+        "vars": [
+          "$j"
+        ],
+        "body": [
+          {
+            "kind": "stmt",
+            "line": 31,
+            "text": "echo \"for $j $k\\n\";"
+          }
+        ]
+      }
+    ]
+  },
+  "diagnostics": null
+}
