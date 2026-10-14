@@ -7,11 +7,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/siregaryedija/gopherviz.git"
+    "url": "https://github.com/siregaryedija-ctrl/gopherviz.git"
   },
-  "homepage": "https://github.com/siregaryedija/gopherviz/tree/main/vscode-extension#readme",
+  "homepage": "https://github.com/siregaryedija-ctrl/gopherviz/tree/main/vscode-extension#readme",
   "bugs": {
-    "url": "https://github.com/siregaryedija/gopherviz/issues"
+    "url": "https://github.com/siregaryedija-ctrl/gopherviz/issues"
   },
   "icon": "media/icon.png",
   "galleryBanner": {
@@ -276,7 +276,7 @@
     "build:bin:all": "node scripts/build-bin.mjs --all",
     "test": "npm run build:bin && node scripts/build.mjs --test && node --test out/test/*.test.js",
     "test:vscode": "npm run build:bin && npm run compile && node scripts/test-vscode.mjs",
-    "package": "npm run build:bin:all && npm run compile && vsce package --baseContentUrl https://github.com/siregaryedija/gopherviz/blob/main/vscode-extension/ --baseImagesUrl https://raw.githubusercontent.com/siregaryedija/gopherviz/main/vscode-extension/"
+    "package": "npm run build:bin:all && npm run compile && vsce package --baseContentUrl https://github.com/siregaryedija-ctrl/gopherviz/blob/main/vscode-extension/ --baseImagesUrl https://raw.githubusercontent.com/siregaryedija-ctrl/gopherviz/main/vscode-extension/"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
