@@ -13,3 +13,6 @@ vscode-extension/.vscode-test/
 
 # hasil fuzzing lokal
 **/testdata/fuzz/
+
+# catatan kerja lokal
+CLAUDE.md
